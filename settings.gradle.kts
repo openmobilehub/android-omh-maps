@@ -15,7 +15,7 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "omh-maps"
-include(":maps-api")
-include(":maps-sample")
-include(":maps-api-googlemaps")
-include(":maps-api-openstreetmap")
+include(":packages:maps-api")
+include(":apps:maps-sample")
+include(":packages:maps-api-googlemaps")
+include(":packages:maps-api-openstreetmap")
