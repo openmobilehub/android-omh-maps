@@ -14,6 +14,7 @@ Bug reports and pull requests from users are what keep this project working.
 ## Running for development
 
 #### Step 1: Publish the plugin to mavenLocal
+
 1. In the project's `build.gradle` file comment the stage reference and add maven local:
 
 ```kotlin
@@ -25,7 +26,7 @@ repositories {
 }
 ```
 
-2. Edit the `android-base-lib.gradle` file in `buildSrc` and remove `id("signing"")` inside the plugins:
+2. Edit the `android-base-lib.gradle.kts` file in `buildSrc` and remove `id("signing")` inside the plugins:
 
 ```kotlin
 plugins {
@@ -37,7 +38,7 @@ plugins {
 }
 ```
 
-3. Below the plugins` add the next code:
+3. Below the `plugins` add the following code in `android-base-lib.gradle.kts`:
 
 ```kotlin
 publishing {
@@ -55,14 +56,13 @@ publishing {
 }
 ```
 
-4. Below the comment `// Publishing block` remove all the code.
+4. Below the comment `// Publishing block` remove all the code in `android-base-lib.gradle.kts`.
 
-5. Go to Android Studio -> Gradle tab and run the `publishToMavenLocal`in the `maps-api`, `maps-api-googlemaps` and `maps-api-openstreetmap`:
+5. Go to Android Studio -> Gradle tab and run the `publishToMavenLocal` in the `maps-api`, `maps-api-googlemaps` and `maps-api-openstreetmap`:
 
 ![gradle-maps-api](https://github.com/openmobilehub/omh-maps/assets/124717244/7a8aeb52-fcf2-4c8c-a0e8-e249e69b3fea)
 ![gradle-maps-api-gms](https://github.com/openmobilehub/omh-maps/assets/124717244/e5a370d9-1429-4234-a884-b39a23c6dadb)
 ![gradle-maps-api-ngms](https://github.com/openmobilehub/omh-maps/assets/124717244/2cc52110-8faa-47e3-9298-a6cec846a348)
-
 
 #### Step 2: Verify plugin is published
 
@@ -85,7 +85,7 @@ You can verify your code with the following tasks:
 ./gradlew detekt
 ```
 
-Once you have made a change in any of the `maps-api`, `maps-api-google maps` or `maps-api-openstreetmap` modules, 
+Once you have made a change in any of the `maps-api`, `maps-api-google maps` or `maps-api-openstreetmap` modules,
 you must `publishToMavenLocal` in that module in order to see the changes.
 
 ## Write documentation
