@@ -1,4 +1,4 @@
-@file:Suppress("UnstableApiUsage")
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 
 plugins {
     `android-application`
@@ -38,6 +38,15 @@ omhConfig {
 android {
     namespace = "com.omh.android.maps.sample"
 
+    signingConfigs {
+        create("release") {
+            storeFile = file(getValueFromEnvOrProperties("SAMPLE_APP_KEYSTORE_FILE_NAME") as String)
+            storePassword = getValueFromEnvOrProperties("SAMPLE_APP_KEYSTORE_STORE_PASSWORD") as String
+            keyAlias = getValueFromEnvOrProperties("SAMPLE_APP_KEYSTORE_KEY_ALIAS") as String
+            keyPassword = getValueFromEnvOrProperties("SAMPLE_APP_KEYSTORE_KEY_PASSWORD") as String
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = true
@@ -46,6 +55,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("release")
         }
     }
 
@@ -72,4 +82,9 @@ dependencies {
     // Test
     testImplementation(Libs.junit)
     androidTestImplementation(Libs.androidJunit)
+}
+
+fun getValueFromEnvOrProperties(name: String): Any? {
+    val localProperties = gradleLocalProperties(file("."))
+    return System.getenv(name) ?: localProperties[name]
 }
