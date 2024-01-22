@@ -27,3 +27,8 @@ jobs:
           encodedString: ${{ secrets.SAMPLE_APP_KEYSTORE_BASE_64 }}
       - name: Assemble release app
         run: bash ./gradlew :apps:maps-sample:assembleReleaseSingleBuild
+        env:
+          SAMPLE_APP_KEYSTORE_FILE_NAME: ${{ secrets.SAMPLE_APP_KEYSTORE_FILE_NAME }}
+          SAMPLE_APP_KEYSTORE_STORE_PASSWORD: ${{ secrets.SAMPLE_APP_KEYSTORE_STORE_PASSWORD }}
+          SAMPLE_APP_KEYSTORE_KEY_ALIAS: ${{ secrets.SAMPLE_APP_KEYSTORE_KEY_ALIAS }}
+          SAMPLE_APP_KEYSTORE_KEY_PASSWORD: ${{ secrets.SAMPLE_APP_KEYSTORE_KEY_PASSWORD }}
