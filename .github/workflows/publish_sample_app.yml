@@ -32,3 +32,12 @@ jobs:
           SAMPLE_APP_KEYSTORE_STORE_PASSWORD: ${{ secrets.SAMPLE_APP_KEYSTORE_STORE_PASSWORD }}
           SAMPLE_APP_KEYSTORE_KEY_ALIAS: ${{ secrets.SAMPLE_APP_KEYSTORE_KEY_ALIAS }}
           SAMPLE_APP_KEYSTORE_KEY_PASSWORD: ${{ secrets.SAMPLE_APP_KEYSTORE_KEY_PASSWORD }}
+      - name: Publish app to App Center
+        uses: wzieba/AppCenter-Github-Action@v1
+        with:
+          appName: ${{ secrets.APP_CENTER_APP_NAME }}}
+          group: ${{ secrets.APP_CENTER_GROUP }}}
+          token: ${{ secrets.APP_CENTER_TOKEN }}}
+          file:  './apps/maps-sample/maps-sample-releaseSingleBuild.apk'
+          notifyTesters: false
+          debug: true
