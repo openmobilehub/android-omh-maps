@@ -37,6 +37,11 @@ omhConfig {
 
 android {
     namespace = "com.omh.android.maps.sample"
+    
+    defaultConfig {
+        versionCode = 1
+        versionName = "1.0"
+    }
 
     signingConfigs {
         create("release") {

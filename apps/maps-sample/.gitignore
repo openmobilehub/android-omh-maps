@@ -1,4 +1,2 @@
 /build
 *.keystore
-# Just for testing distribution step
-!*.apk
