@@ -17,21 +17,21 @@ jobs:
           java-version: '11'
           distribution: 'temurin'
           cache: gradle
-      - name: Update local properties for secrets
-        run: echo MAPS_API_KEY="MAPS_API_KEY_VALUE" > ./local.properties # To be replaced with API key from secrets
-      - name: Decode keystore
-        uses: timheuer/base64-to-file@v1.2
-        with:
-          fileDir: './apps/maps-sample'
-          fileName: ${{ secrets.SAMPLE_APP_KEYSTORE_FILE_NAME }}
-          encodedString: ${{ secrets.SAMPLE_APP_KEYSTORE_BASE_64 }}
-      - name: Assemble release app
-        run: bash ./gradlew :apps:maps-sample:assembleReleaseSingleBuild
-        env:
-          SAMPLE_APP_KEYSTORE_FILE_NAME: ${{ secrets.SAMPLE_APP_KEYSTORE_FILE_NAME }}
-          SAMPLE_APP_KEYSTORE_STORE_PASSWORD: ${{ secrets.SAMPLE_APP_KEYSTORE_STORE_PASSWORD }}
-          SAMPLE_APP_KEYSTORE_KEY_ALIAS: ${{ secrets.SAMPLE_APP_KEYSTORE_KEY_ALIAS }}
-          SAMPLE_APP_KEYSTORE_KEY_PASSWORD: ${{ secrets.SAMPLE_APP_KEYSTORE_KEY_PASSWORD }}
+      # - name: Update local properties for secrets
+      #   run: echo MAPS_API_KEY="MAPS_API_KEY_VALUE" > ./local.properties # To be replaced with API key from secrets
+      # - name: Decode keystore
+      #   uses: timheuer/base64-to-file@v1.2
+      #   with:
+      #     fileDir: './apps/maps-sample'
+      #     fileName: ${{ secrets.SAMPLE_APP_KEYSTORE_FILE_NAME }}
+      #     encodedString: ${{ secrets.SAMPLE_APP_KEYSTORE_BASE_64 }}
+      # - name: Assemble release app
+      #   run: bash ./gradlew :apps:maps-sample:assembleReleaseSingleBuild
+      #   env:
+      #     SAMPLE_APP_KEYSTORE_FILE_NAME: ${{ secrets.SAMPLE_APP_KEYSTORE_FILE_NAME }}
+      #     SAMPLE_APP_KEYSTORE_STORE_PASSWORD: ${{ secrets.SAMPLE_APP_KEYSTORE_STORE_PASSWORD }}
+      #     SAMPLE_APP_KEYSTORE_KEY_ALIAS: ${{ secrets.SAMPLE_APP_KEYSTORE_KEY_ALIAS }}
+      #     SAMPLE_APP_KEYSTORE_KEY_PASSWORD: ${{ secrets.SAMPLE_APP_KEYSTORE_KEY_PASSWORD }}
       - name: Publish app to App Center
         uses: wzieba/AppCenter-Github-Action@v1
         with:
