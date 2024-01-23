@@ -36,8 +36,8 @@ jobs:
         uses: wzieba/AppCenter-Github-Action@v1
         with:
           appName: 'Callstack-dev/Android-OMH-Maps-Sample'
-          group: ${{ secrets.APP_CENTER_GROUP }}}
-          token: ${{ secrets.APP_CENTER_TOKEN }}}
+          group: ${{ secrets.APP_CENTER_GROUP }}
+          token: ${{ secrets.APP_CENTER_TOKEN }}
           file:  './apps/maps-sample/maps-sample-releaseSingleBuild.apk'
           notifyTesters: false
           debug: true
