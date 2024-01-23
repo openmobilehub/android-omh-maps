@@ -38,6 +38,6 @@ jobs:
           appName: 'Callstack-dev/Android-OMH-Maps-Sample'
           group: ${{ secrets.APP_CENTER_GROUP }}
           token: ${{ secrets.APP_CENTER_TOKEN }}
-          file:  './apps/maps-sample/maps-sample-releaseSingleBuild.apk'
+          file:  'apps/maps-sample/maps-sample-releaseSingleBuild.apk'
           notifyTesters: false
           debug: true
