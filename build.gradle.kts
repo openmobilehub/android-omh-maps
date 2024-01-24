@@ -1,4 +1,10 @@
 import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+import org.jetbrains.kotlin.konan.properties.hasProperty
+import java.util.Properties
+
+var properties = Properties()
+properties.load(project.rootProject.file("local.properties").inputStream())
+var isLocalDevelopment = (rootProject.ext.has("isLocalDevelopment") && rootProject.ext.get("isLocalDevelopment") == "true") || (properties.hasProperty("isLocalDevelopment") && properties.getProperty("isLocalDevelopment") == "true")
 
 plugins {
     id("io.github.gradle-nexus.publish-plugin") version "1.1.0"
@@ -13,10 +19,18 @@ downloadLicenses {
 
 
 subprojects {
-    repositories {
-        mavenCentral()
-        google()
-        maven("https://s01.oss.sonatype.org/content/groups/staging/")
+    if(isLocalDevelopment) {
+        repositories {
+            mavenLocal()
+            gradlePluginPortal()
+            google()
+        }
+    } else {
+        repositories {
+            mavenCentral()
+            google()
+            maven("https://s01.oss.sonatype.org/content/groups/staging/")
+        }
     }
 }
 

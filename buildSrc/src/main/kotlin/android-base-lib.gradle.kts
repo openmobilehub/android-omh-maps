@@ -1,10 +1,26 @@
+import org.gradle.plugins.signing.SigningPlugin
+import org.jetbrains.kotlin.konan.properties.hasProperty
+import java.util.Properties
+
+var properties = Properties()
+properties.load(project.rootProject.file("local.properties").inputStream())
+var isLocalDevelopment = (rootProject.ext.has("isLocalDevelopment") && rootProject.ext.get("isLocalDevelopment") == "true") || (properties.hasProperty("isLocalDevelopment") && properties.getProperty("isLocalDevelopment") == "true")
+
+if(isLocalDevelopment) {
+    println(" == OMH Maps project running in local development mode, using maven local  == ")
+}
+
 plugins {
     id("com.android.library")
     id("io.gitlab.arturbosch.detekt")
     kotlin("android")
     id("jacoco")
     id("maven-publish")
-    id("signing")
+    id("signing").apply(false)
+}
+
+if(!isLocalDevelopment) {
+    apply<SigningPlugin>()
 }
 
 android {
@@ -45,6 +61,11 @@ dependencies {
 
 // Publishing block
 
+val groupProperty = getPropertyOrFail("group")
+val versionProperty = getPropertyOrFail("version")
+val artifactId = getPropertyOrFail("artifactId")
+val mDescription = getPropertyOrFail("description")
+
 val androidSourcesJar by tasks.registering(Jar::class) {
     archiveClassifier.set("sources")
     from("src/main/java")
@@ -53,33 +74,6 @@ val androidSourcesJar by tasks.registering(Jar::class) {
 
 artifacts {
     add("archives", androidSourcesJar)
-}
-
-val groupProperty = getPropertyOrFail("group")
-val versionProperty = getPropertyOrFail("version")
-val artifactId = getPropertyOrFail("artifactId")
-val mDescription = getPropertyOrFail("description")
-
-group = groupProperty
-version = versionProperty
-
-afterEvaluate {
-    publishing {
-        publications {
-            register("release", MavenPublication::class.java) {
-                setupPublication()
-            }
-        }
-    }
-}
-
-signing {
-    useInMemoryPgpKeys(
-        rootProject.ext["signingKeyId"].toString(),
-        rootProject.ext["signingKey"].toString(),
-        rootProject.ext["signingPassword"].toString(),
-    )
-    sign(publishing.publications)
 }
 
 fun MavenPublication.setupPublication() {
@@ -120,5 +114,43 @@ fun MavenPublication.setupPublication() {
             developerConnection.set("scm:git:ssh://github.com/openmobilehub/omh-maps.git")
             url.set("https://github.com/openmobilehub/omh-maps/tree/main")
         }
+    }
+}
+
+if(isLocalDevelopment) {
+    publishing {
+        publications {
+            register<MavenPublication>("release") {
+                group = groupProperty
+                artifactId = artifactId
+                version = versionProperty
+
+                afterEvaluate {
+                    from(components["release"])
+                }
+            }
+        }
+    }
+} else {
+    group = groupProperty
+    version = versionProperty
+
+    afterEvaluate {
+        publishing {
+            publications {
+                register("release", MavenPublication::class.java) {
+                    setupPublication()
+                }
+            }
+        }
+    }
+
+    signing {
+        useInMemoryPgpKeys(
+            rootProject.ext["signingKeyId"].toString(),
+            rootProject.ext["signingKey"].toString(),
+            rootProject.ext["signingPassword"].toString(),
+        )
+        sign(publishing.publications)
     }
 }
