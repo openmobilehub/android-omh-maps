@@ -11,17 +11,13 @@ jobs:
 
   maps-plugin-gms:
     needs: maps-core
-    runs-on: ubuntu-latest
-    steps:
-    - name: Publish Maps Plugin GMS
-      run: echo "maps-plugin-gms steps"
+    uses: ./.github/workflows/publish_maps_api_gms.yml
+    secrets: inherit
 
   maps-plugin-non-gms:
     needs: maps-core
-    runs-on: ubuntu-latest
-    steps:
-    - name: Publish Maps Plugin Non-GMS
-      run: echo "Running maps-plugin-non-gms steps"
+    uses: ./.github/workflows/publish_maps_api_ngms.yml
+    secrets: inherit
 
   maps-app:
     needs: [maps-plugin-gms, maps-plugin-non-gms]

@@ -1,12 +1,7 @@
 name: Publish Maps API OpenStreetMap Implementation
 
 on:
-  # workflow_run:
-  #   # We'll run this workflow when the Publish Maps API is completed
-  #   workflows: [ Publish Maps API ]
-  #   types:
-  #     - completed
-  workflow_dispatch:
+  workflow_call:
 
 jobs:
   publish:
@@ -26,14 +21,14 @@ jobs:
 
         # Builds the release artifacts of the library
       - name: Release build
-        run: ./gradlew :maps-api-openstreetmap:assembleRelease
+        run: ./gradlew :packages:maps-api-openstreetmap:assembleRelease
       - name: Source jar
         run: ./gradlew androidSourcesJar
 
         # Runs upload, and then closes & releases the repository
       - name: Publish to MavenCentral
-        if: ${{ vars.RELEASE_FLAG == 'true' }}
-        run: ./gradlew :maps-api-openstreetmap:publishReleasePublicationToSonatypeRepository --max-workers 1 closeAndReleaseSonatypeStagingRepository
+        if: ${{ vars.PACKAGE_PUBLISHING_ENABLED == 'true' && vars.RELEASE_FLAG == 'true' }}
+        run: ./gradlew :packages:maps-api-openstreetmap:publishReleasePublicationToSonatypeRepository --max-workers 1 closeAndReleaseSonatypeStagingRepository
         env:
           OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
@@ -44,8 +39,8 @@ jobs:
 
       # Runs upload to the staging repository
       - name: Publish to Staging area
-        if: ${{ vars.RELEASE_FLAG != 'true' }}
-        run: ./gradlew :maps-api-openstreetmap:publishReleasePublicationToSonatypeRepository --max-workers 1
+        if: ${{ vars.PACKAGE_PUBLISHING_ENABLED == 'true' && vars.RELEASE_FLAG != 'true' }}
+        run: ./gradlew :packages:maps-api-openstreetmap:publishReleasePublicationToSonatypeRepository --max-workers 1
         env:
           OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}

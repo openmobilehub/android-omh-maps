@@ -1,8 +1,6 @@
 name: Build and Publish Sample App
 
 on:
-  # push:
-  #   branches: [build/sample-app-pipelines]
   workflow_call:
 
 jobs:

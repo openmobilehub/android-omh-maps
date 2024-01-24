@@ -44,6 +44,9 @@ android {
     }
 
     signingConfigs {
+        // It creates a signing config for release builds if the required properties are set.
+        // The if statement is necessary to avoid errors when the packages are built on CI.
+        // The alternative would be to pass all the environment variables for signing apk to the packages workflows.
         create("release") {
             val storeFileName = getValueFromEnvOrProperties("SAMPLE_APP_KEYSTORE_FILE_NAME") as? String
             val storePassword = getValueFromEnvOrProperties("SAMPLE_APP_KEYSTORE_STORE_PASSWORD") as? String
