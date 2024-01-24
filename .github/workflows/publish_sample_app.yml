@@ -17,8 +17,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - name: Debug
-        run: echo ${{ var.PACKAGE_PUBLISHING_ENABLED }} # To be replaced with API key from secrets
+      - name: Update local properties for secrets
+        run: echo ${{ vars.PACKAGE_PUBLISHING_ENABLED }} # To be replaced with API key from secrets
       # - name: set up JDK 11
       #   uses: actions/setup-java@v3
       #   with:
