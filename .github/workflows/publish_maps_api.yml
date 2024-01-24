@@ -22,6 +22,8 @@ jobs:
 
       - name: Update local properties for secrets
         run: echo MAPS_API_KEY="MAPS_API_KEY_VALUE" > ./local.properties
+      - name: Debug
+        run: echo ${{ secrets.SAMPLE_APP_KEYSTORE_FILE_NAME }}
 
         # Builds the release artifacts of the library
       - name: Release build
