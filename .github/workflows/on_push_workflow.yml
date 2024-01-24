@@ -6,10 +6,8 @@ on:
 
 jobs:
   maps-core:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Publish Maps API
-      run: echo "Running maps-core steps"
+    uses: ./.github/workflows/publish_maps_api.yml
+    secrets: inherit
 
   maps-plugin-gms:
     needs: maps-core
