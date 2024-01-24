@@ -35,7 +35,10 @@ To achieve that, this plugin has been preconfigured with conditional configurati
 
 **Note**: to publish all modules in `packages/`, you can simply run the task `publishToMavenLocal` in the root project.
 
-2. With the CLI: `./gradlew publishToMavenLocal` after `cd packages/{maps-api,maps-api-googlemaps,maps-api-openstreetmap}`
+2. With the CLI:
+
+- to publish all modules: `./gradlew publishToMavenLocal`
+- to publish a selected module: `./gradlew :packages:{module}:publishToMavenLocal`
 
 **Note**: to publish all modules in `packages/`, you can simply run the task `publishToMavenLocal` in the root project directory.
 
