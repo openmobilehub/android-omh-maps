@@ -25,7 +25,7 @@ jobs:
 
         # Builds the release artifacts of the library
       - name: Release build
-        run: ./gradlew :maps-api:assembleRelease
+        run: ./gradlew :packages:maps-api:assembleRelease
       - name: Source jar
         run: ./gradlew androidSourcesJar
 
