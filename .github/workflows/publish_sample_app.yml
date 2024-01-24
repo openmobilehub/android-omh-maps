@@ -39,6 +39,7 @@ jobs:
           SAMPLE_APP_KEYSTORE_KEY_ALIAS: ${{ secrets.SAMPLE_APP_KEYSTORE_KEY_ALIAS }}
           SAMPLE_APP_KEYSTORE_KEY_PASSWORD: ${{ secrets.SAMPLE_APP_KEYSTORE_KEY_PASSWORD }}
       - name: Publish app to App Center
+        if: false
         uses: wzieba/AppCenter-Github-Action@v1
         with:
           appName: ${{ secrets.APP_CENTER_APP_NAME }}
