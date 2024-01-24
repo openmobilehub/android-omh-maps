@@ -1,0 +1,33 @@
+name: Android CD
+
+on:
+  push:
+    branches: [ build/sample-app-pipelines ]
+
+jobs:
+  maps-core:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Publish Maps API
+      run: echo "Running maps-core steps"
+
+  maps-plugin-gms:
+    needs: maps-core
+    runs-on: ubuntu-latest
+    steps:
+    - name: Publish Maps Plugin GMS
+      run: echo "maps-plugin-gms steps"
+
+  maps-plugin-non-gms:
+    needs: maps-core
+    runs-on: ubuntu-latest
+    steps:
+    - name: Publish Maps Plugin Non-GMS
+      run: echo "Running maps-plugin-non-gms steps"
+
+  maps-app:
+    needs: [maps-plugin-gms, maps-plugin-non-gms]
+    runs-on: ubuntu-latest
+    steps:
+    - name: App Steps
+      run: echo "Running maps-app steps"
