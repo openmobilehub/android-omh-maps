@@ -4,6 +4,11 @@ on:
   push:
     branches: [ build/sample-app-pipelines ]
 
+env:
+  SAMPLE_APP_PATH: apps/maps-sample
+  GRADLE_ASSEMBLE_TASK: :apps:maps-sample:assembleReleaseSingleBuild
+  APK_PATH: apps/maps-sample/build/outputs/apk/releaseSingleBuild/maps-sample-releaseSingleBuild.apk
+
 jobs:
   build_and_publish:
     name: Build and Publish
@@ -22,11 +27,11 @@ jobs:
       - name: Decode keystore
         uses: timheuer/base64-to-file@v1.2
         with:
-          fileDir: './apps/maps-sample'
+          fileDir: $SAMPLE_APP_PATH
           fileName: ${{ secrets.SAMPLE_APP_KEYSTORE_FILE_NAME }}
           encodedString: ${{ secrets.SAMPLE_APP_KEYSTORE_BASE_64 }}
       - name: Assemble release app
-        run: bash ./gradlew :apps:maps-sample:assembleReleaseSingleBuild
+        run: bash ./gradlew $GRADLE_ASSEMBLE_TASK
         env:
           SAMPLE_APP_KEYSTORE_FILE_NAME: ${{ secrets.SAMPLE_APP_KEYSTORE_FILE_NAME }}
           SAMPLE_APP_KEYSTORE_STORE_PASSWORD: ${{ secrets.SAMPLE_APP_KEYSTORE_STORE_PASSWORD }}
@@ -38,6 +43,6 @@ jobs:
           appName: ${{ secrets.APP_CENTER_APP_NAME }}
           group: ${{ secrets.APP_CENTER_GROUP }}
           token: ${{ secrets.APP_CENTER_TOKEN }}
-          file:  'apps/maps-sample/build/outputs/apk/releaseSingleBuild/maps-sample-releaseSingleBuild.apk'
+          file:  $APK_PATH
           notifyTesters: true
-          debug: true
+          debug: false
