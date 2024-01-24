@@ -1,11 +1,11 @@
 name: Publish Maps API Google Maps Implementation
 
 on:
-  workflow_run:
-    # We'll run this workflow when the Publish Maps API is completed
-    workflows: [ Publish Maps API ]
-    types:
-      - completed
+  # workflow_run:
+  #   # We'll run this workflow when the Publish Maps API is completed
+  #   workflows: [ Publish Maps API ]
+  #   types:
+  #     - completed
   workflow_dispatch:
 
 jobs:
