@@ -27,4 +27,4 @@ jobs:
 
   maps-app:
     needs: [maps-plugin-gms, maps-plugin-non-gms]
-    uses: './.github/workflows/publish_sample_app.yml'
+    uses: '.github/workflows/publish_sample_app.yml'
