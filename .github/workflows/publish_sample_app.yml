@@ -5,9 +5,9 @@ on:
     branches: [ build/sample-app-pipelines ]
 
 env:
-  SAMPLE_APP_PATH: ./apps/maps-sample
-  GRADLE_ASSEMBLE_TASK: :apps:maps-sample:assembleReleaseSingleBuild
-  APK_PATH: ./apps/maps-sample/build/outputs/apk/releaseSingleBuild/maps-sample-releaseSingleBuild.apk
+  SAMPLE_APP_PATH: './apps/maps-sample'
+  GRADLE_ASSEMBLE_TASK: ':apps:maps-sample:assembleReleaseSingleBuild'
+  APK_PATH: './apps/maps-sample/build/outputs/apk/releaseSingleBuild/maps-sample-releaseSingleBuild.apk'
 
 jobs:
   build_and_publish:
