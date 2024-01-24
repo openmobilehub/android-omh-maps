@@ -27,7 +27,4 @@ jobs:
 
   maps-app:
     needs: [maps-plugin-gms, maps-plugin-non-gms]
-    runs-on: ubuntu-latest
-    steps:
-    - name: App Steps
-      run: echo "Running maps-app steps"
+    uses: './.github/workflows/publish_sample_app.yml'
