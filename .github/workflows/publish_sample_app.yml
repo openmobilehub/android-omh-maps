@@ -27,7 +27,7 @@ jobs:
       - name: Decode keystore
         uses: timheuer/base64-to-file@v1.2
         with:
-          fileDir: $SAMPLE_APP_PATH
+          fileDir: './apps/maps-sample' #temporary
           fileName: ${{ secrets.SAMPLE_APP_KEYSTORE_FILE_NAME }}
           encodedString: ${{ secrets.SAMPLE_APP_KEYSTORE_BASE_64 }}
       - name: Assemble release app
