@@ -26,22 +26,12 @@ jobs:
         # Builds the release artifacts of the library
       - name: Release build
         run: ./gradlew :packages:maps-api:assembleRelease
-        env:
-          SAMPLE_APP_KEYSTORE_FILE_NAME: ${{ secrets.SAMPLE_APP_KEYSTORE_FILE_NAME }}
-          SAMPLE_APP_KEYSTORE_STORE_PASSWORD: ${{ secrets.SAMPLE_APP_KEYSTORE_STORE_PASSWORD }}
-          SAMPLE_APP_KEYSTORE_KEY_ALIAS: ${{ secrets.SAMPLE_APP_KEYSTORE_KEY_ALIAS }}
-          SAMPLE_APP_KEYSTORE_KEY_PASSWORD: ${{ secrets.SAMPLE_APP_KEYSTORE_KEY_PASSWORD }}
       - name: Source jar
         run: ./gradlew androidSourcesJar
-        env:
-          SAMPLE_APP_KEYSTORE_FILE_NAME: ${{ secrets.SAMPLE_APP_KEYSTORE_FILE_NAME }}
-          SAMPLE_APP_KEYSTORE_STORE_PASSWORD: ${{ secrets.SAMPLE_APP_KEYSTORE_STORE_PASSWORD }}
-          SAMPLE_APP_KEYSTORE_KEY_ALIAS: ${{ secrets.SAMPLE_APP_KEYSTORE_KEY_ALIAS }}
-          SAMPLE_APP_KEYSTORE_KEY_PASSWORD: ${{ secrets.SAMPLE_APP_KEYSTORE_KEY_PASSWORD }}
 
         # Runs upload, and then closes & releases the repository
       - name: Publish to MavenCentral
-        if: ${{ vars.PACKAGE_PUBLISHING_ENABLED && vars.RELEASE_FLAG == 'true' }}
+        if: ${{ vars.PACKAGE_PUBLISHING_ENABLED == 'true' && vars.RELEASE_FLAG == 'true' }}
         run: echo "Publishing to MavenCentral"
         # run: ./gradlew :maps-api:publishReleasePublicationToSonatypeRepository --max-workers 1 closeAndReleaseSonatypeStagingRepository
         # env:
@@ -54,7 +44,7 @@ jobs:
 
       # Runs upload to the staging repository
       - name: Publish to Staging area
-        if: ${{ vars.PACKAGE_PUBLISHING_ENABLED && vars.RELEASE_FLAG != 'true' }}
+        if: ${{ vars.PACKAGE_PUBLISHING_ENABLED == 'true' && vars.RELEASE_FLAG != 'true' }}
         run: echo "Publishing to staging area"
         # run: ./gradlew :maps-api:publishReleasePublicationToSonatypeRepository --max-workers 1
         # env:
