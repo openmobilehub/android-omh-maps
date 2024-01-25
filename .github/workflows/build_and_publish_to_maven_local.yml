@@ -39,14 +39,13 @@ jobs:
       - name: Update local properties for secrets
         run: echo MAPS_API_KEY= ${{ secrets.GOOGLE_MAPS_API_KEY }} > ./local.properties
 
-      - name: Restore Cache
+      - name: Restore MavenLocal Cache
         if: ${{ inputs.input-cache-prefix != '' }} 
         uses: actions/cache@v3
         with:
           path: ~/.m2/repository
           key: ${{ inputs.input-cache-prefix }}-${{ github.run_id }}
 
-        # Builds the release artifacts of the library
       - name: Release build
         run: ./gradlew -PisLocalDevelopment=true ${{ inputs.release-build-command }}
       - name: Source jar

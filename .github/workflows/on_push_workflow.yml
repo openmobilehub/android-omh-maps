@@ -1,8 +1,5 @@
 # This workflow combines 3 workflows into one to provide a correct sequence of actions.
 # Build and publishing Sample App needs to wait for all other workflows to complete.
-# It was not possible when using separate workflows and the `workflow_run` events
-# as the workflow_run event is triggered when the first workflow is completed.
-# See the discussion here: https://github.com/orgs/community/discussions/16059
 
 name: Android CD
 
@@ -11,6 +8,7 @@ on:
     branches: [ build/sample-app-pipelines ]
 
 jobs:
+  # Build and publish only core package to MavenLocal
   maps-core:
     uses: ./.github/workflows/build_and_publish_to_maven_local.yml
     with:
@@ -19,7 +17,7 @@ jobs:
       publish-to-maven-local-command: ':packages:maps-api:publishToMavenLocal'
     secrets: inherit
     
-
+  # Build and publish all plugins to MavenLocal
   maps-plugins:
     needs: maps-core
     uses: ./.github/workflows/build_and_publish_to_maven_local.yml
@@ -30,6 +28,7 @@ jobs:
       publish-to-maven-local-command: 'publishToMavenLocal'
     secrets: inherit
 
+  # Build and publish Sample App
   maps-app:
     needs: maps-plugins
     uses: ./.github/workflows/publish_sample_app.yml
