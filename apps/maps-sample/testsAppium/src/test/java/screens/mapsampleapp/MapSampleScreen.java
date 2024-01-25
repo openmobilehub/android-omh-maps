@@ -44,20 +44,20 @@ public class MapSampleScreen extends BaseScreen {
     @AndroidFindBy(xpath="//android.widget.ImageView[@content-desc=\"My Location\"]")  // GMS
     private WebElement mylocBtn;
 
-    @AndroidFindBy(id="com.omh.android.maps.sample:id/marker_shadow_image_view") // Both
+    @AndroidFindBy(id="com.openmobilehub.android.maps.sample:id/marker_shadow_image_view") // Both
     private WebElement markerBtn;
 
-    @AndroidFindBy(id="com.omh.android.maps.sample:id/fab_share_location") // Both
+    @AndroidFindBy(id="com.openmobilehub.android.maps.sample:id/fab_share_location") // Both
     private WebElement shareBtn;
 
-    @AndroidFindBy(id="com.omh.android.maps.sample:id/textView_location") // Both
+    @AndroidFindBy(id="com.openmobilehub.android.maps.sample:id/textView_location") // Both
     private WebElement locationTxt;
 
-    //@AndroidFindBy(id="com.omh.android.maps.sample:id/frameLayout_mapContainer") // GMS
-    @AndroidFindBy(id="com.omh.android.maps.sample:id/fragment_map_container")
+    //@AndroidFindBy(id="com.openmobilehub.android.maps.sample:id/frameLayout_mapContainer") // GMS
+    @AndroidFindBy(id="com.openmobilehub.android.maps.sample:id/fragment_map_container")
     private WebElement mapFrameLayoutContainer;
 
-    @AndroidFindBy(id="com.omh.android.maps.sample:id/textView_coordinate")
+    @AndroidFindBy(id="com.openmobilehub.android.maps.sample:id/textView_coordinate")
     private WebElement txtCoordinates;
 
     /*

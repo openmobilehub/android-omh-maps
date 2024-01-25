@@ -45,7 +45,7 @@
 
                 <data
                     android:scheme="https"
-                    android:host="com.omh.android.maps.sample" />
+                    android:host="com.openmobilehub.android.maps.sample" />
             </intent-filter>
         </activity>
 

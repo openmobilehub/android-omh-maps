@@ -13,12 +13,12 @@
 
     <fragment
         android:id="@+id/initialFragment"
-        android:name="com.omh.android.maps.sample.start.InitialFragment"
+        android:name="com.openmobilehub.android.maps.sample.start.InitialFragment"
         android:label="@string/initial_fragment_text"
         tools:layout="@layout/fragment_initial">
         <argument
             android:name="coordinate"
-            app:argType="com.omh.android.maps.api.presentation.models.OmhCoordinate"
+            app:argType="com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate"
             android:defaultValue="@null"
             app:nullable="true" />
         <action
@@ -28,12 +28,12 @@
 
     <fragment
         android:id="@+id/mapFragment"
-        android:name="com.omh.android.maps.sample.maps.MapFragment"
+        android:name="com.openmobilehub.android.maps.sample.maps.MapFragment"
         android:label="@string/map_fragment_text"
         tools:layout="@layout/fragment_map">
         <argument
             android:name="coordinate"
-            app:argType="com.omh.android.maps.api.presentation.models.OmhCoordinate"
+            app:argType="com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate"
             android:defaultValue="@null"
             app:nullable="true" />
         <action
