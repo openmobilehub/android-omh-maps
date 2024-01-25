@@ -13,56 +13,36 @@ Bug reports and pull requests from users are what keep this project working.
 
 ## Running for development
 
-#### Step 1: Publish the plugin to mavenLocal
+For running the plugin in development locally, there are primarily three things to be achieved compared to standard development scenario:
 
-1. In the project's `build.gradle` file comment the stage reference and add maven local:
+- `repositories` need to include `mavenLocal()`
+- publishing needs to happen to maven local
+- signing needs to be disabled for publishing
 
-```kotlin
-repositories {
-    mavenCentral()
-    google()
-    gradlePluginPortal()
-    mavenLocal()
-}
-```
+To achieve that, this plugin has been preconfigured with conditional configuration that can be enabled as follows:
 
-2. Edit the `android-base-lib.gradle.kts` file in `buildSrc` and remove `id("signing")` inside the plugins:
+1. Via `local.properties` (applies both to Android Studio and `gradlew`): add `isLocalDevelopment=true`
 
-```kotlin
-plugins {
-    id("com.android.library")
-    id("io.gitlab.arturbosch.detekt")
-    kotlin("android")
-    id("jacoco")
-    id("maven-publish")
-}
-```
+2. Via a CLI flag: `./gradlew -PisLocalDevelopment=true ...`
 
-3. Below the `plugins` add the following code in `android-base-lib.gradle.kts`:
+## Publishing
 
-```kotlin
-publishing {
-    publications {
-        register<MavenPublication>("release") {
-            group = getPropertyOrFail("group")
-            artifactId = properties.get("artifactId").toString()
-            version = getPropertyOrFail("version")
-
-            afterEvaluate {
-                from(components["release"])
-            }
-        }
-    }
-}
-```
-
-4. Below the comment `// Publishing block` remove all the code in `android-base-lib.gradle.kts`.
-
-5. Go to Android Studio -> Gradle tab and run the `publishToMavenLocal` in the `maps-api`, `maps-api-googlemaps` and `maps-api-openstreetmap`:
+1. With Android Studio -> Gradle tab and run the `publishToMavenLocal` for modules: `packages > maps-api`, `packages > maps-api-googlemaps` and `packages > maps-api-openstreetmap`:
 
 ![gradle-maps-api](https://github.com/openmobilehub/omh-maps/assets/124717244/7a8aeb52-fcf2-4c8c-a0e8-e249e69b3fea)
 ![gradle-maps-api-gms](https://github.com/openmobilehub/omh-maps/assets/124717244/e5a370d9-1429-4234-a884-b39a23c6dadb)
 ![gradle-maps-api-ngms](https://github.com/openmobilehub/omh-maps/assets/124717244/2cc52110-8faa-47e3-9298-a6cec846a348)
+
+**Note**: to publish all modules in `packages/`, you can simply run the task `publishToMavenLocal` in the root project. Please also remember to publish the `maps-api` module first.
+
+2. With the CLI:
+
+- first publish `./gradlew :packages:core:publishToMavenLocal`
+- then:
+  - to publish all other modules: `./gradlew publishToMavenLocal`
+  - to publish a selected module: `./gradlew :packages:{module}:publishToMavenLocal`
+
+**Note**: to publish all modules in `packages/`, you can simply run the task `publishToMavenLocal` in the root project directory. Please also remember to publish the `maps-api` module first.
 
 #### Step 2: Verify plugin is published
 
@@ -85,8 +65,7 @@ You can verify your code with the following tasks:
 ./gradlew detekt
 ```
 
-Once you have made a change in any of the `maps-api`, `maps-api-google maps` or `maps-api-openstreetmap` modules,
-you must `publishToMavenLocal` in that module in order to see the changes.
+Once you have made a change in any of the `packages/maps-api`, `packages/maps-api-google maps` or `packages/maps-api-openstreetmap` modules, you must `publishToMavenLocal` in that module in order to see the changes.
 
 ## Write documentation
 

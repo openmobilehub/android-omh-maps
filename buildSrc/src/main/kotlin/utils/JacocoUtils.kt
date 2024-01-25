@@ -27,7 +27,7 @@ fun Project.setupJacoco() {
         setDirs(this@setupJacoco)
     }
 
-    val minimunCoverageAllowed = properties.get("minimunCoverageAllowed").toString().toBigDecimal()
+    val minimumCoverageAllowed = properties.get("minimumCoverageAllowed").toString().toBigDecimal()
     tasks.register<JacocoCoverageVerification>("jacocoCoverageVerification") {
         group = jacocoTaskGroup
         description = "Code coverage verification for Android both Android and Unit tests."
@@ -35,7 +35,7 @@ fun Project.setupJacoco() {
         violationRules {
             rule {
                 limit {
-                    minimum = minimunCoverageAllowed
+                    minimum = minimumCoverageAllowed
                 }
             }
             rule {
@@ -47,7 +47,7 @@ fun Project.setupJacoco() {
                     "**.Task"
                 )
                 limit {
-                    minimum = minimunCoverageAllowed
+                    minimum = minimumCoverageAllowed
                 }
             }
         }
