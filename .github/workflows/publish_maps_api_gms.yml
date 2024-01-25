@@ -18,7 +18,7 @@ jobs:
           java-version: 11
 
       - name: Update local properties for secrets
-        run: echo MAPS_API_KEY="MAPS_API_KEY_VALUE" > ./local.properties
+        run: echo MAPS_API_KEY= ${{ secrets.GOOGLE_MAPS_API_KEY }} > ./local.properties
 
         # Builds the release artifacts of the library
       - name: Release build

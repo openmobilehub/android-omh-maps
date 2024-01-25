@@ -25,7 +25,7 @@ jobs:
           cache: gradle
       
       - name: Update local properties for secrets
-        run: echo MAPS_API_KEY="MAPS_API_KEY_VALUE" > ./local.properties # TODO: Replace with API key from secrets once ready
+        run: echo MAPS_API_KEY= ${{ secrets.GOOGLE_MAPS_API_KEY }} > ./local.properties
 
         # Decodes keystore base64 string to file
       - name: Decode keystore
