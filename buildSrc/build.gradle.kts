@@ -6,14 +6,14 @@ var localPropertiesFile = project.file("../local.properties")
 if(localPropertiesFile.exists()) {
     properties.load(localPropertiesFile.inputStream())
 }
-var isLocalDevelopment = (rootProject.ext.has("isLocalDevelopment") && rootProject.ext.get("isLocalDevelopment") == "true") || (properties.hasProperty("isLocalDevelopment") && properties.getProperty("isLocalDevelopment") == "true")
+var useMavenLocal = (rootProject.ext.has("useMavenLocal") && rootProject.ext.get("useMavenLocal") == "true") || (properties.hasProperty("useMavenLocal") && properties.getProperty("useMavenLocal") == "true")
 
 plugins {
     `kotlin-dsl`
 }
 
 repositories {
-    if(isLocalDevelopment) {
+    if(useMavenLocal) {
         mavenLocal()
     }
     mavenCentral()

@@ -7,7 +7,7 @@ var localPropertiesFile = project.file("local.properties")
 if(localPropertiesFile.exists()) {
     properties.load(localPropertiesFile.inputStream())
 }
-var isLocalDevelopment = (rootProject.ext.has("isLocalDevelopment") && rootProject.ext.get("isLocalDevelopment") == "true") || (properties.hasProperty("isLocalDevelopment") && properties.getProperty("isLocalDevelopment") == "true")
+var useMavenLocal = (rootProject.ext.has("useMavenLocal") && rootProject.ext.get("useMavenLocal") == "true") || (properties.hasProperty("useMavenLocal") && properties.getProperty("useMavenLocal") == "true")
 
 plugins {
     id("io.github.gradle-nexus.publish-plugin") version "1.1.0"
@@ -22,7 +22,7 @@ downloadLicenses {
 
 
 subprojects {
-    if(isLocalDevelopment) {
+    if(useMavenLocal) {
         repositories {
             mavenLocal()
             gradlePluginPortal()
@@ -57,7 +57,7 @@ tasks {
     getByName("prepareKotlinBuildScriptModel").dependsOn(installPreCommitHook)
 }
 
-if(!isLocalDevelopment) {
+if(!useMavenLocal) {
     val ossrhUsername by extra(getValueFromEnvOrProperties("OSSRH_USERNAME"))
     val ossrhPassword by extra(getValueFromEnvOrProperties("OSSRH_PASSWORD"))
     val mStagingProfileId by extra(getValueFromEnvOrProperties("SONATYPE_STAGING_PROFILE_ID"))
