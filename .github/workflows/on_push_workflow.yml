@@ -1,4 +1,4 @@
-# This workflow combines 4 workflows into one to provide a correct sequence of actions.
+# This workflow combines 3 workflows into one to provide a correct sequence of actions.
 # Build and publishing Sample App needs to wait for all other workflows to complete.
 # It was not possible when using separate workflows and the `workflow_run` events
 # as the workflow_run event is triggered when the first workflow is completed.
@@ -12,20 +12,25 @@ on:
 
 jobs:
   maps-core:
-    uses: ./.github/workflows/publish_maps_api.yml
+    uses: ./.github/workflows/build_and_publish_to_maven_local.yml
+    with:
+      output-cache-prefix: mavenLocal-core
+      release-build-command: ':packages:maps-api:assembleRelease'
+      publish-to-maven-local-command: ':packages:maps-api:publishToMavenLocal'
     secrets: inherit
+    
 
   maps-plugins:
     needs: maps-core
-    uses: ./.github/workflows/publish_plugins_to_maven_local.yml
+    uses: ./.github/workflows/build_and_publish_to_maven_local.yml
+    with:
+      input-cache-prefix: mavenLocal-core
+      output-cache-prefix: mavenLocal-core-and-plugins
+      release-build-command: 'assembleRelease'
+      publish-to-maven-local-command: 'publishToMavenLocal'
     secrets: inherit
 
-  # maps-plugin-non-gms:
-  #   needs: maps-core
-  #   uses: ./.github/workflows/publish_maps_api_ngms.yml
-  #   secrets: inherit
-
   maps-app:
-    needs: [maps-plugins]
+    needs: maps-plugins
     uses: ./.github/workflows/publish_sample_app.yml
     secrets: inherit

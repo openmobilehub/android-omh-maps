@@ -1,0 +1,62 @@
+name: Build and Release to MavenLocal
+
+on:
+  workflow_call:
+    inputs:
+      input-cache-prefix:
+        description: 'Input cache prefix'
+        type: string
+        required: false
+        default: ''
+      output-cache-prefix:
+        description: 'Output cache prefix'
+        type: string
+        required: false
+        default: ''
+      release-build-command:
+        description: 'Release build command'
+        type: string
+        required: true
+      publish-to-maven-local-command:
+        description: 'Publish to MavenLocal command'
+        type: string
+        required: true
+      
+jobs:
+  publish:
+    name: Publish plugins to MavenLocal
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 11
+        uses: actions/setup-java@v3
+        with:
+          distribution: adopt
+          java-version: 11
+
+      - name: Update local properties for secrets
+        run: echo MAPS_API_KEY= ${{ secrets.GOOGLE_MAPS_API_KEY }} > ./local.properties
+
+      - name: Restore Cache
+        if: ${{ inputs.input-cache-prefix != '' }} 
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: ${{ inputs.input-cache-prefix }}-${{ github.run_id }}
+
+        # Builds the release artifacts of the library
+      - name: Release build
+        run: ./gradlew -PisLocalDevelopment=true ${{ inputs.release-build-command }}
+      - name: Source jar
+        run: ./gradlew androidSourcesJar
+
+      - name: Publish to MavenLocal
+        run: ./gradlew -PisLocalDevelopment=true ${{ inputs.publish-to-maven-local-command }}
+
+      - name: Cache MavenLocal
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: ${{ inputs.output-cache-prefix }}-${{ github.run_id }}
