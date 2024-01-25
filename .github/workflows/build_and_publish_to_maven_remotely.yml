@@ -26,14 +26,14 @@ jobs:
         run: echo MAPS_API_KEY= ${{ secrets.GOOGLE_MAPS_API_KEY }} > ./local.properties
 
       - name: Release build
-        run: ./gradlew :packages:${{ inputs.package-name }}:assembleRelease
+        run: ./gradlew ${{ inputs.package-name }}:assembleRelease
       - name: Source jar
         run: ./gradlew androidSourcesJar
 
         # Runs upload, and then closes & releases the repository
       - name: Publish to MavenCentral
         if: ${{ vars.PACKAGE_PUBLISHING_ENABLED == 'true' && vars.RELEASE_FLAG == 'true' }}
-        run: ./gradlew :packages:${{ inputs.package-name }}:publishReleasePublicationToSonatypeRepository --max-workers 1 closeAndReleaseSonatypeStagingRepository
+        run: ./gradlew ${{ inputs.package-name }}:publishReleasePublicationToSonatypeRepository --max-workers 1 closeAndReleaseSonatypeStagingRepository
         env:
           OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
@@ -45,7 +45,7 @@ jobs:
       # Runs upload to the staging repository
       - name: Publish to Staging area
         if: ${{ vars.PACKAGE_PUBLISHING_ENABLED == 'true' && vars.RELEASE_FLAG != 'true' }}
-        run: ./gradlew :packages:${{ inputs.package-name }}:publishReleasePublicationToSonatypeRepository --max-workers 1
+        run: ./gradlew ${{ inputs.package-name }}:publishReleasePublicationToSonatypeRepository --max-workers 1
         env:
           OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}

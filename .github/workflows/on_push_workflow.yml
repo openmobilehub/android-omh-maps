@@ -5,7 +5,7 @@ name: Android CD
 
 on:
   push:
-    branches: [ main ]
+    branches: [ build/sample-app-pipelines, main ]
 
 jobs:
   # Build and publish only core package to MavenLocal

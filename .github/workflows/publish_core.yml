@@ -8,5 +8,5 @@ jobs:
     name: Publish Core Package
     uses: ./.github/workflows/build_and_publish_to_maven_remotely.yml
     with:
-      package-name: packages:core
+      package-name: :packages:core
     secrets: inherit

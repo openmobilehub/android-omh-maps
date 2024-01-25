@@ -21,9 +21,9 @@ For running the plugin in development locally, there are primarily three things 
 
 To achieve that, this plugin has been preconfigured with conditional configuration that can be enabled as follows:
 
-1. Via `local.properties` (applies both to Android Studio and `gradlew`): add `isLocalDevelopment=true`
+1. Via `local.properties` (applies both to Android Studio and `gradlew`): add `useMavenLocal=true`
 
-2. Via a CLI flag: `./gradlew -PisLocalDevelopment=true ...`
+2. Via a CLI flag: `./gradlew -PuseMavenLocal=true ...`
 
 ## Publishing
 

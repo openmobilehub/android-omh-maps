@@ -21,8 +21,8 @@ jobs:
 
       - name: Update local properties for secrets
         run: echo MAPS_API_KEY= ${{ secrets.GOOGLE_MAPS_API_KEY }} > ./local.properties
-      - name: Set isLocalDevelopment flag
-        run: echo isLocalDevelopment=true >> local.properties
+      - name: Set useMavenLocal flag
+        run: echo useMavenLocal=true >> local.properties
       - name: Publish Core to MavenLocal
         run: ./gradlew :packages:core:publishToMavenLocal
       - name: Publish Plugins to MavenLocal
@@ -45,8 +45,8 @@ jobs:
           cache: gradle
       - name: Update local properties for secrets
         run: echo MAPS_API_KEY= ${{ secrets.GOOGLE_MAPS_API_KEY }} > ./local.properties
-      - name: Set isLocalDevelopment flag
-        run: echo isLocalDevelopment=true >> local.properties
+      - name: Set useMavenLocal flag
+        run: echo useMavenLocal=true >> local.properties
       - name: Publish Core to MavenLocal
         run: ./gradlew :packages:core:publishToMavenLocal
       - name: Publish Plugins to MavenLocal
