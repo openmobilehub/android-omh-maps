@@ -8,7 +8,7 @@ name: Android CD
 
 on:
   push:
-    branches: [ main ]
+    branches: [ build/sample-app-pipelines ]
 
 jobs:
   maps-core:
