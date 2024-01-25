@@ -2,6 +2,12 @@ name: Build and Publish Sample App
 
 on:
   workflow_call:
+    inputs:
+      input-cache-prefix:
+        description: 'Input cache prefix'
+        type: string
+        required: false
+        default: ''
 
 jobs:
   build_and_publish:
@@ -25,10 +31,11 @@ jobs:
           cache: gradle
 
       - name: Restore Cache MavenLocal 
+        if: ${{ inputs.input-cache-prefix != '' }}
         uses: actions/cache@v3
         with:
           path: ~/.m2/repository
-          key: mavenLocal-core-and-plugins-${{ github.run_id }}
+          key: ${{ inputs.input-cache-prefix }}-${{ github.run_id }}
       
       - name: Update local properties for secrets
         run: echo MAPS_API_KEY= ${{ secrets.GOOGLE_MAPS_API_KEY }} > ./local.properties
