@@ -1,3 +1,9 @@
+# This workflow combines 4 workflows into one to provide a correct sequence of actions.
+# Build and publishing Sample App needs to wait for all other workflows to complete.
+# It was not possible when using separate workflows and the `workflow_run` events
+# as the workflow_run event is triggered when the first workflow is completed.
+# See the discussion here: https://github.com/orgs/community/discussions/16059
+
 name: Android CD
 
 on:
@@ -23,3 +29,4 @@ jobs:
     needs: [maps-plugin-gms, maps-plugin-non-gms]
     uses: ./.github/workflows/publish_sample_app.yml
     secrets: inherit
+    

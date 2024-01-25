@@ -70,6 +70,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            // If the signing config is set, it will be used for release builds.
             if (signingConfigs["release"].storeFile != null) {
                 signingConfig = signingConfigs.getByName("release")
             }
