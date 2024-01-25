@@ -15,9 +15,9 @@ jobs:
     uses: ./.github/workflows/publish_maps_api.yml
     secrets: inherit
 
-  maps-plugin-gms:
+  maps-plugins:
     needs: maps-core
-    uses: ./.github/workflows/publish_maps_api_gms.yml
+    uses: ./.github/workflows/publish_plugins_to_maven_local.yml
     secrets: inherit
 
   # maps-plugin-non-gms:
@@ -25,7 +25,7 @@ jobs:
   #   uses: ./.github/workflows/publish_maps_api_ngms.yml
   #   secrets: inherit
 
-  # maps-app:
-  #   needs: [maps-plugin-gms, maps-plugin-non-gms]
-  #   uses: ./.github/workflows/publish_sample_app.yml
-  #   secrets: inherit
+  maps-app:
+    needs: [maps-plugins]
+    uses: ./.github/workflows/publish_sample_app.yml
+    secrets: inherit

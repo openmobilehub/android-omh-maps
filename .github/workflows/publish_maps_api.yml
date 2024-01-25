@@ -39,9 +39,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.m2/repository
-          key: mavenLocal-${{ github.run_id }}
-          restore-keys: |
-            mavenLocal-
+          key: mavenLocal-core-${{ github.run_id }}
 
         # Runs upload, and then closes & releases the repository
       - name: Publish to MavenCentral

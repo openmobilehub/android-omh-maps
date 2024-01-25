@@ -23,6 +23,12 @@ jobs:
           java-version: 11
           distribution: adopt
           cache: gradle
+
+      - name: Restore Cache MavenLocal 
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: mavenLocal-core-and-plugins-${{ github.run_id }}
       
       - name: Update local properties for secrets
         run: echo MAPS_API_KEY= ${{ secrets.GOOGLE_MAPS_API_KEY }} > ./local.properties
@@ -37,7 +43,7 @@ jobs:
       
         # Builds the release version of the application
       - name: Assemble release app
-        run: bash ./gradlew ${{ env.GRADLE_ASSEMBLE_TASK }}
+        run: bash ./gradlew -PisLocalDevelopment=true ${{ env.GRADLE_ASSEMBLE_TASK }}
         env:
           SAMPLE_APP_KEYSTORE_FILE_NAME: ${{ secrets.SAMPLE_APP_KEYSTORE_FILE_NAME }}
           SAMPLE_APP_KEYSTORE_STORE_PASSWORD: ${{ secrets.SAMPLE_APP_KEYSTORE_STORE_PASSWORD }}
