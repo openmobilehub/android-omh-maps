@@ -7,7 +7,7 @@ android {
 }
 
 dependencies {
-    api("com.openmobilehub.android:maps-api:1.0.2-beta")
+    api("com.openmobilehub.android:maps-api:1.1.0-SNAPSHOT")
 
     // KTX
     implementation(Libs.coreKtx)
