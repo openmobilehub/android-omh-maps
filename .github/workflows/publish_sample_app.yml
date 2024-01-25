@@ -40,6 +40,9 @@ jobs:
       - name: Update local properties for secrets
         run: echo MAPS_API_KEY= ${{ secrets.GOOGLE_MAPS_API_KEY }} > ./local.properties
 
+      - name: Set isLocalDevelopment flag
+        run: echo isLocalDevelopment=true >> local.properties
+
         # Decodes keystore base64 string to file
       - name: Decode keystore
         uses: timheuer/base64-to-file@v1.2
@@ -50,7 +53,7 @@ jobs:
       
         # Builds the release version of the application
       - name: Assemble release app
-        run: bash ./gradlew -PisLocalDevelopment=true ${{ env.GRADLE_ASSEMBLE_TASK }}
+        run: bash ./gradlew ${{ env.GRADLE_ASSEMBLE_TASK }}
         env:
           SAMPLE_APP_KEYSTORE_FILE_NAME: ${{ secrets.SAMPLE_APP_KEYSTORE_FILE_NAME }}
           SAMPLE_APP_KEYSTORE_STORE_PASSWORD: ${{ secrets.SAMPLE_APP_KEYSTORE_STORE_PASSWORD }}

@@ -21,12 +21,14 @@ jobs:
 
       - name: Update local properties for secrets
         run: echo MAPS_API_KEY= ${{ secrets.GOOGLE_MAPS_API_KEY }} > ./local.properties
+      - name: Set isLocalDevelopment flag
+        run: echo isLocalDevelopment=true >> local.properties
       - name: Publish Core to MavenLocal
-        run: ./gradlew -PisLocalDevelopment=true :packages:core:publishToMavenLocal
+        run: ./gradlew :packages:core:publishToMavenLocal
       - name: Publish Plugins to MavenLocal
-        run: ./gradlew -PisLocalDevelopment=true publishToMavenLocal
+        run: ./gradlew publishToMavenLocal
       - name: Assemble app debug APK
-        run: bash ./gradlew -PisLocalDevelopment=true assembleDebug
+        run: bash ./gradlew assembleDebug
 
   code_quality_analysis:
     name: Check code quality
@@ -43,11 +45,13 @@ jobs:
           cache: gradle
       - name: Update local properties for secrets
         run: echo MAPS_API_KEY= ${{ secrets.GOOGLE_MAPS_API_KEY }} > ./local.properties
+      - name: Set isLocalDevelopment flag
+        run: echo isLocalDevelopment=true >> local.properties
       - name: Publish Core to MavenLocal
-        run: ./gradlew -PisLocalDevelopment=true :packages:core:publishToMavenLocal
+        run: ./gradlew :packages:core:publishToMavenLocal
       - name: Publish Plugins to MavenLocal
-        run: ./gradlew -PisLocalDevelopment=true publishToMavenLocal
+        run: ./gradlew publishToMavenLocal
       - name: Misspelling on detekt + ktlint
-        run: bash ./gradlew -PisLocalDevelopment=true detekt --stacktrace --continue
+        run: bash ./gradlew detekt --stacktrace --continue
       - name: Run unit tests and check coverage
-        run: bash ./gradlew -PisLocalDevelopment=true jacocoCoverageVerification --stacktrace --continue
+        run: bash ./gradlew jacocoCoverageVerification --stacktrace --continue

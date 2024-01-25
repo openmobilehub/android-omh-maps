@@ -39,6 +39,9 @@ jobs:
       - name: Update local properties for secrets
         run: echo MAPS_API_KEY= ${{ secrets.GOOGLE_MAPS_API_KEY }} > ./local.properties
 
+      - name: Set isLocalDevelopment flag
+        run: echo isLocalDevelopment=true >> local.properties
+
       - name: Restore MavenLocal Cache
         if: ${{ inputs.input-cache-prefix != '' }} 
         uses: actions/cache@v3
@@ -47,12 +50,12 @@ jobs:
           key: ${{ inputs.input-cache-prefix }}-${{ github.run_id }}
 
       - name: Release build
-        run: ./gradlew -PisLocalDevelopment=true ${{ inputs.release-build-command }}
+        run: ./gradlew ${{ inputs.release-build-command }}
       - name: Source jar
         run: ./gradlew androidSourcesJar
 
       - name: Publish to MavenLocal
-        run: ./gradlew -PisLocalDevelopment=true ${{ inputs.publish-to-maven-local-command }}
+        run: ./gradlew ${{ inputs.publish-to-maven-local-command }}
 
       - name: Cache MavenLocal
         uses: actions/cache@v3
