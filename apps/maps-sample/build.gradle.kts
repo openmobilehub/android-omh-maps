@@ -1,4 +1,13 @@
 @file:Suppress("UnstableApiUsage")
+import org.jetbrains.kotlin.konan.properties.hasProperty
+import java.util.Properties
+
+var properties = Properties()
+var localPropertiesFile = project.file("local.properties")
+if(localPropertiesFile.exists()) {
+    properties.load(localPropertiesFile.inputStream())
+}
+var useLocalProjects = (rootProject.ext.has("useLocalProjects") && rootProject.ext.get("useLocalProjects") == "true") || (properties.hasProperty("useLocalProjects") && properties.getProperty("useLocalProjects") == "true")
 
 plugins {
     `android-application`
@@ -11,10 +20,12 @@ plugins {
 var googlemapsDependency = "com.openmobilehub.android.maps:plugin-googlemaps:2.0.0-beta"
 var openstreetmapDependency = "com.openmobilehub.android.maps:plugin-openstreetmap:2.0.0-beta"
 
-var googlemapsPath = "com.openmobilehub.android.maps.plugin.googlemaps.presentation.OmhAuthFactoryImpl"
-var openstreetmapPath = "com.openmobilehub.android.maps.plugin.openstreetmap.presentation.OmhAuthFactoryImpl"
+var googlemapsPath = "com.openmobilehub.android.maps.plugin.googlemaps.presentation.OmhMapFactoryImpl"
+var openstreetmapPath = "com.openmobilehub.android.maps.plugin.openstreetmap.presentation.OmhMapFactoryImpl"
 
 omhConfig {
+    enableLocalProjects = useLocalProjects
+
     bundle("singleBuild") {
         maps {
             gmsService {
@@ -82,4 +93,11 @@ dependencies {
     // Test
     testImplementation(Libs.junit)
     androidTestImplementation(Libs.androidJunit)
+
+    // Use local implementation instead of dependencies
+    if(useLocalProjects) {
+        implementation(project(":packages:core"))
+        implementation(project(":packages:plugin-googlemaps"))
+        implementation(project(":packages:plugin-openstreetmap"))
+    }
 }

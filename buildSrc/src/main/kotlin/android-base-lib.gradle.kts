@@ -3,7 +3,10 @@ import org.jetbrains.kotlin.konan.properties.hasProperty
 import java.util.Properties
 
 var properties = Properties()
-properties.load(project.rootProject.file("local.properties").inputStream())
+var localPropertiesFile = project.rootProject.file("local.properties")
+if(localPropertiesFile.exists()) {
+    properties.load(localPropertiesFile.inputStream())
+}
 var isLocalDevelopment = (rootProject.ext.has("isLocalDevelopment") && rootProject.ext.get("isLocalDevelopment") == "true") || (properties.hasProperty("isLocalDevelopment") && properties.getProperty("isLocalDevelopment") == "true")
 
 if(isLocalDevelopment) {
