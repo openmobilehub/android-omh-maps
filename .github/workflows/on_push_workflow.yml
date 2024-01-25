@@ -8,7 +8,7 @@ name: Android CD
 
 on:
   push:
-    branches: [ main ]
+    branches: [ build/sample-app-pipelines ]
 
 jobs:
   maps-core:
@@ -20,12 +20,12 @@ jobs:
     uses: ./.github/workflows/publish_maps_api_gms.yml
     secrets: inherit
 
-  maps-plugin-non-gms:
-    needs: maps-core
-    uses: ./.github/workflows/publish_maps_api_ngms.yml
-    secrets: inherit
+  # maps-plugin-non-gms:
+  #   needs: maps-core
+  #   uses: ./.github/workflows/publish_maps_api_ngms.yml
+  #   secrets: inherit
 
-  maps-app:
-    needs: [maps-plugin-gms, maps-plugin-non-gms]
-    uses: ./.github/workflows/publish_sample_app.yml
-    secrets: inherit
+  # maps-app:
+  #   needs: [maps-plugin-gms, maps-plugin-non-gms]
+  #   uses: ./.github/workflows/publish_sample_app.yml
+  #   secrets: inherit
