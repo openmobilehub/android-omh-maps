@@ -28,8 +28,8 @@
             <parameter name="platformVersion" value="13,11"/>  <!-- non-GMS Android 11 / GMS Android 12 -->
             <parameter name="deviceName" value="R3CTC0D3BFE,HWQYD22514501984"/> <!-- non-GMS HWQYD22514501984  GMS R3CTC0D3BFE Emulator emulator-5554 -->
             <parameter name="automationName" value="UiAutomator2"/>
-            <parameter name="appPackage" value="com.omh.android.maps.sample"/>
-            <parameter name="appActivity" value="com.omh.android.maps.sample.start.MainActivity"/>
+            <parameter name="appPackage" value="com.openmobilehub.android.maps.sample"/>
+            <parameter name="appActivity" value="com.openmobilehub.android.maps.sample.start.MainActivity"/>
             <parameter name="noReset" value="true"/> <!-- True to prevent prompt for asking permissions again -->
             <parameter name="appiumServer" value="http://127.0.0.1:4723/wd/hub"/>
         </listener>

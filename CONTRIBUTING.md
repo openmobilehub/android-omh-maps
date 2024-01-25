@@ -27,13 +27,13 @@ To achieve that, this plugin has been preconfigured with conditional configurati
 
 ## Publishing
 
-1. With Android Studio -> Gradle tab and run the `publishToMavenLocal` for modules: `packages > maps-api`, `packages > maps-api-googlemaps` and `packages > maps-api-openstreetmap`:
+1. With Android Studio -> Gradle tab and run the `publishToMavenLocal` for modules: `packages > core`, `packages > plugin-googlemaps` and `packages > plugin-openstreetmap`:
 
-![gradle-maps-api](https://github.com/openmobilehub/omh-maps/assets/124717244/7a8aeb52-fcf2-4c8c-a0e8-e249e69b3fea)
-![gradle-maps-api-gms](https://github.com/openmobilehub/omh-maps/assets/124717244/e5a370d9-1429-4234-a884-b39a23c6dadb)
-![gradle-maps-api-ngms](https://github.com/openmobilehub/omh-maps/assets/124717244/2cc52110-8faa-47e3-9298-a6cec846a348)
+![gradle-core](https://github.com/openmobilehub/omh-maps/assets/124717244/7a8aeb52-fcf2-4c8c-a0e8-e249e69b3fea)
+![gradle-core-gms](https://github.com/openmobilehub/omh-maps/assets/124717244/e5a370d9-1429-4234-a884-b39a23c6dadb)
+![gradle-core-ngms](https://github.com/openmobilehub/omh-maps/assets/124717244/2cc52110-8faa-47e3-9298-a6cec846a348)
 
-**Note**: to publish all modules in `packages/`, you can simply run the task `publishToMavenLocal` in the root project. Please also remember to publish the `maps-api` module first.
+**Note**: to publish all modules in `packages/`, you can simply run the task `publishToMavenLocal` in the root project. Please also remember to publish the `core` module first.
 
 2. With the CLI:
 
@@ -42,7 +42,7 @@ To achieve that, this plugin has been preconfigured with conditional configurati
   - to publish all other modules: `./gradlew publishToMavenLocal`
   - to publish a selected module: `./gradlew :packages:{module}:publishToMavenLocal`
 
-**Note**: to publish all modules in `packages/`, you can simply run the task `publishToMavenLocal` in the root project directory. Please also remember to publish the `maps-api` module first.
+**Note**: to publish all modules in `packages/`, you can simply run the task `publishToMavenLocal` in the root project directory. Please also remember to publish the `core` module first.
 
 #### Step 2: Verify plugin is published
 
@@ -65,7 +65,7 @@ You can verify your code with the following tasks:
 ./gradlew detekt
 ```
 
-Once you have made a change in any of the `packages/maps-api`, `packages/maps-api-google maps` or `packages/maps-api-openstreetmap` modules, you must `publishToMavenLocal` in that module in order to see the changes.
+Once you have made a change in any of the `packages/core`, `packages/core-google maps` or `packages/plugin-openstreetmap` modules, you must `publishToMavenLocal` in that module in order to see the changes.
 
 ## Write documentation
 

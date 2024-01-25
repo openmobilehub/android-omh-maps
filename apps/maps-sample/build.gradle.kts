@@ -10,35 +10,45 @@ plugins {
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
 }
 
+var googlemapsDependency = "com.openmobilehub.android.maps:plugin-googlemaps:2.0.0-beta"
+var openstreetmapDependency = "com.openmobilehub.android.maps:plugin-openstreetmap:2.0.0-beta"
+
+var googlemapsPath = "com.openmobilehub.android.maps.plugin.googlemaps.presentation.OmhAuthFactoryImpl"
+var openstreetmapPath = "com.openmobilehub.android.maps.plugin.openstreetmap.presentation.OmhAuthFactoryImpl"
+
 omhConfig {
     bundle("singleBuild") {
         maps {
             gmsService {
-                dependency = "com.openmobilehub.android:maps-api-googlemaps:1.1.0-SNAPSHOT"
+                dependency = googlemapsDependency
+                path = googlemapsPath
             }
             nonGmsService {
-                dependency = "com.openmobilehub.android:maps-api-openstreetmap:1.1.0-SNAPSHOT"
+                dependency = openstreetmapDependency
+                path = openstreetmapPath
             }
         }
     }
     bundle("gms") {
         maps {
             gmsService {
-                dependency = "com.openmobilehub.android:maps-api-googlemaps:1.1.0-SNAPSHOT"
+                dependency = googlemapsDependency
+                path = googlemapsPath
             }
         }
     }
     bundle("nongms") {
         maps {
             nonGmsService {
-                dependency = "com.openmobilehub.android:maps-api-openstreetmap:1.1.0-SNAPSHOT"
+                dependency = openstreetmapDependency
+                path = openstreetmapPath
             }
         }
     }
 }
 
 android {
-    namespace = "com.omh.android.maps.sample"
+    namespace = "com.openmobilehub.android.maps.sample"
     
     defaultConfig {
         versionCode = 1
@@ -63,7 +73,7 @@ android {
             }
         }
     }
-
+    
     buildTypes {
         release {
             isMinifyEnabled = true

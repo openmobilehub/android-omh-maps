@@ -66,7 +66,7 @@ Complete the required Cloud Console setup following the next steps, for more inf
 
 1. This step only goes through the API Key creation process. If you use your API Key in production, we strongly recommend that you restrict your API key. You can find more information in the product-specific Using API Keys page.
 2. The API key is a unique identifier that authenticates requests associated with your project for usage and billing purposes. You must have at least one API key associated with your project.
-3. Go to the **Google Maps Platform > Credentials** page, [Go to the Credentials page](https://console.cloud.google.com/project/_/google/maps-apis/credentials?utm_source=Docs_Credentials&_gl=1*9zgq7y*_ga*MTUwMDIzODY1Ni4xNjc1OTYyMDgw*_ga_NRWSTWS78N*MTY4MjA4ODIyNS44NS4xLjE2ODIwODgyMzcuMC4wLjA.).
+3. Go to the **Google Maps Platform > Credentials** page, [Go to the Credentials page](https://console.cloud.google.com/project/_/google/cores/credentials?utm_source=Docs_Credentials&_gl=1*9zgq7y*_ga*MTUwMDIzODY1Ni4xNjc1OTYyMDgw*_ga_NRWSTWS78N*MTY4MjA4ODIyNS44NS4xLjE2ODIwODgyMzcuMC4wLjA.).
 4. On the **Credentials** page, click **Create credentials > API key**. The **API key created** dialog displays your newly created API key.
 5. Click **Close**. The new API key is listed on the **Credentials** page under **API keys**. (Remember to [restrict the API](https://developers.google.com/maps/api-security-best-practices#restricting-api-keys) key before using it in production.)
 
@@ -149,24 +149,24 @@ omhConfig {
    bundle("singleBuild") {
       maps {
          gmsService {
-            dependency = "com.openmobilehub.android:maps-api-googlemaps:1.0"
+            dependency = "com.openmobilehub.android.maps:plugin-googlemaps:1.0"
          }
          nonGmsService {
-            dependency = "com.openmobilehub.android:maps-api-openstreetmap:1.0"
+            dependency = "com.openmobilehub.android.maps:plugin-openstreetmap:1.0"
          }
       }
    }
    bundle("gms") {
       maps {
          gmsService {
-            dependency = "com.openmobilehub.android:maps-api-googlemaps:1.0"
+            dependency = "com.openmobilehub.android.maps:plugin-googlemaps:1.0"
          }
       }
    }
    bundle("nonGms") {
       maps {
          nonGmsService {
-            dependency = "com.openmobilehub.android:maps-api-openstreetmap:1.0"
+            dependency = "com.openmobilehub.android.maps:plugin-openstreetmap:1.0"
          }
       }
    }
@@ -182,7 +182,7 @@ In this step, you defined the OMH Core Plugin bundles to generate multiple build
 
 - Define the `Service`. In this example is maps.
 - Define the `ServiceDetails`. In this example are `gmsService` and `nonGmsService`.
-- Define the dependency and the path. In this example are `com.openmobilehub.android:maps-api-googlemaps:1.0"` and `com.openmobilehub.android:maps-api-openstreetmap:1.0`.
+- Define the dependency and the path. In this example are `com.openmobilehub.android.maps:plugin-googlemaps:1.0"` and `com.openmobilehub.android.maps:plugin-openstreetmap:1.0`.
 
   **Note: It's important to observe how a single build encompasses both GMS and Non-GMS configurations.**
 
@@ -190,7 +190,7 @@ In this step, you defined the OMH Core Plugin bundles to generate multiple build
 
 - Define the `Service`. In this example is maps.
 - Define the `ServiceDetails` . In this example is `gmsService`.
-- Define the dependency and the path. In this example is `com.openmobilehub.android:maps-api-googlemaps:1.0"`.
+- Define the dependency and the path. In this example is `com.openmobilehub.android.maps:plugin-googlemaps:1.0"`.
 
   **Note:** gms build covers only GMS (Google Mobile Services).
 
@@ -198,7 +198,7 @@ In this step, you defined the OMH Core Plugin bundles to generate multiple build
 
 - Define the `Service`. In this example is maps.
 - Define the `ServiceDetails` . In this example is `nonGmsService`.
-- Define the dependency and the path. In this example is `com.openmobilehub.android:maps-api-openstreetmap:1.0`.
+- Define the dependency and the path. In this example is `com.openmobilehub.android.maps:plugin-openstreetmap:1.0`.
 
   **Note:** nonGms build covers only Non-GMS configurations.
 
@@ -220,7 +220,7 @@ In this step, you defined the OMH Core Plugin bundles to generate multiple build
 5. Open the app's module-level `MainApplication` class and add the required imports below the package name. The file is in the same level as the `MainActivity`:
 
    ```kotlin
-   import com.omh.android.maps.api.factories.OmhMapProvider
+   import com.openmobilehub.android.maps.core.factories.OmhMapProvider
    ```
 
    Then initialize the `OmhMapProvider` as follows:
@@ -263,7 +263,7 @@ Fragment has to declare `android:name` that sets the class name of the fragment 
 ...
     <fragment
         android:id="@+id/fragment_map_container"
-        android:name="com.omh.android.maps.api.presentation.fragments.OmhMapFragment"
+        android:name="com.openmobilehub.android.maps.core.presentation.fragments.OmhMapFragment"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -286,7 +286,7 @@ And the complete fragment's layout should look similar to this example:
 
    <fragment
            android:id="@+id/fragment_map_container"
-           android:name="com.omh.android.maps.api.presentation.fragments.OmhMapFragment"
+           android:name="com.openmobilehub.android.maps.core.presentation.fragments.OmhMapFragment"
            android:layout_width="0dp"
            android:layout_height="0dp"
            app:layout_constraintBottom_toBottomOf="parent"
@@ -318,14 +318,14 @@ An `OmhMap` must be acquired using `getMapAsync(OmhOnMapReadyCallback)`. This cl
     import android.view.ViewGroup
     import androidx.activity.result.contract.ActivityResultContracts
     import androidx.core.content.ContextCompat
-    import com.omh.android.maps.api.factories.OmhMapProvider
-    import com.omh.android.maps.api.presentation.fragments.OmhMapFragment
-    import com.omh.android.maps.api.presentation.interfaces.location.OmhFailureListener
-    import com.omh.android.maps.api.presentation.interfaces.location.OmhSuccessListener
-    import com.omh.android.maps.api.presentation.interfaces.maps.OmhMap
-    import com.omh.android.maps.api.presentation.interfaces.maps.OmhOnMapReadyCallback
-    import com.omh.android.maps.api.presentation.models.OmhMarkerOptions
-    import com.omh.android.maps.starter_sample.databinding.FragmentMapBinding
+    import com.openmobilehub.android.maps.core.factories.OmhMapProvider
+    import com.openmobilehub.android.maps.core.presentation.fragments.OmhMapFragment
+    import com.openmobilehub.android.maps.core.presentation.interfaces.location.OmhFailureListener
+    import com.openmobilehub.android.maps.core.presentation.interfaces.location.OmhSuccessListener
+    import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMap
+    import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMapReadyCallback
+    import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
+    import com.openmobilehub.android.maps.starter_sample.databinding.FragmentMapBinding
 
     class MapFragment : Fragment(), OmhOnMapReadyCallback {
 

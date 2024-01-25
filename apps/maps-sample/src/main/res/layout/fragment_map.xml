@@ -24,7 +24,7 @@
 
     <fragment
         android:id="@+id/fragment_map_container"
-        android:name="com.omh.android.maps.api.presentation.fragments.OmhMapFragment"
+        android:name="com.openmobilehub.android.maps.core.presentation.fragments.OmhMapFragment"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"

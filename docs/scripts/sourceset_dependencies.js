@@ -1,1 +1,2 @@
-sourceset_dependencies='{":maps-api:dokkaHtml/androidTestRelease":[],":maps-api:dokkaHtml/debug":[],":maps-api:dokkaHtml/main":[],":maps-api:dokkaHtml/release":[],":maps-api:dokkaHtml/testFixtures":[],":maps-api:dokkaHtml/testFixturesDebug":[],":maps-api:dokkaHtml/testFixturesRelease":[]}'
+sourceset_dependencies =
+  '{":core:dokkaHtml/androidTestRelease":[],":core:dokkaHtml/debug":[],":core:dokkaHtml/main":[],":core:dokkaHtml/release":[],":core:dokkaHtml/testFixtures":[],":core:dokkaHtml/testFixturesDebug":[],":core:dokkaHtml/testFixturesRelease":[]}';
