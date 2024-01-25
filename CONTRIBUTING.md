@@ -11,19 +11,29 @@ Bug reports and pull requests from users are what keep this project working.
 5. Publish the branch (`git push origin my-new-feature`)
 6. Create a new Pull Request
 
-## Running for development
+## Development
 
-For running the plugin in development locally, there are primarily three things to be achieved compared to standard development scenario:
+For using the plugins for development locally, there are two approaches:
 
-- `repositories` need to include `mavenLocal()`
-- publishing needs to happen to maven local
-- signing needs to be disabled for publishing
+1. Using Maven Local
+   This scenario includes primarily three things to be achieved compared to standard development scenario:
 
-To achieve that, this plugin has been preconfigured with conditional configuration that can be enabled as follows:
+   - `repositories` need to include `mavenLocal()`
+   - publishing needs to happen to maven local
+   - signing needs to be disabled for publishing
 
-1. Via `local.properties` (applies both to Android Studio and `gradlew`): add `useMavenLocal=true`
+   This project has been preconfigured with such conditional configuration that can be enabled as follows:
 
-2. Via a CLI flag: `./gradlew -PuseMavenLocal=true ...`
+   - Via `local.properties` (applies both to Android Studio and `gradlew`): add `useMavenLocal=true`
+   - Via a CLI flag: `./gradlew -PuseMavenLocal=true ...`
+
+2. Using local modules in the project
+   This scenario utilizes the local modules (subprojects) residing inside `packages/` to be used in place of dependencies so that between modifying the code in a plugin and running it in the sample app there is no need to publish to Maven.
+
+   This project has been preconfigured with such conditional configuration that can be enabled as follows:
+
+   - Via `apps/maps-sample/local.properties` (applies both to Android Studio and `gradlew`): add `useLocalProjects=true`
+   - Via a CLI flag: `./gradlew -PuseLocalProjects=true :apps:maps-sample:...`
 
 ## Publishing
 
