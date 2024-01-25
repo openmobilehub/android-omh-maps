@@ -13,8 +13,8 @@ jobs:
     uses: ./.github/workflows/build_and_publish_to_maven_local.yml
     with:
       output-cache-prefix: mavenLocal-core
-      release-build-command: ':packages:maps-api:assembleRelease'
-      publish-to-maven-local-command: ':packages:maps-api:publishToMavenLocal'
+      release-build-command: ':packages:core:assembleRelease'
+      publish-to-maven-local-command: ':packages:core:publishToMavenLocal'
     secrets: inherit
     
   # Build and publish all plugins to MavenLocal

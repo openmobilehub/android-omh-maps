@@ -8,5 +8,5 @@ jobs:
     name: Publish Google Maps Plugin
     uses: ./.github/workflows/build_and_publish_to_maven_remotely.yml
     with:
-      package-name: maps-api-googlemaps
+      package-name: packages:plugin-googlemaps
     secrets: inherit
