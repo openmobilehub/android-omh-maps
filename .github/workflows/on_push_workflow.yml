@@ -1,0 +1,37 @@
+# This workflow combines 3 workflows into one to provide a correct sequence of actions.
+# Build and publishing Sample App needs to wait for all other workflows to complete.
+
+name: Android CD
+
+on:
+  push:
+    branches: [ build/sample-app-pipelines, main ]
+
+jobs:
+  # Build and publish only core package to MavenLocal
+  maps-core:
+    uses: ./.github/workflows/build_and_publish_to_maven_local.yml
+    with:
+      output-cache-prefix: mavenLocal-core
+      release-build-command: ':packages:core:assembleRelease'
+      publish-to-maven-local-command: ':packages:core:publishToMavenLocal'
+    secrets: inherit
+    
+  # Build and publish all plugins to MavenLocal
+  maps-plugins:
+    needs: maps-core
+    uses: ./.github/workflows/build_and_publish_to_maven_local.yml
+    with:
+      input-cache-prefix: mavenLocal-core
+      output-cache-prefix: mavenLocal-core-and-plugins
+      release-build-command: 'assembleRelease'
+      publish-to-maven-local-command: 'publishToMavenLocal'
+    secrets: inherit
+
+  # Build and publish Sample App
+  maps-app:
+    needs: maps-plugins
+    uses: ./.github/workflows/publish_sample_app.yml
+    with:
+      input-cache-prefix: mavenLocal-core-and-plugins
+    secrets: inherit

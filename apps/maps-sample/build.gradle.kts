@@ -1,4 +1,5 @@
 @file:Suppress("UnstableApiUsage")
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 import org.jetbrains.kotlin.konan.properties.hasProperty
 import java.util.Properties
 
@@ -58,7 +59,31 @@ omhConfig {
 
 android {
     namespace = "com.openmobilehub.android.maps.sample"
+    
+    defaultConfig {
+        versionCode = 1
+        versionName = "1.0"
+    }
 
+    signingConfigs {
+        // It creates a signing config for release builds if the required properties are set.
+        // The if statement is necessary to avoid errors when the packages are built on CI.
+        // The alternative would be to pass all the environment variables for signing apk to the packages workflows.
+        create("release") {
+            val storeFileName = getValueFromEnvOrProperties("SAMPLE_APP_KEYSTORE_FILE_NAME") as? String
+            val storePassword = getValueFromEnvOrProperties("SAMPLE_APP_KEYSTORE_STORE_PASSWORD") as? String
+            val keyAlias = getValueFromEnvOrProperties("SAMPLE_APP_KEYSTORE_KEY_ALIAS") as? String
+            val keyPassword = getValueFromEnvOrProperties("SAMPLE_APP_KEYSTORE_KEY_PASSWORD") as? String
+
+            if (storeFileName != null && storePassword != null && keyAlias != null && keyPassword != null) {
+                this.storeFile = file(storeFileName)
+                this.storePassword = storePassword
+                this.keyAlias = keyAlias
+                this.keyPassword = keyPassword
+            }
+        }
+    }
+    
     buildTypes {
         release {
             isMinifyEnabled = true
@@ -67,6 +92,10 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            // If the signing config is set, it will be used for release builds.
+            if (signingConfigs["release"].storeFile != null) {
+                signingConfig = signingConfigs.getByName("release")
+            }
         }
     }
 
@@ -100,4 +129,9 @@ dependencies {
         implementation(project(":packages:plugin-googlemaps"))
         implementation(project(":packages:plugin-openstreetmap"))
     }
+}
+
+fun getValueFromEnvOrProperties(name: String): Any? {
+    val localProperties = gradleLocalProperties(file("."))
+    return System.getenv(name) ?: localProperties[name]
 }
