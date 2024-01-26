@@ -13,8 +13,8 @@ plugins {
 var googlemapsDependency = "com.openmobilehub.android.maps:plugin-googlemaps:2.0.0-beta"
 var openstreetmapDependency = "com.openmobilehub.android.maps:plugin-openstreetmap:2.0.0-beta"
 
-var googlemapsPath = "com.openmobilehub.android.maps.plugin.googlemaps.presentation.OmhAuthFactoryImpl"
-var openstreetmapPath = "com.openmobilehub.android.maps.plugin.openstreetmap.presentation.OmhAuthFactoryImpl"
+var googlemapsPath = "com.openmobilehub.android.maps.plugin.googlemaps.presentation.OmhMapFactoryImpl"
+var openstreetmapPath = "com.openmobilehub.android.maps.plugin.openstreetmap.presentation.OmhMapFactoryImpl"
 
 omhConfig {
     bundle("singleBuild") {
