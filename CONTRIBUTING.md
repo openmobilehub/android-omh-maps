@@ -24,7 +24,7 @@ For using the plugins for development locally, there are two approaches:
 
    This project has been preconfigured with such conditional configuration that can be enabled as follows:
 
-   - Via `local.properties` (applies both to Android Studio and `gradlew`): add `useMavenLocal=true`
+   - Via root project's `local.properties` (applies both to Android Studio and `gradlew`): add `useMavenLocal=true`
    - Via a CLI flag: `./gradlew -PuseMavenLocal=true ...`
 
 2. Using local modules in the project
@@ -32,8 +32,8 @@ For using the plugins for development locally, there are two approaches:
 
    This project has been preconfigured with such conditional configuration that can be enabled as follows:
 
-   - Via `apps/maps-sample/local.properties` (applies both to Android Studio and `gradlew`): add `useLocalProjects=true`
-   - Via a CLI flag: `./gradlew -PuseLocalProjects=true :apps:maps-sample:...`
+   - Via root project's `local.properties` (applies both to Android Studio and `gradlew`): add `useLocalProjects=true`
+   - Via a CLI flag: `./gradlew -PuseLocalProjects=true ...`
 
 ## Publishing
 

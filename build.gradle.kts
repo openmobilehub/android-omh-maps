@@ -1,13 +1,24 @@
 import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
-import org.jetbrains.kotlin.konan.properties.hasProperty
 import java.util.Properties
 
-var properties = Properties()
-var localPropertiesFile = project.file("local.properties")
+val properties = Properties()
+val localPropertiesFile = project.file("local.properties")
 if(localPropertiesFile.exists()) {
     properties.load(localPropertiesFile.inputStream())
 }
-var useMavenLocal = (rootProject.ext.has("useMavenLocal") && rootProject.ext.get("useMavenLocal") == "true") || (properties.hasProperty("useMavenLocal") && properties.getProperty("useMavenLocal") == "true")
+val useMavenLocal = getBooleanFromProperties("useMavenLocal")
+val useLocalProjects = getBooleanFromProperties("useLocalProjects")
+
+if(useLocalProjects) {
+    println("OMH Maps project running with useLocalProjects enabled ")
+}
+
+if(useMavenLocal) {
+    println("OMH Maps project running with useMavenLocal enabled${if(useLocalProjects) ", but only publishing will be altered since dependencies are overriden by useLocalProjects" else ""} ")
+}
+
+project.extra.set("useLocalProjects", useLocalProjects)
+project.extra.set("useMavenLocal", useMavenLocal)
 
 plugins {
     id("io.github.gradle-nexus.publish-plugin") version "1.1.0"
@@ -83,4 +94,9 @@ if(!useMavenLocal) {
 fun getValueFromEnvOrProperties(name: String): Any? {
     val localProperties = gradleLocalProperties(rootDir)
     return System.getenv(name) ?: localProperties[name]
+}
+
+fun getBooleanFromProperties(name: String): Boolean {
+    val localProperties = gradleLocalProperties(rootDir)
+    return (project.ext.has(name) && project.ext.get(name) == "true") || localProperties[name] == "true"
 }

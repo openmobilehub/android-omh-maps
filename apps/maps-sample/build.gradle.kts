@@ -1,14 +1,7 @@
 @file:Suppress("UnstableApiUsage")
 import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
-import org.jetbrains.kotlin.konan.properties.hasProperty
-import java.util.Properties
 
-var properties = Properties()
-var localPropertiesFile = project.file("local.properties")
-if(localPropertiesFile.exists()) {
-    properties.load(localPropertiesFile.inputStream())
-}
-var useLocalProjects = (rootProject.ext.has("useLocalProjects") && rootProject.ext.get("useLocalProjects") == "true") || (properties.hasProperty("useLocalProjects") && properties.getProperty("useLocalProjects") == "true")
+val useLocalProjects = project.rootProject.extra["useLocalProjects"] as Boolean
 
 plugins {
     `android-application`
