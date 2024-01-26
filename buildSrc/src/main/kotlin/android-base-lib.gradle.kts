@@ -1,7 +1,6 @@
 import org.gradle.plugins.signing.SigningPlugin
 
 val useMavenLocal = project.rootProject.extra["useMavenLocal"] as Boolean
-val useLocalProjects = project.rootProject.extra["useLocalProjects"] as Boolean
 
 plugins {
     id("com.android.library")
