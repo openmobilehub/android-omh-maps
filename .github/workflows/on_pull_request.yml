@@ -20,7 +20,13 @@ jobs:
           cache: gradle
 
       - name: Update local properties for secrets
-        run: echo MAPS_API_KEY="MAPS_API_KEY_VALUE" > ./local.properties
+        run: echo MAPS_API_KEY= ${{ secrets.GOOGLE_MAPS_API_KEY }} > ./local.properties
+      - name: Set useMavenLocal flag
+        run: echo useMavenLocal=true >> local.properties
+      - name: Publish Core to MavenLocal
+        run: ./gradlew :packages:core:publishToMavenLocal
+      - name: Publish Plugins to MavenLocal
+        run: ./gradlew publishToMavenLocal
       - name: Assemble app debug APK
         run: bash ./gradlew assembleDebug
 
@@ -38,7 +44,13 @@ jobs:
           distribution: 'temurin'
           cache: gradle
       - name: Update local properties for secrets
-        run: echo MAPS_API_KEY="MAPS_API_KEY_VALUE" > ./local.properties
+        run: echo MAPS_API_KEY= ${{ secrets.GOOGLE_MAPS_API_KEY }} > ./local.properties
+      - name: Set useMavenLocal flag
+        run: echo useMavenLocal=true >> local.properties
+      - name: Publish Core to MavenLocal
+        run: ./gradlew :packages:core:publishToMavenLocal
+      - name: Publish Plugins to MavenLocal
+        run: ./gradlew publishToMavenLocal
       - name: Misspelling on detekt + ktlint
         run: bash ./gradlew detekt --stacktrace --continue
       - name: Run unit tests and check coverage

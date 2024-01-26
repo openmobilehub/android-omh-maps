@@ -4,9 +4,9 @@ import java.util.Properties
 
 var properties = Properties()
 properties.load(project.rootProject.file("local.properties").inputStream())
-var isLocalDevelopment = (rootProject.ext.has("isLocalDevelopment") && rootProject.ext.get("isLocalDevelopment") == "true") || (properties.hasProperty("isLocalDevelopment") && properties.getProperty("isLocalDevelopment") == "true")
+var useMavenLocal = (rootProject.ext.has("useMavenLocal") && rootProject.ext.get("useMavenLocal") == "true") || (properties.hasProperty("useMavenLocal") && properties.getProperty("useMavenLocal") == "true")
 
-if(isLocalDevelopment) {
+if(useMavenLocal) {
     println(" == OMH Maps project running in local development mode, using maven local  == ")
 }
 
@@ -19,7 +19,7 @@ plugins {
     id("signing").apply(false)
 }
 
-if(!isLocalDevelopment) {
+if(!useMavenLocal) {
     apply<SigningPlugin>()
 }
 
@@ -117,7 +117,7 @@ fun MavenPublication.setupPublication() {
     }
 }
 
-if(isLocalDevelopment) {
+if(useMavenLocal) {
     publishing {
         publications {
             register<MavenPublication>("release") {
