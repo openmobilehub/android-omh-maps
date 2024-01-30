@@ -16,6 +16,7 @@
 
 package com.openmobilehub.android.maps.plugin.googlemaps.presentation.maps
 
+import OmhPolylineImpl
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.graphics.Bitmap
@@ -30,10 +31,13 @@ import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMarke
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnCameraIdleListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnCameraMoveStartedListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMyLocationButtonClickListener
+import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhPolyline
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhSnapshotReadyCallback
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
+import com.openmobilehub.android.maps.core.presentation.models.OmhPolylineOptions
 import com.openmobilehub.android.maps.plugin.googlemaps.extensions.toMarkerOptions
+import com.openmobilehub.android.maps.plugin.googlemaps.extensions.toPolylineOptions
 import com.openmobilehub.android.maps.plugin.googlemaps.utils.ConverterUtils
 
 @SuppressWarnings("TooManyFunctions")
@@ -43,6 +47,13 @@ internal class OmhMapImpl(private var googleMap: GoogleMap) : OmhMap {
         val marker: Marker? = googleMap.addMarker(googleOptions)
 
         return marker?.let { OmhMarkerImpl(it) }
+    }
+
+    override fun addPolyline(options: OmhPolylineOptions): OmhPolyline {
+        val googleOptions = options.toPolylineOptions();
+        val polyline = googleMap.addPolyline(googleOptions);
+
+        return OmhPolylineImpl(polyline)
     }
 
     override fun getCameraPositionCoordinate(): OmhCoordinate {

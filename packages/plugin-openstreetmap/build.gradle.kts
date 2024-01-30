@@ -20,6 +20,8 @@ dependencies {
 
     // Open Street Map
     implementation(Libs.osmdroid)
+    implementation(project(":packages:core"))
+    implementation(project(":packages:core"))
 
     // Test dependencies
     testImplementation(Libs.junit)

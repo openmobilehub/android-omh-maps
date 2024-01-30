@@ -27,6 +27,8 @@ import androidx.core.content.ContextCompat
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMap
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMapLoadedCallback
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMarker
+import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhPolyline
+import com.openmobilehub.android.maps.core.presentation.models.OmhPolylineOptions
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnCameraIdleListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnCameraMoveStartedListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMyLocationButtonClickListener
@@ -36,6 +38,7 @@ import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
 import com.openmobilehub.android.maps.plugin.openstreetmap.R
 import com.openmobilehub.android.maps.plugin.openstreetmap.extensions.toGeoPoint
 import com.openmobilehub.android.maps.plugin.openstreetmap.extensions.toOmhCoordinate
+import com.openmobilehub.android.maps.plugin.openstreetmap.extensions.toPolylineOptions
 import com.openmobilehub.android.maps.plugin.openstreetmap.utils.Constants.DEFAULT_ZOOM_LEVEL
 import com.openmobilehub.android.maps.plugin.openstreetmap.utils.MapListenerController
 import com.openmobilehub.android.maps.plugin.openstreetmap.utils.MapTouchListener
@@ -63,6 +66,7 @@ internal class OmhMapImpl(
     }
 
     override fun addMarker(options: OmhMarkerOptions): OmhMarker? {
+        // TODO: Add extension for OmhMarkerOptions
         val marker: Marker = Marker(mapView).apply {
             position = options.position.toGeoPoint()
             title = options.title
@@ -73,6 +77,16 @@ internal class OmhMapImpl(
         }
 
         return OmhMarkerImpl(marker)
+    }
+
+    override fun addPolyline(options: OmhPolylineOptions): OmhPolyline? {
+       val osmPolyline = options.toPolylineOptions()
+       mapView.run {
+           overlayManager.add(osmPolyline)
+           postInvalidate()
+       }
+
+        return OmhPolylineImpl(osmPolyline)
     }
 
     override fun getCameraPositionCoordinate(): OmhCoordinate {

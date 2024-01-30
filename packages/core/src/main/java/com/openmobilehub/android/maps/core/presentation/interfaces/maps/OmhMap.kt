@@ -21,6 +21,7 @@ import android.Manifest.permission.ACCESS_FINE_LOCATION
 import androidx.annotation.RequiresPermission
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
+import com.openmobilehub.android.maps.core.presentation.models.OmhPolylineOptions
 
 /**
  * Abstraction to provide access to the OmhMap. This is the main class of OMH Maps SDK
@@ -38,6 +39,14 @@ interface OmhMap {
      * @return [OmhMarker] that was added to the map.
      */
     fun addMarker(options: OmhMarkerOptions): OmhMarker?
+
+    /**
+     * Adds a marker to this map. The marker's icon is rendered on the map at the position.
+     *
+     * @param options a marker options object that defines how to render the marker.
+     * @return [OmhMarker] that was added to the map.
+     */
+    fun addPolyline(options: OmhPolylineOptions): OmhPolyline?
 
     /**
      * Gets the camera's position.

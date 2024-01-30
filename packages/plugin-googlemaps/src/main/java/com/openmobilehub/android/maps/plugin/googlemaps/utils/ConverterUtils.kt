@@ -17,8 +17,24 @@
 package com.openmobilehub.android.maps.plugin.googlemaps.utils
 
 import android.location.Location
+import com.google.android.gms.maps.model.ButtCap
+import com.google.android.gms.maps.model.Cap
+import com.google.android.gms.maps.model.Dash
+import com.google.android.gms.maps.model.Dot
+import com.google.android.gms.maps.model.Gap
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.PatternItem
+import com.google.android.gms.maps.model.RoundCap
+import com.google.android.gms.maps.model.SquareCap
+import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhCap
+import com.openmobilehub.android.maps.core.presentation.models.OmhButtCap
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
+import com.openmobilehub.android.maps.core.presentation.models.OmhDash
+import com.openmobilehub.android.maps.core.presentation.models.OmhDot
+import com.openmobilehub.android.maps.core.presentation.models.OmhGap
+import com.openmobilehub.android.maps.core.presentation.models.OmhPatternItem
+import com.openmobilehub.android.maps.core.presentation.models.OmhRoundCap
+import com.openmobilehub.android.maps.core.presentation.models.OmhSquareCap
 
 internal object ConverterUtils {
     fun convertToOmhCoordinate(latLng: LatLng?): OmhCoordinate {
@@ -35,5 +51,23 @@ internal object ConverterUtils {
 
     fun convertToOmhCoordinate(location: Location): OmhCoordinate {
         return OmhCoordinate(location.latitude, location.longitude)
+    }
+
+    fun convertToPatternItem(omhPatternItem: OmhPatternItem): PatternItem {
+        return when (omhPatternItem) {
+            is OmhDot -> Dot()
+            is OmhDash -> Dash(omhPatternItem.length)
+            is OmhGap -> Gap(omhPatternItem.length)
+            else -> throw IllegalArgumentException("Unknown pattern item type")
+        }
+    }
+
+    fun convertToCap(omhCap: OmhCap): Cap {
+        return when (omhCap) {
+            is OmhRoundCap -> RoundCap()
+            is OmhSquareCap -> SquareCap()
+            is OmhButtCap -> ButtCap()
+            else -> throw IllegalArgumentException("Unknown cap type")
+        }
     }
 }
