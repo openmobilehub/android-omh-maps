@@ -1,6 +1,7 @@
 @file:Suppress("UnstableApiUsage")
-
 import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+
+val useLocalProjects = project.rootProject.extra["useLocalProjects"] as Boolean
 
 plugins {
     `android-application`
@@ -17,14 +18,16 @@ var googlemapsPath = "com.openmobilehub.android.maps.plugin.googlemaps.presentat
 var openstreetmapPath = "com.openmobilehub.android.maps.plugin.openstreetmap.presentation.OmhMapFactoryImpl"
 
 omhConfig {
+    enableLocalProjects = useLocalProjects
+
     bundle("singleBuild") {
         maps {
             gmsService {
-                dependency = googlemapsDependency
+                if(!useLocalProjects) dependency = googlemapsDependency
                 path = googlemapsPath
             }
             nonGmsService {
-                dependency = openstreetmapDependency
+                if(!useLocalProjects) dependency = openstreetmapDependency
                 path = openstreetmapPath
             }
         }
@@ -32,7 +35,7 @@ omhConfig {
     bundle("gms") {
         maps {
             gmsService {
-                dependency = googlemapsDependency
+                if(!useLocalProjects) dependency = googlemapsDependency
                 path = googlemapsPath
             }
         }
@@ -40,7 +43,7 @@ omhConfig {
     bundle("nongms") {
         maps {
             nonGmsService {
-                dependency = openstreetmapDependency
+                if(!useLocalProjects) dependency = openstreetmapDependency
                 path = openstreetmapPath
             }
         }
@@ -112,6 +115,13 @@ dependencies {
     // Test
     testImplementation(Libs.junit)
     androidTestImplementation(Libs.androidJunit)
+
+    // Use local implementation instead of dependencies
+    if(useLocalProjects) {
+        implementation(project(":packages:core"))
+        implementation(project(":packages:plugin-googlemaps"))
+        implementation(project(":packages:plugin-openstreetmap"))
+    }
 }
 
 fun getValueFromEnvOrProperties(name: String): Any? {
