@@ -82,7 +82,7 @@ internal class OmhMapImpl(private var googleMap: GoogleMap) : OmhMap {
     }
 
     override fun addMarker(options: OmhMarkerOptions): OmhMarker? {
-        val googleOptions = options.toMarkerOptions().draggable(true)
+        val googleOptions = options.toMarkerOptions()
         val marker: Marker? = googleMap.addMarker(googleOptions)
 
         return if (marker != null) {
