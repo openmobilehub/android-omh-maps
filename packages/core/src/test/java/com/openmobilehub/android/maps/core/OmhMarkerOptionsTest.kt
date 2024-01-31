@@ -26,8 +26,10 @@ import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 internal class OmhMarkerOptionsTest {
@@ -148,6 +150,29 @@ internal class OmhMarkerOptionsTest {
         val createdFromParcel = OmhMarkerOptions.CREATOR.createFromParcel(parcel)
 
         assertNull(createdFromParcel.title)
+    }
+
+    @Test
+    fun `given a Parcel without isDraggable, when createFromParcel, then isDraggable is false`() {
+        val omhMarkerOptions = OmhMarkerOptions().apply {
+            position = omhCoordinate
+        }
+        val parcel = createOmhMarkerOptionsParcel(omhMarkerOptions)
+        val createdFromParcel = OmhMarkerOptions.CREATOR.createFromParcel(parcel)
+
+        assertFalse(createdFromParcel.isDraggable)
+    }
+
+    @Test
+    fun `given a Parcel with isDraggable that is true, when createFromParcel, then isDraggable is true`() {
+        val omhMarkerOptions = OmhMarkerOptions().apply {
+            position = omhCoordinate
+            isDraggable = true
+        }
+        val parcel = createOmhMarkerOptionsParcel(omhMarkerOptions)
+        val createdFromParcel = OmhMarkerOptions.CREATOR.createFromParcel(parcel)
+
+        assertTrue(createdFromParcel.isDraggable)
     }
 
     private fun createOmhMarkerOptionsParcel(omhMarkerOptions: OmhMarkerOptions): Parcel {

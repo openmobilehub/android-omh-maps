@@ -21,6 +21,7 @@ import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
 import com.openmobilehub.android.maps.plugin.googlemaps.extensions.toMarkerOptions
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 internal class OmhMarkerOptionsTest {
@@ -44,5 +45,21 @@ internal class OmhMarkerOptionsTest {
 
         assertFalse(markerOptions.position.latitude == anotherMarkerOptions.position.latitude)
         assertFalse(markerOptions.position.longitude == anotherMarkerOptions.position.longitude)
+    }
+
+    @Test
+    fun `by default OmhMarkerOptions should have isDraggable set to false`() {
+        val markerOptions = omhMarkerOptions.toMarkerOptions()
+
+        assertFalse(markerOptions.isDraggable)
+    }
+
+    @Test
+    fun `OmhMarkerOptions isDraggable can be set and get properly returned from the getter`() {
+        val differentMarkerOptions = omhMarkerOptions.apply {
+            isDraggable = true
+        }.toMarkerOptions()
+
+        assertTrue(differentMarkerOptions.isDraggable)
     }
 }
