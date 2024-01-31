@@ -6,8 +6,14 @@ android {
     namespace = "com.openmobilehub.android.maps.plugin.openstreetmap"
 }
 
+val useLocalProjects = project.rootProject.extra["useLocalProjects"] as Boolean
+
 dependencies {
-    api("com.openmobilehub.android.maps:core:2.0.0-beta")
+    if(useLocalProjects) {
+        api(project(":packages:core"))
+    } else {
+        api("com.openmobilehub.android.maps:core:2.0.0-beta")
+    }
 
     // KTX
     implementation(Libs.coreKtx)
