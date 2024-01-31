@@ -40,23 +40,41 @@ class OmhMarkerOptions() : Parcelable {
     var title: String? = null
 
     /**
+     * Whether the marker is draggable.
+     */
+    var isDraggable: Boolean = false
+
+    /**
      * Constructs a OmhMarkerOptions with the given Parcel.
      *
      * @param parcel container for the OmhCoordinate.
      */
     constructor(parcel: Parcel) : this() {
-        val omhCoordinate: OmhCoordinate? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            parcel.readParcelable(OmhCoordinate::class.java.classLoader, OmhCoordinate::class.java)
-        } else {
-            // Before Android 13, API level 33(Tiramisu) use:
-            // fun <T : Parcelable?> readParcelable(loader: ClassLoader?): T
-            @Suppress("DEPRECATION")
-            parcel.readParcelable(OmhCoordinate::class.java.classLoader)
-        }
+        val omhCoordinate: OmhCoordinate? =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                parcel.readParcelable(
+                    OmhCoordinate::class.java.classLoader,
+                    OmhCoordinate::class.java
+                )
+            } else {
+                // Before Android 13, API level 33 (Tiramisu) use:
+                // fun <T : Parcelable?> readParcelable(loader: ClassLoader?): T
+                @Suppress("DEPRECATION")
+                parcel.readParcelable(OmhCoordinate::class.java.classLoader)
+            }
+
         if (omhCoordinate != null) {
             position = omhCoordinate
         }
+
         title = parcel.readString()
+
+        isDraggable = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            parcel.readBoolean()
+        } else {
+            // Before Android 10, API level 29 (Q) use:
+            parcel.readByte() != 0.toByte()
+        }
     }
 
     /**
@@ -78,6 +96,12 @@ class OmhMarkerOptions() : Parcelable {
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeParcelable(position, flags)
         parcel.writeString(title)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            parcel.writeBoolean(isDraggable)
+        } else {
+            // Before Android 10, API level 29 (Q) use:
+            parcel.writeByte((if (isDraggable) 1 else 0).toByte())
+        }
     }
 
     /**

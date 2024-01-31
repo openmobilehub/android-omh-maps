@@ -42,10 +42,17 @@ class InitialFragment : Fragment() {
     private val binding get() = _binding!!
     private val args: InitialFragmentArgs by navArgs()
 
-    private val permissionLauncher = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+    private val mapPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
         val allPermissionsGranted = permissions.all { it.value }
         if (allPermissionsGranted) {
             findNavController().navigate(R.id.action_initialFragment_to_mapFragment)
+        }
+    }
+
+    private val markersDemoMapPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+        val allPermissionsGranted = permissions.all { it.value }
+        if (allPermissionsGranted) {
+            findNavController().navigate(R.id.action_initialFragment_to_markersDemoMapFragment)
         }
     }
 
@@ -68,7 +75,10 @@ class InitialFragment : Fragment() {
             }
         }
         binding.buttonOpenMap.setOnClickListener {
-            permissionLauncher.launch(PERMISSIONS)
+            mapPermissionLauncher.launch(PERMISSIONS)
+        }
+        binding.buttonOpenMarkersDemo.setOnClickListener {
+            markersDemoMapPermissionLauncher.launch(PERMISSIONS)
         }
     }
 

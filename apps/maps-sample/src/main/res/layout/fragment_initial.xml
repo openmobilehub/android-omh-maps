@@ -34,6 +34,20 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed" />
 
+    <Button
+        android:id="@+id/button_open_markers_demo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/open_markers_demo_map"
+        android:layout_marginStart="@dimen/normal_16"
+        android:layout_marginTop="@dimen/small_4"
+        android:layout_marginEnd="@dimen/normal_16"
+        android:textAlignment="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button_open_map"
+        tools:visibility="visible"/>
+
     <TextView
         android:id="@+id/textView_coordinate"
         android:layout_width="0dp"
@@ -45,7 +59,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button_open_map"
+        app:layout_constraintTop_toBottomOf="@+id/button_open_markers_demo"
         tools:text="@string/example_coordinate" />
 
     <Button

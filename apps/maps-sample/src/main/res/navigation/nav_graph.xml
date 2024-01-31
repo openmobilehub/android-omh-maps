@@ -24,6 +24,9 @@
         <action
             android:id="@+id/action_initialFragment_to_mapFragment"
             app:destination="@id/mapFragment" />
+        <action
+            android:id="@+id/action_initialFragment_to_markersDemoMapFragment"
+            app:destination="@id/markersDemoMapFragment" />
     </fragment>
 
     <fragment
@@ -36,6 +39,19 @@
             app:argType="com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate"
             android:defaultValue="@null"
             app:nullable="true" />
+        <action
+            android:id="@+id/action_mapFragment_to_initialFragment"
+            app:destination="@id/initialFragment"
+            app:popUpTo="@id/nav_graph"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+
+    <fragment
+        android:id="@+id/markersDemoMapFragment"
+        android:name="com.openmobilehub.android.maps.sample.maps.MarkersDemoMapFragment"
+        android:label="@string/markers_demo_map_fragment_text"
+        tools:layout="@layout/fragment_markers_demo_map">
         <action
             android:id="@+id/action_mapFragment_to_initialFragment"
             app:destination="@id/initialFragment"

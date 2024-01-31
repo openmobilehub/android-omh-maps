@@ -19,157 +19,134 @@ package com.openmobilehub.android.maps.sample.maps
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import com.openmobilehub.android.maps.core.factories.OmhMapProvider
 import com.openmobilehub.android.maps.core.presentation.fragments.OmhMapFragment
 import com.openmobilehub.android.maps.core.presentation.interfaces.location.OmhFailureListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.location.OmhSuccessListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMap
-import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnCameraIdleListener
-import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnCameraMoveStartedListener
+import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMarker
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMapReadyCallback
+import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMarkerClickListener
+import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMarkerDragListener
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
 import com.openmobilehub.android.maps.core.utils.NetworkConnectivityChecker
 import com.openmobilehub.android.maps.sample.R
-import com.openmobilehub.android.maps.sample.databinding.FragmentMapBinding
-import com.openmobilehub.android.maps.sample.utils.Constants.ANIMATION_DURATION
+import com.openmobilehub.android.maps.sample.databinding.FragmentMarkersDemoMapBinding
+import com.openmobilehub.android.maps.sample.utils.Constants
 import com.openmobilehub.android.maps.sample.utils.Constants.DEFAULT_ZOOM_LEVEL
-import com.openmobilehub.android.maps.sample.utils.Constants.FINAL_TRANSLATION
-import com.openmobilehub.android.maps.sample.utils.Constants.INITIAL_TRANSLATION
 import com.openmobilehub.android.maps.sample.utils.Constants.LOCATION_KEY
-import com.openmobilehub.android.maps.sample.utils.Constants.ONLY_DISPLAY_KEY
-import com.openmobilehub.android.maps.sample.utils.Constants.OVERSHOOT_INTERPOLATOR
 import com.openmobilehub.android.maps.sample.utils.Constants.PERMISSIONS
 import com.openmobilehub.android.maps.sample.utils.Constants.PRIME_MERIDIAN
 import com.openmobilehub.android.maps.sample.utils.Constants.SHOW_MESSAGE_TIME
 import com.openmobilehub.android.maps.sample.utils.Constants.ZOOM_LEVEL_5
 import com.openmobilehub.android.maps.sample.utils.PermissionsUtils
-import com.openmobilehub.android.maps.sample.utils.getOmhCoordinate
 
-open class MapFragment : Fragment(), OmhOnMapReadyCallback {
+open class MarkersDemoMapFragment : Fragment(), OmhOnMapReadyCallback {
     private var currentLocation: OmhCoordinate = PRIME_MERIDIAN
-    private var _binding: FragmentMapBinding? = null
+    private var _binding: FragmentMarkersDemoMapBinding? = null
     private val binding get() = _binding!!
-    private var displayOnlyCoordinate = false
-    private val args: MapFragmentArgs by navArgs()
     private var networkConnectivityChecker: NetworkConnectivityChecker? = null
     private var handler: Handler? = null
-    private var runnable : Runnable? = null
+    private var runnable: Runnable? = null
     private var handledCurrentLocation = false
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        displayOnlyCoordinate = savedInstanceState?.getBoolean(ONLY_DISPLAY_KEY, false) ?: false
-        val coordinate = savedInstanceState?.getOmhCoordinate(LOCATION_KEY)
-        coordinate?.let {
-            currentLocation = coordinate
-        }
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentMapBinding.inflate(inflater, container, false)
+        _binding = FragmentMarkersDemoMapBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val coordinate: OmhCoordinate? = args.coordinate
-        coordinate?.let {
-            currentLocation = coordinate
-            displayOnlyCoordinate = true
-        }
-
         networkConnectivityChecker = NetworkConnectivityChecker(requireContext()).apply {
             startListeningForConnectivityChanges {
-                Toast.makeText(requireContext(), R.string.lost_internet_connection, Toast.LENGTH_LONG).show()
+                Toast.makeText(
+                    requireContext(),
+                    R.string.lost_internet_connection,
+                    Toast.LENGTH_LONG
+                ).show()
             }
         }
-        binding.fabShareLocation.setOnClickListener {
-            val action = MapFragmentDirections.actionMapFragmentToInitialFragment(currentLocation)
-            findNavController().navigate(action)
-        }
-
-        val displayText: (v: View) -> Unit = {
-            val isVisible = binding.textViewLocation.isVisible
-            binding.textViewLocation.visibility = if (isVisible) { View.GONE } else { View.VISIBLE }
-        }
-
-        binding.textViewLocation.setOnClickListener(displayText)
-        binding.markerImageView.setOnClickListener(displayText)
 
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
             val omhMapFragment =
-                childFragmentManager.findFragmentById(R.id.fragment_map_container) as? OmhMapFragment
+                childFragmentManager.findFragmentById(R.id.fragment_markers_demo_map_container) as? OmhMapFragment
             omhMapFragment?.getMapAsync(this)
         }.launch(PERMISSIONS)
     }
 
     override fun onMapReady(omhMap: OmhMap) {
         if (networkConnectivityChecker?.isNetworkAvailable() != true) {
-            Toast.makeText(requireContext(), R.string.no_internet_connection, Toast.LENGTH_LONG).show()
+            Toast.makeText(requireContext(), R.string.no_internet_connection, Toast.LENGTH_LONG)
+                .show()
         }
         omhMap.setZoomGesturesEnabled(true)
 
-        if (displayOnlyCoordinate) {
-            displaySharedLocation(omhMap)
-        }
-
-        val omhOnCameraMoveStartedListener = OmhOnCameraMoveStartedListener {
-            binding.markerImageView.animate()
-                .translationY(INITIAL_TRANSLATION)
-                .setInterpolator(OVERSHOOT_INTERPOLATOR)
-                .setDuration(ANIMATION_DURATION)
-                .start()
-        }
-
-        omhMap.setOnCameraMoveStartedListener(omhOnCameraMoveStartedListener)
-
-        val omhOnCameraIdleListener = OmhOnCameraIdleListener {
-            binding.markerImageView.animate()
-                .translationY(FINAL_TRANSLATION)
-                .setInterpolator(OVERSHOOT_INTERPOLATOR)
-                .setDuration(ANIMATION_DURATION)
-                .start()
-
-            currentLocation = omhMap.getCameraPositionCoordinate()
-            binding.textViewLocation.text = getString(
-                R.string.latitude_longitude_text,
-                currentLocation.latitude.toString(),
-                currentLocation.longitude.toString()
-            )
-        }
-
-        omhMap.setOnCameraIdleListener(omhOnCameraIdleListener)
         getCurrentLocation(omhMap)
-    }
 
-    private fun displaySharedLocation(omhMap: OmhMap) {
-        binding.fabShareLocation.visibility = View.GONE
-        binding.markerImageView.visibility = View.GONE
-        binding.markerShadowImageView.visibility = View.GONE
-        val omhMarkerOptions = OmhMarkerOptions().apply {
-            position = currentLocation
-            title = getString(
-                R.string.latitude_longitude_text,
-                currentLocation.latitude.toString(),
-                currentLocation.longitude.toString()
+        omhMap.addMarker(OmhMarkerOptions().apply {
+            title = "Test #1 (non-draggable)"
+            position = Constants.PRIME_MERIDIAN.apply {
+                longitude += 0.0008
+                latitude += 0.0008
+            }
+        })
+
+        omhMap.addMarker(OmhMarkerOptions().apply {
+            title = "Test #2 (draggable)"
+            position = Constants.PRIME_MERIDIAN.apply {
+                latitude += 0.0008
+            }
+            isDraggable = true
+        })
+
+        omhMap.setOnMarkerClickListener(OmhOnMarkerClickListener { marker ->
+            Log.d(
+                LOG_TAG,
+                "User clicked marker '${marker.getTitle()}' at ${marker.getPosition().toString()}"
             )
-        }
-        omhMap.addMarker(omhMarkerOptions)
-        moveToCurrentLocation(omhMap, DEFAULT_ZOOM_LEVEL)
+            false
+        })
+
+        omhMap.setOnMarkerDragListener(object : OmhOnMarkerDragListener {
+            override fun onMarkerDrag(marker: OmhMarker) {
+                Log.d(
+                    LOG_TAG,
+                    "User is dragging marker '${marker.getTitle()}', now at ${
+                        marker.getPosition()
+                    }"
+                )
+            }
+
+            override fun onMarkerDragEnd(marker: OmhMarker) {
+                Log.d(
+                    LOG_TAG,
+                    "User ended dragging marker '${marker.getTitle()}' at ${
+                        marker.getPosition()
+                    }"
+                )
+            }
+
+            override fun onMarkerDragStart(marker: OmhMarker) {
+                Log.d(
+                    LOG_TAG,
+                    "User started dragging marker '${marker.getTitle()}' at ${
+                        marker.getPosition()
+                    }"
+                )
+            }
+        })
     }
 
     private fun enableMyLocation(omhMap: OmhMap) {
@@ -232,12 +209,13 @@ open class MapFragment : Fragment(), OmhOnMapReadyCallback {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putParcelable(LOCATION_KEY, currentLocation)
-        outState.putBoolean(ONLY_DISPLAY_KEY, displayOnlyCoordinate)
     }
 
     override fun onResume() {
         super.onResume()
-        if (handledCurrentLocation) { return }
+        if (handledCurrentLocation) {
+            return
+        }
         runnable?.let { validRunnable ->
             handler?.postDelayed(validRunnable, SHOW_MESSAGE_TIME)
         }
@@ -256,8 +234,10 @@ open class MapFragment : Fragment(), OmhOnMapReadyCallback {
 
     companion object {
         @JvmStatic
-        fun newInstance(): MapFragment {
-            return MapFragment()
+        fun newInstance(): MarkersDemoMapFragment {
+            return MarkersDemoMapFragment()
         }
+
+        val LOG_TAG: String = "MarkersDemoMapFragment"
     }
 }

@@ -39,4 +39,12 @@ internal class OmhMarkerImpl(private val marker: Marker) : OmhMarker {
     override fun setTitle(title: String?) {
         marker.title = title
     }
+
+    override fun getIsDraggable(): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override fun setIsDraggable(isDraggable: Boolean) {
+        TODO("Not yet implemented")
+    }
 }

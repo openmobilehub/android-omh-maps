@@ -51,4 +51,18 @@ interface OmhMarker {
      * @param title sets the title. If null, the title is cleared.
      */
     fun setTitle(title: String?)
+
+    /**
+     * Checks whether the marker is draggable.
+     *
+     * @return a boolean indicating whether the marker is draggable.
+     */
+    fun getIsDraggable(): Boolean
+
+    /**
+     * Sets whether the marker is draggable.
+     *
+     * @param isDraggable sets whether the marker is draggable.
+     */
+    fun setIsDraggable(isDraggable: Boolean)
 }

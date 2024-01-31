@@ -29,6 +29,8 @@ import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMapLo
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMarker
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnCameraIdleListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnCameraMoveStartedListener
+import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMarkerClickListener
+import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMarkerDragListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMyLocationButtonClickListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhSnapshotReadyCallback
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
@@ -60,6 +62,14 @@ internal class OmhMapImpl(
         mapView.setOnTouchListener(MapTouchListener(mapListenerController))
         mapView.overlayManager.add(gestureOverlay)
         setZoomGesturesEnabled(true)
+    }
+
+    override fun setOnMarkerClickListener(listener: OmhOnMarkerClickListener?) {
+        TODO("Not yet implemented")
+    }
+
+    override fun setOnMarkerDragListener(listener: OmhOnMarkerDragListener?) {
+        TODO("Not yet implemented")
     }
 
     override fun addMarker(options: OmhMarkerOptions): OmhMarker? {
@@ -98,7 +108,8 @@ internal class OmhMapImpl(
     }
 
     override fun snapshot(omhSnapshotReadyCallback: OmhSnapshotReadyCallback) {
-        val drawable: Drawable? = ContextCompat.getDrawable(mapView.context, R.drawable.img_map_placeholder)
+        val drawable: Drawable? =
+            ContextCompat.getDrawable(mapView.context, R.drawable.img_map_placeholder)
         if (drawable == null) {
             omhSnapshotReadyCallback.onSnapshotReady(null)
             return

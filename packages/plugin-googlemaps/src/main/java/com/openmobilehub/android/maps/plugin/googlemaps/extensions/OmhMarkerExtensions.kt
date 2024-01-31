@@ -24,4 +24,5 @@ internal fun OmhMarkerOptions.toMarkerOptions(): MarkerOptions {
     return MarkerOptions()
         .position(ConverterUtils.convertToLatLng(position))
         .title(title)
+        .draggable(isDraggable)
 }

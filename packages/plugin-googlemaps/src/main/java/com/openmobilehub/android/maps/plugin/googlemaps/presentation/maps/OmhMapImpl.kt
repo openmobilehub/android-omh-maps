@@ -29,6 +29,8 @@ import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMapLo
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMarker
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnCameraIdleListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnCameraMoveStartedListener
+import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMarkerClickListener
+import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMarkerDragListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMyLocationButtonClickListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhSnapshotReadyCallback
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
@@ -38,11 +40,60 @@ import com.openmobilehub.android.maps.plugin.googlemaps.utils.ConverterUtils
 
 @SuppressWarnings("TooManyFunctions")
 internal class OmhMapImpl(private var googleMap: GoogleMap) : OmhMap {
+    private val markers = mutableMapOf<Marker, OmhMarker>()
+
+    private var onMarkerClickListener: OmhOnMarkerClickListener? = null
+    private var onMarkerDragListener: OmhOnMarkerDragListener? = null
+
+    init {
+        this.googleMap.setOnMarkerClickListener { marker ->
+            this.markers[marker]?.let { omhMarker ->
+                this.onMarkerClickListener?.onMarkerClick(omhMarker)
+            } ?: false
+        }
+
+        this.googleMap.setOnMarkerDragListener(object : GoogleMap.OnMarkerDragListener {
+            override fun onMarkerDrag(marker: Marker) {
+                this@OmhMapImpl.markers[marker]?.let { omhMarker ->
+                    this@OmhMapImpl.onMarkerDragListener?.onMarkerDrag(omhMarker)
+                }
+            }
+
+            override fun onMarkerDragEnd(marker: Marker) {
+                this@OmhMapImpl.markers[marker]?.let { omhMarker ->
+                    this@OmhMapImpl.onMarkerDragListener?.onMarkerDragEnd(omhMarker)
+                }
+            }
+
+            override fun onMarkerDragStart(marker: Marker) {
+                this@OmhMapImpl.markers[marker]?.let { omhMarker ->
+                    this@OmhMapImpl.onMarkerDragListener?.onMarkerDragStart(omhMarker)
+                }
+            }
+        })
+    }
+
+    override fun setOnMarkerClickListener(listener: OmhOnMarkerClickListener?) {
+        this.onMarkerClickListener = listener
+    }
+
+    override fun setOnMarkerDragListener(listener: OmhOnMarkerDragListener?) {
+        this.onMarkerDragListener = listener
+    }
+
     override fun addMarker(options: OmhMarkerOptions): OmhMarker? {
-        val googleOptions = options.toMarkerOptions()
+        val googleOptions = options.toMarkerOptions().draggable(true)
         val marker: Marker? = googleMap.addMarker(googleOptions)
 
-        return marker?.let { OmhMarkerImpl(it) }
+        return if (marker != null) {
+            val omhMarker = OmhMarkerImpl(marker)
+
+            markers[marker] = omhMarker
+
+            omhMarker
+        } else {
+            null
+        }
     }
 
     override fun getCameraPositionCoordinate(): OmhCoordinate {

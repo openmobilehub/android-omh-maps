@@ -155,10 +155,12 @@ internal class OmhMarkerOptionsTest {
 
         every { parcel.writeParcelable(any(), any()) } returns Unit
         every { parcel.writeString(any()) } returns Unit
+        every { parcel.writeByte(any()) } returns Unit
         every {
             parcel.readParcelable<OmhCoordinate>(OmhCoordinate::class.java.classLoader)
         } returns omhMarkerOptions.position
         every { parcel.readString() } returns omhMarkerOptions.title
+        every { parcel.readByte() } returns (if (omhMarkerOptions.isDraggable) 1 else 0).toByte()
 
         omhMarkerOptions.writeToParcel(parcel, omhMarkerOptions.describeContents())
 

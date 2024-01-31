@@ -14,4 +14,6 @@
     <string name="no_internet_connection">"No internet connection"</string>
     <string name="lost_internet_connection">"Lost internet connection"</string>
     <string name="move_message">"For more accuracy move to an open space"</string>
+    <string name="markers_demo_map_fragment_text">Markers Demo Map Fragment</string>
+    <string name="open_markers_demo_map">Open Markers Demo</string>
 </resources>
