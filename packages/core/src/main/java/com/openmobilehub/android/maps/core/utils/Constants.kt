@@ -24,4 +24,6 @@ internal object Constants {
     // Log
     const val MAX_NAME_LENGTH = 23
     const val MIN_NAME_LENGTH = 0
+
+    const val LOG_TAG = "OmhMaps"
 }

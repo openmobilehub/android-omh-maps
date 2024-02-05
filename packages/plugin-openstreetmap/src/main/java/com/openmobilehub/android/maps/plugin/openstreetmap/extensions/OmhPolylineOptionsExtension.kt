@@ -16,18 +16,37 @@
 
 package com.openmobilehub.android.maps.plugin.openstreetmap.extensions
 
-import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolylineOptions
+import com.openmobilehub.android.maps.core.utils.UnsupportedFeatureLogger
 import org.osmdroid.views.overlay.Polyline
 
+val Logger = UnsupportedFeatureLogger("OmhPolyline", "OpenStreetMap")
+
 internal fun OmhPolylineOptions.toPolylineOptions(): Polyline {
-    val mappedOptions =  Polyline()
+    val mappedOptions = Polyline()
+
     mappedOptions.setPoints(points.map { it.toGeoPoint() })
     width?.let { mappedOptions.outlinePaint.strokeWidth = it }
     color?.let { mappedOptions.outlinePaint.color = it }
     isVisible?.let { mappedOptions.isVisible = it }
+
     zIndex?.let {
-        // TODO: Log that it's not supported
+        Logger.logNotSupported("zIndex")
+    }
+    jointType.let {
+        Logger.logNotSupported("jointType")
+    }
+    pattern?.let {
+        Logger.logNotSupported("pattern")
+    }
+    startCap?.let {
+        Logger.logNotSupported("startCap")
+    }
+    endCap?.let {
+        Logger.logNotSupported("endCap")
+    }
+    spans?.let {
+        Logger.logNotSupported("spans")
     }
 
     return mappedOptions

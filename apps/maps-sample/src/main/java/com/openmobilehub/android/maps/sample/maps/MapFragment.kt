@@ -16,6 +16,7 @@
 
 package com.openmobilehub.android.maps.sample.maps
 
+import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
@@ -37,20 +38,14 @@ import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMap
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnCameraIdleListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnCameraMoveStartedListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMapReadyCallback
-import com.openmobilehub.android.maps.core.presentation.models.OmhButtCap
+import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnPolylineClickListener
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
-import com.openmobilehub.android.maps.core.presentation.models.OmhDash
-import com.openmobilehub.android.maps.core.presentation.models.OmhDot
-import com.openmobilehub.android.maps.core.presentation.models.OmhGap
-import com.openmobilehub.android.maps.core.presentation.models.OmhJointType
 import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
-import com.openmobilehub.android.maps.core.presentation.models.OmhPolylineOptions
-import com.openmobilehub.android.maps.core.presentation.models.OmhRoundCap
-import com.openmobilehub.android.maps.core.presentation.models.OmhSquareCap
 import com.openmobilehub.android.maps.core.utils.NetworkConnectivityChecker
 import com.openmobilehub.android.maps.sample.R
 import com.openmobilehub.android.maps.sample.databinding.FragmentMapBinding
 import com.openmobilehub.android.maps.sample.utils.Constants.ANIMATION_DURATION
+import com.openmobilehub.android.maps.sample.utils.Constants.DEFAULT_ZOOM_LEVEL
 import com.openmobilehub.android.maps.sample.utils.Constants.FINAL_TRANSLATION
 import com.openmobilehub.android.maps.sample.utils.Constants.INITIAL_TRANSLATION
 import com.openmobilehub.android.maps.sample.utils.Constants.LOCATION_KEY
@@ -64,7 +59,6 @@ import com.openmobilehub.android.maps.sample.utils.PermissionsUtils
 import com.openmobilehub.android.maps.sample.utils.getOmhCoordinate
 
 class MapFragment : Fragment(), OmhOnMapReadyCallback {
-
     private var currentLocation: OmhCoordinate = PRIME_MERIDIAN
     private var _binding: FragmentMapBinding? = null
     private val binding get() = _binding!!
@@ -163,54 +157,16 @@ class MapFragment : Fragment(), OmhOnMapReadyCallback {
             )
         }
 
+        val omhOnPolylineClickListener = OmhOnPolylineClickListener {
+            Toast.makeText(requireContext(), it.getWidth().toString(), Toast.LENGTH_SHORT).show()
+        }
+
         omhMap.setOnCameraIdleListener(omhOnCameraIdleListener)
+        omhMap.setOnPolylineClickListener(omhOnPolylineClickListener)
         getCurrentLocation(omhMap)
         moveToCurrentLocation(omhMap, ZOOM_LEVEL_5)
 
-        addDebugPolylines(omhMap)
-    }
-
-    private fun addDebugPolylines(omhMap: OmhMap) {
-        val polyline1 = OmhPolylineOptions().apply {
-            points = arrayOf(
-                OmhCoordinate(0.0, 0.0),
-                OmhCoordinate(25.0, -90.0),
-                OmhCoordinate(30.0, -100.0)
-            )
-            color = Color.parseColor("#FF0000")
-            width = 5f
-            isVisible = true
-            zIndex = 3f
-            jointType = OmhJointType.BEVEL
-            startCap = OmhSquareCap()
-            endCap = OmhButtCap()
-            pattern = listOf(
-                OmhDot(),
-                OmhGap(10f),
-                OmhDash(20f),
-                OmhGap(10f),
-                OmhDot()
-            )
-        }
-
-        val polyline2 = OmhPolylineOptions().apply {
-            points = arrayOf(
-                OmhCoordinate(0.0, -90.0),
-                OmhCoordinate(25.0, 0.0),
-                OmhCoordinate(12.0, 30.0)
-
-            )
-            color = Color.parseColor("#0000FF")
-            width = 10f
-            isVisible = true
-            zIndex = 2f
-            jointType = OmhJointType.ROUND
-            startCap = OmhRoundCap()
-            endCap = OmhRoundCap()
-        }
-
-        omhMap.addPolyline(polyline1)
-        omhMap.addPolyline(polyline2)
+        DebugPolylineHelper.addDebugPolylines(omhMap, resources)
     }
 
     private fun displaySharedLocation(omhMap: OmhMap) {
@@ -226,7 +182,7 @@ class MapFragment : Fragment(), OmhOnMapReadyCallback {
             )
         }
         omhMap.addMarker(omhMarkerOptions)
-//        moveToCurrentLocation(omhMap, DEFAULT_ZOOM_LEVEL)
+        moveToCurrentLocation(omhMap, DEFAULT_ZOOM_LEVEL)
     }
 
     private fun enableMyLocation(omhMap: OmhMap) {

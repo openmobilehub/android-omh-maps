@@ -17,26 +17,14 @@
 package com.openmobilehub.android.maps.core.presentation.interfaces.maps
 
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
-import com.openmobilehub.android.maps.core.presentation.models.OmhPatternItem
 
 /**
- * `OmhPolyline` is an interface that provides an abstraction for a polyline on a map.
+ * [OmhPolyline] is an interface that provides an abstraction for a polyline on a map.
  * A polyline is a series of connected line segments that can form any shape you want on a map.
  * You can customize the appearance of the polyline by changing its color, width, pattern, joint type, and caps.
  */
+@SuppressWarnings("TooManyFunctions")
 interface OmhPolyline {
-
-    /**
-     * Gets the points that make up the polyline.
-     * @return An array of `OmhCoordinate` objects specifying the polyline's points.
-     */
-    fun getPoints(): Array<OmhCoordinate>
-
-    /**
-     * Sets the points that make up the polyline.
-     * @param omhCoordinate An array of `OmhCoordinate` objects specifying the polyline's points.
-     */
-    fun setPoints(omhCoordinate: Array<OmhCoordinate>)
 
     /**
      * Gets the color of the polyline.
@@ -51,40 +39,16 @@ interface OmhPolyline {
     fun setColor(color: Int)
 
     /**
-     * Gets the width of the polyline.
-     * @return A float representing the width of the polyline.
+     * Gets the end cap of the polyline.
+     * @return An [OmhCap] object representing the end cap of the polyline.
      */
-    fun getWidth(): Float
+    fun getEndCap(): OmhCap?
 
     /**
-     * Sets the width of the polyline.
-     * @param width A float representing the width of the polyline.
+     * Sets the end cap of the polyline.
+     * @param endCap An [OmhCap] object representing the end cap of the polyline.
      */
-    fun setWidth(width: Float)
-
-    /**
-     * Gets the visibility of the polyline.
-     * @return A boolean indicating whether the polyline is visible.
-     */
-    fun isVisible(): Boolean
-
-    /**
-     * Sets the visibility of the polyline.
-     * @param visible A boolean indicating whether the polyline should be visible.
-     */
-    fun setVisible(visible: Boolean)
-
-    /**
-     * Gets the z-index of the polyline.
-     * @return A float representing the z-index of the polyline.
-     */
-    fun getZIndex(): Float
-
-    /**
-     * Sets the z-index of the polyline.
-     * @param zIndex A float representing the z-index of the polyline.
-     */
-    fun setZIndex(zIndex: Float)
+    fun setEndCap(endCap: OmhCap?)
 
     /**
      * Gets the joint type of the polyline.
@@ -100,37 +64,85 @@ interface OmhPolyline {
 
     /**
      * Gets the pattern of the polyline.
-     * @return A list of `OmhPatternItem` objects representing the pattern of the polyline.
+     * @return A list of [OmhPatternItem] objects representing the pattern of the polyline.
      */
     fun getPattern(): List<OmhPatternItem>?
 
     /**
      * Sets the pattern of the polyline.
-     * @param pattern A list of `OmhPatternItem` objects representing the pattern of the polyline.
+     * @param pattern A list of [OmhPatternItem] objects representing the pattern of the polyline.
      */
     fun setPattern(pattern: List<OmhPatternItem>?)
 
     /**
+     * Gets the points that make up the polyline.
+     * @return An array of [OmhCoordinate] objects specifying the polyline's points.
+     */
+    fun getPoints(): List<OmhCoordinate>
+
+    /**
+     * Sets the points that make up the polyline.
+     * @param omhCoordinates An array of [OmhCoordinate] objects specifying the polyline's points.
+     */
+    fun setPoints(omhCoordinates: List<OmhCoordinate>)
+
+    /**
+     * Gets the spans of the polyline.
+     * @return A list of [OmhStyleSpan] objects representing the spans of the polyline.
+     */
+    fun getSpans(): List<OmhStyleSpan>?
+
+    /**
+     * Sets the spans of the polyline.
+     * @param spans A list of [OmhStyleSpan] objects representing the spans of the polyline.
+     */
+    fun setSpans(spans: List<OmhStyleSpan>?)
+
+    /**
      * Gets the start cap of the polyline.
-     * @return An `OmhCap` object representing the start cap of the polyline.
+     * @return An [OmhCap] object representing the start cap of the polyline.
      */
     fun getStartCap(): OmhCap?
 
     /**
      * Sets the start cap of the polyline.
-     * @param startCap An `OmhCap` object representing the start cap of the polyline.
+     * @param startCap An [OmhCap] object representing the start cap of the polyline.
      */
     fun setStartCap(startCap: OmhCap?)
 
     /**
-     * Gets the end cap of the polyline.
-     * @return An `OmhCap` object representing the end cap of the polyline.
+     * Gets the visibility of the polyline.
+     * @return A boolean indicating whether the polyline is visible.
      */
-    fun getEndCap(): OmhCap?
+    fun isVisible(): Boolean
 
     /**
-     * Sets the end cap of the polyline.
-     * @param endCap An `OmhCap` object representing the end cap of the polyline.
+     * Sets the visibility of the polyline.
+     * @param visible A boolean indicating whether the polyline should be visible.
      */
-    fun setEndCap(endCap: OmhCap?)
+    fun setVisible(visible: Boolean)
+
+    /**
+     * Gets the width of the polyline.
+     * @return A float representing the width of the polyline.
+     */
+    fun getWidth(): Float
+
+    /**
+     * Sets the width of the polyline.
+     * @param width A float representing the width of the polyline.
+     */
+    fun setWidth(width: Float)
+
+    /**
+     * Gets the z-index of the polyline.
+     * @return A float representing the z-index of the polyline.
+     */
+    fun getZIndex(): Float
+
+    /**
+     * Sets the z-index of the polyline.
+     * @param zIndex A float representing the z-index of the polyline.
+     */
+    fun setZIndex(zIndex: Float)
 }

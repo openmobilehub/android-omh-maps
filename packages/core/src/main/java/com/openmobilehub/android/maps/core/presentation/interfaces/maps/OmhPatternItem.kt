@@ -14,17 +14,11 @@
  * limitations under the License.
  */
 
-package com.openmobilehub.android.maps.core.presentation.models
+package com.openmobilehub.android.maps.core.presentation.interfaces.maps
 
-import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhPatternItem
-import kotlinx.parcelize.Parcelize
+import android.os.Parcelable
 
 /**
- * `OmhDash` is a class that represents a dash pattern item on a map.
- * A dash pattern item can be used to customize the appearance of polylines and other map elements.
- * This class extends the [OmhPatternItem] interface.
- *
- * @property length The length of the dash.
+ * `OmhPatternItem` is an interface that provides an abstraction for a pattern item for polylines and polygons.
  */
-@Parcelize
-class OmhDash(val length: Float) : OmhPatternItem
+interface OmhPatternItem : Parcelable

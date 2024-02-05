@@ -17,24 +17,21 @@
 package com.openmobilehub.android.maps.plugin.googlemaps.presentation.maps
 
 import android.content.Context
-import android.opengl.GLSurfaceView.Renderer
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.MapsInitializer
-import com.google.android.gms.maps.OnMapsSdkInitializedCallback
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMapView
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMapReadyCallback
 
 @Suppress("TooManyFunctions") // Suppress issue since interface has more than 12 functions.
-internal class OmhMapViewImpl(context: Context) : OmhMapView, OnMapsSdkInitializedCallback {
+internal class OmhMapViewImpl(context: Context) : OmhMapView {
 
     private var mapView: MapView? = null
 
     init {
-        MapsInitializer.initialize(context, MapsInitializer.Renderer.LATEST, null)
+        MapsInitializer.initialize(context)
         mapView = MapView(context)
     }
 
@@ -85,13 +82,6 @@ internal class OmhMapViewImpl(context: Context) : OmhMapView, OnMapsSdkInitializ
 
         override fun build(context: Context): OmhMapView {
             return OmhMapViewImpl(context)
-        }
-    }
-
-    override fun onMapsSdkInitialized(renderer: MapsInitializer.Renderer) {
-        when (renderer) {
-            MapsInitializer.Renderer.LATEST -> Log.d("MapsDemo", "The latest version of the renderer is used.")
-            MapsInitializer.Renderer.LEGACY -> Log.d("MapsDemo", "The legacy version of the renderer is used.")
         }
     }
 }

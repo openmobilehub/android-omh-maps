@@ -1,26 +1,28 @@
+/*
+ * Copyright 2023 Open Mobile Hub
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.openmobilehub.android.maps.core.presentation.models
 
-import android.os.Parcel
-import android.os.Parcelable
-class OmhDot() : OmhPatternItem() {
-    constructor(parcel: Parcel) : this() {
-    }
+import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhPatternItem
+import kotlinx.parcelize.Parcelize
 
-    override fun writeToParcel(parcel: Parcel, flags: Int) {
-        super.writeToParcel(parcel, flags)
-    }
-
-    override fun describeContents(): Int {
-        return 0
-    }
-
-    companion object CREATOR : Parcelable.Creator<OmhDot> {
-        override fun createFromParcel(parcel: Parcel): OmhDot {
-            return OmhDot(parcel)
-        }
-
-        override fun newArray(size: Int): Array<OmhDot?> {
-            return arrayOfNulls(size)
-        }
-    }
-}
+/**
+ * [OmhDot] is a class that represents a dot pattern item on a map.
+ * A dot pattern item can be used to customize the appearance of polylines and other map elements.
+ * This class implements the [OmhPatternItem] interface.
+ */
+@Parcelize
+class OmhDot : OmhPatternItem

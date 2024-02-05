@@ -16,15 +16,17 @@
 
 package com.openmobilehub.android.maps.core.presentation.models
 
-import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhPatternItem
+import android.graphics.Bitmap
+import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhCap
 import kotlinx.parcelize.Parcelize
 
 /**
- * `OmhDash` is a class that represents a dash pattern item on a map.
- * A dash pattern item can be used to customize the appearance of polylines and other map elements.
- * This class extends the [OmhPatternItem] interface.
+ * `OmhCustomCap` is a class that represents a custom cap for a polyline on a map.
+ * A custom cap is a cap that uses a custom bitmap image.
+ * This class extends the [OmhCap] interface.
  *
- * @property length The length of the dash.
+ * @property bitmap The bitmap image used for the custom cap.
+ * @property refWidth The reference width for the custom cap. The cap scales as the zoom level changes.
  */
 @Parcelize
-class OmhDash(val length: Float) : OmhPatternItem
+class OmhCustomCap(val bitmap: Bitmap, val refWidth: Float?) : OmhCap

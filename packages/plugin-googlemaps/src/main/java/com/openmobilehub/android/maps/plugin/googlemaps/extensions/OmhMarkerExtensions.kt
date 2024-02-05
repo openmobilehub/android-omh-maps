@@ -18,10 +18,10 @@ package com.openmobilehub.android.maps.plugin.googlemaps.extensions
 
 import com.google.android.gms.maps.model.MarkerOptions
 import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
-import com.openmobilehub.android.maps.plugin.googlemaps.utils.ConverterUtils
+import com.openmobilehub.android.maps.plugin.googlemaps.utils.CoordinateConverter
 
 internal fun OmhMarkerOptions.toMarkerOptions(): MarkerOptions {
     return MarkerOptions()
-        .position(ConverterUtils.convertToLatLng(position))
+        .position(CoordinateConverter.convertToLatLng(position))
         .title(title)
 }

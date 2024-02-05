@@ -16,99 +16,39 @@
 
 package com.openmobilehub.android.maps.core.presentation.models
 
-import android.os.Build
-import android.os.Parcel
 import android.os.Parcelable
-import androidx.annotation.Keep
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhCap
+import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhPatternItem
+import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhStyleSpan
+import kotlinx.parcelize.Parcelize
 
 /**
- * Defines OmhMarkerOptions for a marker.
+ * [OmhPolylineOptions] is a class that represents the options for a polyline on a map.
+ * A polyline is a series of connected line segments that can form any shape you want on a map.
+ * You can customize the appearance of the polyline by changing its color, width, pattern, joint type, and caps.
  *
- * Implements Parcelable interface to facilitate the usage.
+ * @property points The points that make up the polyline.
+ * @property color The color of the polyline.
+ * @property width The width of the polyline.
+ * @property isVisible The visibility of the polyline.
+ * @property zIndex The z-index of the polyline.
+ * @property jointType The joint type of the polyline.
+ * @property pattern The pattern of the polyline.
+ * @property startCap The start cap of the polyline.
+ * @property endCap The end cap of the polyline.
+ * @property spans The spans of the polyline.
  */
-@Keep
-class OmhPolylineOptions() : Parcelable {
-    var points: Array<OmhCoordinate> = arrayOf()
-    var color: Int? = null
-    var width: Float? = null
-    var isVisible: Boolean? = null
-    var zIndex: Float? = null
-    var jointType: Int? = OmhJointType.DEFAULT
-    var pattern: List<OmhPatternItem>? = null
-    var startCap: OmhCap? = null
-    var endCap: OmhCap? = null
-
-    /**
-     * Constructs a OmhMarkerOptions with the given Parcel.
-     *
-     * @param parcel container for the OmhCoordinate.
-     */
-    constructor(parcel: Parcel) : this() {
-        val pointsFromParcel: Array<OmhCoordinate>? = parcel.createTypedArray(OmhCoordinate.CREATOR)
-        if (pointsFromParcel != null) {
-            points = pointsFromParcel
-        }
-        width = parcel.readFloat()
-        color = parcel.readInt()
-        isVisible = parcel.readByte() != 0.toByte()
-        zIndex = parcel.readFloat()
-        jointType = parcel.readInt()
-        pattern = parcel.createTypedArrayList(OmhPatternItem.CREATOR)
-        startCap = parcel.readParcelable(OmhCap::class.java.classLoader)
-        endCap = parcel.readParcelable(OmhCap::class.java.classLoader)
-    }
-    /**
-     * Describe the kinds of special objects contained in this Parcelable instance's marshaled representation.
-     * Value is either 0 or CONTENTS_FILE_DESCRIPTOR
-     *
-     * @return a bitmask indicating the set of special object types marshaled by this Parcelable object instance.
-     */
-    override fun describeContents(): Int {
-        return 0
-    }
-
-    /**
-     * Flatten this object in to a Parcel.
-     *
-     * @param parcel the Parcel in which the object should be written. This value cannot be null.
-     * @param flags additional flags about how the object should be written.
-     */
-    override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeTypedArray(points, flags)
-        parcel.writeFloat(width ?: 0f)
-        parcel.writeInt(color ?: 0)
-        parcel.writeByte(if (isVisible == true) 1 else 0)
-        parcel.writeFloat(zIndex ?: 0f)
-        parcel.writeInt(jointType ?: OmhJointType.DEFAULT)
-        parcel.writeTypedList(pattern)
-//        parcel.writeParcelable(startCap, flags)
-//        parcel.writeParcelable(endCap, flags)
-    }
-
-    /**
-     * public CREATOR field that generates instances of your Parcelable class from a Parcel.
-     */
-    companion object CREATOR : Parcelable.Creator<OmhPolylineOptions> {
-        /**
-         * Create a new instance of the Parcelable class,
-         * instantiating it from the given Parcel whose data had previously been written by Parcelable.writeToParcel().
-         *
-         * @param parcel the Parcel to read the object's data from.
-         * @return a new instance of the Parcelable class.
-         */
-        override fun createFromParcel(parcel: Parcel): OmhPolylineOptions {
-            return OmhPolylineOptions(parcel)
-        }
-
-        /**
-         * Create a new array of the Parcelable class.
-         *
-         * @param size size of the array.
-         * @return an array of the Parcelable class, with every entry initialized to null.
-         */
-        override fun newArray(size: Int): Array<OmhPolylineOptions?> {
-            return arrayOfNulls(size)
-        }
-    }
-}
+@SuppressWarnings("LongParameterList")
+@Parcelize
+class OmhPolylineOptions(
+    var points: List<OmhCoordinate> = listOf(),
+    var color: Int? = null,
+    var width: Float? = null,
+    var isVisible: Boolean? = null,
+    var zIndex: Float? = null,
+    var jointType: Int? = null,
+    var pattern: List<OmhPatternItem>? = null,
+    var startCap: OmhCap? = null,
+    var endCap: OmhCap? = null,
+    var spans: List<OmhStyleSpan>? = null,
+) : Parcelable

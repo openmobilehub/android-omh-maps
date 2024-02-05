@@ -1,65 +1,55 @@
-import com.google.android.gms.maps.model.ButtCap
-import com.google.android.gms.maps.model.Dash
-import com.google.android.gms.maps.model.Dot
-import com.google.android.gms.maps.model.Gap
-import com.google.android.gms.maps.model.JointType
-import com.google.android.gms.maps.model.Marker
+/*
+ * Copyright 2023 Open Mobile Hub
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.openmobilehub.android.maps.plugin.googlemaps.presentation.maps
+
 import com.google.android.gms.maps.model.Polyline
-import com.google.android.gms.maps.model.RoundCap
-import com.google.android.gms.maps.model.SquareCap
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhCap
-import com.openmobilehub.android.maps.core.presentation.models.OmhDash
-import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMarker
+import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhPatternItem
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhPolyline
-import com.openmobilehub.android.maps.core.presentation.models.OmhButtCap
+import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhStyleSpan
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
-import com.openmobilehub.android.maps.core.presentation.models.OmhDot
-import com.openmobilehub.android.maps.core.presentation.models.OmhGap
-import com.openmobilehub.android.maps.core.presentation.models.OmhPatternItem
-import com.openmobilehub.android.maps.core.presentation.models.OmhRoundCap
-import com.openmobilehub.android.maps.core.presentation.models.OmhSquareCap
-import com.openmobilehub.android.maps.plugin.googlemaps.utils.ConverterUtils
+import com.openmobilehub.android.maps.plugin.googlemaps.utils.CapConverter
+import com.openmobilehub.android.maps.plugin.googlemaps.utils.CoordinateConverter
+import com.openmobilehub.android.maps.plugin.googlemaps.utils.PatternConverter
+import com.openmobilehub.android.maps.plugin.googlemaps.utils.SpanConverter
 
+@SuppressWarnings("TooManyFunctions")
 internal class OmhPolylineImpl(private val polyline: Polyline) : OmhPolyline {
-
-    override fun getPoints(): Array<OmhCoordinate> {
-        return polyline.points.map { ConverterUtils.convertToOmhCoordinate(it) }.toTypedArray()
-    }
-    //TODO: Replace with omhCoordinates
-    override fun setPoints(omhCoordinate: Array<OmhCoordinate>) {
-        polyline.points = omhCoordinate.map { ConverterUtils.convertToLatLng(it) }
-    }
 
     override fun getColor(): Int {
         return polyline.color
     }
 
-    override fun setWidth(width: Float) {
-        polyline.width = width
-    }
-
-    override fun setVisible(visible: Boolean) {
-        polyline.isVisible = visible
-    }
-
-    override fun setZIndex(zIndex: Float) {
-        polyline.zIndex = zIndex
-    }
-
     override fun setColor(color: Int) {
-//        polyline.color = color
+        polyline.color = color
     }
 
-    override fun getWidth(): Float {
-        return polyline.width
+    override fun getEndCap(): OmhCap? {
+        return null
     }
 
-    override fun isVisible(): Boolean {
-        return polyline.isVisible
-    }
+    override fun setEndCap(endCap: OmhCap?) {
+        if (endCap == null) {
+            return
+        }
 
-    override fun getZIndex(): Float {
-        return polyline.zIndex
+        CapConverter.convertToCap(endCap)?.let {
+            polyline.endCap = it
+        }
     }
 
     override fun getJointType(): Int {
@@ -70,66 +60,73 @@ internal class OmhPolylineImpl(private val polyline: Polyline) : OmhPolyline {
         polyline.jointType = jointType
     }
 
+    override fun getPattern(): List<OmhPatternItem>? {
+        return polyline.pattern?.mapNotNull { patternItem ->
+            PatternConverter.convertToOmhPatternItem(patternItem)
+        }
+    }
 
     override fun setPattern(pattern: List<OmhPatternItem>?) {
-        polyline.pattern = pattern?.map { patternItem ->
-            when (patternItem) {
-                is OmhDot -> Dot()
-                is OmhDash -> Dash(patternItem.length)
-                is OmhGap -> Gap(patternItem.length)
-                else -> throw IllegalArgumentException("Unknown pattern item type")
+        pattern?.let {
+            polyline.pattern = it.map { patternItem ->
+                PatternConverter.convertToPatternItem(patternItem)
             }
         }
     }
 
-    override fun getPattern(): List<OmhPatternItem> {
-        return polyline.pattern!!.map {
-            when (it) {
-                is Dot -> OmhDot()
-                is Dash -> OmhDash(it.length)
-                is Gap -> OmhGap(it.length)
-                else -> throw IllegalArgumentException("Unknown pattern item type")
-            }
+    override fun getPoints(): List<OmhCoordinate> {
+        return polyline.points.map { CoordinateConverter.convertToOmhCoordinate(it) }
+    }
+
+    override fun setPoints(omhCoordinates: List<OmhCoordinate>) {
+        polyline.points = omhCoordinates.map { CoordinateConverter.convertToLatLng(it) }
+    }
+
+    override fun getSpans(): List<OmhStyleSpan>? {
+        return null
+    }
+
+    override fun setSpans(spans: List<OmhStyleSpan>?) {
+        spans?.let {
+            polyline.spans = spans.map { span -> SpanConverter.convertToStyleSpan(span) }
         }
     }
 
     override fun getStartCap(): OmhCap? {
-        return polyline.startCap.let {
-            when (it) {
-                is RoundCap -> OmhRoundCap()
-                is SquareCap -> OmhSquareCap()
-                is ButtCap -> OmhButtCap()
-                else -> throw IllegalArgumentException("Unknown cap type")
-            }
-        }
+        return null
     }
 
     override fun setStartCap(startCap: OmhCap?) {
-        polyline.startCap = when (startCap) {
-            is OmhRoundCap -> RoundCap()
-            is OmhSquareCap -> SquareCap()
-            is OmhButtCap -> ButtCap()
-            else -> throw IllegalArgumentException("Unknown cap type")
+        if (startCap == null) {
+            return
+        }
+
+        CapConverter.convertToCap(startCap)?.let {
+            polyline.startCap = it
         }
     }
 
-    override fun getEndCap(): OmhCap? {
-        return polyline.endCap.let {
-            when (it) {
-                is RoundCap -> OmhRoundCap()
-                is SquareCap -> OmhSquareCap()
-                is ButtCap -> OmhButtCap()
-                else -> throw IllegalArgumentException("Unknown cap type")
-            }
-        }
+    override fun getWidth(): Float {
+        return polyline.width
     }
 
-    override fun setEndCap(endCap: OmhCap?) {
-        polyline.endCap = when (endCap) {
-            is OmhRoundCap -> RoundCap()
-            is OmhSquareCap -> SquareCap()
-            is OmhButtCap -> ButtCap()
-            else -> throw IllegalArgumentException("Unknown cap type")
-        }
+    override fun setWidth(width: Float) {
+        polyline.width = width
+    }
+
+    override fun isVisible(): Boolean {
+        return polyline.isVisible
+    }
+
+    override fun setVisible(visible: Boolean) {
+        polyline.isVisible = visible
+    }
+
+    override fun getZIndex(): Float {
+        return polyline.zIndex
+    }
+
+    override fun setZIndex(zIndex: Float) {
+        polyline.zIndex = zIndex
     }
 }

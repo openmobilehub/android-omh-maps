@@ -16,49 +16,39 @@
 
 package com.openmobilehub.android.maps.plugin.googlemaps.extensions
 
-import android.graphics.Color
-import androidx.lifecycle.Transformations.map
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.Polyline
 import com.google.android.gms.maps.model.PolylineOptions
-import com.google.android.gms.maps.model.StyleSpan
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolylineOptions
-import com.openmobilehub.android.maps.plugin.googlemaps.utils.ConverterUtils
-
+import com.openmobilehub.android.maps.plugin.googlemaps.utils.CapConverter
+import com.openmobilehub.android.maps.plugin.googlemaps.utils.CoordinateConverter
+import com.openmobilehub.android.maps.plugin.googlemaps.utils.PatternConverter
+import com.openmobilehub.android.maps.plugin.googlemaps.utils.SpanConverter
 
 internal fun OmhPolylineOptions.toPolylineOptions(): PolylineOptions {
-    return PolylineOptions()
-            .add(
-                LatLng(0.789258, -122.387819),
-                LatLng(0.786572, -122.390556),
-                LatLng(0.786140, 30.390899)
-            )
-            .addSpan(StyleSpan(Color.MAGENTA))
-            .addSpan(StyleSpan(Color.GREEN))
+    val options = PolylineOptions().addAll(points.map { CoordinateConverter.convertToLatLng(it) })
 
-//    color?.let { mappedOptions.color(it) }
-//    width?.let { mappedOptions.width(it) }
-//    isVisible?.let { mappedOptions.visible(it) }
-//    zIndex?.let { mappedOptions.zIndex(it) }
-//    jointType?.let { mappedOptions.jointType(it) }
-//    pattern?.let { mappedOptions.pattern(it.map { ConverterUtils.convertToPatternItem(it) }) }
-//    startCap?.let { mappedOptions.startCap(ConverterUtils.convertToCap(it)) }
-//    endCap?.let { mappedOptions.endCap(ConverterUtils.convertToCap(it)) }
+    color?.let { options.color(it) }
+    width?.let { options.width(it) }
+    isVisible?.let { options.visible(it) }
+    zIndex?.let { options.zIndex(it) }
+    jointType?.let { options.jointType(it) }
+    pattern?.let {
+        options.pattern(
+            it.map { patternItem ->
+                PatternConverter.convertToPatternItem(
+                    patternItem
+                )
+            }
+        )
+    }
+    startCap?.let {
+        val cap = CapConverter.convertToCap(it)
+        cap?.let { options.startCap(cap) }
+    }
+    endCap?.let {
+        val cap = CapConverter.convertToCap(it)
+        cap?.let { options.endCap(cap) }
+    }
+    spans?.let { options.addAllSpans(it.map { span -> SpanConverter.convertToStyleSpan(span) }) }
 
-//    mappedOptions.color(Color.RED)
-//    mappedOptions.addSpan(StyleSpan(Color.GREEN, 2.0))
-//    return mappedOptions.addAllSpans(listOf(StyleSpan(Color.RED), StyleSpan(Color.BLUE)))
-
-
-//       Make it work
-//        .addAllSpans(
-//            listOf(
-//                StyleSpan(Color.RED),
-//                StyleSpan(Color.BLUE)
-//            )
-//        )
-//        .addSpan(StyleSpan(Color.RED, 2.0))
-//        .addSpan(StyleSpan(Color.GREEN))
-
-//    return mappedOptions
+    return options
 }

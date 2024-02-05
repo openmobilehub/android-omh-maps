@@ -1,4 +1,5 @@
 package com.openmobilehub.android.maps.core.presentation.interfaces.maps
 
-interface OmhCap {
-}
+import android.os.Parcelable
+
+interface OmhCap : Parcelable

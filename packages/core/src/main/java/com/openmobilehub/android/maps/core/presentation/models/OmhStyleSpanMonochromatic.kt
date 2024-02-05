@@ -16,15 +16,23 @@
 
 package com.openmobilehub.android.maps.core.presentation.models
 
-import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhPatternItem
+import android.graphics.Bitmap
+import android.os.Parcelable
+import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhStyleSpan
 import kotlinx.parcelize.Parcelize
 
 /**
- * `OmhDash` is a class that represents a dash pattern item on a map.
- * A dash pattern item can be used to customize the appearance of polylines and other map elements.
- * This class extends the [OmhPatternItem] interface.
+ * [OmhStyleSpanMonochromatic] is a class that represents a monochromatic style span on a map.
+ * A style span can be used to customize the appearance of polylines.
+ * This class implements the [OmhStyleSpan] interface.
  *
- * @property length The length of the dash.
+ * @property color The color of the style span.
+ * @property segments The number of segments in the style span.
+ * @property stamp The bitmap used for the style span.
  */
 @Parcelize
-class OmhDash(val length: Float) : OmhPatternItem
+class OmhStyleSpanMonochromatic(
+    val color: Int,
+    override val segments: Double? = null,
+    override val stamp: Bitmap? = null
+) : OmhStyleSpan, Parcelable

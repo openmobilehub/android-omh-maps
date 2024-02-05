@@ -41,10 +41,10 @@ interface OmhMap {
     fun addMarker(options: OmhMarkerOptions): OmhMarker?
 
     /**
-     * Adds a marker to this map. The marker's icon is rendered on the map at the position.
+     * Adds a polyline to this map. The polyline is rendered on the map based on the provided options.
      *
-     * @param options a marker options object that defines how to render the marker.
-     * @return [OmhMarker] that was added to the map.
+     * @param options a polyline options object that defines how to render the polyline.
+     * @return [OmhPolyline] that was added to the map.
      */
     fun addPolyline(options: OmhPolylineOptions): OmhPolyline?
 
@@ -116,6 +116,15 @@ interface OmhMap {
      * @param callback The callback invoked when the map has finished rendering. To unset the callback, use null.
      */
     fun setOnMapLoadedCallback(callback: OmhMapLoadedCallback?)
+
+    /**
+     * Sets a callback that's invoked when a polyline on the map is clicked.
+     *
+     * @param listener The callback that's invoked when a polyline is clicked.
+     * This listener takes in an [OmhOnPolylineClickListener] object which defines the
+     * `onPolylineClick` method that will be called with the clicked [OmhPolyline] as a parameter.
+     */
+    fun setOnPolylineClickListener(listener: OmhOnPolylineClickListener)
 
     /**
      * Takes a snapshot of the map.
