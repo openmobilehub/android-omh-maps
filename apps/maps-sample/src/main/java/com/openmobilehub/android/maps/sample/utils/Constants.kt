@@ -25,7 +25,7 @@ object Constants {
     // Coordinate constants
     val PRIME_MERIDIAN: OmhCoordinate = OmhCoordinate(51.4779, -0.0015)
     const val DEFAULT_ZOOM_LEVEL = 15f
-    const val ZOOM_LEVEL_5 = 0f
+    const val ZOOM_LEVEL_5 = 5f
 
     // Animation constants
     val OVERSHOOT_INTERPOLATOR = OvershootInterpolator()

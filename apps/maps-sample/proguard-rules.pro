@@ -16,9 +16,6 @@
 # debugging stack traces.
 -keepattributes SourceFile,LineNumberTable
 
--keep class com.openmobilehub.android.maps.plugin.googlemaps.** { *; }
-
-
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile

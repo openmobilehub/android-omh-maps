@@ -158,13 +158,12 @@ class MapFragment : Fragment(), OmhOnMapReadyCallback {
         }
 
         val omhOnPolylineClickListener = OmhOnPolylineClickListener {
-            Toast.makeText(requireContext(), it.getWidth().toString(), Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "Polyline clicked!", Toast.LENGTH_SHORT).show()
         }
 
         omhMap.setOnCameraIdleListener(omhOnCameraIdleListener)
         omhMap.setOnPolylineClickListener(omhOnPolylineClickListener)
         getCurrentLocation(omhMap)
-        moveToCurrentLocation(omhMap, ZOOM_LEVEL_5)
 
         DebugPolylineHelper.addDebugPolylines(omhMap, resources)
     }
@@ -234,7 +233,7 @@ class MapFragment : Fragment(), OmhOnMapReadyCallback {
         handledCurrentLocation = true
         handler?.removeCallbacksAndMessages(null)
         binding.progressIndicatorIcon.visibility = View.GONE
-//        moveToCurrentLocation(omhMap, DEFAULT_ZOOM_LEVEL)
+        moveToCurrentLocation(omhMap, DEFAULT_ZOOM_LEVEL)
         enableMyLocation(omhMap)
     }
 

@@ -79,8 +79,10 @@ object DebugPolylineHelper {
                 OmhCoordinate(50.0, 24.0),
             )
             color = Color.BLUE
-            startCap = OmhCustomCap(BitmapFactory.decodeResource(resources, R.drawable.soccer_ball), 35f)
-            endCap = OmhCustomCap(BitmapFactory.decodeResource(resources, R.drawable.soccer_ball), 35f)
+            startCap =
+                OmhCustomCap(BitmapFactory.decodeResource(resources, R.drawable.soccer_ball), 35f)
+            endCap =
+                OmhCustomCap(BitmapFactory.decodeResource(resources, R.drawable.soccer_ball), 35f)
         }
 
         val roundedCapPolyline = OmhPolylineOptions().apply {
@@ -108,7 +110,11 @@ object DebugPolylineHelper {
                 OmhStyleSpanMonochromatic(Color.GREEN),
                 OmhStyleSpanGradient(Color.BLUE, Color.RED),
                 OmhStyleSpanMonochromatic(Color.RED, 2.0),
-                OmhStyleSpanMonochromatic(Color.GREEN, null, BitmapFactory.decodeResource(resources, R.drawable.soccer_ball)),
+                OmhStyleSpanMonochromatic(
+                    Color.GREEN,
+                    null,
+                    BitmapFactory.decodeResource(resources, R.drawable.soccer_ball)
+                ),
             )
             width = 30f
         }
