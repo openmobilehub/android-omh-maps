@@ -39,7 +39,6 @@ class PatternConverterTest {
         val result = PatternConverter.convertToPatternItem(omhDot)
 
         // Assert
-        Assert.assertNotNull(result)
         Assert.assertTrue(result is Dot)
     }
 
@@ -52,7 +51,6 @@ class PatternConverterTest {
         val result = PatternConverter.convertToPatternItem(omhDash)
 
         // Assert
-        Assert.assertNotNull(result)
         Assert.assertTrue(result is Dash)
         Assert.assertEquals(10f, (result as Dash).length)
     }
@@ -66,7 +64,6 @@ class PatternConverterTest {
         val result = PatternConverter.convertToPatternItem(omhGap)
 
         // Assert
-        Assert.assertNotNull(result)
         Assert.assertTrue(result is Gap)
         Assert.assertEquals(20f, (result as Gap).length)
     }
@@ -89,7 +86,6 @@ class PatternConverterTest {
         val result = PatternConverter.convertToOmhPatternItem(Dot())
 
         // Assert
-        Assert.assertNotNull(result)
         Assert.assertTrue(result is OmhDot)
     }
 
@@ -102,7 +98,6 @@ class PatternConverterTest {
         val result = PatternConverter.convertToOmhPatternItem(dash)
 
         // Assert
-        Assert.assertNotNull(result)
         Assert.assertTrue(result is OmhDash)
         Assert.assertEquals(30f, (result as OmhDash).length)
     }
@@ -116,7 +111,6 @@ class PatternConverterTest {
         val result = PatternConverter.convertToOmhPatternItem(gap)
 
         // Assert
-        Assert.assertNotNull(result)
         Assert.assertTrue(result is OmhGap)
         Assert.assertEquals(40f, (result as OmhGap).length)
     }

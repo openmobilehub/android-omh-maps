@@ -182,7 +182,7 @@ class MapFragment : Fragment(), OmhOnMapReadyCallback {
             )
         }
         omhMap.addMarker(omhMarkerOptions)
-//        moveToCurrentLocation(omhMap, DEFAULT_ZOOM_LEVEL)
+        moveToCurrentLocation(omhMap, DEFAULT_ZOOM_LEVEL)
     }
 
     private fun enableMyLocation(omhMap: OmhMap) {

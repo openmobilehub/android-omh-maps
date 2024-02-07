@@ -21,7 +21,7 @@ import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhCap
 import kotlinx.parcelize.Parcelize
 
 /**
- * `OmhCustomCap` is a class that represents a custom cap for a polyline on a map.
+ * [OmhCustomCap] is a class that represents a custom cap for a polyline on a map.
  * A custom cap is a cap that uses a custom bitmap image.
  * This class extends the [OmhCap] interface.
  *

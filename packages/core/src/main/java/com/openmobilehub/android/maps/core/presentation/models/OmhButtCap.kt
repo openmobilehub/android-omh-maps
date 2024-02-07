@@ -20,7 +20,7 @@ import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhCap
 import kotlinx.parcelize.Parcelize
 
 /**
- * `OmhButtCap` is a class that represents a butt cap for a polyline on a map.
+ * [OmhButtCap] is a class that represents a butt cap for a polyline on a map.
  * A butt cap is a cap that is squared off exactly at the start or end vertex of a polyline.
  * This class extends the [OmhCap] interface.
  */

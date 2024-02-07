@@ -55,7 +55,6 @@ class SpanConverterTest {
         val result = SpanConverter.convertToStyleSpan(omhStyleSpanMonochromatic)
 
         // Assert
-        Assert.assertNotNull(result)
         Assert.assertTrue(result is StyleSpan)
         Assert.assertEquals(3.0, result?.segments)
     }
@@ -78,7 +77,6 @@ class SpanConverterTest {
         val result = SpanConverter.convertToStyleSpan(omhStyleSpanGradient)
 
         // Assert
-        Assert.assertNotNull(result)
         Assert.assertTrue(result is StyleSpan)
         Assert.assertEquals(3.0, result?.segments)
     }

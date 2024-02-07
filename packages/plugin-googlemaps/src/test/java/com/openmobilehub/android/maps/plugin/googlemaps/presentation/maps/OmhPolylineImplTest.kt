@@ -38,7 +38,6 @@ import io.mockk.mockk
 import io.mockk.mockkObject
 import io.mockk.runs
 import io.mockk.verify
-import org.junit.Assert
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Before
@@ -60,7 +59,7 @@ class OmhPolylineImplTest {
     }
 
     @Test
-    fun `getClickable returns clickable boolean`() {
+    fun `getClickable returns clickable state`() {
         // Arrange
         val expectedValue = true
         every { polyline.isClickable } returns expectedValue
@@ -69,11 +68,11 @@ class OmhPolylineImplTest {
         val clickable = omhPolyline.getClickable()
 
         // Assert
-        Assert.assertEquals(expectedValue, clickable)
+        assertEquals(expectedValue, clickable)
     }
 
     @Test
-    fun `setClickable sets clickable boolean`() {
+    fun `setClickable sets clickable state`() {
         // Arrange
         val expectedValue = true
         every { polyline.isClickable = any() } just runs
@@ -127,8 +126,8 @@ class OmhPolylineImplTest {
         val omhCap = mockk<OmhCap>()
         val cap = mockk<Cap>()
 
-        every { CapConverter.convertToCap(omhCap) } returns cap // Stub the method call
-        every { polyline.endCap = cap } just runs // Stub the setter on polyline
+        every { CapConverter.convertToCap(omhCap) } returns cap
+        every { polyline.endCap = cap } just runs
 
         omhPolyline.setEndCap(omhCap)
 
@@ -161,32 +160,40 @@ class OmhPolylineImplTest {
 
     @Test
     fun `getPattern returns converted polyline pattern`() {
+        // Arrange
         val patternItem = mockk<PatternItem>()
         val omhPatternItem = mockk<OmhPatternItem>()
         every { polyline.pattern } returns listOf(patternItem)
         every { PatternConverter.convertToOmhPatternItem(patternItem) } returns omhPatternItem
 
+        // Act
         val result = omhPolyline.getPattern()
 
+        // Assert
         assertEquals(listOf(omhPatternItem), result)
     }
 
     @Test
     fun `setPattern sets polyline pattern`() {
+        // Arrange
         val omhPatternItem = mockk<OmhPatternItem>()
         val patternItem = mockk<PatternItem>()
         every { PatternConverter.convertToPatternItem(omhPatternItem) } returns patternItem
         every { polyline.pattern = listOf(patternItem) } just runs
 
+        // Act
         omhPolyline.setPattern(listOf(omhPatternItem))
 
+        // Assert
         verify { polyline.pattern = listOf(patternItem) }
     }
 
     @Test
     fun `setEndCap does nothing if omhCap is null`() {
+        // Act
         omhPolyline.setEndCap(null)
 
+        // Assert
         verify(exactly = 0) { polyline.endCap = any() }
     }
 

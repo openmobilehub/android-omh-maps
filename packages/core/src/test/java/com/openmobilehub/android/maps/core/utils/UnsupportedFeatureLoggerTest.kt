@@ -24,10 +24,11 @@ import org.junit.Before
 import org.junit.Test
 
 class UnsupportedFeatureLoggerTest {
-    private val mapElement = "OmhPolyline"
-    private val providerName = "OpenStreetMap"
-    private val propertyName = "color"
+    private val mapElement = "MapElement"
+    private val providerName = "ProviderName"
+    private val propertyName = "SomeProperty"
     private val tag = Constants.LOG_TAG
+
     private lateinit var logger: UnsupportedFeatureLogger
 
     @Before

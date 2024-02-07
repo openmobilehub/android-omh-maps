@@ -51,7 +51,7 @@ class OmhPolylineImplTest {
     }
 
     @Test
-    fun `getClickable returns clickable boolean`() {
+    fun `getClickable returns clickable state`() {
         // Arrange
         val expectedValue = true
         every { polyline.isEnabled } returns expectedValue
@@ -64,7 +64,7 @@ class OmhPolylineImplTest {
     }
 
     @Test
-    fun `setClickable sets clickable boolean`() {
+    fun `setClickable sets clickable state`() {
         // Arrange
         val expectedValue = true
         every { polyline.isEnabled = any() } just runs

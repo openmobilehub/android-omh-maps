@@ -28,6 +28,7 @@ import kotlinx.parcelize.Parcelize
  * You can customize the appearance of the polyline by changing its color, width, pattern, joint type, and caps.
  *
  * @property points The points that make up the polyline.
+ * @property clickable The clickable state of the polyline.
  * @property color The color of the polyline.
  * @property width The width of the polyline.
  * @property isVisible The visibility of the polyline.

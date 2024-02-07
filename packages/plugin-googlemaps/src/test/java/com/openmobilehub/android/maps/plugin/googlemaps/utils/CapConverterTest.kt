@@ -39,7 +39,6 @@ class CapConverterTest {
 
     @Before
     fun setUp() {
-        // Mock static methods if needed, e.g., BitmapDescriptorFactory
         mockkStatic(BitmapDescriptorFactory::class)
     }
 
@@ -52,7 +51,6 @@ class CapConverterTest {
         val result = CapConverter.convertToCap(omhRoundCap)
 
         // Assert
-        Assert.assertNotNull(result)
         Assert.assertTrue(result is RoundCap)
     }
 
@@ -65,7 +63,6 @@ class CapConverterTest {
         val result = CapConverter.convertToCap(omhSquareCap)
 
         // Assert
-        Assert.assertNotNull(result)
         Assert.assertTrue(result is SquareCap)
     }
 
@@ -78,7 +75,6 @@ class CapConverterTest {
         val result = CapConverter.convertToCap(omhButtCap)
 
         // Assert
-        Assert.assertNotNull(result)
         Assert.assertTrue(result is ButtCap)
     }
 
@@ -95,7 +91,6 @@ class CapConverterTest {
         val result = CapConverter.convertToCap(omhCustomCap)
 
         // Assert
-        Assert.assertNotNull(result)
         Assert.assertTrue(result is CustomCap)
         Assert.assertEquals(10f, (result as CustomCap).refWidth)
     }
@@ -115,7 +110,6 @@ class CapConverterTest {
         val result = CapConverter.convertToCap(omhCustomCap)
 
         // Assert
-        Assert.assertNotNull(result)
         Assert.assertTrue(result is CustomCap)
         Assert.assertEquals(googleMapsDefaultRefWidth, (result as CustomCap).refWidth)
     }

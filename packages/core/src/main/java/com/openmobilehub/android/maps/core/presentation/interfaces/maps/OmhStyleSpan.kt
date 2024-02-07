@@ -20,13 +20,12 @@ import android.graphics.Bitmap
 import android.os.Parcelable
 
 /**
- * `OmhStyleSpan` is an interface that provides an abstraction for a style span on a map.
+ * [OmhStyleSpan] is an interface that provides an abstraction for a style span on a map.
  * A style span is a segment of a polyline or polygon that has a specific style.
- * You can customize the appearance of the style span by changing its color, pattern, and texture.
  */
 interface OmhStyleSpan : Parcelable {
     /**
-     * Gets the length of the style span in screen pixels.
+     * Gets the length of this span in number of segments
      * @return A double representing the length of the style span.
      */
     val segments: Double?

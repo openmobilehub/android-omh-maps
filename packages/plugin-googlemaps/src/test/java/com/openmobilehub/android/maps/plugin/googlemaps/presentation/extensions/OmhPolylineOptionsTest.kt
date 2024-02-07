@@ -77,7 +77,6 @@ internal class OmhPolylineOptionsTest {
 
     @Before
     fun setUp() {
-        // Mocking static methods of converters
         mockkObject(CoordinateConverter)
         mockkObject(PatternConverter)
         mockkObject(CapConverter)

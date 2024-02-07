@@ -21,7 +21,7 @@ import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 /**
  * [OmhPolyline] is an interface that provides an abstraction for a polyline on a map.
  * A polyline is a series of connected line segments that can form any shape you want on a map.
- * You can customize the appearance of the polyline by changing its color, width, pattern, joint type, and caps.
+ * You can customize the appearance of the polyline by changing its properties.
  */
 @SuppressWarnings("TooManyFunctions")
 interface OmhPolyline {
@@ -122,8 +122,16 @@ interface OmhPolyline {
      */
     fun setStartCap(startCap: OmhCap?)
 
+    /**
+     * Retrieves the tag associated with the polyline.
+     * @return The tag of the polyline.
+     */
     fun getTag(): Any?
 
+    /**
+     * Sets the tag associated with the polyline.
+     * @param tag The tag to be set for the polyline.
+     */
     fun setTag(tag: Any?)
 
     /**
