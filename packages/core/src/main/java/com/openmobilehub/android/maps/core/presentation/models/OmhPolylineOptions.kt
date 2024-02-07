@@ -42,6 +42,7 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 class OmhPolylineOptions(
     var points: List<OmhCoordinate> = listOf(),
+    var clickable: Boolean? = null,
     var color: Int? = null,
     var width: Float? = null,
     var isVisible: Boolean? = null,

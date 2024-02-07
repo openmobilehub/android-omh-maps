@@ -40,13 +40,40 @@ class OmhPolylineImplTest {
 
     private lateinit var polyline: Polyline
     private lateinit var omhPolyline: OmhPolylineImpl
-    private val mockLogger: UnsupportedFeatureLogger = mockk<UnsupportedFeatureLogger>(relaxed = true)
+    private val mockLogger: UnsupportedFeatureLogger =
+        mockk<UnsupportedFeatureLogger>(relaxed = true)
 
     @Before
     fun setUp() {
         polyline = mockk(relaxed = true)
         omhPolyline = OmhPolylineImpl(polyline, mockLogger)
         mockkObject(ConverterUtils)
+    }
+
+    @Test
+    fun `getClickable returns clickable boolean`() {
+        // Arrange
+        val expectedValue = true
+        every { polyline.isEnabled } returns expectedValue
+
+        // Act
+        val clickable = omhPolyline.getClickable()
+
+        // Assert
+        Assert.assertEquals(expectedValue, clickable)
+    }
+
+    @Test
+    fun `setClickable sets clickable boolean`() {
+        // Arrange
+        val expectedValue = true
+        every { polyline.isEnabled = any() } just runs
+
+        // Act
+        omhPolyline.setClickable(expectedValue)
+
+        // Assert
+        verify { polyline.isEnabled = expectedValue }
     }
 
     @Test

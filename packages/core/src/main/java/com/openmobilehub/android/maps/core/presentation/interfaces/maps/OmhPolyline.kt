@@ -27,6 +27,18 @@ import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 interface OmhPolyline {
 
     /**
+     * Checks if the polyline is clickable.
+     * @return A boolean indicating whether the polyline is clickable.
+     */
+    fun getClickable(): Boolean
+
+    /**
+     * Sets the clickable state of the polyline.
+     * @param clickable A boolean indicating whether the polyline should be clickable.
+     */
+    fun setClickable(clickable: Boolean)
+
+    /**
      * Gets the color of the polyline.
      * @return An integer representing the color of the polyline.
      */
@@ -109,6 +121,10 @@ interface OmhPolyline {
      * @param startCap An [OmhCap] object representing the start cap of the polyline.
      */
     fun setStartCap(startCap: OmhCap?)
+
+    fun getTag(): Any?
+
+    fun setTag(tag: Any?)
 
     /**
      * Gets the visibility of the polyline.

@@ -18,24 +18,26 @@ import com.openmobilehub.android.maps.sample.R
 
 object DebugPolylineHelper {
     fun addDebugPolylines(omhMap: OmhMap, resources: Resources) {
-        val basicPolyline = OmhPolylineOptions().apply {
+        val basicPolylineOptions = OmhPolylineOptions().apply {
             points = listOf(
                 OmhCoordinate(55.0, 15.0),
                 OmhCoordinate(56.0, 19.0),
                 OmhCoordinate(55.0, 24.0),
             )
+            clickable = true
         }
 
-        val colorPolyline = OmhPolylineOptions().apply {
+        val colorPolylineOptions = OmhPolylineOptions().apply {
             points = listOf(
                 OmhCoordinate(54.0, 15.0),
                 OmhCoordinate(55.0, 19.0),
                 OmhCoordinate(54.0, 24.0),
             )
             color = Color.BLUE
+            clickable = true
         }
 
-        val customWidthPolyline = OmhPolylineOptions().apply {
+        val customWidthPolylineOptions = OmhPolylineOptions().apply {
             points = listOf(
                 OmhCoordinate(53.0, 15.0),
                 OmhCoordinate(54.0, 19.0),
@@ -43,9 +45,10 @@ object DebugPolylineHelper {
             )
             color = Color.BLUE
             width = 50f
+            clickable = true
         }
 
-        val customPatternPolyline = OmhPolylineOptions().apply {
+        val customPatternPolylineOptions = OmhPolylineOptions().apply {
             points = listOf(
                 OmhCoordinate(52.0, 15.0),
                 OmhCoordinate(53.0, 19.0),
@@ -60,9 +63,10 @@ object DebugPolylineHelper {
                 OmhDot(),
                 OmhGap(10f),
             )
+            clickable = true
         }
 
-        val roundedJointTypePolyline = OmhPolylineOptions().apply {
+        val roundedJointTypePolylineOptions = OmhPolylineOptions().apply {
             points = listOf(
                 OmhCoordinate(51.0, 15.0),
                 OmhCoordinate(52.0, 19.0),
@@ -70,9 +74,10 @@ object DebugPolylineHelper {
             )
             color = Color.BLUE
             jointType = OmhJointType.ROUND
+            clickable = true
         }
 
-        val customCapPolyline = OmhPolylineOptions().apply {
+        val customCapPolylineOptions = OmhPolylineOptions().apply {
             points = listOf(
                 OmhCoordinate(50.0, 15.0),
                 OmhCoordinate(51.0, 19.0),
@@ -83,9 +88,10 @@ object DebugPolylineHelper {
                 OmhCustomCap(BitmapFactory.decodeResource(resources, R.drawable.soccer_ball), 35f)
             endCap =
                 OmhCustomCap(BitmapFactory.decodeResource(resources, R.drawable.soccer_ball), 35f)
+            clickable = true
         }
 
-        val roundedCapPolyline = OmhPolylineOptions().apply {
+        val roundedCapPolylineOptions = OmhPolylineOptions().apply {
             points = listOf(
                 OmhCoordinate(49.0, 15.0),
                 OmhCoordinate(50.0, 19.0),
@@ -94,9 +100,10 @@ object DebugPolylineHelper {
             color = Color.BLUE
             startCap = OmhRoundCap()
             endCap = OmhRoundCap()
+            clickable = true
         }
 
-        val customSpansPolyline = OmhPolylineOptions().apply {
+        val customSpansPolylineOptions = OmhPolylineOptions().apply {
             points = listOf(
                 OmhCoordinate(48.0, 15.0),
                 OmhCoordinate(49.0, 19.0),
@@ -117,24 +124,44 @@ object DebugPolylineHelper {
                 ),
             )
             width = 30f
+            clickable = true
         }
 
-        val increasedZIndexPolyline = OmhPolylineOptions().apply {
+        val increasedZIndexPolylineOptions = OmhPolylineOptions().apply {
             points = listOf(
                 OmhCoordinate(57.0, 16.0),
                 OmhCoordinate(45.0, 18.0),
             )
             color = Color.RED
             zIndex = 10f
+            clickable = true
         }
 
-        omhMap.addPolyline(colorPolyline)
-        omhMap.addPolyline(customWidthPolyline)
-        omhMap.addPolyline(customPatternPolyline)
-        omhMap.addPolyline(roundedJointTypePolyline)
-        omhMap.addPolyline(customCapPolyline)
-        omhMap.addPolyline(roundedCapPolyline)
-        omhMap.addPolyline(increasedZIndexPolyline)
-        omhMap.addPolyline(customSpansPolyline)
+        val basicPolyline = omhMap.addPolyline(basicPolylineOptions)
+        basicPolyline?.setTag("Basic Polyline")
+
+        val colorPolyline = omhMap.addPolyline(colorPolylineOptions)
+        colorPolyline?.setTag("Custom Color Polyline")
+
+        val customWidthPolyline =  omhMap.addPolyline(customWidthPolylineOptions)
+        customWidthPolyline?.setTag("Custom Width Polyline")
+
+        val customPatternPolyline =  omhMap.addPolyline(customPatternPolylineOptions)
+        customPatternPolyline?.setTag("Custom Pattern Polyline")
+
+        val roundedJointTypePolyline = omhMap.addPolyline(roundedJointTypePolylineOptions)
+        roundedJointTypePolyline?.setTag("Rounded Joint Type Polyline")
+
+        val customCapPolyline = omhMap.addPolyline(customCapPolylineOptions)
+        customCapPolyline?.setTag("Custom Cap Polyline")
+
+        val roundedCapPolyline = omhMap.addPolyline(roundedCapPolylineOptions)
+        roundedCapPolyline?.setTag("Rounded Cap Polyline")
+
+        val increasedZIndexPolyline = omhMap.addPolyline(increasedZIndexPolylineOptions)
+        increasedZIndexPolyline?.setTag("Increased Z-Index Polyline")
+
+        val customSpansPolyline = omhMap.addPolyline(customSpansPolylineOptions)
+        customSpansPolyline?.setTag("Custom Spans Polyline")
     }
 }

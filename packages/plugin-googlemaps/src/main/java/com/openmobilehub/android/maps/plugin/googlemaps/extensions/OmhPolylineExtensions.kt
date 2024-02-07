@@ -26,6 +26,7 @@ import com.openmobilehub.android.maps.plugin.googlemaps.utils.SpanConverter
 internal fun OmhPolylineOptions.toPolylineOptions(): PolylineOptions {
     val options = PolylineOptions().addAll(points.map { CoordinateConverter.convertToLatLng(it) })
 
+    clickable?.let { options.clickable(it) }
     color?.let { options.color(it) }
     width?.let { options.width(it) }
     isVisible?.let { options.visible(it) }

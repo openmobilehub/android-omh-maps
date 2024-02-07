@@ -47,6 +47,7 @@ class OmhPolylineOptionsExtensionTest {
             OmhCoordinate(20.0, 20.0),
             OmhCoordinate(10.0, 10.0),
         )
+        clickable = true
         color = Color.BLUE
         width = 100f
         isVisible = true
@@ -84,6 +85,7 @@ class OmhPolylineOptionsExtensionTest {
         // Assert
         Assert.assertEquals(2, polylineOptions.actualPoints.size)
         Assert.assertEquals(true, polylineOptions.isVisible)
+        Assert.assertTrue(polylineOptions.isEnabled)
     }
 
     @Test

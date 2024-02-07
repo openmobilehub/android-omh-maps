@@ -158,7 +158,8 @@ class MapFragment : Fragment(), OmhOnMapReadyCallback {
         }
 
         val omhOnPolylineClickListener = OmhOnPolylineClickListener {
-            Toast.makeText(requireContext(), "Polyline clicked!", Toast.LENGTH_SHORT).show()
+
+            Toast.makeText(requireContext(), it.getTag().toString(), Toast.LENGTH_SHORT).show()
         }
 
         omhMap.setOnCameraIdleListener(omhOnCameraIdleListener)
@@ -181,7 +182,7 @@ class MapFragment : Fragment(), OmhOnMapReadyCallback {
             )
         }
         omhMap.addMarker(omhMarkerOptions)
-        moveToCurrentLocation(omhMap, DEFAULT_ZOOM_LEVEL)
+//        moveToCurrentLocation(omhMap, DEFAULT_ZOOM_LEVEL)
     }
 
     private fun enableMyLocation(omhMap: OmhMap) {

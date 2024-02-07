@@ -53,6 +53,7 @@ internal class OmhPolylineOptionsTest {
             OmhCoordinate(20.0, 20.0),
             OmhCoordinate(10.0, 10.0),
         )
+        clickable = true
         color = Color.RED
         width = 100f
         isVisible = true
@@ -105,5 +106,6 @@ internal class OmhPolylineOptionsTest {
         assertTrue(polylineOptions.pattern?.get(2) is Dash)
         assertTrue(polylineOptions.startCap is RoundCap)
         assertTrue(polylineOptions.endCap is SquareCap)
+        assertTrue(polylineOptions.isClickable)
     }
 }

@@ -38,6 +38,7 @@ import io.mockk.mockk
 import io.mockk.mockkObject
 import io.mockk.runs
 import io.mockk.verify
+import org.junit.Assert
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Before
@@ -56,6 +57,32 @@ class OmhPolylineImplTest {
         mockkObject(PatternConverter)
         mockkObject(CoordinateConverter)
         mockkObject(SpanConverter)
+    }
+
+    @Test
+    fun `getClickable returns clickable boolean`() {
+        // Arrange
+        val expectedValue = true
+        every { polyline.isClickable } returns expectedValue
+
+        // Act
+        val clickable = omhPolyline.getClickable()
+
+        // Assert
+        Assert.assertEquals(expectedValue, clickable)
+    }
+
+    @Test
+    fun `setClickable sets clickable boolean`() {
+        // Arrange
+        val expectedValue = true
+        every { polyline.isClickable = any() } just runs
+
+        // Act
+        omhPolyline.setClickable(expectedValue)
+
+        // Assert
+        verify { polyline.isClickable = expectedValue }
     }
 
     @Test

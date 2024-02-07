@@ -32,6 +32,14 @@ internal class OmhPolylineImpl(
     private val logger: UnsupportedFeatureLogger = polylineLogger
 ) : OmhPolyline {
 
+    override fun getClickable(): Boolean {
+        return polyline.isEnabled
+    }
+
+    override fun setClickable(clickable: Boolean) {
+        polyline.isEnabled = clickable
+    }
+
     override fun getColor(): Int {
         return polyline.outlinePaint.color
     }
@@ -91,6 +99,14 @@ internal class OmhPolylineImpl(
 
     override fun setStartCap(startCap: OmhCap?) {
         logger.logSetterNotSupported("startCap")
+    }
+
+    override fun getTag(): Any? {
+        return polyline.relatedObject
+    }
+
+    override fun setTag(tag: Any?) {
+        polyline.relatedObject = tag
     }
 
     override fun getWidth(): Float {
