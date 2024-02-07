@@ -22,13 +22,18 @@ import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhPatte
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhPolyline
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhStyleSpan
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
+import com.openmobilehub.android.maps.core.utils.UnsupportedFeatureLogger
 import com.openmobilehub.android.maps.plugin.googlemaps.utils.CapConverter
 import com.openmobilehub.android.maps.plugin.googlemaps.utils.CoordinateConverter
 import com.openmobilehub.android.maps.plugin.googlemaps.utils.PatternConverter
 import com.openmobilehub.android.maps.plugin.googlemaps.utils.SpanConverter
+import com.openmobilehub.android.maps.plugin.googlemaps.utils.polylineLogger
 
 @SuppressWarnings("TooManyFunctions")
-internal class OmhPolylineImpl(private val polyline: Polyline) : OmhPolyline {
+internal class OmhPolylineImpl(
+    private val polyline: Polyline,
+    private val logger: UnsupportedFeatureLogger = polylineLogger
+) : OmhPolyline {
 
     override fun getColor(): Int {
         return polyline.color
@@ -39,6 +44,7 @@ internal class OmhPolylineImpl(private val polyline: Polyline) : OmhPolyline {
     }
 
     override fun getEndCap(): OmhCap? {
+        logger.logGetterNotSupported("endCap")
         return null
     }
 
@@ -83,6 +89,7 @@ internal class OmhPolylineImpl(private val polyline: Polyline) : OmhPolyline {
     }
 
     override fun getSpans(): List<OmhStyleSpan>? {
+        logger.logGetterNotSupported("spans")
         return null
     }
 
@@ -93,6 +100,7 @@ internal class OmhPolylineImpl(private val polyline: Polyline) : OmhPolyline {
     }
 
     override fun getStartCap(): OmhCap? {
+        logger.logGetterNotSupported("startCap")
         return null
     }
 
