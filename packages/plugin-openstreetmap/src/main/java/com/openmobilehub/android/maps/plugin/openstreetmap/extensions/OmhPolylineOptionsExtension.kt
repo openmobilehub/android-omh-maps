@@ -18,11 +18,10 @@ package com.openmobilehub.android.maps.plugin.openstreetmap.extensions
 
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolylineOptions
 import com.openmobilehub.android.maps.core.utils.UnsupportedFeatureLogger
+import com.openmobilehub.android.maps.plugin.openstreetmap.utils.polylineLogger
 import org.osmdroid.views.overlay.Polyline
 
-val Logger = UnsupportedFeatureLogger("OmhPolyline", "OpenStreetMap")
-
-internal fun OmhPolylineOptions.toPolylineOptions(): Polyline {
+internal fun OmhPolylineOptions.toPolylineOptions(logger: UnsupportedFeatureLogger = polylineLogger): Polyline {
     val mappedOptions = Polyline()
 
     mappedOptions.setPoints(points.map { it.toGeoPoint() })
@@ -31,22 +30,22 @@ internal fun OmhPolylineOptions.toPolylineOptions(): Polyline {
     isVisible?.let { mappedOptions.isVisible = it }
 
     zIndex?.let {
-        Logger.logNotSupported("zIndex")
+        logger.logNotSupported("zIndex")
     }
     jointType.let {
-        Logger.logNotSupported("jointType")
+        logger.logNotSupported("jointType")
     }
     pattern?.let {
-        Logger.logNotSupported("pattern")
+        logger.logNotSupported("pattern")
     }
     startCap?.let {
-        Logger.logNotSupported("startCap")
+        logger.logNotSupported("startCap")
     }
     endCap?.let {
-        Logger.logNotSupported("endCap")
+        logger.logNotSupported("endCap")
     }
     spans?.let {
-        Logger.logNotSupported("spans")
+        logger.logNotSupported("spans")
     }
 
     return mappedOptions

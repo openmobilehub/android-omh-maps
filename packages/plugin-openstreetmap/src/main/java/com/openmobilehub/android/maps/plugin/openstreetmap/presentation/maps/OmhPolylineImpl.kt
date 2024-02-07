@@ -23,12 +23,14 @@ import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhStyle
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.utils.UnsupportedFeatureLogger
 import com.openmobilehub.android.maps.plugin.openstreetmap.utils.ConverterUtils
+import com.openmobilehub.android.maps.plugin.openstreetmap.utils.polylineLogger
 import org.osmdroid.views.overlay.Polyline
 
-val Logger = UnsupportedFeatureLogger("OmhPolyline", "OpenStreetMap")
-
 @SuppressWarnings("TooManyFunctions")
-internal class OmhPolylineImpl(private val polyline: Polyline) : OmhPolyline {
+internal class OmhPolylineImpl(
+    private val polyline: Polyline,
+    private val logger: UnsupportedFeatureLogger = polylineLogger
+) : OmhPolyline {
 
     override fun getColor(): Int {
         return polyline.outlinePaint.color
@@ -39,30 +41,30 @@ internal class OmhPolylineImpl(private val polyline: Polyline) : OmhPolyline {
     }
 
     override fun getEndCap(): OmhCap? {
-        Logger.logGetterNotSupported("endCap")
+        logger.logGetterNotSupported("endCap")
         return null
     }
 
     override fun setEndCap(endCap: OmhCap?) {
-        Logger.logSetterNotSupported("endCap")
+        logger.logSetterNotSupported("endCap")
     }
 
     override fun getJointType(): Int {
-        Logger.logGetterNotSupported("jointType")
-        return 0
+        logger.logGetterNotSupported("jointType")
+        return DEFAULT_JOINT_TYPE
     }
 
     override fun setJointType(jointType: Int) {
-        Logger.logSetterNotSupported("jointType")
+        logger.logSetterNotSupported("jointType")
     }
 
     override fun getPattern(): List<OmhPatternItem>? {
-        Logger.logGetterNotSupported("pattern")
+        logger.logGetterNotSupported("pattern")
         return null
     }
 
     override fun setPattern(pattern: List<OmhPatternItem>?) {
-        Logger.logSetterNotSupported("pattern")
+        logger.logSetterNotSupported("pattern")
     }
 
     override fun getPoints(): List<OmhCoordinate> {
@@ -74,21 +76,21 @@ internal class OmhPolylineImpl(private val polyline: Polyline) : OmhPolyline {
     }
 
     override fun getSpans(): List<OmhStyleSpan>? {
-        Logger.logGetterNotSupported("spans")
+        logger.logGetterNotSupported("spans")
         return null
     }
 
     override fun setSpans(spans: List<OmhStyleSpan>?) {
-        Logger.logSetterNotSupported("spans")
+        logger.logSetterNotSupported("spans")
     }
 
     override fun getStartCap(): OmhCap? {
-        Logger.logGetterNotSupported("startCap")
+        logger.logGetterNotSupported("startCap")
         return null
     }
 
     override fun setStartCap(startCap: OmhCap?) {
-        Logger.logSetterNotSupported("startCap")
+        logger.logSetterNotSupported("startCap")
     }
 
     override fun getWidth(): Float {
@@ -100,12 +102,12 @@ internal class OmhPolylineImpl(private val polyline: Polyline) : OmhPolyline {
     }
 
     override fun getZIndex(): Float {
-        Logger.logGetterNotSupported("zIndex")
-        return 0f
+        logger.logGetterNotSupported("zIndex")
+        return DEFAULT_Z_INDEX
     }
 
     override fun setZIndex(zIndex: Float) {
-        Logger.logSetterNotSupported("zIndex")
+        logger.logSetterNotSupported("zIndex")
     }
 
     override fun isVisible(): Boolean {
@@ -114,5 +116,10 @@ internal class OmhPolylineImpl(private val polyline: Polyline) : OmhPolyline {
 
     override fun setVisible(visible: Boolean) {
         polyline.isVisible = visible
+    }
+
+    companion object {
+        private const val DEFAULT_JOINT_TYPE = 0
+        private const val DEFAULT_Z_INDEX = 0f
     }
 }
