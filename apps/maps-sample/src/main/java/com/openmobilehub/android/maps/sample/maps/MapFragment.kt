@@ -16,6 +16,8 @@
 
 package com.openmobilehub.android.maps.sample.maps
 
+import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -36,6 +38,7 @@ import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMap
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnCameraIdleListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnCameraMoveStartedListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMapReadyCallback
+import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnPolylineClickListener
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
 import com.openmobilehub.android.maps.core.utils.NetworkConnectivityChecker
@@ -56,7 +59,6 @@ import com.openmobilehub.android.maps.sample.utils.PermissionsUtils
 import com.openmobilehub.android.maps.sample.utils.getOmhCoordinate
 
 class MapFragment : Fragment(), OmhOnMapReadyCallback {
-
     private var currentLocation: OmhCoordinate = PRIME_MERIDIAN
     private var _binding: FragmentMapBinding? = null
     private val binding get() = _binding!!
@@ -155,8 +157,16 @@ class MapFragment : Fragment(), OmhOnMapReadyCallback {
             )
         }
 
+        val omhOnPolylineClickListener = OmhOnPolylineClickListener {
+
+            Toast.makeText(requireContext(), it.getTag().toString(), Toast.LENGTH_SHORT).show()
+        }
+
         omhMap.setOnCameraIdleListener(omhOnCameraIdleListener)
+        omhMap.setOnPolylineClickListener(omhOnPolylineClickListener)
         getCurrentLocation(omhMap)
+
+        DebugPolylineHelper.addDebugPolylines(omhMap, resources)
     }
 
     private fun displaySharedLocation(omhMap: OmhMap) {

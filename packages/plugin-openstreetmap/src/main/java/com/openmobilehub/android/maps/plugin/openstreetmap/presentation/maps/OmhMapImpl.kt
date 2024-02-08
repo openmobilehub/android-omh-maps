@@ -30,12 +30,16 @@ import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMarke
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnCameraIdleListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnCameraMoveStartedListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMyLocationButtonClickListener
+import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnPolylineClickListener
+import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhPolyline
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhSnapshotReadyCallback
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
+import com.openmobilehub.android.maps.core.presentation.models.OmhPolylineOptions
 import com.openmobilehub.android.maps.plugin.openstreetmap.R
 import com.openmobilehub.android.maps.plugin.openstreetmap.extensions.toGeoPoint
 import com.openmobilehub.android.maps.plugin.openstreetmap.extensions.toOmhCoordinate
+import com.openmobilehub.android.maps.plugin.openstreetmap.extensions.toPolylineOptions
 import com.openmobilehub.android.maps.plugin.openstreetmap.utils.Constants.DEFAULT_ZOOM_LEVEL
 import com.openmobilehub.android.maps.plugin.openstreetmap.utils.MapListenerController
 import com.openmobilehub.android.maps.plugin.openstreetmap.utils.MapTouchListener
@@ -54,6 +58,7 @@ internal class OmhMapImpl(
     private var myLocationNewOverlay: MyLocationNewOverlay? = null
     private var myLocationIconOverlay: MyLocationIconOverlay? = null
     private val gestureOverlay = GestureOverlay()
+    private var polylineClickListener: OmhOnPolylineClickListener? = null
 
     init {
         mapView.addMapListener(mapListenerController)
@@ -73,6 +78,22 @@ internal class OmhMapImpl(
         }
 
         return OmhMarkerImpl(marker)
+    }
+
+    override fun addPolyline(options: OmhPolylineOptions): OmhPolyline? {
+        val osmPolyline = options.toPolylineOptions()
+
+        osmPolyline.setOnClickListener { polyline, _, _ ->
+            val polylineOmh = OmhPolylineImpl(polyline)
+            polylineClickListener?.onPolylineClick(polylineOmh)
+            true
+        }
+        mapView.run {
+            overlayManager.add(osmPolyline)
+            postInvalidate()
+        }
+
+        return OmhPolylineImpl(osmPolyline)
     }
 
     override fun getCameraPositionCoordinate(): OmhCoordinate {
@@ -98,7 +119,8 @@ internal class OmhMapImpl(
     }
 
     override fun snapshot(omhSnapshotReadyCallback: OmhSnapshotReadyCallback) {
-        val drawable: Drawable? = ContextCompat.getDrawable(mapView.context, R.drawable.img_map_placeholder)
+        val drawable: Drawable? =
+            ContextCompat.getDrawable(mapView.context, R.drawable.img_map_placeholder)
         if (drawable == null) {
             omhSnapshotReadyCallback.onSnapshotReady(null)
             return
@@ -167,6 +189,10 @@ internal class OmhMapImpl(
 
     override fun setOnMapLoadedCallback(callback: OmhMapLoadedCallback?) {
         callback?.onMapLoaded()
+    }
+
+    override fun setOnPolylineClickListener(listener: OmhOnPolylineClickListener) {
+        polylineClickListener = listener
     }
 
     override fun setOnCameraIdleListener(listener: OmhOnCameraIdleListener) {

@@ -14,16 +14,15 @@
  * limitations under the License.
  */
 
-package com.openmobilehub.android.maps.core.utils
+package com.openmobilehub.android.maps.core.presentation.models
 
-internal object Constants {
-    // Network
-    const val NO_INTERNET_CONNECTION = "No internet connection"
-    const val LOST_INTERNET_CONNECTION = "Lost internet connection"
+import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhCap
+import kotlinx.parcelize.Parcelize
 
-    // Log
-    const val MAX_NAME_LENGTH = 23
-    const val MIN_NAME_LENGTH = 0
-
-    const val LOG_TAG = "OmhMaps"
-}
+/**
+ * [OmhButtCap] is a class that represents a butt cap for a polyline on a map.
+ * A butt cap is a cap that is squared off exactly at the start or end vertex of a polyline.
+ * This class extends the [OmhCap] interface.
+ */
+@Parcelize
+class OmhButtCap : OmhCap

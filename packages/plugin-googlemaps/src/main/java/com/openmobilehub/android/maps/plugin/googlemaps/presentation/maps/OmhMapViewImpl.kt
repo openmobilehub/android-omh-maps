@@ -31,7 +31,7 @@ internal class OmhMapViewImpl(context: Context) : OmhMapView {
     private var mapView: MapView? = null
 
     init {
-        MapsInitializer.initialize(context, MapsInitializer.Renderer.LEGACY, null)
+        MapsInitializer.initialize(context)
         mapView = MapView(context)
     }
 

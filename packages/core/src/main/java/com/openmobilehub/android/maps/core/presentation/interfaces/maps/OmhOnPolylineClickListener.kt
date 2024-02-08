@@ -14,16 +14,15 @@
  * limitations under the License.
  */
 
-package com.openmobilehub.android.maps.core.utils
+package com.openmobilehub.android.maps.core.presentation.interfaces.maps
 
-internal object Constants {
-    // Network
-    const val NO_INTERNET_CONNECTION = "No internet connection"
-    const val LOST_INTERNET_CONNECTION = "Lost internet connection"
-
-    // Log
-    const val MAX_NAME_LENGTH = 23
-    const val MIN_NAME_LENGTH = 0
-
-    const val LOG_TAG = "OmhMaps"
+/**
+ * Abstraction to provide access to callback interface for when a polyline on the map is clicked.
+ */
+fun interface OmhOnPolylineClickListener {
+    /**
+     * Called when a polyline on the map is clicked.
+     * @param polyline The polyline that was clicked.
+     */
+    fun onPolylineClick(polyline: OmhPolyline)
 }

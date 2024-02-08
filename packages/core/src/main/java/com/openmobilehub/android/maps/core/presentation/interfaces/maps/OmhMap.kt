@@ -21,6 +21,7 @@ import android.Manifest.permission.ACCESS_FINE_LOCATION
 import androidx.annotation.RequiresPermission
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
+import com.openmobilehub.android.maps.core.presentation.models.OmhPolylineOptions
 
 /**
  * Abstraction to provide access to the OmhMap. This is the main class of OMH Maps SDK
@@ -38,6 +39,14 @@ interface OmhMap {
      * @return [OmhMarker] that was added to the map.
      */
     fun addMarker(options: OmhMarkerOptions): OmhMarker?
+
+    /**
+     * Adds a polyline to this map. The polyline is rendered on the map based on the provided options.
+     *
+     * @param options a polyline options object that defines how to render the polyline.
+     * @return [OmhPolyline] that was added to the map.
+     */
+    fun addPolyline(options: OmhPolylineOptions): OmhPolyline?
 
     /**
      * Gets the camera's position.
@@ -107,6 +116,15 @@ interface OmhMap {
      * @param callback The callback invoked when the map has finished rendering. To unset the callback, use null.
      */
     fun setOnMapLoadedCallback(callback: OmhMapLoadedCallback?)
+
+    /**
+     * Sets a callback that's invoked when a polyline on the map is clicked.
+     *
+     * @param listener The callback that's invoked when a polyline is clicked.
+     * This listener takes in an [OmhOnPolylineClickListener] object which defines the
+     * `onPolylineClick` method that will be called with the clicked [OmhPolyline] as a parameter.
+     */
+    fun setOnPolylineClickListener(listener: OmhOnPolylineClickListener)
 
     /**
      * Takes a snapshot of the map.

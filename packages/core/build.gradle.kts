@@ -1,5 +1,6 @@
 plugins {
     `android-base-lib`
+    `kotlin-parcelize`
 }
 
 android {

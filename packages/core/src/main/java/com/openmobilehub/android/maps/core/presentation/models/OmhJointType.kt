@@ -14,16 +14,17 @@
  * limitations under the License.
  */
 
-package com.openmobilehub.android.maps.core.utils
+package com.openmobilehub.android.maps.core.presentation.models
 
-internal object Constants {
-    // Network
-    const val NO_INTERNET_CONNECTION = "No internet connection"
-    const val LOST_INTERNET_CONNECTION = "Lost internet connection"
-
-    // Log
-    const val MAX_NAME_LENGTH = 23
-    const val MIN_NAME_LENGTH = 0
-
-    const val LOG_TAG = "OmhMaps"
+/**
+ * [OmhJointType] is an object that represents the joint type of a polyline on a map.
+ * The joint type can be one of the following:
+ * - DEFAULT: The mitter joint type.
+ * - BEVEL: The bevel joint type.
+ * - ROUND: The round joint type.
+ */
+object OmhJointType {
+    const val DEFAULT = 0
+    const val BEVEL = 1
+    const val ROUND = 2
 }

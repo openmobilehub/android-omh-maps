@@ -14,16 +14,8 @@
  * limitations under the License.
  */
 
-package com.openmobilehub.android.maps.core.utils
+package com.openmobilehub.android.maps.plugin.openstreetmap.utils
 
-internal object Constants {
-    // Network
-    const val NO_INTERNET_CONNECTION = "No internet connection"
-    const val LOST_INTERNET_CONNECTION = "Lost internet connection"
+import com.openmobilehub.android.maps.core.utils.UnsupportedFeatureLogger
 
-    // Log
-    const val MAX_NAME_LENGTH = 23
-    const val MIN_NAME_LENGTH = 0
-
-    const val LOG_TAG = "OmhMaps"
-}
+val polylineLogger = UnsupportedFeatureLogger("OmhPolyline", "OpenStreetMap")

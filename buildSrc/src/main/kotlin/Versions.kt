@@ -15,7 +15,7 @@ object Versions {
     const val preference = "1.2.0"
 
     // Play Services
-    const val playServicesMaps = "18.1.0"
+    const val playServicesMaps = "18.2.0"
     const val playServicesLocation = "21.0.1"
     const val googlePlayBase = "18.2.0"
 

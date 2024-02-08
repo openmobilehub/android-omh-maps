@@ -19,7 +19,7 @@ package com.openmobilehub.android.maps.plugin.googlemaps
 import android.location.Location
 import com.google.android.gms.maps.model.LatLng
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
-import com.openmobilehub.android.maps.plugin.googlemaps.utils.ConverterUtils
+import com.openmobilehub.android.maps.plugin.googlemaps.utils.CoordinateConverter
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.Assert.assertEquals
@@ -33,14 +33,14 @@ internal class ConverterTest {
 
     @Test
     fun `given a OmhCoordinate, when is converted to a LatLng, then a correct LatLng is returned`() {
-        val latLngResult = ConverterUtils.convertToLatLng(omhCoordinate)
+        val latLngResult = CoordinateConverter.convertToLatLng(omhCoordinate)
 
         assertEquals(latLng, latLngResult)
     }
 
     @Test
     fun `given a LatLng, when is converted to OmhCoordinate, then a correct OmhCoordinate is returned`() {
-        val coordinateResult = ConverterUtils.convertToOmhCoordinate(latLng)
+        val coordinateResult = CoordinateConverter.convertToOmhCoordinate(latLng)
 
         assertEquals(omhCoordinate, coordinateResult)
     }
@@ -51,7 +51,7 @@ internal class ConverterTest {
             every { latitude } returns -16.19
             every { longitude } returns 166.16
         }
-        val coordinateResult = ConverterUtils.convertToOmhCoordinate(mockLocation)
+        val coordinateResult = CoordinateConverter.convertToOmhCoordinate(mockLocation)
 
         assertEquals(omhCoordinate, coordinateResult)
     }

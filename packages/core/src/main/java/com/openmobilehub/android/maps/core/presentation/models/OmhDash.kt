@@ -14,16 +14,17 @@
  * limitations under the License.
  */
 
-package com.openmobilehub.android.maps.core.utils
+package com.openmobilehub.android.maps.core.presentation.models
 
-internal object Constants {
-    // Network
-    const val NO_INTERNET_CONNECTION = "No internet connection"
-    const val LOST_INTERNET_CONNECTION = "Lost internet connection"
+import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhPatternItem
+import kotlinx.parcelize.Parcelize
 
-    // Log
-    const val MAX_NAME_LENGTH = 23
-    const val MIN_NAME_LENGTH = 0
-
-    const val LOG_TAG = "OmhMaps"
-}
+/**
+ * `OmhDash` is a class that represents a dash pattern item on a map.
+ * A dash pattern item can be used to customize the appearance of polylines and other map elements.
+ * This class extends the [OmhPatternItem] interface.
+ *
+ * @property length The length of the dash.
+ */
+@Parcelize
+class OmhDash(val length: Float) : OmhPatternItem
