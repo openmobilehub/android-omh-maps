@@ -38,6 +38,7 @@ import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMap
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnCameraIdleListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnCameraMoveStartedListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMapReadyCallback
+import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnPolygonClickListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnPolylineClickListener
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
@@ -158,15 +159,20 @@ class MapFragment : Fragment(), OmhOnMapReadyCallback {
         }
 
         val omhOnPolylineClickListener = OmhOnPolylineClickListener {
+            Toast.makeText(requireContext(), it.getTag().toString(), Toast.LENGTH_SHORT).show()
+        }
 
+        val omhOnPolygonClickListener = OmhOnPolygonClickListener {
             Toast.makeText(requireContext(), it.getTag().toString(), Toast.LENGTH_SHORT).show()
         }
 
         omhMap.setOnCameraIdleListener(omhOnCameraIdleListener)
         omhMap.setOnPolylineClickListener(omhOnPolylineClickListener)
+        omhMap.setOnPolygonClickListener(omhOnPolygonClickListener)
         getCurrentLocation(omhMap)
 
         DebugPolylineHelper.addDebugPolylines(omhMap, resources)
+        DebugPolygonHelper.addDebugPolygons(omhMap)
     }
 
     private fun displaySharedLocation(omhMap: OmhMap) {

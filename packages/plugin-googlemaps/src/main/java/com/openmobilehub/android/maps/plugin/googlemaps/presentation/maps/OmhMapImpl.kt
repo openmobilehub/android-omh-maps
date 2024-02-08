@@ -30,13 +30,17 @@ import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMarke
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnCameraIdleListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnCameraMoveStartedListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMyLocationButtonClickListener
+import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnPolygonClickListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnPolylineClickListener
+import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhPolygon
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhPolyline
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhSnapshotReadyCallback
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
+import com.openmobilehub.android.maps.core.presentation.models.OmhPolygonOptions
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolylineOptions
 import com.openmobilehub.android.maps.plugin.googlemaps.extensions.toMarkerOptions
+import com.openmobilehub.android.maps.plugin.googlemaps.extensions.toPolygonOptions
 import com.openmobilehub.android.maps.plugin.googlemaps.extensions.toPolylineOptions
 import com.openmobilehub.android.maps.plugin.googlemaps.utils.CoordinateConverter
 
@@ -54,6 +58,13 @@ internal class OmhMapImpl(private var googleMap: GoogleMap) : OmhMap {
         val polyline = googleMap.addPolyline(googleOptions)
 
         return OmhPolylineImpl(polyline)
+    }
+
+    override fun addPolygon(options: OmhPolygonOptions): OmhPolygon {
+        val googleOptions = options.toPolygonOptions()
+        val polygon = googleMap.addPolygon(googleOptions)
+
+        return OmhPolygonImpl(polygon)
     }
 
     override fun getCameraPositionCoordinate(): OmhCoordinate {
@@ -103,6 +114,12 @@ internal class OmhMapImpl(private var googleMap: GoogleMap) : OmhMap {
     override fun setOnPolylineClickListener(listener: OmhOnPolylineClickListener) {
         googleMap.setOnPolylineClickListener {
             listener.onPolylineClick(OmhPolylineImpl(it))
+        }
+    }
+
+    override fun setOnPolygonClickListener(listener: OmhOnPolygonClickListener) {
+        googleMap.setOnPolygonClickListener {
+            listener.onPolygonClick(OmhPolygonImpl(it))
         }
     }
 
