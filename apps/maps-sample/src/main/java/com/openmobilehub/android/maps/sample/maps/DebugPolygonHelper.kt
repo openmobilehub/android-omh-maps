@@ -27,8 +27,8 @@ object DebugPolygonHelper {
                 )
             )
             clickable = true
-            strokeColor = Color.BLUE
-            fillColor = Color.RED
+            strokeColor = Color.RED
+            fillColor = Color.BLUE
             strokeJointType = OmhJointType.ROUND
             strokeWidth = 30f
             strokePattern = listOf(OmhGap(10f), OmhDash(30f))
