@@ -21,6 +21,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -58,7 +59,7 @@ import com.openmobilehub.android.maps.sample.utils.Constants.ZOOM_LEVEL_5
 import com.openmobilehub.android.maps.sample.utils.PermissionsUtils
 import com.openmobilehub.android.maps.sample.utils.getOmhCoordinate
 
-class MapFragment : Fragment(), OmhOnMapReadyCallback {
+    class MapFragment : Fragment(), OmhOnMapReadyCallback {
     private var currentLocation: OmhCoordinate = PRIME_MERIDIAN
     private var _binding: FragmentMapBinding? = null
     private val binding get() = _binding!!
@@ -121,6 +122,7 @@ class MapFragment : Fragment(), OmhOnMapReadyCallback {
     }
 
     override fun onMapReady(omhMap: OmhMap) {
+        Log.v("MapFragment", "onMapReady")
 
         if (networkConnectivityChecker?.isNetworkAvailable() != true) {
             Toast.makeText(requireContext(), R.string.no_internet_connection, Toast.LENGTH_LONG).show()

@@ -3,7 +3,9 @@ package com.openmobilehub.android.maps.sample.maps
 import android.content.res.Resources
 import android.graphics.BitmapFactory
 import android.graphics.Color
+import android.util.Log
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMap
+import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhPolyline
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhCustomCap
 import com.openmobilehub.android.maps.core.presentation.models.OmhDash
@@ -17,6 +19,47 @@ import com.openmobilehub.android.maps.core.presentation.models.OmhStyleSpanMonoc
 import com.openmobilehub.android.maps.sample.R
 
 object DebugPolylineHelper {
+
+    fun addSinglePolyline(omhMap: OmhMap): OmhPolyline? {
+        val basicPolylineOptions = OmhPolylineOptions().apply {
+            points = listOf(
+                OmhCoordinate(0.0, 0.0),
+                OmhCoordinate(30.0, 10.0),
+                OmhCoordinate(20.0, 20.0),
+                OmhCoordinate(20.0, 20.0),
+                OmhCoordinate(20.0, 30.0),
+                OmhCoordinate(10.0, 30.0),
+                OmhCoordinate(-10.0, 40.0),
+                OmhCoordinate(15.0, 60.0),
+                )
+            clickable = false
+            width = 10f
+        }
+
+        val basicPolyline = omhMap.addPolyline(basicPolylineOptions)
+        basicPolyline?.setTag("Customizable polyline press")
+
+        return basicPolyline
+    }
+
+    fun addReferencePolyline(omhMap: OmhMap): OmhPolyline? {
+        val basicPolylineOptions = OmhPolylineOptions().apply {
+            points = listOf(
+                OmhCoordinate(30.0, 25.0),
+                OmhCoordinate(10.0, 25.0),
+                )
+//            clickable = true
+            width = 10f
+            zIndex = 50f
+            color = Color.LTGRAY
+        }
+
+        val basicPolyline = omhMap.addPolyline(basicPolylineOptions)
+        basicPolyline?.setTag("Reference polyline press")
+
+        return basicPolyline
+    }
+
     fun addDebugPolylines(omhMap: OmhMap, resources: Resources) {
         val basicPolylineOptions = OmhPolylineOptions().apply {
             points = listOf(
@@ -163,5 +206,7 @@ object DebugPolylineHelper {
 
         val customSpansPolyline = omhMap.addPolyline(customSpansPolylineOptions)
         customSpansPolyline?.setTag("Custom Spans Polyline")
+
+        Log.v("DebugPolylineHelper", "Polylines added to the map.")
     }
 }
