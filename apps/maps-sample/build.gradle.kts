@@ -23,8 +23,8 @@ omhConfig {
     bundle("singleBuild") {
         maps {
             gmsService {
-                if(!useLocalProjects) dependency = openstreetmapDependency
-                path = openstreetmapPath
+                if(!useLocalProjects) dependency = googlemapsDependency
+                path = googlemapsPath
             }
             nonGmsService {
                 if(!useLocalProjects) dependency = openstreetmapDependency

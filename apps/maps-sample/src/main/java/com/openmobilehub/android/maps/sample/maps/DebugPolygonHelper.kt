@@ -1,6 +1,5 @@
 package com.openmobilehub.android.maps.sample.maps
 
-import android.content.res.Resources
 import android.graphics.Color
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMap
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
@@ -36,6 +35,5 @@ object DebugPolygonHelper {
 
         val polygon = omhMap.addPolygon(polygonOptions)
         polygon?.setTag("Debug Polygon")
-//        omhMap.addPolygon(polygonOptions)
     }
 }

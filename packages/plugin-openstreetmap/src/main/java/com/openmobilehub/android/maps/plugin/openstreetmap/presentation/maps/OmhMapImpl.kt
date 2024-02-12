@@ -88,8 +88,6 @@ internal class OmhMapImpl(
     override fun addPolyline(options: OmhPolylineOptions): OmhPolyline? {
         val osmPolyline = options.toPolylineOptions()
 
-        val polyline = OmhPolylineImpl(osmPolyline)
-
         osmPolyline.setOnClickListener { polyline, _, _ ->
             val polylineOmh = OmhPolylineImpl(polyline)
             polylineClickListener?.onPolylineClick(polylineOmh)

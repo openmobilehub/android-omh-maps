@@ -49,6 +49,12 @@ interface OmhMap {
      */
     fun addPolyline(options: OmhPolylineOptions): OmhPolyline?
 
+    /**
+     * Adds a polygon to this map. The polygon is rendered on the map based on the provided options.
+     *
+     * @param options a polygon options object that defines how to render the polygon.
+     * @return [OmhPolygon] that was added to the map.
+     */
     fun addPolygon(options: OmhPolygonOptions): OmhPolygon?
 
     /**

@@ -20,10 +20,10 @@ import android.graphics.Color
 import android.graphics.Paint
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolygonOptions
 import com.openmobilehub.android.maps.core.utils.UnsupportedFeatureLogger
-import com.openmobilehub.android.maps.plugin.openstreetmap.utils.polylineLogger
+import com.openmobilehub.android.maps.plugin.openstreetmap.utils.polygonLogger
 import org.osmdroid.views.overlay.Polygon
 
-internal fun OmhPolygonOptions.toPolygonOptions(logger: UnsupportedFeatureLogger = polylineLogger): Polygon {
+internal fun OmhPolygonOptions.toPolygonOptions(logger: UnsupportedFeatureLogger = polygonLogger): Polygon {
     val mappedOptions = Polygon()
 
     mappedOptions.points = (outline.map { it.toGeoPoint() })

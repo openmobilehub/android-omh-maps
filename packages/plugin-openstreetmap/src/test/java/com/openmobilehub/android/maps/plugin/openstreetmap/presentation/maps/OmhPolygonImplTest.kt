@@ -130,6 +130,7 @@ class OmhPolygonImplTest {
     fun `getStrokeJointType should return default joint type value`() {
         // Arrange
         val defaultJointType = 0
+
         // Act
         val jointType = omhPolygon.getStrokeJointType()
 
@@ -185,7 +186,7 @@ class OmhPolygonImplTest {
     }
 
     @Test
-    fun `setOutline sets polyline outline`() {
+    fun `setOutline sets polygon outline`() {
         // Arrange
         val omhCoordinate = mockk<OmhCoordinate>()
         val geoPoint = mockk<GeoPoint>()
@@ -304,7 +305,7 @@ class OmhPolygonImplTest {
     }
 
     @Test
-    fun `getZIndex should return default polyline zIndex and log getter not supported`() {
+    fun `getZIndex should return default polygon zIndex and log getter not supported`() {
         // Arrange
         val defaultZIndex = 0.0f
 

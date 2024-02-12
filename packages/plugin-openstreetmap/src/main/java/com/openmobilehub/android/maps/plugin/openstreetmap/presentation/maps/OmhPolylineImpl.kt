@@ -23,13 +23,13 @@ import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhStyle
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.utils.UnsupportedFeatureLogger
 import com.openmobilehub.android.maps.plugin.openstreetmap.utils.ConverterUtils
-import com.openmobilehub.android.maps.plugin.openstreetmap.utils.polylineLogger
+import com.openmobilehub.android.maps.plugin.openstreetmap.utils.polygonLogger
 import org.osmdroid.views.overlay.Polyline
 
 @SuppressWarnings("TooManyFunctions")
 internal class OmhPolylineImpl(
     private val polyline: Polyline,
-    private val logger: UnsupportedFeatureLogger = polylineLogger
+    private val logger: UnsupportedFeatureLogger = polygonLogger
 ) : OmhPolyline {
 
     override fun getClickable(): Boolean {
