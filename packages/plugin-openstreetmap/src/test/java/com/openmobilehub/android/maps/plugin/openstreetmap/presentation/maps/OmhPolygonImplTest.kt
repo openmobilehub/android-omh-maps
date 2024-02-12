@@ -32,19 +32,21 @@ import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.osmdroid.util.GeoPoint
+import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Polygon
 
 class OmhPolygonImplTest {
 
     private lateinit var polygon: Polygon
     private lateinit var omhPolygon: OmhPolygonImpl
+    private val mockMapView: MapView = mockk(relaxed = true)
     private val mockLogger: UnsupportedFeatureLogger =
         mockk<UnsupportedFeatureLogger>(relaxed = true)
 
     @Before
     fun setUp() {
         polygon = mockk(relaxed = true)
-        omhPolygon = OmhPolygonImpl(polygon, mockLogger)
+        omhPolygon = OmhPolygonImpl(polygon, mockMapView, mockLogger)
         mockkObject(ConverterUtils)
     }
 

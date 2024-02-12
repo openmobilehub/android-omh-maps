@@ -107,7 +107,7 @@ internal class OmhMapImpl(
         val polygonOptions = options.toPolygonOptions()
 
         polygonOptions.setOnClickListener { polygon, _, _ ->
-            val polygonOmh = OmhPolygonImpl(polygon)
+            val polygonOmh = OmhPolygonImpl(polygon, mapView)
             polygonClickListener?.onPolygonClick(polygonOmh)
             true
         }
@@ -117,7 +117,7 @@ internal class OmhMapImpl(
             postInvalidate()
         }
 
-        return OmhPolygonImpl(polygonOptions)
+        return OmhPolygonImpl(polygonOptions, mapView)
     }
 
     override fun getCameraPositionCoordinate(): OmhCoordinate {

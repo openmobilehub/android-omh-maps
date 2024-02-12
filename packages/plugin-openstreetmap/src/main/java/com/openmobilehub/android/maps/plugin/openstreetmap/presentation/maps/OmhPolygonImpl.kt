@@ -22,11 +22,13 @@ import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.utils.UnsupportedFeatureLogger
 import com.openmobilehub.android.maps.plugin.openstreetmap.utils.ConverterUtils
 import com.openmobilehub.android.maps.plugin.openstreetmap.utils.polylineLogger
+import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Polygon
 
 @SuppressWarnings("TooManyFunctions")
 internal class OmhPolygonImpl(
     private val polygon: Polygon,
+    private val mapView: MapView,
     private val logger: UnsupportedFeatureLogger = polylineLogger
 ) : OmhPolygon {
 
@@ -36,6 +38,7 @@ internal class OmhPolygonImpl(
 
     override fun setClickable(clickable: Boolean) {
         polygon.isEnabled = clickable
+        mapView.postInvalidate()
     }
 
     override fun getStrokeColor(): Int {
@@ -44,6 +47,7 @@ internal class OmhPolygonImpl(
 
     override fun setStrokeColor(color: Int) {
         polygon.outlinePaint.color = color
+        mapView.postInvalidate()
     }
 
     override fun getFillColor(): Int {
@@ -52,6 +56,7 @@ internal class OmhPolygonImpl(
 
     override fun setFillColor(color: Int) {
         polygon.fillPaint.color = color
+        mapView.postInvalidate()
     }
 
     override fun getStrokeJointType(): Int {
@@ -78,6 +83,7 @@ internal class OmhPolygonImpl(
 
     override fun setOutline(omhCoordinates: List<OmhCoordinate>) {
         polygon.points = (omhCoordinates.map { ConverterUtils.convertToGeoPoint(it) })
+        mapView.postInvalidate()
     }
 
     override fun getHoles(): List<List<OmhCoordinate>> {
@@ -86,6 +92,7 @@ internal class OmhPolygonImpl(
 
     override fun setHoles(omhCoordinates: List<List<OmhCoordinate>>) {
         polygon.holes = omhCoordinates.map { it.map { ConverterUtils.convertToGeoPoint(it) } }
+        mapView.postInvalidate()
     }
 
     override fun getTag(): Any? {
@@ -94,6 +101,7 @@ internal class OmhPolygonImpl(
 
     override fun setTag(tag: Any?) {
         polygon.relatedObject = tag
+        mapView.postInvalidate()
     }
 
     override fun getStrokeWidth(): Float {
@@ -102,6 +110,7 @@ internal class OmhPolygonImpl(
 
     override fun setStrokeWidth(width: Float) {
         polygon.outlinePaint.strokeWidth = width
+        mapView.postInvalidate()
     }
 
     override fun getZIndex(): Float {
@@ -119,6 +128,7 @@ internal class OmhPolygonImpl(
 
     override fun setVisible(visible: Boolean) {
         polygon.isVisible = visible
+        mapView.postInvalidate()
     }
 
     companion object {
