@@ -211,15 +211,15 @@ class OmhPolygonImplTest {
     @Test
     fun `setHoles sets polygon holes`() {
         // Arrange
-        val holes = listOf(listOf(mockk<OmhCoordinate>()))
-        every { CoordinateConverter.convertToLatLng(any()) } returns mockk()
-        every { polygon.holes = any() } just runs
+        val omhCoordinate = mockk<OmhCoordinate>()
+        val latLng = mockk<LatLng>()
+        every { CoordinateConverter.convertToLatLng(omhCoordinate) } returns latLng
 
         // Act
-        omhPolygon.setHoles(holes)
+        omhPolygon.setHoles(listOf(listOf(omhCoordinate)))
 
         // Assert
-        verify { polygon.holes = any() }
+        verify { polygon.holes = listOf(listOf(latLng)) }
     }
 
     @Test
