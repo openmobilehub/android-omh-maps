@@ -18,16 +18,13 @@ package com.openmobilehub.android.maps.sample.maps
 
 import android.graphics.BitmapFactory
 import android.graphics.Color
-import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.LinearLayout
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.openmobilehub.android.maps.core.presentation.fragments.OmhMapFragment
@@ -55,26 +52,6 @@ import com.openmobilehub.android.maps.sample.databinding.FragmentMapPolylinesBin
 
 
 class MapPolylinesFragment : Fragment(), OmhOnMapReadyCallback {
-    private val jointTypeNameResourceID = intArrayOf(
-        R.string.joint_type_mitter,
-        R.string.joint_type_bevel,
-        R.string.joint_type_round
-    )
-
-    private val capTypeNameResourceID = intArrayOf(
-        R.string.cap_type_butt,
-        R.string.cap_type_square,
-        R.string.cap_type_round,
-        R.string.cap_type_custom
-    )
-
-    private val patternTypeNameResourceID = intArrayOf(
-        R.string.pattern_type_none,
-        R.string.pattern_type_dotted,
-        R.string.pattern_type_dashed,
-        R.string.pattern_type_custom
-    )
-
 
     private var _binding: FragmentMapPolylinesBinding? = null
     private val binding get() = _binding!!
@@ -92,6 +69,24 @@ class MapPolylinesFragment : Fragment(), OmhOnMapReadyCallback {
     private var spanSegments: Double = 1.0
     private var spanColor: Int = Color.RED
 
+    private val jointTypeNameResourceID = intArrayOf(
+        R.string.joint_type_mitter,
+        R.string.joint_type_bevel,
+        R.string.joint_type_round
+    )
+    private val capTypeNameResourceID = intArrayOf(
+        R.string.cap_type_butt,
+        R.string.cap_type_square,
+        R.string.cap_type_round,
+        R.string.cap_type_custom
+    )
+    private val patternTypeNameResourceID = intArrayOf(
+        R.string.pattern_type_none,
+        R.string.pattern_type_dotted,
+        R.string.pattern_type_dashed,
+        R.string.pattern_type_custom
+    )
+
     private var spanProperties: LinearLayout? = null
     private var spanGradientProperties: LinearLayout? = null
 
@@ -106,11 +101,11 @@ class MapPolylinesFragment : Fragment(), OmhOnMapReadyCallback {
     private var withSpanCheckbox: CheckBox? = null
     private var spanSegmentsSeekbar: PanelSeekbar? = null
     private var spanColorSeekbar: PanelColorSeekbar? = null
-
     private var withGradientCheckbox: CheckBox? = null
     private var spanGradientFromColorSeekbar: PanelColorSeekbar? = null
     private var spanGradientToColorSeekbar: PanelColorSeekbar? = null
     private var withSpanPatternCheckbox: CheckBox? = null
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -119,7 +114,6 @@ class MapPolylinesFragment : Fragment(), OmhOnMapReadyCallback {
         return binding.root
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -202,7 +196,6 @@ class MapPolylinesFragment : Fragment(), OmhOnMapReadyCallback {
         spanGradientProperties = view.findViewById(R.id.spanGradientProperties)
         updatePanelUI()
 
-
         // isClickable
         isVisibleCheckbox = view.findViewById(R.id.checkBox_isVisible)
         isVisibleCheckbox?.setOnCheckedChangeListener { _, isChecked ->
@@ -215,7 +208,7 @@ class MapPolylinesFragment : Fragment(), OmhOnMapReadyCallback {
         }
         // color
         colorSeekbar = view.findViewById(R.id.panelColorSeekbar_color)
-        colorSeekbar?.setOnProgressChangedCallback { color: Int ->
+        colorSeekbar?.setOnColorChangedCallback { color: Int ->
             polylineColor = color
             customizablePolyline?.setColor(color)
             updateSpan()
@@ -223,25 +216,25 @@ class MapPolylinesFragment : Fragment(), OmhOnMapReadyCallback {
         // startCap
         startCapSpinner = view.findViewById(R.id.panelSpinner_startCap)
         startCapSpinner?.setValues(requireContext(), capTypeNameResourceID)
-        startCapSpinner?.setOnProgressChangedCallback { position: Int ->
+        startCapSpinner?.setOnItemSelectedCallback { position: Int ->
             customizablePolyline?.setStartCap(mapSpinnerPositionToOmhCap(position))
         }
         // endCap
         endCapSpinner = view.findViewById(R.id.panelSpinner_endCap)
         endCapSpinner?.setValues(requireContext(), capTypeNameResourceID)
-        endCapSpinner?.setOnProgressChangedCallback { position: Int ->
+        endCapSpinner?.setOnItemSelectedCallback { position: Int ->
             customizablePolyline?.setEndCap(mapSpinnerPositionToOmhCap(position))
         }
         // jointType
         jointTypeSpinner = view.findViewById(R.id.panelSpinner_joinType)
         jointTypeSpinner?.setValues(requireContext(), jointTypeNameResourceID)
-        jointTypeSpinner?.setOnProgressChangedCallback { position: Int ->
+        jointTypeSpinner?.setOnItemSelectedCallback { position: Int ->
             customizablePolyline?.setJointType(position)
         }
         // pattern
         patternSpinner = view.findViewById(R.id.panelSpinner_pattern)
         patternSpinner?.setValues(requireContext(), patternTypeNameResourceID)
-        patternSpinner?.setOnProgressChangedCallback { position: Int ->
+        patternSpinner?.setOnItemSelectedCallback { position: Int ->
             customizablePolyline?.setPattern(mapSpinnerPositionToOmhPattern(position))
         }
         // zIndex
@@ -264,8 +257,8 @@ class MapPolylinesFragment : Fragment(), OmhOnMapReadyCallback {
         }
         // spanColor
         spanColorSeekbar = view.findViewById(R.id.panelColorSeekbar_spanColor)
-        spanColorSeekbar?.setOnProgressChangedCallback { color: Int ->
-            spanColor =color
+        spanColorSeekbar?.setOnColorChangedCallback { color: Int ->
+            spanColor = color
             updateSpan()
         }
         // withGradient
@@ -277,13 +270,13 @@ class MapPolylinesFragment : Fragment(), OmhOnMapReadyCallback {
         }
         // fromColor
         spanGradientFromColorSeekbar = view.findViewById(R.id.panelColorSeekbar_spanFromColor)
-        spanGradientFromColorSeekbar?.setOnProgressChangedCallback { color: Int ->
+        spanGradientFromColorSeekbar?.setOnColorChangedCallback { color: Int ->
             spanGradientFromColor = color
             updateSpan()
         }
         // toColor
         spanGradientToColorSeekbar = view.findViewById(R.id.panelColorSeekbar_spanToColor)
-        spanGradientToColorSeekbar?.setOnProgressChangedCallback { color: Int ->
+        spanGradientToColorSeekbar?.setOnColorChangedCallback { color: Int ->
             spanGradientToColor = color
             updateSpan()
         }
@@ -293,7 +286,6 @@ class MapPolylinesFragment : Fragment(), OmhOnMapReadyCallback {
             withSpanPattern = isChecked
             updateSpan()
         }
-
     }
 
     private fun updatePanelUI() {
@@ -326,12 +318,9 @@ class MapPolylinesFragment : Fragment(), OmhOnMapReadyCallback {
             else -> null
         }
 
-        Log.v("Span", span.toString())
-
         val defaultSpan = OmhStyleSpanMonochromatic(polylineColor)
         customizablePolyline?.setSpans(listOfNotNull(span, defaultSpan))
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()

@@ -3,7 +3,6 @@ package com.openmobilehub.android.maps.sample.maps
 import android.content.res.Resources
 import android.graphics.BitmapFactory
 import android.graphics.Color
-import android.util.Log
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMap
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhPolyline
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
@@ -31,8 +30,8 @@ object DebugPolylineHelper {
                 OmhCoordinate(10.0, 30.0),
                 OmhCoordinate(-10.0, 40.0),
                 OmhCoordinate(15.0, 60.0),
-                )
-            clickable = false
+            )
+            clickable = true
             width = 10f
         }
 
@@ -47,11 +46,11 @@ object DebugPolylineHelper {
             points = listOf(
                 OmhCoordinate(30.0, 25.0),
                 OmhCoordinate(10.0, 25.0),
-                )
-//            clickable = true
+            )
+            color = Color.LTGRAY
+            clickable = true
             width = 10f
             zIndex = 50f
-            color = Color.LTGRAY
         }
 
         val basicPolyline = omhMap.addPolyline(basicPolylineOptions)
@@ -186,10 +185,10 @@ object DebugPolylineHelper {
         val colorPolyline = omhMap.addPolyline(colorPolylineOptions)
         colorPolyline?.setTag("Custom Color Polyline")
 
-        val customWidthPolyline =  omhMap.addPolyline(customWidthPolylineOptions)
+        val customWidthPolyline = omhMap.addPolyline(customWidthPolylineOptions)
         customWidthPolyline?.setTag("Custom Width Polyline")
 
-        val customPatternPolyline =  omhMap.addPolyline(customPatternPolylineOptions)
+        val customPatternPolyline = omhMap.addPolyline(customPatternPolylineOptions)
         customPatternPolyline?.setTag("Custom Pattern Polyline")
 
         val roundedJointTypePolyline = omhMap.addPolyline(roundedJointTypePolylineOptions)
@@ -206,7 +205,5 @@ object DebugPolylineHelper {
 
         val customSpansPolyline = omhMap.addPolyline(customSpansPolylineOptions)
         customSpansPolyline?.setTag("Custom Spans Polyline")
-
-        Log.v("DebugPolylineHelper", "Polylines added to the map.")
     }
 }

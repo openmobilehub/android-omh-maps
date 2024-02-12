@@ -16,12 +16,9 @@
 
 package com.openmobilehub.android.maps.sample.maps
 
-import android.graphics.BitmapFactory
-import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -59,7 +56,7 @@ import com.openmobilehub.android.maps.sample.utils.Constants.ZOOM_LEVEL_5
 import com.openmobilehub.android.maps.sample.utils.PermissionsUtils
 import com.openmobilehub.android.maps.sample.utils.getOmhCoordinate
 
-    class MapFragment : Fragment(), OmhOnMapReadyCallback {
+class MapFragment : Fragment(), OmhOnMapReadyCallback {
     private var currentLocation: OmhCoordinate = PRIME_MERIDIAN
     private var _binding: FragmentMapBinding? = null
     private val binding get() = _binding!!
@@ -67,7 +64,7 @@ import com.openmobilehub.android.maps.sample.utils.getOmhCoordinate
     private val args: MapFragmentArgs by navArgs()
     private var networkConnectivityChecker: NetworkConnectivityChecker? = null
     private var handler: Handler? = null
-    private var runnable : Runnable? = null
+    private var runnable: Runnable? = null
     private var handledCurrentLocation = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -98,7 +95,11 @@ import com.openmobilehub.android.maps.sample.utils.getOmhCoordinate
 
         networkConnectivityChecker = NetworkConnectivityChecker(requireContext()).apply {
             startListeningForConnectivityChanges {
-                Toast.makeText(requireContext(), R.string.lost_internet_connection, Toast.LENGTH_LONG).show()
+                Toast.makeText(
+                    requireContext(),
+                    R.string.lost_internet_connection,
+                    Toast.LENGTH_LONG
+                ).show()
             }
         }
         binding.fabShareLocation.setOnClickListener {
@@ -108,7 +109,11 @@ import com.openmobilehub.android.maps.sample.utils.getOmhCoordinate
 
         val displayText: (v: View) -> Unit = {
             val isVisible = binding.textViewLocation.isVisible
-            binding.textViewLocation.visibility = if (isVisible) { View.GONE } else { View.VISIBLE }
+            binding.textViewLocation.visibility = if (isVisible) {
+                View.GONE
+            } else {
+                View.VISIBLE
+            }
         }
 
         binding.textViewLocation.setOnClickListener(displayText)
@@ -122,10 +127,9 @@ import com.openmobilehub.android.maps.sample.utils.getOmhCoordinate
     }
 
     override fun onMapReady(omhMap: OmhMap) {
-        Log.v("MapFragment", "onMapReady")
-
         if (networkConnectivityChecker?.isNetworkAvailable() != true) {
-            Toast.makeText(requireContext(), R.string.no_internet_connection, Toast.LENGTH_LONG).show()
+            Toast.makeText(requireContext(), R.string.no_internet_connection, Toast.LENGTH_LONG)
+                .show()
         }
         omhMap.setZoomGesturesEnabled(true)
 
@@ -252,7 +256,9 @@ import com.openmobilehub.android.maps.sample.utils.getOmhCoordinate
 
     override fun onResume() {
         super.onResume()
-        if (handledCurrentLocation) { return }
+        if (handledCurrentLocation) {
+            return
+        }
         runnable?.let { validRunnable ->
             handler?.postDelayed(validRunnable, SHOW_MESSAGE_TIME)
         }

@@ -34,7 +34,6 @@ class MenuFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_menu, container, false)
     }
 
@@ -51,14 +50,12 @@ class MenuFragment : Fragment() {
                 "Map showcasing the polylines",
                 R.id.action_menuFragment_to_mapPolylinesFragment
             ),
-            // Add more items as needed
         )
 
         val adapter = ListViewAdapter(requireContext(), items)
         val listView: ListView = view.findViewById(R.id.listView)
         listView.adapter = adapter
-
-        listView.setOnItemClickListener { _, _, position, arg ->
+        listView.setOnItemClickListener { _, _, position, _ ->
             findNavController().navigate(items[position].resID)
         }
     }

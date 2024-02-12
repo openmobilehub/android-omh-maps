@@ -1,8 +1,6 @@
 package com.openmobilehub.android.maps.sample.customviews
 
 import android.content.Context
-import android.graphics.BitmapFactory
-import android.os.Build
 import android.util.AttributeSet
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -10,14 +8,8 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.LinearLayout
-import android.widget.SeekBar
 import android.widget.Spinner
 import android.widget.TextView
-import androidx.annotation.RequiresApi
-import com.openmobilehub.android.maps.core.presentation.models.OmhButtCap
-import com.openmobilehub.android.maps.core.presentation.models.OmhCustomCap
-import com.openmobilehub.android.maps.core.presentation.models.OmhRoundCap
-import com.openmobilehub.android.maps.core.presentation.models.OmhSquareCap
 import com.openmobilehub.android.maps.sample.R
 
 class PanelSpinner @JvmOverloads constructor(
@@ -31,14 +23,12 @@ class PanelSpinner @JvmOverloads constructor(
         orientation = HORIZONTAL
         gravity = Gravity.CENTER_VERTICAL
 
-        // Inflate the layout
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         inflater.inflate(R.layout.panel_spinner, this, true)
 
         titleTextView = findViewById(R.id.panelSeekbarTitle)
         spinner = findViewById(R.id.panelSpinner)
 
-        // Apply custom attributes
         context.theme.obtainStyledAttributes(
             attrs,
             R.styleable.PanelSeekbar,
@@ -68,7 +58,7 @@ class PanelSpinner @JvmOverloads constructor(
         )
     }
 
-    fun setOnProgressChangedCallback(callback: (position: Int) -> Unit) {
+    fun setOnItemSelectedCallback(callback: (position: Int) -> Unit) {
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
                 parent: AdapterView<*>,

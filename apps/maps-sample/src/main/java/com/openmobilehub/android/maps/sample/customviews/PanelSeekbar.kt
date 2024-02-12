@@ -1,14 +1,12 @@
 package com.openmobilehub.android.maps.sample.customviews
 
 import android.content.Context
-import android.os.Build
 import android.util.AttributeSet
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.widget.LinearLayout
 import android.widget.SeekBar
 import android.widget.TextView
-import androidx.annotation.RequiresApi
 import com.openmobilehub.android.maps.sample.R
 
 class PanelSeekbar @JvmOverloads constructor(
@@ -22,14 +20,12 @@ class PanelSeekbar @JvmOverloads constructor(
         orientation = HORIZONTAL
         gravity = Gravity.CENTER_VERTICAL
 
-        // Inflate the layout
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         inflater.inflate(R.layout.panel_seekbar, this, true)
 
         titleTextView = findViewById(R.id.panelSeekbarTitle)
         customSeekBar = findViewById(R.id.panelSeekbar)
 
-        // Apply custom attributes
         context.theme.obtainStyledAttributes(
             attrs,
             R.styleable.PanelSeekbar,
