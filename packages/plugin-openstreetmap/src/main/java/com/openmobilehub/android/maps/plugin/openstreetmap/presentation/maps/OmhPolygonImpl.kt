@@ -55,21 +55,21 @@ internal class OmhPolygonImpl(
     }
 
     override fun getStrokeJointType(): Int {
-        logger.logGetterNotSupported("jointType")
+        logger.logGetterNotSupported("strokeJointType")
         return DEFAULT_JOINT_TYPE
     }
 
     override fun setStrokeJointType(jointType: Int) {
-        logger.logSetterNotSupported("jointType")
+        logger.logSetterNotSupported("strokeJointType")
     }
 
     override fun getStrokePattern(): List<OmhPatternItem>? {
-        logger.logGetterNotSupported("pattern")
+        logger.logGetterNotSupported("strokePattern")
         return null
     }
 
     override fun setStrokePattern(pattern: List<OmhPatternItem>?) {
-        logger.logSetterNotSupported("pattern")
+        logger.logSetterNotSupported("strokePattern")
     }
 
     override fun getOutline(): List<OmhCoordinate> {

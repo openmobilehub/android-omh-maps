@@ -18,7 +18,6 @@ package com.openmobilehub.android.maps.plugin.openstreetmap.extensions
 
 import android.graphics.Color
 import android.graphics.Paint
-import android.util.Log
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolygonOptions
 import com.openmobilehub.android.maps.core.utils.UnsupportedFeatureLogger
 import com.openmobilehub.android.maps.plugin.openstreetmap.utils.polylineLogger
@@ -45,13 +44,11 @@ internal fun OmhPolygonOptions.toPolygonOptions(logger: UnsupportedFeatureLogger
         logger.logNotSupported("pattern")
     }
 
-    mappedOptions.outlinePaint.set(Paint().apply {
-        color = Color.RED
-    })
-
-
-    println("Color: ${tests.outlinePaint.color}")
-    println("Passed color: $strokeColor")
+    mappedOptions.outlinePaint.set(
+        Paint().apply {
+            color = Color.RED
+        }
+    )
 
     return mappedOptions
 }

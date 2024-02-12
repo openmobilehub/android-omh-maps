@@ -1,5 +1,6 @@
 package com.openmobilehub.android.maps.plugin.googlemaps.presentation.maps
 
+import android.graphics.Color
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.PatternItem
 import com.google.android.gms.maps.model.Polygon
@@ -85,7 +86,7 @@ class OmhPolygonImplTest {
     @Test
     fun `getFillColor returns polygon fill color`() {
         // Arrange
-        val expectedColor = 123
+        val expectedColor = Color.RED
         every { polygon.fillColor } returns expectedColor
 
         // Act
@@ -98,7 +99,7 @@ class OmhPolygonImplTest {
     @Test
     fun `setFillColor sets polygon fill color`() {
         // Arrange
-        val color = 123
+        val color = Color.RED
         every { polygon.fillColor = any() } just runs
 
         // Act

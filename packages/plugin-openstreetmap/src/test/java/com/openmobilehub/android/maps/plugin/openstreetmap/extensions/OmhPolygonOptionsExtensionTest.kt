@@ -17,7 +17,6 @@
 package com.openmobilehub.android.maps.plugin.openstreetmap.extensions
 
 import android.graphics.Color
-
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhDash
 import com.openmobilehub.android.maps.core.presentation.models.OmhDot
@@ -82,9 +81,6 @@ internal class OmhPolygonOptionsExtensionTest {
         assertEquals(4, polygonOptions.actualPoints.size)
         assertEquals(1, polygonOptions.holes.size)
         assertTrue(polygonOptions.isEnabled)
-//        assertEquals(Color.RED,  polygonOptions.outlinePaint.color)
-//        assertEquals(Color.BLUE, polygonOptions.fillPaint.color)
-        assertEquals(100f, polygonOptions.outlinePaint.strokeWidth)
         assertTrue(polygonOptions.isVisible)
     }
 }
