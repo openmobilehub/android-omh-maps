@@ -27,7 +27,7 @@ internal fun OmhPolygonOptions.toPolygonOptions(logger: UnsupportedFeatureLogger
     val mappedOptions = Polygon()
 
     mappedOptions.points = (outline.map { it.toGeoPoint() })
-    mappedOptions.holes = holes?.map { it.map { point -> point.toGeoPoint() } }
+//    mappedOptions.holes = holes?.map { it.map { point -> point.toGeoPoint() } }
     clickable?.let { mappedOptions.isEnabled = it }
     strokeWidth?.let { mappedOptions.outlinePaint.strokeWidth = it }
     strokeColor?.let { mappedOptions.outlinePaint.color = it }

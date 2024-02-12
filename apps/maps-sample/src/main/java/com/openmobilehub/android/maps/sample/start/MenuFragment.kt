@@ -50,6 +50,11 @@ class MenuFragment : Fragment() {
                 "Map showcasing the polylines",
                 R.id.action_menuFragment_to_mapPolylinesFragment
             ),
+            MyListItem(
+                "Polygon Map",
+                "Map showcasing the polygons",
+                R.id.action_menuFragment_to_mapPolygonsFragment
+            ),
         )
 
         val adapter = ListViewAdapter(requireContext(), items)

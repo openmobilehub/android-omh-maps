@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".maps.MapPolygonsFragment">
+
+    <fragment
+        android:id="@+id/fragment_map_container"
+        android:name="com.openmobilehub.android.maps.core.presentation.fragments.OmhMapFragment"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/scrollView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout="@layout/fragment_omh_map" />
+
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/fragment_map_container">
+
+        <LinearLayout
+            android:id="@+id/controlPanel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <CheckBox
+                android:id="@+id/checkBox_isVisible"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="@string/visible" />
+
+            <CheckBox
+                android:id="@+id/checkBox_isClickable"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/clickable" />
+
+            <CheckBox
+                android:id="@+id/checkBox_withHoles"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/holes" />
+
+            <com.openmobilehub.android.maps.sample.customviews.PanelSeekbar
+                android:id="@+id/panelSeekbar_width"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:maxValue="100"
+                app:minValue="1"
+                app:titleText="Stroke Width" />
+
+            <com.openmobilehub.android.maps.sample.customviews.PanelColorSeekbar
+                android:id="@+id/panelColorSeekbar_color"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:titleText="Stroke Color" />
+
+            <com.openmobilehub.android.maps.sample.customviews.PanelColorSeekbar
+                android:id="@+id/panelColorSeekbar_fillColor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:titleText="Fill Color" />
+
+            <com.openmobilehub.android.maps.sample.customviews.PanelSpinner
+                android:id="@+id/panelSpinner_joinType"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:titleText="Stroke Join Type" />
+
+            <com.openmobilehub.android.maps.sample.customviews.PanelSpinner
+                android:id="@+id/panelSpinner_pattern"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:titleText="Stroke Pattern" />
+
+            <com.openmobilehub.android.maps.sample.customviews.PanelSeekbar
+                android:id="@+id/panelSeekbar_zIndex"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:maxValue="100"
+                app:minValue="1"
+                app:titleText="@string/z_index" />
+
+        </LinearLayout>
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>
