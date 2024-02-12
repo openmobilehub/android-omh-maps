@@ -173,6 +173,7 @@ class MapFragment : Fragment(), OmhOnMapReadyCallback {
 
         DebugPolylineHelper.addDebugPolylines(omhMap, resources)
         DebugPolygonHelper.addDebugPolygons(omhMap)
+        DebugPolylineHelper.addDebugPolylines(omhMap, resources)
     }
 
     private fun displaySharedLocation(omhMap: OmhMap) {
