@@ -89,7 +89,7 @@ internal class OmhMapImpl(
         val osmPolyline = options.toPolylineOptions()
 
         osmPolyline.setOnClickListener { polyline, _, _ ->
-            val polylineOmh = OmhPolylineImpl(polyline)
+            val polylineOmh = OmhPolylineImpl(polyline, mapView)
             polylineClickListener?.onPolylineClick(polylineOmh)
             true
         }
@@ -98,7 +98,7 @@ internal class OmhMapImpl(
             postInvalidate()
         }
 
-        return OmhPolylineImpl(osmPolyline)
+        return OmhPolylineImpl(osmPolyline, mapView)
     }
 
     override fun addPolygon(options: OmhPolygonOptions): OmhPolygon? {

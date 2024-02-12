@@ -24,12 +24,14 @@ import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.utils.UnsupportedFeatureLogger
 import com.openmobilehub.android.maps.plugin.openstreetmap.utils.ConverterUtils
 import com.openmobilehub.android.maps.plugin.openstreetmap.utils.polygonLogger
+import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Polyline
 
 @SuppressWarnings("TooManyFunctions")
 internal class OmhPolylineImpl(
     private val polyline: Polyline,
-    private val logger: UnsupportedFeatureLogger = polygonLogger
+    private val mapView: MapView,
+    private val logger: UnsupportedFeatureLogger = polygonLogger,
 ) : OmhPolyline {
 
     override fun getClickable(): Boolean {
@@ -38,6 +40,7 @@ internal class OmhPolylineImpl(
 
     override fun setClickable(clickable: Boolean) {
         polyline.isEnabled = clickable
+        mapView.postInvalidate()
     }
 
     override fun getColor(): Int {
@@ -46,6 +49,7 @@ internal class OmhPolylineImpl(
 
     override fun setColor(color: Int) {
         polyline.outlinePaint.color = color
+        mapView.postInvalidate()
     }
 
     override fun getEndCap(): OmhCap? {
@@ -55,6 +59,7 @@ internal class OmhPolylineImpl(
 
     override fun setEndCap(endCap: OmhCap?) {
         logger.logSetterNotSupported("endCap")
+        mapView.postInvalidate()
     }
 
     override fun getJointType(): Int {
@@ -107,6 +112,7 @@ internal class OmhPolylineImpl(
 
     override fun setTag(tag: Any?) {
         polyline.relatedObject = tag
+        mapView.postInvalidate()
     }
 
     override fun getWidth(): Float {
@@ -115,6 +121,7 @@ internal class OmhPolylineImpl(
 
     override fun setWidth(width: Float) {
         polyline.outlinePaint.strokeWidth = width
+        mapView.postInvalidate()
     }
 
     override fun getZIndex(): Float {
@@ -132,6 +139,7 @@ internal class OmhPolylineImpl(
 
     override fun setVisible(visible: Boolean) {
         polyline.isVisible = visible
+        mapView.postInvalidate()
     }
 
     companion object {

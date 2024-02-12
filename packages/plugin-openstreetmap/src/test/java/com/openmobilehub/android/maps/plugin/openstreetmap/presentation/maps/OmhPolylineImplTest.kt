@@ -34,19 +34,21 @@ import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.osmdroid.util.GeoPoint
+import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Polyline
 
 class OmhPolylineImplTest {
 
     private lateinit var polyline: Polyline
     private lateinit var omhPolyline: OmhPolylineImpl
+    private val mockMapView: MapView = mockk(relaxed = true)
     private val mockLogger: UnsupportedFeatureLogger =
         mockk<UnsupportedFeatureLogger>(relaxed = true)
 
     @Before
     fun setUp() {
         polyline = mockk(relaxed = true)
-        omhPolyline = OmhPolylineImpl(polyline, mockLogger)
+        omhPolyline = OmhPolylineImpl(polyline, mockMapView, mockLogger)
         mockkObject(ConverterUtils)
     }
 
