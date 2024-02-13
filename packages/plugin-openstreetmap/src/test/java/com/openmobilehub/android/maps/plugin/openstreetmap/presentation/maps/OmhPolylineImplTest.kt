@@ -34,46 +34,43 @@ import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.osmdroid.util.GeoPoint
+import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Polyline
 
 class OmhPolylineImplTest {
 
     private lateinit var polyline: Polyline
     private lateinit var omhPolyline: OmhPolylineImpl
+    private val initiallyClickable = true
+    private val mockMapView: MapView = mockk(relaxed = true)
     private val mockLogger: UnsupportedFeatureLogger =
         mockk<UnsupportedFeatureLogger>(relaxed = true)
 
     @Before
     fun setUp() {
         polyline = mockk(relaxed = true)
-        omhPolyline = OmhPolylineImpl(polyline, mockLogger)
+        omhPolyline = OmhPolylineImpl(polyline, mockMapView, initiallyClickable, mockLogger)
         mockkObject(ConverterUtils)
     }
 
     @Test
     fun `getClickable returns clickable state`() {
-        // Arrange
-        val expectedValue = true
-        every { polyline.isEnabled } returns expectedValue
-
         // Act
         val clickable = omhPolyline.getClickable()
 
         // Assert
-        Assert.assertEquals(expectedValue, clickable)
+        Assert.assertEquals(initiallyClickable, clickable)
     }
 
     @Test
     fun `setClickable sets clickable state`() {
         // Arrange
         val expectedValue = true
-        every { polyline.isEnabled = any() } just runs
-
         // Act
         omhPolyline.setClickable(expectedValue)
 
         // Assert
-        verify { polyline.isEnabled = expectedValue }
+        Assert.assertEquals(expectedValue, omhPolyline.getClickable())
     }
 
     @Test

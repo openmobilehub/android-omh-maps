@@ -16,8 +16,6 @@
 
 package com.openmobilehub.android.maps.sample.maps
 
-import android.graphics.BitmapFactory
-import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -66,7 +64,7 @@ class MapFragment : Fragment(), OmhOnMapReadyCallback {
     private val args: MapFragmentArgs by navArgs()
     private var networkConnectivityChecker: NetworkConnectivityChecker? = null
     private var handler: Handler? = null
-    private var runnable : Runnable? = null
+    private var runnable: Runnable? = null
     private var handledCurrentLocation = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -97,7 +95,11 @@ class MapFragment : Fragment(), OmhOnMapReadyCallback {
 
         networkConnectivityChecker = NetworkConnectivityChecker(requireContext()).apply {
             startListeningForConnectivityChanges {
-                Toast.makeText(requireContext(), R.string.lost_internet_connection, Toast.LENGTH_LONG).show()
+                Toast.makeText(
+                    requireContext(),
+                    R.string.lost_internet_connection,
+                    Toast.LENGTH_LONG
+                ).show()
             }
         }
         binding.fabShareLocation.setOnClickListener {
@@ -107,7 +109,11 @@ class MapFragment : Fragment(), OmhOnMapReadyCallback {
 
         val displayText: (v: View) -> Unit = {
             val isVisible = binding.textViewLocation.isVisible
-            binding.textViewLocation.visibility = if (isVisible) { View.GONE } else { View.VISIBLE }
+            binding.textViewLocation.visibility = if (isVisible) {
+                View.GONE
+            } else {
+                View.VISIBLE
+            }
         }
 
         binding.textViewLocation.setOnClickListener(displayText)
@@ -121,9 +127,9 @@ class MapFragment : Fragment(), OmhOnMapReadyCallback {
     }
 
     override fun onMapReady(omhMap: OmhMap) {
-
         if (networkConnectivityChecker?.isNetworkAvailable() != true) {
-            Toast.makeText(requireContext(), R.string.no_internet_connection, Toast.LENGTH_LONG).show()
+            Toast.makeText(requireContext(), R.string.no_internet_connection, Toast.LENGTH_LONG)
+                .show()
         }
         omhMap.setZoomGesturesEnabled(true)
 
@@ -250,7 +256,9 @@ class MapFragment : Fragment(), OmhOnMapReadyCallback {
 
     override fun onResume() {
         super.onResume()
-        if (handledCurrentLocation) { return }
+        if (handledCurrentLocation) {
+            return
+        }
         runnable?.let { validRunnable ->
             handler?.postDelayed(validRunnable, SHOW_MESSAGE_TIME)
         }

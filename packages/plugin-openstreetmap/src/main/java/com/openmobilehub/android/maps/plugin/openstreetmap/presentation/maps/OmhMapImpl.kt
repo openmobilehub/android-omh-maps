@@ -47,6 +47,7 @@ import org.osmdroid.api.IGeoPoint
 import org.osmdroid.views.CustomZoomButtonsController
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
+import org.osmdroid.views.overlay.Polyline
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 
@@ -59,6 +60,8 @@ internal class OmhMapImpl(
     private var myLocationIconOverlay: MyLocationIconOverlay? = null
     private val gestureOverlay = GestureOverlay()
     private var polylineClickListener: OmhOnPolylineClickListener? = null
+
+    private val polylines = mutableMapOf<Polyline, OmhPolyline>()
 
     init {
         mapView.addMapListener(mapListenerController)
@@ -81,19 +84,25 @@ internal class OmhMapImpl(
     }
 
     override fun addPolyline(options: OmhPolylineOptions): OmhPolyline? {
-        val osmPolyline = options.toPolylineOptions()
+        val initiallyClickable = options.clickable ?: false
 
-        osmPolyline.setOnClickListener { polyline, _, _ ->
-            val polylineOmh = OmhPolylineImpl(polyline)
-            polylineClickListener?.onPolylineClick(polylineOmh)
+        val polyline = options.toPolylineOptions()
+        val omhPolyline = OmhPolylineImpl(polyline, mapView, initiallyClickable)
+
+        polylines[polyline] = omhPolyline
+        polyline.setOnClickListener { _, _, _ ->
+            if (omhPolyline.getClickable()) {
+                polylineClickListener?.onPolylineClick(omhPolyline)
+            }
             true
         }
+
         mapView.run {
-            overlayManager.add(osmPolyline)
+            overlayManager.add(polyline)
             postInvalidate()
         }
 
-        return OmhPolylineImpl(osmPolyline)
+        return omhPolyline
     }
 
     override fun getCameraPositionCoordinate(): OmhCoordinate {
@@ -193,6 +202,15 @@ internal class OmhMapImpl(
 
     override fun setOnPolylineClickListener(listener: OmhOnPolylineClickListener) {
         polylineClickListener = listener
+
+        polylines.forEach() { (polyline, omhPolyline) ->
+            polyline.setOnClickListener { _, _, _ ->
+                if (omhPolyline.getClickable()) {
+                    listener.onPolylineClick(omhPolyline)
+                }
+                true
+            }
+        }
     }
 
     override fun setOnCameraIdleListener(listener: OmhOnCameraIdleListener) {
