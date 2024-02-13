@@ -16,8 +16,6 @@
 
 package com.openmobilehub.android.maps.plugin.openstreetmap.extensions
 
-import android.graphics.Color
-import android.graphics.Paint
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolygonOptions
 import com.openmobilehub.android.maps.core.utils.UnsupportedFeatureLogger
 import com.openmobilehub.android.maps.plugin.openstreetmap.utils.polygonLogger
@@ -25,9 +23,8 @@ import org.osmdroid.views.overlay.Polygon
 
 internal fun OmhPolygonOptions.toPolygonOptions(logger: UnsupportedFeatureLogger = polygonLogger): Polygon {
     val mappedOptions = Polygon()
-
     mappedOptions.points = (outline.map { it.toGeoPoint() })
-//    mappedOptions.holes = holes?.map { it.map { point -> point.toGeoPoint() } }
+    holes?.let { mappedOptions.holes = it.map { it.map { point -> point.toGeoPoint() } } }
     clickable?.let { mappedOptions.isEnabled = it }
     strokeWidth?.let { mappedOptions.outlinePaint.strokeWidth = it }
     strokeColor?.let { mappedOptions.outlinePaint.color = it }
@@ -43,12 +40,6 @@ internal fun OmhPolygonOptions.toPolygonOptions(logger: UnsupportedFeatureLogger
     strokePattern?.let {
         logger.logNotSupported("pattern")
     }
-
-    mappedOptions.outlinePaint.set(
-        Paint().apply {
-            color = Color.RED
-        }
-    )
 
     return mappedOptions
 }
