@@ -64,6 +64,8 @@ internal class OmhMapImpl(
     private val gestureOverlay = GestureOverlay()
     private var polylineClickListener: OmhOnPolylineClickListener? = null
     private var polygonClickListener: OmhOnPolygonClickListener? = null
+    private val polygons = mutableMapOf<Polygon, OmhPolygon>()
+
 
     init {
         mapView.addMapListener(mapListenerController)
@@ -102,20 +104,25 @@ internal class OmhMapImpl(
     }
 
     override fun addPolygon(options: OmhPolygonOptions): OmhPolygon? {
-        val polygonOptions = options.toPolygonOptions()
+        val initiallyClickable = options.clickable ?: false
 
-        polygonOptions.setOnClickListener { polygon, _, _ ->
-            val polygonOmh = OmhPolygonImpl(polygon, mapView)
-            polygonClickListener?.onPolygonClick(polygonOmh)
+        val polygon = options.toPolygonOptions()
+        val omhPolygon = OmhPolygonImpl(polygon, mapView, initiallyClickable)
+
+        polygons[polygon] = omhPolygon
+        polygon.setOnClickListener { _, _, _ ->
+            if (omhPolygon.getClickable()) {
+                polygonClickListener?.onPolygonClick(omhPolygon)
+            }
             true
         }
 
         mapView.run {
-            overlayManager.add(polygonOptions)
+            overlayManager.add(polygon)
             postInvalidate()
         }
 
-        return OmhPolygonImpl(polygonOptions, mapView)
+        return omhPolygon
     }
 
     override fun getCameraPositionCoordinate(): OmhCoordinate {
@@ -219,6 +226,15 @@ internal class OmhMapImpl(
 
     override fun setOnPolygonClickListener(listener: OmhOnPolygonClickListener) {
         polygonClickListener = listener
+
+        polygons.forEach() { (polygon, omhPolygon) ->
+            polygon.setOnClickListener { _, _, _ ->
+                if (omhPolygon.getClickable()) {
+                    listener.onPolygonClick(omhPolygon)
+                }
+                true
+            }
+        }
     }
 
     override fun setOnCameraIdleListener(listener: OmhOnCameraIdleListener) {

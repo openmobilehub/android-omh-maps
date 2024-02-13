@@ -16,6 +16,7 @@
 
 package com.openmobilehub.android.maps.plugin.openstreetmap.presentation.maps
 
+import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnPolygonClickListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhPatternItem
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhPolygon
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
@@ -29,16 +30,17 @@ import org.osmdroid.views.overlay.Polygon
 internal class OmhPolygonImpl(
     private val polygon: Polygon,
     private val mapView: MapView,
+    initiallyClickable: Boolean,
     private val logger: UnsupportedFeatureLogger = polylineLogger
 ) : OmhPolygon {
+    private var isClickable = initiallyClickable
 
     override fun getClickable(): Boolean {
-        return polygon.isEnabled
+        return isClickable
     }
 
     override fun setClickable(clickable: Boolean) {
-        polygon.isEnabled = clickable
-        mapView.postInvalidate()
+        isClickable = clickable
     }
 
     override fun getStrokeColor(): Int {
