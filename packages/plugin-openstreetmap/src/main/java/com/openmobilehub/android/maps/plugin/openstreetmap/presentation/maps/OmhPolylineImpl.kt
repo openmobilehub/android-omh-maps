@@ -31,16 +31,17 @@ import org.osmdroid.views.overlay.Polyline
 internal class OmhPolylineImpl(
     private val polyline: Polyline,
     private val mapView: MapView,
+    initiallyClickable: Boolean,
     private val logger: UnsupportedFeatureLogger = polylineLogger
 ) : OmhPolyline {
+    private var isClickable = initiallyClickable
 
     override fun getClickable(): Boolean {
-        return polyline.isEnabled
+        return isClickable
     }
 
     override fun setClickable(clickable: Boolean) {
-        polyline.isEnabled = clickable
-        mapView.postInvalidate()
+        isClickable = clickable
     }
 
     override fun getColor(): Int {

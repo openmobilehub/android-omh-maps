@@ -25,7 +25,6 @@ internal fun OmhPolylineOptions.toPolylineOptions(logger: UnsupportedFeatureLogg
     val mappedOptions = Polyline()
 
     mappedOptions.setPoints(points.map { it.toGeoPoint() })
-    clickable?.let { mappedOptions.isEnabled = it }
     width?.let { mappedOptions.outlinePaint.strokeWidth = it }
     color?.let { mappedOptions.outlinePaint.color = it }
     isVisible?.let { mappedOptions.isVisible = it }
