@@ -81,10 +81,8 @@ internal class OmhPolylineImpl(
     }
 
     override fun setPattern(pattern: List<OmhPatternItem>?) {
-        pattern?.let {
-            polyline.pattern = it.map { patternItem ->
-                PatternConverter.convertToPatternItem(patternItem)
-            }
+        polyline.pattern = pattern?.map { patternItem ->
+            PatternConverter.convertToPatternItem(patternItem)
         }
     }
 

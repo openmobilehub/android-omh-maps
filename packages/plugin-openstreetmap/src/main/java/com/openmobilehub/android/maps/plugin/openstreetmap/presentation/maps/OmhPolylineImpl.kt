@@ -23,7 +23,7 @@ import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhStyle
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.utils.UnsupportedFeatureLogger
 import com.openmobilehub.android.maps.plugin.openstreetmap.utils.ConverterUtils
-import com.openmobilehub.android.maps.plugin.openstreetmap.utils.polygonLogger
+import com.openmobilehub.android.maps.plugin.openstreetmap.utils.polylineLogger
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Polyline
 
@@ -31,16 +31,17 @@ import org.osmdroid.views.overlay.Polyline
 internal class OmhPolylineImpl(
     private val polyline: Polyline,
     private val mapView: MapView,
-    private val logger: UnsupportedFeatureLogger = polygonLogger,
+    initiallyClickable: Boolean,
+    private val logger: UnsupportedFeatureLogger = polylineLogger
 ) : OmhPolyline {
+    private var isClickable = initiallyClickable
 
     override fun getClickable(): Boolean {
-        return polyline.isEnabled
+        return isClickable
     }
 
     override fun setClickable(clickable: Boolean) {
-        polyline.isEnabled = clickable
-        mapView.postInvalidate()
+        isClickable = clickable
     }
 
     override fun getColor(): Int {

@@ -91,6 +91,7 @@ class MapPolylinesFragment : Fragment(), OmhOnMapReadyCallback {
     private var spanGradientProperties: LinearLayout? = null
 
     private var isVisibleCheckbox: CheckBox? = null
+    private var isClickableCheckbox: CheckBox? = null
     private var strokeWidthSeekbar: PanelSeekbar? = null
     private var colorSeekbar: PanelColorSeekbar? = null
     private var startCapSpinner: PanelSpinner? = null
@@ -196,10 +197,15 @@ class MapPolylinesFragment : Fragment(), OmhOnMapReadyCallback {
         spanGradientProperties = view.findViewById(R.id.spanGradientProperties)
         updatePanelUI()
 
-        // isClickable
+        // isVisible
         isVisibleCheckbox = view.findViewById(R.id.checkBox_isVisible)
         isVisibleCheckbox?.setOnCheckedChangeListener { _, isChecked ->
             customizablePolyline?.setVisible(isChecked)
+        }
+        // isClickable
+        isClickableCheckbox = view.findViewById(R.id.checkBox_isClickable)
+        isClickableCheckbox?.setOnCheckedChangeListener { _, isChecked ->
+            customizablePolyline?.setClickable(isChecked)
         }
         // strokeWidth
         strokeWidthSeekbar = view.findViewById(R.id.panelSeekbar_width)

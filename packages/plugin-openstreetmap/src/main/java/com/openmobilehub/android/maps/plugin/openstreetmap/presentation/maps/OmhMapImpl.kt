@@ -52,6 +52,7 @@ import org.osmdroid.views.CustomZoomButtonsController
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.Polygon
+import org.osmdroid.views.overlay.Polyline
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 
@@ -66,6 +67,7 @@ internal class OmhMapImpl(
     private var polylineClickListener: OmhOnPolylineClickListener? = null
     private var polygonClickListener: OmhOnPolygonClickListener? = null
 
+    private val polylines = mutableMapOf<Polyline, OmhPolyline>()
     private val polygons = mutableMapOf<Polygon, OmhPolygon>()
 
     init {
@@ -89,19 +91,25 @@ internal class OmhMapImpl(
     }
 
     override fun addPolyline(options: OmhPolylineOptions): OmhPolyline? {
-        val osmPolyline = options.toPolylineOptions()
+        val initiallyClickable = options.clickable ?: false
 
-        osmPolyline.setOnClickListener { polyline, _, _ ->
-            val polylineOmh = OmhPolylineImpl(polyline, mapView)
-            polylineClickListener?.onPolylineClick(polylineOmh)
+        val polyline = options.toPolylineOptions()
+        val omhPolyline = OmhPolylineImpl(polyline, mapView, initiallyClickable)
+
+        polylines[polyline] = omhPolyline
+        polyline.setOnClickListener { _, _, _ ->
+            if (omhPolyline.getClickable()) {
+                polylineClickListener?.onPolylineClick(omhPolyline)
+            }
             true
         }
+
         mapView.run {
-            overlayManager.add(osmPolyline)
+            overlayManager.add(polyline)
             postInvalidate()
         }
 
-        return OmhPolylineImpl(osmPolyline, mapView)
+        return omhPolyline
     }
 
     override fun addPolygon(options: OmhPolygonOptions): OmhPolygon? {
@@ -223,6 +231,15 @@ internal class OmhMapImpl(
 
     override fun setOnPolylineClickListener(listener: OmhOnPolylineClickListener) {
         polylineClickListener = listener
+
+        polylines.forEach() { (polyline, omhPolyline) ->
+            polyline.setOnClickListener { _, _, _ ->
+                if (omhPolyline.getClickable()) {
+                    listener.onPolylineClick(omhPolyline)
+                }
+                true
+            }
+        }
     }
 
     override fun setOnPolygonClickListener(listener: OmhOnPolygonClickListener) {
