@@ -51,6 +51,7 @@ import org.osmdroid.api.IGeoPoint
 import org.osmdroid.views.CustomZoomButtonsController
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
+import org.osmdroid.views.overlay.Polygon
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 
@@ -64,8 +65,8 @@ internal class OmhMapImpl(
     private val gestureOverlay = GestureOverlay()
     private var polylineClickListener: OmhOnPolylineClickListener? = null
     private var polygonClickListener: OmhOnPolygonClickListener? = null
-    private val polygons = mutableMapOf<Polygon, OmhPolygon>()
 
+    private val polygons = mutableMapOf<Polygon, OmhPolygon>()
 
     init {
         mapView.addMapListener(mapListenerController)

@@ -39,6 +39,7 @@ class OmhPolygonImplTest {
 
     private lateinit var polygon: Polygon
     private lateinit var omhPolygon: OmhPolygonImpl
+    private val initiallyClickable = true
     private val mockMapView: MapView = mockk(relaxed = true)
     private val mockLogger: UnsupportedFeatureLogger =
         mockk<UnsupportedFeatureLogger>(relaxed = true)
@@ -46,34 +47,29 @@ class OmhPolygonImplTest {
     @Before
     fun setUp() {
         polygon = mockk(relaxed = true)
-        omhPolygon = OmhPolygonImpl(polygon, mockMapView, mockLogger)
+        omhPolygon = OmhPolygonImpl(polygon, mockMapView, initiallyClickable, mockLogger)
         mockkObject(ConverterUtils)
     }
 
     @Test
     fun `getClickable returns clickable state`() {
-        // Arrange
-        val expectedValue = true
-        every { polygon.isEnabled } returns expectedValue
-
         // Act
         val clickable = omhPolygon.getClickable()
 
         // Assert
-        Assert.assertEquals(expectedValue, clickable)
+        Assert.assertEquals(initiallyClickable, clickable)
     }
 
     @Test
     fun `setClickable sets clickable state`() {
         // Arrange
         val expectedValue = true
-        every { polygon.isEnabled = any() } just runs
 
         // Act
         omhPolygon.setClickable(expectedValue)
 
         // Assert
-        verify { polygon.isEnabled = expectedValue }
+        Assert.assertEquals(expectedValue, omhPolygon.getClickable())
     }
 
     @Test
