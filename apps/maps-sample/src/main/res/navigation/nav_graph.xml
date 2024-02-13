@@ -18,8 +18,8 @@
         tools:layout="@layout/fragment_initial">
         <argument
             android:name="coordinate"
-            app:argType="com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate"
             android:defaultValue="@null"
+            app:argType="com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate"
             app:nullable="true" />
         <action
             android:id="@+id/action_initialFragment_to_mapFragment"
@@ -29,8 +29,14 @@
     <fragment
         android:id="@+id/mapPolylinesFragment"
         android:name="com.openmobilehub.android.maps.sample.maps.MapPolylinesFragment"
-        android:label= "@string/map_polylines_fragment_text"
+        android:label="@string/map_polylines_fragment_text"
         tools:layout="@layout/fragment_map_polylines" />
+
+    <fragment
+        android:id="@+id/mapPolygonsFragment"
+        android:name="com.openmobilehub.android.maps.sample.maps.MapPolygonsFragment"
+        android:label="@string/map_polygons_fragment_text"
+        tools:layout="@layout/fragment_map_polygons" />
 
     <fragment
         android:id="@+id/mapFragment"
@@ -39,8 +45,8 @@
         tools:layout="@layout/fragment_map">
         <argument
             android:name="coordinate"
-            app:argType="com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate"
             android:defaultValue="@null"
+            app:argType="com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate"
             app:nullable="true" />
         <action
             android:id="@+id/action_mapFragment_to_initialFragment"
@@ -54,12 +60,15 @@
         android:name="com.openmobilehub.android.maps.sample.start.MenuFragment"
         android:label="@string/menu_fragment_text"
         tools:layout="@layout/fragment_menu">
-    <action
+        <action
             android:id="@+id/action_menuFragment_to_mapFragment"
             app:destination="@id/mapFragment" />
-    <action
-        android:id="@+id/action_menuFragment_to_mapPolylinesFragment"
-        app:destination="@id/mapPolylinesFragment" />
+        <action
+            android:id="@+id/action_menuFragment_to_mapPolylinesFragment"
+            app:destination="@id/mapPolylinesFragment" />
+        <action
+            android:id="@+id/action_menuFragment_to_mapPolygonsFragment"
+            app:destination="@id/mapPolygonsFragment" />
     </fragment>
 
 </navigation>

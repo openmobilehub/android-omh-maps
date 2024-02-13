@@ -21,6 +21,7 @@ import android.Manifest.permission.ACCESS_FINE_LOCATION
 import androidx.annotation.RequiresPermission
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
+import com.openmobilehub.android.maps.core.presentation.models.OmhPolygonOptions
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolylineOptions
 
 /**
@@ -47,6 +48,14 @@ interface OmhMap {
      * @return [OmhPolyline] that was added to the map.
      */
     fun addPolyline(options: OmhPolylineOptions): OmhPolyline?
+
+    /**
+     * Adds a polygon to this map. The polygon is rendered on the map based on the provided options.
+     *
+     * @param options a polygon options object that defines how to render the polygon.
+     * @return [OmhPolygon] that was added to the map.
+     */
+    fun addPolygon(options: OmhPolygonOptions): OmhPolygon?
 
     /**
      * Gets the camera's position.
@@ -125,6 +134,15 @@ interface OmhMap {
      * `onPolylineClick` method that will be called with the clicked [OmhPolyline] as a parameter.
      */
     fun setOnPolylineClickListener(listener: OmhOnPolylineClickListener)
+
+    /**
+     * Sets a callback that's invoked when a polygon on the map is clicked.
+     *
+     * @param listener The callback that's invoked when a polygon is clicked.
+     * This listener takes in an [OmhOnPolygonClickListener] object which defines the
+     * `onPolygonClick` method that will be called with the clicked [OmhPolygon] as a parameter.
+     */
+    fun setOnPolygonClickListener(listener: OmhOnPolygonClickListener)
 
     /**
      * Takes a snapshot of the map.

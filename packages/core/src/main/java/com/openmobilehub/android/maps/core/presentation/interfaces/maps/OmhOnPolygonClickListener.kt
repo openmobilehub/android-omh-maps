@@ -14,9 +14,15 @@
  * limitations under the License.
  */
 
-package com.openmobilehub.android.maps.plugin.openstreetmap.utils
+package com.openmobilehub.android.maps.core.presentation.interfaces.maps
 
-import com.openmobilehub.android.maps.core.utils.UnsupportedFeatureLogger
-
-val polylineLogger = UnsupportedFeatureLogger("OmhPolyline", "OpenStreetMap")
-val polygonLogger = UnsupportedFeatureLogger("OmhPolygon", "OpenStreetMap")
+/**
+ * Abstraction to provide access to callback interface for when a polygon on the map is clicked.
+ */
+fun interface OmhOnPolygonClickListener {
+    /**
+     * Called when a polygon on the map is clicked.
+     * @param polygon The polygon that was clicked.
+     */
+    fun onPolygonClick(polygon: OmhPolygon)
+}
