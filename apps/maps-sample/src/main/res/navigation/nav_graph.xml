@@ -36,7 +36,7 @@
         android:id="@+id/mapPolygonsFragment"
         android:name="com.openmobilehub.android.maps.sample.maps.MapPolygonsFragment"
         android:label="@string/map_polygons_fragment_text"
-        tools:layout="@layout/fragment_map_polylines" />
+        tools:layout="@layout/fragment_map_polygons" />
 
     <fragment
         android:id="@+id/mapFragment"
