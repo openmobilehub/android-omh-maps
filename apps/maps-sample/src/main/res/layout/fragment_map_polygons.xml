@@ -60,31 +60,31 @@
                 android:layout_height="wrap_content"
                 app:maxValue="100"
                 app:minValue="1"
-                app:titleText="Stroke Width" />
+                app:titleText="@string/stroke_width" />
 
             <com.openmobilehub.android.maps.sample.customviews.PanelColorSeekbar
                 android:id="@+id/panelColorSeekbar_color"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:titleText="Stroke Color" />
+                app:titleText="@string/stroke_color" />
 
             <com.openmobilehub.android.maps.sample.customviews.PanelColorSeekbar
                 android:id="@+id/panelColorSeekbar_fillColor"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:titleText="Fill Color" />
+                app:titleText="@string/fill_color" />
 
             <com.openmobilehub.android.maps.sample.customviews.PanelSpinner
                 android:id="@+id/panelSpinner_joinType"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:titleText="Stroke Join Type" />
+                app:titleText="@string/stroke_join_type" />
 
             <com.openmobilehub.android.maps.sample.customviews.PanelSpinner
                 android:id="@+id/panelSpinner_pattern"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:titleText="Stroke Pattern" />
+                app:titleText="@string/stroke_pattern" />
 
             <com.openmobilehub.android.maps.sample.customviews.PanelSeekbar
                 android:id="@+id/panelSeekbar_zIndex"

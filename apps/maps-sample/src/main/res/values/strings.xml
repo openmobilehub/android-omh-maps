@@ -46,4 +46,9 @@
     <string name="from_color">From Color</string>
     <string name="to_color">To Color</string>
     <string name="holes">Holes</string>
+    <string name="stroke_width">Stroke Width</string>
+    <string name="stroke_color">Stroke Color</string>
+    <string name="fill_color">Fill Color</string>
+    <string name="stroke_join_type">Stroke Join Type</string>
+    <string name="stroke_pattern">Stroke Pattern</string>
 </resources>
