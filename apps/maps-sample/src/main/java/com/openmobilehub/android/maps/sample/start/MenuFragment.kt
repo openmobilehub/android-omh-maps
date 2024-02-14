@@ -55,6 +55,11 @@ class MenuFragment : Fragment() {
                 "Map showcasing the polygons",
                 R.id.action_menuFragment_to_mapPolygonsFragment
             ),
+            MyListItem(
+                "Custom Styles Map",
+                "Map showcasing custom styles",
+                R.id.action_menuFragment_to_mapStylesFragment
+            ),
         )
 
         val adapter = ListViewAdapter(requireContext(), items)

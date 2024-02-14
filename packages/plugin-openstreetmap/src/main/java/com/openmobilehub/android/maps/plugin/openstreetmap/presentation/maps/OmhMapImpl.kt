@@ -77,6 +77,9 @@ internal class OmhMapImpl(
         setZoomGesturesEnabled(true)
     }
 
+    override val providerName: String
+        get() = "OpenStreetMap"
+
     override fun addMarker(options: OmhMarkerOptions): OmhMarker? {
         val marker: Marker = Marker(mapView).apply {
             position = options.position.toGeoPoint()
@@ -257,5 +260,9 @@ internal class OmhMapImpl(
 
     override fun setOnCameraIdleListener(listener: OmhOnCameraIdleListener) {
         mapListenerController.setOnIdleListener(listener)
+    }
+
+    override fun setMapStyle(json: Int?) {
+        // To be implemented
     }
 }

@@ -34,6 +34,12 @@ import com.openmobilehub.android.maps.core.presentation.models.OmhPolylineOption
 interface OmhMap {
 
     /**
+     * The name of the map provider.
+     * This is a read-only property.
+     */
+    val providerName: String
+
+    /**
      * Adds a marker to this map. The marker's icon is rendered on the map at the position.
      *
      * @param options a marker options object that defines how to render the marker.
@@ -154,4 +160,13 @@ interface OmhMap {
      * @param omhSnapshotReadyCallback Callback method invoked when the snapshot is taken.
      */
     fun snapshot(omhSnapshotReadyCallback: OmhSnapshotReadyCallback)
+
+    /**
+     * Sets the style of the map based on a JSON resource.
+     * The JSON file should define the styles for the map elements.
+     *
+     * @param json The resource id of the JSON file containing the map styles.
+     * If null, the map style will be reset to the default style.
+     */
+    fun setMapStyle(json: Int?)
 }

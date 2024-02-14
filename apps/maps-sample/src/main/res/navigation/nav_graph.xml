@@ -39,6 +39,12 @@
         tools:layout="@layout/fragment_map_polygons" />
 
     <fragment
+        android:id="@+id/mapStylesFragment"
+        android:name="com.openmobilehub.android.maps.sample.maps.MapStylesFragment"
+        android:label="@string/map_styles_fragment_text"
+        tools:layout="@layout/fragment_map_styles" />
+
+    <fragment
         android:id="@+id/mapFragment"
         android:name="com.openmobilehub.android.maps.sample.maps.MapFragment"
         android:label="@string/map_fragment_text"
@@ -69,6 +75,9 @@
         <action
             android:id="@+id/action_menuFragment_to_mapPolygonsFragment"
             app:destination="@id/mapPolygonsFragment" />
+        <action
+            android:id="@+id/action_menuFragment_to_mapStylesFragment"
+            app:destination="@id/mapStylesFragment" />
     </fragment>
 
 </navigation>

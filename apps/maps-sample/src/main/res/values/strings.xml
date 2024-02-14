@@ -15,6 +15,7 @@
     <string name="menu_fragment_text">Menu Fragment</string>
     <string name="map_polylines_fragment_text">Map Polylines Fragment</string>
     <string name="map_polygons_fragment_text">Map Polygons Fragment</string>
+    <string name="map_styles_fragment_text">Map Styles Fragment</string>
     <string name="no_internet_connection">"No internet connection"</string>
     <string name="lost_internet_connection">"Lost internet connection"</string>
     <string name="move_message">"For more accuracy move to an open space"</string>
@@ -51,4 +52,9 @@
     <string name="fill_color">Fill Color</string>
     <string name="stroke_join_type">Stroke Join Type</string>
     <string name="stroke_pattern">Stroke Pattern</string>
+    <string name="none">None</string>
+    <string name="dark">Dark</string>
+    <string name="retro">Retro</string>
+    <string name="silver">Silver</string>
+    <string name="map_style_radio_group_title">Select a map style:</string>
 </resources>
