@@ -35,7 +35,7 @@ object DebugPolylineHelper {
         }
 
         val basicPolyline = omhMap.addPolyline(basicPolylineOptions)
-        basicPolyline?.setTag("Customizable polyline press")
+        basicPolyline?.setTag("Customizable Polyline pressed")
 
         return basicPolyline
     }
@@ -53,7 +53,7 @@ object DebugPolylineHelper {
         }
 
         val basicPolyline = omhMap.addPolyline(basicPolylineOptions)
-        basicPolyline?.setTag("Reference polyline press")
+        basicPolyline?.setTag("Reference Polyline pressed")
 
         return basicPolyline
     }

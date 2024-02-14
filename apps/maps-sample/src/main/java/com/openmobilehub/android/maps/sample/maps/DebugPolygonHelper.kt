@@ -28,7 +28,7 @@ object DebugPolygonHelper {
         }
 
         val polygon = omhMap.addPolygon(polygonOptions)
-        polygon?.setTag("Customizable Polygon Press")
+        polygon?.setTag("Customizable Polygon Pressed")
 
         return polygon
     }
