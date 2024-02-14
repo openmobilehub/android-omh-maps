@@ -61,15 +61,15 @@ class PanelSpinner @JvmOverloads constructor(
     fun setOnItemSelectedCallback(callback: (position: Int) -> Unit) {
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
-                parent: AdapterView<*>,
-                view: View,
+                parent: AdapterView<*>?,
+                view: View?,
                 position: Int,
                 id: Long
             ) {
                 callback(position)
             }
 
-            override fun onNothingSelected(parent: AdapterView<*>) {
+            override fun onNothingSelected(parent: AdapterView<*>?) {
                 // Another interface callback
             }
         }
