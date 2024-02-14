@@ -19,7 +19,7 @@
     <string name="no_internet_connection">"No internet connection"</string>
     <string name="lost_internet_connection">"Lost internet connection"</string>
     <string name="move_message">"For more accuracy move to an open space"</string>
-    <string name="joint_type_mitter">Mitter</string>
+    <string name="joint_type_miter">Miter</string>
     <string name="joint_type_round">Round</string>
     <string name="joint_type_bevel">Bevel</string>
     <string name="cap_type_square">Square</string>

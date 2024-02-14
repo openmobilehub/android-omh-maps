@@ -70,7 +70,7 @@ class MapPolylinesFragment : Fragment(), OmhOnMapReadyCallback {
     private var spanColor: Int = Color.RED
 
     private val jointTypeNameResourceID = intArrayOf(
-        R.string.joint_type_mitter,
+        R.string.joint_type_miter,
         R.string.joint_type_bevel,
         R.string.joint_type_round
     )

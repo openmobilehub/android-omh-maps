@@ -51,7 +51,7 @@ class MapPolygonsFragment : Fragment(), OmhOnMapReadyCallback {
     private var customizablePolygon: OmhPolygon? = null
 
     private val jointTypeNameResourceID = intArrayOf(
-        R.string.joint_type_mitter,
+        R.string.joint_type_miter,
         R.string.joint_type_bevel,
         R.string.joint_type_round
     )
