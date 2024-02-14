@@ -16,6 +16,7 @@
 
 package com.openmobilehub.android.maps.sample.maps
 
+import android.app.AlertDialog
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.os.Bundle
@@ -70,7 +71,7 @@ class MapPolylinesFragment : Fragment(), OmhOnMapReadyCallback {
     private var spanColor: Int = Color.RED
 
     private val jointTypeNameResourceID = intArrayOf(
-        R.string.joint_type_mitter,
+        R.string.joint_type_miter,
         R.string.joint_type_bevel,
         R.string.joint_type_round
     )
@@ -145,7 +146,12 @@ class MapPolylinesFragment : Fragment(), OmhOnMapReadyCallback {
         omhMap.setZoomGesturesEnabled(true)
 
         val omhOnPolylineClickListener = OmhOnPolylineClickListener {
-            Toast.makeText(requireContext(), it.getTag().toString(), Toast.LENGTH_SHORT).show()
+            val alert = AlertDialog.Builder(requireContext())
+            alert.setTitle(it.getTag().toString())
+            alert.setPositiveButton("OK") { dialog, _ ->
+                dialog.dismiss()
+            }
+            alert.show()
         }
         omhMap.setOnPolylineClickListener(omhOnPolylineClickListener)
 

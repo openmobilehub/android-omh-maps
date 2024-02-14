@@ -18,11 +18,13 @@ package com.openmobilehub.android.maps.plugin.googlemaps.presentation.maps
 
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
+import android.content.Context
 import android.graphics.Bitmap
 import androidx.annotation.RequiresPermission
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.Marker
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMap
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMapLoadedCallback
@@ -45,11 +47,14 @@ import com.openmobilehub.android.maps.plugin.googlemaps.extensions.toPolylineOpt
 import com.openmobilehub.android.maps.plugin.googlemaps.utils.CoordinateConverter
 
 @SuppressWarnings("TooManyFunctions")
-internal class OmhMapImpl(private var googleMap: GoogleMap) : OmhMap {
+internal class OmhMapImpl(private var googleMap: GoogleMap, private val context: Context) : OmhMap {
+
+    override val providerName: String
+        get() = "Google"
+
     override fun addMarker(options: OmhMarkerOptions): OmhMarker? {
         val googleOptions = options.toMarkerOptions()
         val marker: Marker? = googleMap.addMarker(googleOptions)
-
         return marker?.let { OmhMarkerImpl(it) }
     }
 
@@ -126,6 +131,14 @@ internal class OmhMapImpl(private var googleMap: GoogleMap) : OmhMap {
     override fun snapshot(omhSnapshotReadyCallback: OmhSnapshotReadyCallback) {
         googleMap.snapshot { bitmap: Bitmap? ->
             omhSnapshotReadyCallback.onSnapshotReady(bitmap)
+        }
+    }
+
+    override fun setMapStyle(json: Int?) {
+        if (json == null) {
+            googleMap.setMapStyle(null)
+        } else {
+            googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(context, json))
         }
     }
 

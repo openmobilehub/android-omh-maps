@@ -16,6 +16,7 @@
 
 package com.openmobilehub.android.maps.sample.maps
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -51,7 +52,7 @@ class MapPolygonsFragment : Fragment(), OmhOnMapReadyCallback {
     private var customizablePolygon: OmhPolygon? = null
 
     private val jointTypeNameResourceID = intArrayOf(
-        R.string.joint_type_mitter,
+        R.string.joint_type_miter,
         R.string.joint_type_bevel,
         R.string.joint_type_round
     )
@@ -110,7 +111,12 @@ class MapPolygonsFragment : Fragment(), OmhOnMapReadyCallback {
         omhMap.setZoomGesturesEnabled(true)
 
         val omhOnPolygonClickListener = OmhOnPolygonClickListener {
-            Toast.makeText(requireContext(), it.getTag().toString(), Toast.LENGTH_SHORT).show()
+            val alert = AlertDialog.Builder(requireContext())
+            alert.setTitle(it.getTag().toString())
+            alert.setPositiveButton("OK") { dialog, _ ->
+                dialog.dismiss()
+            }
+            alert.show()
         }
         omhMap.setOnPolygonClickListener(omhOnPolygonClickListener)
 

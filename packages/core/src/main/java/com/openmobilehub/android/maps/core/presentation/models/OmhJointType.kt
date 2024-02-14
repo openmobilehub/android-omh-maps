@@ -19,7 +19,7 @@ package com.openmobilehub.android.maps.core.presentation.models
 /**
  * [OmhJointType] is an object that represents the joint type of a polyline on a map.
  * The joint type can be one of the following:
- * - DEFAULT: The mitter joint type.
+ * - DEFAULT: The miter joint type.
  * - BEVEL: The bevel joint type.
  * - ROUND: The round joint type.
  */
