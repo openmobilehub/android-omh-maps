@@ -44,13 +44,14 @@ import com.openmobilehub.android.maps.core.presentation.models.OmhPolylineOption
 import com.openmobilehub.android.maps.plugin.googlemaps.extensions.toMarkerOptions
 import com.openmobilehub.android.maps.plugin.googlemaps.extensions.toPolygonOptions
 import com.openmobilehub.android.maps.plugin.googlemaps.extensions.toPolylineOptions
+import com.openmobilehub.android.maps.plugin.googlemaps.utils.Constants
 import com.openmobilehub.android.maps.plugin.googlemaps.utils.CoordinateConverter
 
 @SuppressWarnings("TooManyFunctions")
 internal class OmhMapImpl(private var googleMap: GoogleMap, private val context: Context) : OmhMap {
 
     override val providerName: String
-        get() = "Google"
+        get() = Constants.PROVIDER_NAME
 
     override fun addMarker(options: OmhMarkerOptions): OmhMarker? {
         val googleOptions = options.toMarkerOptions()

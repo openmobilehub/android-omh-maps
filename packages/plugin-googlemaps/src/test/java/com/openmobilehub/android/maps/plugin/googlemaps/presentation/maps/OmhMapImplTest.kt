@@ -14,6 +14,7 @@ import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhPolyl
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolygonOptions
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolylineOptions
+import com.openmobilehub.android.maps.plugin.googlemaps.utils.Constants
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
@@ -42,7 +43,7 @@ class OmhMapImplTest {
         val providerName = omhMapImpl.providerName
 
         // Assert
-        Assert.assertEquals("Google", providerName)
+        Assert.assertEquals(Constants.PROVIDER_NAME, providerName)
     }
 
     @Test
