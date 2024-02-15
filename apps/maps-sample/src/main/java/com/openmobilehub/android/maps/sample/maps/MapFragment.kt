@@ -102,7 +102,8 @@ class MapFragment : Fragment(), OmhOnMapReadyCallback {
             }
         }
         binding.fabShareLocation.setOnClickListener {
-            val action = MapFragmentDirections.actionMapFragmentToInitialFragment(currentLocation)
+            val action =
+                MapFragmentDirections.actionMapFragmentToLocationResultFragment(currentLocation)
             findNavController().navigate(action)
         }
 

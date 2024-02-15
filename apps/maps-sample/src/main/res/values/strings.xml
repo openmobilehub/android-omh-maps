@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">OMH Maps demo</string>
     <string name="title_activity_main">MainActivity</string>
-    <string name="open_map">Open Map</string>
+    <string name="back_to_menu_fragment">Back to Menu fragment</string>
     <string name="open_polyline_map">Open Polyline Map</string>
     <string name="drop_pin">Drop pin</string>
     <string name="button_to_share_location">Button to share location</string>
@@ -10,7 +10,7 @@
     <string name="center_message">Centering location</string>
     <string name="share_link">"Share link"</string>
     <string name="latitude_longitude_text">Lat: %1$s \nLng: %2$s</string>
-    <string name="initial_fragment_text">Initial Fragment</string>
+    <string name="location_result_fragment_text">Location Result Fragment</string>
     <string name="map_fragment_text">Map Fragment</string>
     <string name="menu_fragment_text">Menu Fragment</string>
     <string name="map_polylines_fragment_text">Map Polylines Fragment</string>

@@ -28,7 +28,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.sample.R
-import com.openmobilehub.android.maps.sample.databinding.FragmentInitialBinding
+import com.openmobilehub.android.maps.sample.databinding.FragmentLocationResultBinding
 import com.openmobilehub.android.maps.sample.utils.Constants.AUTHORITY_URL
 import com.openmobilehub.android.maps.sample.utils.Constants.LAT_PARAM
 import com.openmobilehub.android.maps.sample.utils.Constants.LNG_PARAM
@@ -37,30 +37,24 @@ import com.openmobilehub.android.maps.sample.utils.Constants.PERMISSIONS
 import com.openmobilehub.android.maps.sample.utils.Constants.SCHEME_PROTOCOL
 import com.openmobilehub.android.maps.sample.utils.Constants.TYPE_TEXT_PLAIN
 
-class InitialFragment : Fragment() {
-    private var _binding: FragmentInitialBinding? = null
+class LocationResultFragment : Fragment() {
+    private var _binding: FragmentLocationResultBinding? = null
     private val binding get() = _binding!!
-    private val args: InitialFragmentArgs by navArgs()
+    private val args: LocationResultFragmentArgs by navArgs()
 
-    private val mapPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
-        val allPermissionsGranted = permissions.all { it.value }
-        if (allPermissionsGranted) {
-            findNavController().navigate(R.id.action_initialFragment_to_mapFragment)
+    private val mapPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+            val allPermissionsGranted = permissions.all { it.value }
+            if (allPermissionsGranted) {
+                findNavController().navigate(R.id.action_locationResultFragment_to_menuFragment)
+            }
         }
-    }
-
-    private val markersDemoMapPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
-        val allPermissionsGranted = permissions.all { it.value }
-        if (allPermissionsGranted) {
-            findNavController().navigate(R.id.action_initialFragment_to_markersDemoMapFragment)
-        }
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentInitialBinding.inflate(inflater, container, false)
+        _binding = FragmentLocationResultBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -74,11 +68,8 @@ class InitialFragment : Fragment() {
                 intentSend(coordinate)
             }
         }
-        binding.buttonOpenMap.setOnClickListener {
+        binding.buttonBackToMenuFragment.setOnClickListener {
             mapPermissionLauncher.launch(PERMISSIONS)
-        }
-        binding.buttonOpenMarkersDemo.setOnClickListener {
-            markersDemoMapPermissionLauncher.launch(PERMISSIONS)
         }
     }
 
@@ -101,8 +92,8 @@ class InitialFragment : Fragment() {
     }
 
     companion object {
-        fun instantiate(): InitialFragment {
-            return InitialFragment()
+        fun instantiate(): LocationResultFragment {
+            return LocationResultFragment()
         }
     }
 }

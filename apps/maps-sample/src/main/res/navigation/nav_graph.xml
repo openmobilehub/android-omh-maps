@@ -12,21 +12,18 @@
         app:popUpToInclusive="true" />
 
     <fragment
-        android:id="@+id/initialFragment"
-        android:name="com.openmobilehub.android.maps.sample.start.InitialFragment"
-        android:label="@string/initial_fragment_text"
-        tools:layout="@layout/fragment_initial">
+        android:id="@+id/locationResultFragment"
+        android:name="com.openmobilehub.android.maps.sample.start.LocationResultFragment"
+        android:label="@string/location_result_fragment_text"
+        tools:layout="@layout/fragment_location_result">
         <argument
             android:name="coordinate"
             android:defaultValue="@null"
             app:argType="com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate"
             app:nullable="true" />
         <action
-            android:id="@+id/action_initialFragment_to_mapFragment"
-            app:destination="@id/mapFragment" />
-        <action
-            android:id="@+id/action_initialFragment_to_markersDemoMapFragment"
-            app:destination="@id/markersDemoMapFragment" />
+            android:id="@+id/action_locationResultFragment_to_menuFragment"
+            app:destination="@id/menuFragment" />
     </fragment>
 
     <fragment
@@ -58,8 +55,8 @@
             app:argType="com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate"
             app:nullable="true" />
         <action
-            android:id="@+id/action_mapFragment_to_initialFragment"
-            app:destination="@id/initialFragment"
+            android:id="@+id/action_mapFragment_to_locationResultFragment"
+            app:destination="@id/locationResultFragment"
             app:popUpTo="@id/nav_graph"
             app:popUpToInclusive="true" />
     </fragment>
@@ -71,8 +68,8 @@
         android:label="@string/markers_demo_map_fragment_text"
         tools:layout="@layout/fragment_markers_demo_map">
         <action
-            android:id="@+id/action_mapFragment_to_initialFragment"
-            app:destination="@id/initialFragment"
+            android:id="@+id/action_mapFragment_to_locationResultFragment"
+            app:destination="@id/locationResultFragment"
             app:popUpTo="@id/nav_graph"
             app:popUpToInclusive="true" />
     </fragment>
