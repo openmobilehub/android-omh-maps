@@ -1,4 +1,5 @@
 @file:Suppress("UnstableApiUsage")
+
 import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 
 val useLocalProjects = project.rootProject.extra["useLocalProjects"] as Boolean
@@ -14,20 +15,22 @@ plugins {
 var googlemapsDependency = "com.openmobilehub.android.maps:plugin-googlemaps:2.0.0-beta"
 var openstreetmapDependency = "com.openmobilehub.android.maps:plugin-openstreetmap:2.0.0-beta"
 
-var googlemapsPath = "com.openmobilehub.android.maps.plugin.googlemaps.presentation.OmhMapFactoryImpl"
-var openstreetmapPath = "com.openmobilehub.android.maps.plugin.openstreetmap.presentation.OmhMapFactoryImpl"
+var googlemapsPath =
+    "com.openmobilehub.android.maps.plugin.googlemaps.presentation.OmhMapFactoryImpl"
+var openstreetmapPath =
+    "com.openmobilehub.android.maps.plugin.openstreetmap.presentation.OmhMapFactoryImpl"
 
 omhConfig {
     enableLocalProjects = useLocalProjects
-
+    
     bundle("singleBuild") {
         maps {
             gmsService {
-                if(!useLocalProjects) dependency = googlemapsDependency
+                if (!useLocalProjects) dependency = googlemapsDependency
                 path = googlemapsPath
             }
             nonGmsService {
-                if(!useLocalProjects) dependency = openstreetmapDependency
+                if (!useLocalProjects) dependency = openstreetmapDependency
                 path = openstreetmapPath
             }
         }
@@ -35,7 +38,7 @@ omhConfig {
     bundle("gms") {
         maps {
             gmsService {
-                if(!useLocalProjects) dependency = googlemapsDependency
+                if (!useLocalProjects) dependency = googlemapsDependency
                 path = googlemapsPath
             }
         }
@@ -43,7 +46,7 @@ omhConfig {
     bundle("nongms") {
         maps {
             nonGmsService {
-                if(!useLocalProjects) dependency = openstreetmapDependency
+                if (!useLocalProjects) dependency = openstreetmapDependency
                 path = openstreetmapPath
             }
         }
@@ -52,7 +55,7 @@ omhConfig {
 
 android {
     namespace = "com.openmobilehub.android.maps.sample"
-    
+
     defaultConfig {
         versionCode = 1
         versionName = "1.0"
@@ -63,10 +66,13 @@ android {
         // The if statement is necessary to avoid errors when the packages are built on CI.
         // The alternative would be to pass all the environment variables for signing apk to the packages workflows.
         create("release") {
-            val storeFileName = getValueFromEnvOrProperties("SAMPLE_APP_KEYSTORE_FILE_NAME") as? String
-            val storePassword = getValueFromEnvOrProperties("SAMPLE_APP_KEYSTORE_STORE_PASSWORD") as? String
+            val storeFileName =
+                getValueFromEnvOrProperties("SAMPLE_APP_KEYSTORE_FILE_NAME") as? String
+            val storePassword =
+                getValueFromEnvOrProperties("SAMPLE_APP_KEYSTORE_STORE_PASSWORD") as? String
             val keyAlias = getValueFromEnvOrProperties("SAMPLE_APP_KEYSTORE_KEY_ALIAS") as? String
-            val keyPassword = getValueFromEnvOrProperties("SAMPLE_APP_KEYSTORE_KEY_PASSWORD") as? String
+            val keyPassword =
+                getValueFromEnvOrProperties("SAMPLE_APP_KEYSTORE_KEY_PASSWORD") as? String
 
             if (storeFileName != null && storePassword != null && keyAlias != null && keyPassword != null) {
                 this.storeFile = file(storeFileName)
@@ -76,7 +82,7 @@ android {
             }
         }
     }
-    
+
     buildTypes {
         release {
             isMinifyEnabled = true
@@ -117,7 +123,7 @@ dependencies {
     androidTestImplementation(Libs.androidJunit)
 
     // Use local implementation instead of dependencies
-    if(useLocalProjects) {
+    if (useLocalProjects) {
         implementation(project(":packages:core"))
         implementation(project(":packages:plugin-googlemaps"))
         implementation(project(":packages:plugin-openstreetmap"))
