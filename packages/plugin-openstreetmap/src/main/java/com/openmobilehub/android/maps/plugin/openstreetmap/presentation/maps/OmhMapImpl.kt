@@ -32,12 +32,20 @@ import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnCam
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMarkerClickListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMarkerDragListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMyLocationButtonClickListener
+import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnPolygonClickListener
+import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnPolylineClickListener
+import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhPolygon
+import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhPolyline
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhSnapshotReadyCallback
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
+import com.openmobilehub.android.maps.core.presentation.models.OmhPolygonOptions
+import com.openmobilehub.android.maps.core.presentation.models.OmhPolylineOptions
 import com.openmobilehub.android.maps.plugin.openstreetmap.R
 import com.openmobilehub.android.maps.plugin.openstreetmap.extensions.toGeoPoint
 import com.openmobilehub.android.maps.plugin.openstreetmap.extensions.toOmhCoordinate
+import com.openmobilehub.android.maps.plugin.openstreetmap.extensions.toPolygonOptions
+import com.openmobilehub.android.maps.plugin.openstreetmap.extensions.toPolylineOptions
 import com.openmobilehub.android.maps.plugin.openstreetmap.utils.Constants.DEFAULT_ZOOM_LEVEL
 import com.openmobilehub.android.maps.plugin.openstreetmap.utils.MapListenerController
 import com.openmobilehub.android.maps.plugin.openstreetmap.utils.MapTouchListener
@@ -45,6 +53,8 @@ import org.osmdroid.api.IGeoPoint
 import org.osmdroid.views.CustomZoomButtonsController
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
+import org.osmdroid.views.overlay.Polygon
+import org.osmdroid.views.overlay.Polyline
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 
@@ -53,9 +63,17 @@ internal class OmhMapImpl(
     private val mapView: MapView,
     private val mapListenerController: MapListenerController
 ) : OmhMap {
+    override val providerName: String
+        get() = "OpenStreetMap"
+
     private var myLocationNewOverlay: MyLocationNewOverlay? = null
     private var myLocationIconOverlay: MyLocationIconOverlay? = null
     private val gestureOverlay = GestureOverlay()
+    private var polylineClickListener: OmhOnPolylineClickListener? = null
+    private var polygonClickListener: OmhOnPolygonClickListener? = null
+
+    private val polylines = mutableMapOf<Polyline, OmhPolyline>()
+    private val polygons = mutableMapOf<Polygon, OmhPolygon>()
 
     init {
         mapView.addMapListener(mapListenerController)
@@ -83,6 +101,50 @@ internal class OmhMapImpl(
         }
 
         return OmhMarkerImpl(marker)
+    }
+
+    override fun addPolyline(options: OmhPolylineOptions): OmhPolyline? {
+        val initiallyClickable = options.clickable ?: false
+
+        val polyline = options.toPolylineOptions()
+        val omhPolyline = OmhPolylineImpl(polyline, mapView, initiallyClickable)
+
+        polylines[polyline] = omhPolyline
+        polyline.setOnClickListener { _, _, _ ->
+            if (omhPolyline.getClickable()) {
+                polylineClickListener?.onPolylineClick(omhPolyline)
+            }
+            true
+        }
+
+        mapView.run {
+            overlayManager.add(polyline)
+            postInvalidate()
+        }
+
+        return omhPolyline
+    }
+
+    override fun addPolygon(options: OmhPolygonOptions): OmhPolygon? {
+        val initiallyClickable = options.clickable ?: false
+
+        val polygon = options.toPolygonOptions()
+        val omhPolygon = OmhPolygonImpl(polygon, mapView, initiallyClickable)
+
+        polygons[polygon] = omhPolygon
+        polygon.setOnClickListener { _, _, _ ->
+            if (omhPolygon.getClickable()) {
+                polygonClickListener?.onPolygonClick(omhPolygon)
+            }
+            true
+        }
+
+        mapView.run {
+            overlayManager.add(polygon)
+            postInvalidate()
+        }
+
+        return omhPolygon
     }
 
     override fun getCameraPositionCoordinate(): OmhCoordinate {
@@ -180,7 +242,37 @@ internal class OmhMapImpl(
         callback?.onMapLoaded()
     }
 
+    override fun setOnPolylineClickListener(listener: OmhOnPolylineClickListener) {
+        polylineClickListener = listener
+
+        polylines.forEach() { (polyline, omhPolyline) ->
+            polyline.setOnClickListener { _, _, _ ->
+                if (omhPolyline.getClickable()) {
+                    listener.onPolylineClick(omhPolyline)
+                }
+                true
+            }
+        }
+    }
+
+    override fun setOnPolygonClickListener(listener: OmhOnPolygonClickListener) {
+        polygonClickListener = listener
+
+        polygons.forEach() { (polygon, omhPolygon) ->
+            polygon.setOnClickListener { _, _, _ ->
+                if (omhPolygon.getClickable()) {
+                    listener.onPolygonClick(omhPolygon)
+                }
+                true
+            }
+        }
+    }
+
     override fun setOnCameraIdleListener(listener: OmhOnCameraIdleListener) {
         mapListenerController.setOnIdleListener(listener)
+    }
+
+    override fun setMapStyle(json: Int?) {
+        // To be implemented
     }
 }

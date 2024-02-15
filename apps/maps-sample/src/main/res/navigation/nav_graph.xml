@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/initialFragment">
+    app:startDestination="@id/menuFragment">
 
     <action
         android:id="@+id/action_global_mapFragment"
@@ -18,8 +18,8 @@
         tools:layout="@layout/fragment_initial">
         <argument
             android:name="coordinate"
-            app:argType="com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate"
             android:defaultValue="@null"
+            app:argType="com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate"
             app:nullable="true" />
         <action
             android:id="@+id/action_initialFragment_to_mapFragment"
@@ -30,14 +30,32 @@
     </fragment>
 
     <fragment
+        android:id="@+id/mapPolylinesFragment"
+        android:name="com.openmobilehub.android.maps.sample.maps.MapPolylinesFragment"
+        android:label="@string/map_polylines_fragment_text"
+        tools:layout="@layout/fragment_map_polylines" />
+
+    <fragment
+        android:id="@+id/mapPolygonsFragment"
+        android:name="com.openmobilehub.android.maps.sample.maps.MapPolygonsFragment"
+        android:label="@string/map_polygons_fragment_text"
+        tools:layout="@layout/fragment_map_polygons" />
+
+    <fragment
+        android:id="@+id/mapStylesFragment"
+        android:name="com.openmobilehub.android.maps.sample.maps.MapStylesFragment"
+        android:label="@string/map_styles_fragment_text"
+        tools:layout="@layout/fragment_map_styles" />
+
+    <fragment
         android:id="@+id/mapFragment"
         android:name="com.openmobilehub.android.maps.sample.maps.MapFragment"
         android:label="@string/map_fragment_text"
         tools:layout="@layout/fragment_map">
         <argument
             android:name="coordinate"
-            app:argType="com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate"
             android:defaultValue="@null"
+            app:argType="com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate"
             app:nullable="true" />
         <action
             android:id="@+id/action_mapFragment_to_initialFragment"
@@ -57,6 +75,25 @@
             app:destination="@id/initialFragment"
             app:popUpTo="@id/nav_graph"
             app:popUpToInclusive="true" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/menuFragment"
+        android:name="com.openmobilehub.android.maps.sample.start.MenuFragment"
+        android:label="@string/menu_fragment_text"
+        tools:layout="@layout/fragment_menu">
+        <action
+            android:id="@+id/action_menuFragment_to_mapFragment"
+            app:destination="@id/mapFragment" />
+        <action
+            android:id="@+id/action_menuFragment_to_mapPolylinesFragment"
+            app:destination="@id/mapPolylinesFragment" />
+        <action
+            android:id="@+id/action_menuFragment_to_mapPolygonsFragment"
+            app:destination="@id/mapPolygonsFragment" />
+        <action
+            android:id="@+id/action_menuFragment_to_mapStylesFragment"
+            app:destination="@id/mapStylesFragment" />
     </fragment>
 
 </navigation>

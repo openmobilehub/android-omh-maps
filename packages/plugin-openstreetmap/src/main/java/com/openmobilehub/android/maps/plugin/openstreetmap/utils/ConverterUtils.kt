@@ -14,23 +14,23 @@
  * limitations under the License.
  */
 
-package com.openmobilehub.android.maps.plugin.googlemaps.utils
+package com.openmobilehub.android.maps.plugin.openstreetmap.utils
 
 import android.location.Location
-import com.google.android.gms.maps.model.LatLng
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
+import org.osmdroid.util.GeoPoint
 
 internal object ConverterUtils {
-    fun convertToOmhCoordinate(latLng: LatLng?): OmhCoordinate {
-        return if (latLng == null) {
+    fun convertToOmhCoordinate(geoPoint: GeoPoint?): OmhCoordinate {
+        return if (geoPoint == null) {
             OmhCoordinate()
         } else {
-            OmhCoordinate(latLng.latitude, latLng.longitude)
+            OmhCoordinate(geoPoint.latitude, geoPoint.longitude)
         }
     }
 
-    fun convertToLatLng(coordinate: OmhCoordinate): LatLng {
-        return LatLng(coordinate.latitude, coordinate.longitude)
+    fun convertToGeoPoint(coordinate: OmhCoordinate): GeoPoint {
+        return GeoPoint(coordinate.latitude, coordinate.longitude)
     }
 
     fun convertToOmhCoordinate(location: Location): OmhCoordinate {

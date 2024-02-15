@@ -19,16 +19,16 @@ package com.openmobilehub.android.maps.plugin.googlemaps.presentation.maps
 import com.google.android.gms.maps.model.Marker
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMarker
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
-import com.openmobilehub.android.maps.plugin.googlemaps.utils.ConverterUtils
+import com.openmobilehub.android.maps.plugin.googlemaps.utils.CoordinateConverter
 
 internal class OmhMarkerImpl(private val marker: Marker) : OmhMarker {
 
     override fun getPosition(): OmhCoordinate {
-        return ConverterUtils.convertToOmhCoordinate(marker.position)
+        return CoordinateConverter.convertToOmhCoordinate(marker.position)
     }
 
     override fun setPosition(omhCoordinate: OmhCoordinate) {
-        marker.position = ConverterUtils.convertToLatLng(omhCoordinate)
+        marker.position = CoordinateConverter.convertToLatLng(omhCoordinate)
     }
 
     override fun getTitle(): String? {

@@ -30,7 +30,7 @@ import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhMapException
 import com.openmobilehub.android.maps.core.presentation.models.OmhMapStatusCodes.NULL_LOCATION
 import com.openmobilehub.android.maps.core.presentation.models.OmhMapStatusCodes.getStatusCodeString
-import com.openmobilehub.android.maps.plugin.googlemaps.utils.ConverterUtils
+import com.openmobilehub.android.maps.plugin.googlemaps.utils.CoordinateConverter
 import com.openmobilehub.android.maps.plugin.googlemaps.utils.LocationUtils
 
 internal class OmhLocationImpl(context: Context) : OmhLocation {
@@ -79,7 +79,7 @@ internal class OmhLocationImpl(context: Context) : OmhLocation {
         locationClient.lastLocation
             .addOnSuccessListener { location ->
                 if (location != null) {
-                    omhOnSuccessListener.onSuccess(ConverterUtils.convertToOmhCoordinate(location))
+                    omhOnSuccessListener.onSuccess(CoordinateConverter.convertToOmhCoordinate(location))
                 } else {
                     omhOnFailureListener.onFailure(
                         exception = OmhMapException.NullLocation(
