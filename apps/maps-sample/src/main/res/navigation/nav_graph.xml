@@ -6,9 +6,9 @@
     app:startDestination="@id/menuFragment">
 
     <action
-        android:id="@+id/action_global_mapFragment"
-        app:destination="@+id/mapFragment"
-        app:popUpTo="@id/mapFragment"
+        android:id="@+id/action_global_mapLocationPickerFragment"
+        app:destination="@+id/mapLocationPickerFragment"
+        app:popUpTo="@id/mapLocationPickerFragment"
         app:popUpToInclusive="true" />
 
     <fragment
@@ -45,8 +45,8 @@
         tools:layout="@layout/fragment_map_styles" />
 
     <fragment
-        android:id="@+id/mapFragment"
-        android:name="com.openmobilehub.android.maps.sample.maps.MapFragment"
+        android:id="@+id/mapLocationPickerFragment"
+        android:name="com.openmobilehub.android.maps.sample.maps.MapLocationPickerFragment"
         android:label="@string/map_fragment_text"
         tools:layout="@layout/fragment_map">
         <argument
@@ -55,7 +55,7 @@
             app:argType="com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate"
             app:nullable="true" />
         <action
-            android:id="@+id/action_mapFragment_to_locationResultFragment"
+            android:id="@+id/action_mapLocationPickerFragment_to_locationResultFragment"
             app:destination="@id/locationResultFragment"
             app:popUpTo="@id/nav_graph"
             app:popUpToInclusive="true" />
@@ -63,12 +63,12 @@
 
 
     <fragment
-        android:id="@+id/markersDemoMapFragment"
-        android:name="com.openmobilehub.android.maps.sample.maps.MarkersDemoMapFragment"
-        android:label="@string/markers_demo_map_fragment_text"
-        tools:layout="@layout/fragment_markers_demo_map">
+        android:id="@+id/mapMarkersFragment"
+        android:name="com.openmobilehub.android.maps.sample.maps.MapMarkersFragment"
+        android:label="@string/map_markers_fragment_text"
+        tools:layout="@layout/fragment_map_markers">
         <action
-            android:id="@+id/action_mapFragment_to_locationResultFragment"
+            android:id="@+id/action_mapMarkersFragment_to_locationResultFragment"
             app:destination="@id/locationResultFragment"
             app:popUpTo="@id/nav_graph"
             app:popUpToInclusive="true" />
@@ -80,8 +80,11 @@
         android:label="@string/menu_fragment_text"
         tools:layout="@layout/fragment_menu">
         <action
-            android:id="@+id/action_menuFragment_to_mapFragment"
-            app:destination="@id/mapFragment" />
+            android:id="@+id/action_menuFragment_to_mapMarkersFragment"
+            app:destination="@id/mapMarkersFragment" />
+        <action
+            android:id="@+id/action_menuFragment_to_mapLocationPickerFragment"
+            app:destination="@id/mapLocationPickerFragment" />
         <action
             android:id="@+id/action_menuFragment_to_mapPolylinesFragment"
             app:destination="@id/mapPolylinesFragment" />

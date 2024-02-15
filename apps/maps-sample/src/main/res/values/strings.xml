@@ -19,7 +19,7 @@
     <string name="no_internet_connection">"No internet connection"</string>
     <string name="lost_internet_connection">"Lost internet connection"</string>
     <string name="move_message">"For more accuracy move to an open space"</string>
-    <string name="markers_demo_map_fragment_text">Markers Demo Map Fragment</string>
+    <string name="map_markers_fragment_text">Map Markers Fragment</string>
     <string name="open_markers_demo_map">Open Markers Demo</string>
     <string name="joint_type_miter">Miter</string>
     <string name="joint_type_round">Round</string>

@@ -55,12 +55,12 @@ import com.openmobilehub.android.maps.sample.utils.Constants.ZOOM_LEVEL_5
 import com.openmobilehub.android.maps.sample.utils.PermissionsUtils
 import com.openmobilehub.android.maps.sample.utils.getOmhCoordinate
 
-class MapFragment : Fragment(), OmhOnMapReadyCallback {
+class MapLocationPickerFragment : Fragment(), OmhOnMapReadyCallback {
     private var currentLocation: OmhCoordinate = PRIME_MERIDIAN
     private var _binding: FragmentMapBinding? = null
     private val binding get() = _binding!!
     private var displayOnlyCoordinate = false
-    private val args: MapFragmentArgs by navArgs()
+    private val args: MapLocationPickerFragmentArgs by navArgs()
     private var networkConnectivityChecker: NetworkConnectivityChecker? = null
     private var handler: Handler? = null
     private var runnable: Runnable? = null
@@ -103,7 +103,9 @@ class MapFragment : Fragment(), OmhOnMapReadyCallback {
         }
         binding.fabShareLocation.setOnClickListener {
             val action =
-                MapFragmentDirections.actionMapFragmentToLocationResultFragment(currentLocation)
+                MapLocationPickerFragmentDirections.actionMapLocationPickerFragmentToLocationResultFragment(
+                    currentLocation
+                )
             findNavController().navigate(action)
         }
 
@@ -268,8 +270,8 @@ class MapFragment : Fragment(), OmhOnMapReadyCallback {
 
     companion object {
         @JvmStatic
-        fun newInstance(): MapFragment {
-            return MapFragment()
+        fun newInstance(): MapLocationPickerFragment {
+            return MapLocationPickerFragment()
         }
     }
 }

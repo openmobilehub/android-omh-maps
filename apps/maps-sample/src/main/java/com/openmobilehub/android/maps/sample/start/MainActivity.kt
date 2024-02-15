@@ -60,7 +60,7 @@ class MainActivity : AppCompatActivity() {
             val longitude = uri.getQueryParameter(LNG_PARAM)
             if (latitude != null && longitude != null) {
                 val coordinate = OmhCoordinate(latitude.toDouble(), longitude.toDouble())
-                val action = NavGraphDirections.actionGlobalMapFragment(coordinate)
+                val action = NavGraphDirections.actionGlobalMapLocationPickerFragment(coordinate)
                 findNavController(R.id.nav_host_fragment_content_main).navigate(action)
             }
         }

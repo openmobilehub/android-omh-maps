@@ -39,7 +39,7 @@ import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
 import com.openmobilehub.android.maps.core.utils.NetworkConnectivityChecker
 import com.openmobilehub.android.maps.sample.R
-import com.openmobilehub.android.maps.sample.databinding.FragmentMarkersDemoMapBinding
+import com.openmobilehub.android.maps.sample.databinding.FragmentMapMarkersBinding
 import com.openmobilehub.android.maps.sample.utils.Constants
 import com.openmobilehub.android.maps.sample.utils.Constants.DEFAULT_ZOOM_LEVEL
 import com.openmobilehub.android.maps.sample.utils.Constants.LOCATION_KEY
@@ -49,9 +49,9 @@ import com.openmobilehub.android.maps.sample.utils.Constants.SHOW_MESSAGE_TIME
 import com.openmobilehub.android.maps.sample.utils.Constants.ZOOM_LEVEL_5
 import com.openmobilehub.android.maps.sample.utils.PermissionsUtils
 
-open class MarkersDemoMapFragment : Fragment(), OmhOnMapReadyCallback {
+open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
     private var currentLocation: OmhCoordinate = PRIME_MERIDIAN
-    private var _binding: FragmentMarkersDemoMapBinding? = null
+    private var _binding: FragmentMapMarkersBinding? = null
     private val binding get() = _binding!!
     private var networkConnectivityChecker: NetworkConnectivityChecker? = null
     private var handler: Handler? = null
@@ -62,7 +62,7 @@ open class MarkersDemoMapFragment : Fragment(), OmhOnMapReadyCallback {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentMarkersDemoMapBinding.inflate(inflater, container, false)
+        _binding = FragmentMapMarkersBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -234,8 +234,8 @@ open class MarkersDemoMapFragment : Fragment(), OmhOnMapReadyCallback {
 
     companion object {
         @JvmStatic
-        fun newInstance(): MarkersDemoMapFragment {
-            return MarkersDemoMapFragment()
+        fun newInstance(): MapMarkersFragment {
+            return MapMarkersFragment()
         }
 
         val LOG_TAG: String = "MarkersDemoMapFragment"
