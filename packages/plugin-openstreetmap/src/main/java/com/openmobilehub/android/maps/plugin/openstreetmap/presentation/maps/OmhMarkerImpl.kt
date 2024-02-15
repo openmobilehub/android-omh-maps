@@ -25,8 +25,6 @@ import org.osmdroid.views.overlay.Marker
 
 @SuppressWarnings("TooManyFunctions")
 internal class OmhMarkerImpl(private val marker: Marker) : OmhMarker {
-    private var visible: Boolean = true
-
     override fun getPosition(): OmhCoordinate {
         return marker.position.toOmhCoordinate()
     }
@@ -76,11 +74,10 @@ internal class OmhMarkerImpl(private val marker: Marker) : OmhMarker {
     }
 
     override fun getIsVisible(): Boolean {
-        return visible
+        return marker.alpha != 0f
     }
 
     override fun setIsVisible(visible: Boolean) {
-        this.visible = visible
         marker.setVisible(visible)
     }
 
