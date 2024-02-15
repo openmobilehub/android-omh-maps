@@ -14,6 +14,7 @@ import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhPolyl
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolygonOptions
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolylineOptions
+import com.openmobilehub.android.maps.core.utils.logging.Logger
 import com.openmobilehub.android.maps.plugin.googlemaps.utils.Constants
 import io.mockk.every
 import io.mockk.mockk
@@ -32,9 +33,11 @@ class OmhMapImplTest {
     private val omhOnPolylineClickListener = mockk<OmhOnPolylineClickListener>(relaxed = true)
     private val omhOnPolygonClickListener = mockk<OmhOnPolygonClickListener>(relaxed = true)
 
+    private val logger = mockk<Logger>(relaxed = true)
+
     @Before
     fun setUp() {
-        omhMapImpl = OmhMapImpl(googleMap, context)
+        omhMapImpl = OmhMapImpl(googleMap, context, logger)
     }
 
     @Test
@@ -103,6 +106,23 @@ class OmhMapImplTest {
 
         // Assert
         verify { googleMap.setMapStyle(any<MapStyleOptions>()) }
+    }
+
+    @Test
+    fun `setMapStyle logs warning message when style is not applied`() {
+        // Arrange
+        val jsonStyleResId = 1
+
+        every { googleMap.setMapStyle(any()) } returns false
+
+        val inputStream = ByteArrayInputStream("{}".toByteArray())
+        every { context.resources.openRawResource(jsonStyleResId) } returns inputStream
+
+        // Act
+        omhMapImpl.setMapStyle(jsonStyleResId)
+
+        // Assert
+        verify { logger.logWarning("Failed to apply custom map style. Check logs from Google Maps SDK.") }
     }
 
     @Test
