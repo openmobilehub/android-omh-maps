@@ -16,13 +16,17 @@
 
 package com.openmobilehub.android.maps.plugin.googlemaps.presentation.maps
 
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.Marker
+import com.google.android.gms.maps.model.PinConfig
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMarker
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.plugin.googlemaps.utils.CoordinateConverter
 
+@SuppressWarnings("TooManyFunctions")
 internal class OmhMarkerImpl(private val marker: Marker) : OmhMarker {
-
     override fun getPosition(): OmhCoordinate {
         return CoordinateConverter.convertToOmhCoordinate(marker.position)
     }
@@ -45,5 +49,71 @@ internal class OmhMarkerImpl(private val marker: Marker) : OmhMarker {
 
     override fun setIsDraggable(isDraggable: Boolean) {
         marker.isDraggable = isDraggable
+    }
+
+    override fun setAnchor(anchorU: Float, anchorV: Float) {
+        this.marker.setAnchor(anchorU, anchorV)
+    }
+
+    override fun getAlpha(): Float {
+        return marker.alpha
+    }
+
+    override fun setAlpha(alpha: Float) {
+        marker.alpha = alpha
+    }
+
+    override fun getSnippet(): String? {
+        return marker.snippet
+    }
+
+    override fun setSnippet(snippet: String?) {
+        marker.snippet = snippet
+    }
+
+    override fun setIcon(icon: Drawable?) {
+        if (icon == null) {
+            marker.setIcon(null)
+        } else {
+            marker.setIcon(
+                BitmapDescriptorFactory.fromBitmap((icon as BitmapDrawable).bitmap)
+            )
+        }
+    }
+
+    override fun getIsVisible(): Boolean {
+        return marker.isVisible
+    }
+
+    override fun setIsVisible(visible: Boolean) {
+        marker.isVisible = visible
+    }
+
+    override fun getIsFlat(): Boolean {
+        return marker.isFlat
+    }
+
+    override fun setIsFlat(flat: Boolean) {
+        marker.isFlat = flat
+    }
+
+    override fun getRotation(): Float {
+        return marker.rotation
+    }
+
+    override fun setRotation(rotation: Float) {
+        marker.rotation = rotation
+    }
+
+    override fun setBackgroundColor(color: Int?) {
+        if (color == null) {
+            marker.setIcon(null)
+        } else {
+            marker.setIcon(
+                BitmapDescriptorFactory.fromPinConfig(
+                    PinConfig.builder().setBackgroundColor(color).build()
+                )
+            )
+        }
     }
 }
