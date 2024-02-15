@@ -25,6 +25,7 @@ import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
 import io.mockk.every
 import io.mockk.mockk
+import kotlinx.parcelize.parcelableCreator
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotEquals
@@ -103,7 +104,7 @@ internal class OmhMarkerOptionsTest {
     @Test
     fun `given a Parcel, when createFromParcel and compared to another with same properties, then is true`() {
         val parcel = createOmhMarkerOptionsParcel(omhMarkerOptions)
-        val createdFromParcel = OmhMarkerOptions.CREATOR.createFromParcel(parcel)
+        val createdFromParcel = parcelableCreator<OmhMarkerOptions>().createFromParcel(parcel)
 
         assertEquals(omhMarkerOptions.position, createdFromParcel.position)
     }
@@ -113,7 +114,7 @@ internal class OmhMarkerOptionsTest {
         val compareOmhCoordinate = OmhCoordinate()
         val compareOmhMarkerOptions = OmhMarkerOptions().apply { position = compareOmhCoordinate }
         val parcel = createOmhMarkerOptionsParcel(omhMarkerOptions)
-        val createdFromParcel = OmhMarkerOptions.CREATOR.createFromParcel(parcel)
+        val createdFromParcel = parcelableCreator<OmhMarkerOptions>().createFromParcel(parcel)
 
         assertNotEquals(compareOmhMarkerOptions.position, createdFromParcel.position)
     }
@@ -125,7 +126,7 @@ internal class OmhMarkerOptionsTest {
             title = ANOTHER_MARKER_TITLE
         }
         val parcel = createOmhMarkerOptionsParcel(omhMarkerOptions)
-        val createdFromParcel = OmhMarkerOptions.CREATOR.createFromParcel(parcel)
+        val createdFromParcel = parcelableCreator<OmhMarkerOptions>().createFromParcel(parcel)
 
         assertNotEquals(compareOmhMarkerOptions.title, createdFromParcel.title)
     }
@@ -136,7 +137,7 @@ internal class OmhMarkerOptionsTest {
             position = omhCoordinate
         }
         val parcel = createOmhMarkerOptionsParcel(omhMarkerOptions)
-        val createdFromParcel = OmhMarkerOptions.CREATOR.createFromParcel(parcel)
+        val createdFromParcel = parcelableCreator<OmhMarkerOptions>().createFromParcel(parcel)
 
         assertNotEquals(compareOmhMarkerOptions.title, createdFromParcel.title)
     }
@@ -147,7 +148,7 @@ internal class OmhMarkerOptionsTest {
             position = omhCoordinate
         }
         val parcel = createOmhMarkerOptionsParcel(omhMarkerOptions)
-        val createdFromParcel = OmhMarkerOptions.CREATOR.createFromParcel(parcel)
+        val createdFromParcel = parcelableCreator<OmhMarkerOptions>().createFromParcel(parcel)
 
         assertNull(createdFromParcel.title)
     }
@@ -158,7 +159,7 @@ internal class OmhMarkerOptionsTest {
             position = omhCoordinate
         }
         val parcel = createOmhMarkerOptionsParcel(omhMarkerOptions)
-        val createdFromParcel = OmhMarkerOptions.CREATOR.createFromParcel(parcel)
+        val createdFromParcel = parcelableCreator<OmhMarkerOptions>().createFromParcel(parcel)
 
         assertFalse(createdFromParcel.isDraggable)
     }
@@ -170,7 +171,7 @@ internal class OmhMarkerOptionsTest {
             isDraggable = true
         }
         val parcel = createOmhMarkerOptionsParcel(omhMarkerOptions)
-        val createdFromParcel = OmhMarkerOptions.CREATOR.createFromParcel(parcel)
+        val createdFromParcel = parcelableCreator<OmhMarkerOptions>().createFromParcel(parcel)
 
         assertTrue(createdFromParcel.isDraggable)
     }
@@ -180,12 +181,31 @@ internal class OmhMarkerOptionsTest {
 
         every { parcel.writeParcelable(any(), any()) } returns Unit
         every { parcel.writeString(any()) } returns Unit
+        every { parcel.writeFloat(any()) } returns Unit
+        every { parcel.writeInt(any()) } returns Unit
         every { parcel.writeByte(any()) } returns Unit
+        every { parcel.writeBoolean(any()) } returns Unit
+        every { parcel.writeSerializable(any()) } returns Unit
         every {
             parcel.readParcelable<OmhCoordinate>(OmhCoordinate::class.java.classLoader)
         } returns omhMarkerOptions.position
-        every { parcel.readString() } returns omhMarkerOptions.title
-        every { parcel.readByte() } returns (if (omhMarkerOptions.isDraggable) 1 else 0).toByte()
+        every { parcel.readString() } returnsMany listOf(
+            omhMarkerOptions.title,
+            omhMarkerOptions.snippet
+        )
+        every { parcel.readSerializable() } returnsMany listOf(
+            omhMarkerOptions.anchor,
+        )
+        every { parcel.readInt() } returnsMany listOf(
+            omhMarkerOptions.isDraggable,
+            omhMarkerOptions.isVisible,
+            omhMarkerOptions.isFlat,
+            omhMarkerOptions.backgroundColor
+        ).map { it?.let { if (it as Boolean) 1 else 0 } ?: -1 }
+        every { parcel.readFloat() } returnsMany listOf(
+            omhMarkerOptions.alpha,
+            omhMarkerOptions.rotation
+        )
 
         omhMarkerOptions.writeToParcel(parcel, omhMarkerOptions.describeContents())
 

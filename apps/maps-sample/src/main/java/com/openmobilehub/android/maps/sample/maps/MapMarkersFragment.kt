@@ -97,16 +97,17 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
 
         omhMap.addMarker(OmhMarkerOptions().apply {
             title = "Test #1 (non-draggable)"
-            position = Constants.PRIME_MERIDIAN.apply {
-                longitude += 0.0008
-                latitude += 0.0008
+            position = OmhCoordinate().apply {
+                latitude = Constants.PRIME_MERIDIAN.latitude + 0.002
+                longitude = Constants.PRIME_MERIDIAN.longitude + 0.0008
             }
         })
 
         omhMap.addMarker(OmhMarkerOptions().apply {
             title = "Test #2 (draggable)"
-            position = Constants.PRIME_MERIDIAN.apply {
-                latitude += 0.0008
+            position = OmhCoordinate().apply {
+                latitude = Constants.PRIME_MERIDIAN.latitude
+                longitude = Constants.PRIME_MERIDIAN.longitude + 0.0008
             }
             isDraggable = true
         })

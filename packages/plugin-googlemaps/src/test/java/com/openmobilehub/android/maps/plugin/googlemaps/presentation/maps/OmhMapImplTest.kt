@@ -3,15 +3,21 @@ package com.openmobilehub.android.maps.plugin.googlemaps.presentation.maps
 import android.content.Context
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.MapStyleOptions
+import com.google.android.gms.maps.model.Marker
+import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.Polygon
 import com.google.android.gms.maps.model.PolygonOptions
 import com.google.android.gms.maps.model.Polyline
 import com.google.android.gms.maps.model.PolylineOptions
+import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMarker
+import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMarkerClickListener
+import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMarkerDragListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnPolygonClickListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnPolylineClickListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhPolygon
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhPolyline
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
+import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolygonOptions
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolylineOptions
 import io.mockk.every
@@ -28,6 +34,8 @@ class OmhMapImplTest {
     private lateinit var omhMapImpl: OmhMapImpl
     private val googleMap = mockk<GoogleMap>()
     private val context = mockk<Context>()
+    private val omhOnMarkerClickListener = mockk<OmhOnMarkerClickListener>(relaxed = true)
+    private val setOnMarkerDragListener = mockk<OmhOnMarkerDragListener>(relaxed = true)
     private val omhOnPolylineClickListener = mockk<OmhOnPolylineClickListener>(relaxed = true)
     private val omhOnPolygonClickListener = mockk<OmhOnPolygonClickListener>(relaxed = true)
 
@@ -88,6 +96,23 @@ class OmhMapImplTest {
     }
 
     @Test
+    fun `addMarker adds marker to map and returns OmhMarker`() {
+        // Arrange
+        val omhMarkerOptions = OmhMarkerOptions()
+
+        val marker = mockk<Marker>(relaxed = true)
+
+        every { googleMap.addMarker(any<MarkerOptions>()) } returns marker
+
+        // Act
+        val result = omhMapImpl.addMarker(omhMarkerOptions)
+
+        // Assert
+        verify { googleMap.addMarker(any<MarkerOptions>()) }
+        Assert.assertNotNull(result)
+    }
+
+    @Test
     fun `setMapStyle applies custom style when JSON resource ID provided`() {
         // Arrange
         val jsonStyleResId = 1
@@ -114,6 +139,42 @@ class OmhMapImplTest {
 
         // Assert
         verify { googleMap.setMapStyle(null) }
+    }
+
+    @Test
+    fun `setOnMarkerClickListener triggers listener on marker click`() {
+        // Assert
+        val capturedListener = slot<GoogleMap.OnMarkerClickListener>()
+        every { googleMap.setOnMarkerClickListener(capture(capturedListener)) } answers {}
+        val marker = mockk<Marker>(relaxed = true)
+
+        // Act
+        omhMapImpl.setOnMarkerClickListener(omhOnMarkerClickListener)
+        capturedListener.captured.onMarkerClick(marker)
+
+        // Assert
+        verify { omhOnMarkerClickListener.onMarkerClick(any<OmhMarker>()) }
+    }
+
+    @Test
+    fun `setOnMarkerDragListener triggers listener on marker click`() {
+        // Assert
+        val capturedListener = slot<GoogleMap.OnMarkerDragListener>()
+        every { googleMap.setOnMarkerDragListener(capture(capturedListener)) } answers {}
+        val marker = mockk<Marker>(relaxed = true)
+
+        // Act
+        omhMapImpl.setOnMarkerDragListener(setOnMarkerDragListener)
+        capturedListener.captured.onMarkerDragStart(marker)
+        capturedListener.captured.onMarkerDrag(marker)
+        capturedListener.captured.onMarkerDragEnd(marker)
+
+        // Assert
+        verify {
+            setOnMarkerDragListener.onMarkerDragStart(any<OmhMarker>())
+            setOnMarkerDragListener.onMarkerDrag(any<OmhMarker>())
+            setOnMarkerDragListener.onMarkerDragEnd(any<OmhMarker>())
+        }
     }
 
     @Test

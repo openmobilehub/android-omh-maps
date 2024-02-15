@@ -20,10 +20,10 @@ import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.Marker
-import com.google.android.gms.maps.model.PinConfig
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMarker
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.plugin.googlemaps.utils.CoordinateConverter
+import com.openmobilehub.android.maps.plugin.googlemaps.utils.MarkerIconConverter
 
 @SuppressWarnings("TooManyFunctions")
 internal class OmhMarkerImpl(private val marker: Marker) : OmhMarker {
@@ -106,14 +106,6 @@ internal class OmhMarkerImpl(private val marker: Marker) : OmhMarker {
     }
 
     override fun setBackgroundColor(color: Int?) {
-        if (color == null) {
-            marker.setIcon(null)
-        } else {
-            marker.setIcon(
-                BitmapDescriptorFactory.fromPinConfig(
-                    PinConfig.builder().setBackgroundColor(color).build()
-                )
-            )
-        }
+        marker.setIcon(MarkerIconConverter.convertColorToBitmapDescriptor(color))
     }
 }

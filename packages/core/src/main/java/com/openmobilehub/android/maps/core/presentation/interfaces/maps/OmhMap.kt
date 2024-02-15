@@ -25,37 +25,6 @@ import com.openmobilehub.android.maps.core.presentation.models.OmhPolygonOptions
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolylineOptions
 
 /**
- * Abstraction to provide access to callback interface for when a marker has been clicked.
- */
-fun interface OmhOnMarkerClickListener {
-    /**
-     * Listener called when a marker is clicked
-     * @return true if the default behavior should be suppressed; false otherwise
-     */
-    fun onMarkerClick(marker: OmhMarker): Boolean
-}
-
-/**
- * Abstraction to provide access to callback interface for when a marker is being dragged.
- */
-interface OmhOnMarkerDragListener {
-    /**
-     * Listener called continuously when the marker is being dragged
-     */
-    fun onMarkerDrag(marker: OmhMarker)
-
-    /**
-     * Listener called when the marker ended being dragged
-     */
-    fun onMarkerDragEnd(marker: OmhMarker)
-
-    /**
-     * Listener called when the marker began being dragged
-     */
-    fun onMarkerDragStart(marker: OmhMarker)
-}
-
-/**
  * Abstraction to provide access to the OmhMap. This is the main class of OMH Maps SDK
  * for Android and is the entry point for all methods related to the map.
  * You cannot instantiate a GoogleMap object directly, rather,
@@ -63,16 +32,6 @@ interface OmhOnMarkerDragListener {
  */
 @SuppressWarnings("TooManyFunctions")
 interface OmhMap {
-    /**
-     * The callback to be executed when the marker is clicked.
-     */
-    fun setOnMarkerClickListener(listener: OmhOnMarkerClickListener?)
-
-    /**
-     * The callback to be executed when the marker is clicked.
-     */
-    fun setOnMarkerDragListener(listener: OmhOnMarkerDragListener?)
-
     /**
      * The name of the map provider.
      * This is a read-only property.
@@ -171,6 +130,16 @@ interface OmhMap {
      * @param callback The callback invoked when the map has finished rendering. To unset the callback, use null.
      */
     fun setOnMapLoadedCallback(callback: OmhMapLoadedCallback?)
+
+    /**
+     * The callback to be executed when the marker is clicked.
+     */
+    fun setOnMarkerClickListener(listener: OmhOnMarkerClickListener)
+
+    /**
+     * The callback to be executed when the marker is clicked.
+     */
+    fun setOnMarkerDragListener(listener: OmhOnMarkerDragListener)
 
     /**
      * Sets a callback that's invoked when a polyline on the map is clicked.

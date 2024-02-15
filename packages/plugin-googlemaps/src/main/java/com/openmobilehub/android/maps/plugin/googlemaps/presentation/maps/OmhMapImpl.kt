@@ -53,60 +53,11 @@ internal class OmhMapImpl(private var googleMap: GoogleMap, private val context:
     override val providerName: String
         get() = "Google"
 
-    private val markers = mutableMapOf<Marker, OmhMarker>()
-
-    private var onMarkerClickListener: OmhOnMarkerClickListener? = null
-    private var onMarkerDragListener: OmhOnMarkerDragListener? = null
-
-    init {
-        this.googleMap.setOnMarkerClickListener { marker ->
-            this.markers[marker]?.let { omhMarker ->
-                this.onMarkerClickListener?.onMarkerClick(omhMarker)
-            } ?: false
-        }
-
-        this.googleMap.setOnMarkerDragListener(object : GoogleMap.OnMarkerDragListener {
-            override fun onMarkerDrag(marker: Marker) {
-                this@OmhMapImpl.markers[marker]?.let { omhMarker ->
-                    this@OmhMapImpl.onMarkerDragListener?.onMarkerDrag(omhMarker)
-                }
-            }
-
-            override fun onMarkerDragEnd(marker: Marker) {
-                this@OmhMapImpl.markers[marker]?.let { omhMarker ->
-                    this@OmhMapImpl.onMarkerDragListener?.onMarkerDragEnd(omhMarker)
-                }
-            }
-
-            override fun onMarkerDragStart(marker: Marker) {
-                this@OmhMapImpl.markers[marker]?.let { omhMarker ->
-                    this@OmhMapImpl.onMarkerDragListener?.onMarkerDragStart(omhMarker)
-                }
-            }
-        })
-    }
-
-    override fun setOnMarkerClickListener(listener: OmhOnMarkerClickListener?) {
-        this.onMarkerClickListener = listener
-    }
-
-    override fun setOnMarkerDragListener(listener: OmhOnMarkerDragListener?) {
-        this.onMarkerDragListener = listener
-    }
-
     override fun addMarker(options: OmhMarkerOptions): OmhMarker? {
         val googleOptions = options.toMarkerOptions()
         val marker: Marker? = googleMap.addMarker(googleOptions)
 
-        return if (marker != null) {
-            val omhMarker = OmhMarkerImpl(marker)
-
-            markers[marker] = omhMarker
-
-            omhMarker
-        } else {
-            null
-        }
+        return marker?.let { OmhMarkerImpl(marker) }
     }
 
     override fun addPolyline(options: OmhPolylineOptions): OmhPolyline {
@@ -165,6 +116,28 @@ internal class OmhMapImpl(private var googleMap: GoogleMap, private val context:
         googleMap.setOnMapLoadedCallback {
             callback?.onMapLoaded()
         }
+    }
+
+    override fun setOnMarkerClickListener(listener: OmhOnMarkerClickListener) {
+        this.googleMap.setOnMarkerClickListener { marker ->
+            listener.onMarkerClick(OmhMarkerImpl(marker))
+        }
+    }
+
+    override fun setOnMarkerDragListener(listener: OmhOnMarkerDragListener) {
+        this.googleMap.setOnMarkerDragListener(object : GoogleMap.OnMarkerDragListener {
+            override fun onMarkerDrag(marker: Marker) {
+                listener.onMarkerDrag(OmhMarkerImpl(marker))
+            }
+
+            override fun onMarkerDragEnd(marker: Marker) {
+                listener.onMarkerDragEnd(OmhMarkerImpl(marker))
+            }
+
+            override fun onMarkerDragStart(marker: Marker) {
+                listener.onMarkerDragStart(OmhMarkerImpl(marker))
+            }
+        })
     }
 
     override fun setOnPolylineClickListener(listener: OmhOnPolylineClickListener) {

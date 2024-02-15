@@ -106,7 +106,7 @@ interface OmhMarker {
 
     /**
      * Sets the icon to display for the marker.
-     * * Note: this overrides [setBackgroundColor].
+     * Note: this overrides [setBackgroundColor].
      *
      * @param icon Drawable representing the icon or null to use
      * the provider's default icon.
@@ -114,7 +114,7 @@ interface OmhMarker {
     fun setIcon(icon: Drawable?)
 
     /**
-     *  Gets whether the marker is visible.
+     * Gets whether the marker is visible.
      *
      * @return a boolean indicating whether the marker is visible.
      */

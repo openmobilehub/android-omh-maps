@@ -82,14 +82,6 @@ internal class OmhMapImpl(
         setZoomGesturesEnabled(true)
     }
 
-    override fun setOnMarkerClickListener(listener: OmhOnMarkerClickListener?) {
-        TODO("Not yet implemented")
-    }
-
-    override fun setOnMarkerDragListener(listener: OmhOnMarkerDragListener?) {
-        TODO("Not yet implemented")
-    }
-
     override fun addMarker(options: OmhMarkerOptions): OmhMarker? {
         val marker: Marker = Marker(mapView).apply {
             position = options.position.toGeoPoint()
@@ -240,6 +232,14 @@ internal class OmhMapImpl(
 
     override fun setOnMapLoadedCallback(callback: OmhMapLoadedCallback?) {
         callback?.onMapLoaded()
+    }
+
+    override fun setOnMarkerClickListener(listener: OmhOnMarkerClickListener) {
+        TODO("Not yet implemented")
+    }
+
+    override fun setOnMarkerDragListener(listener: OmhOnMarkerDragListener) {
+        TODO("Not yet implemented")
     }
 
     override fun setOnPolylineClickListener(listener: OmhOnPolylineClickListener) {

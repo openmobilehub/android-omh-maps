@@ -19,10 +19,27 @@ package com.openmobilehub.android.maps.plugin.googlemaps.extensions
 import com.google.android.gms.maps.model.MarkerOptions
 import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
 import com.openmobilehub.android.maps.plugin.googlemaps.utils.CoordinateConverter
+import com.openmobilehub.android.maps.plugin.googlemaps.utils.MarkerIconConverter
 
 internal fun OmhMarkerOptions.toMarkerOptions(): MarkerOptions {
-    return MarkerOptions()
+    val mappedOptions = MarkerOptions()
         .position(CoordinateConverter.convertToLatLng(position))
         .title(title)
         .draggable(isDraggable)
+
+    anchor.let { mappedOptions.anchor(anchor.first, anchor.second) }
+    alpha.let { mappedOptions.alpha(alpha) }
+    snippet?.let { mappedOptions.snippet(snippet!!) }
+    isVisible.let { mappedOptions.visible(isVisible) }
+    isFlat.let { mappedOptions.flat(isFlat) }
+    rotation.let { mappedOptions.rotation(rotation) }
+    backgroundColor.let {
+        mappedOptions.icon(
+            MarkerIconConverter.convertColorToBitmapDescriptor(
+                backgroundColor
+            )
+        )
+    }
+
+    return mappedOptions
 }
