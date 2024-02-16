@@ -35,14 +35,14 @@ internal fun OmhMarkerOptions.toMarkerOptions(logger: UnsupportedFeatureLogger =
     isVisible.let { mappedOptions.visible(isVisible) }
     isFlat.let { mappedOptions.flat(isFlat) }
     rotation.let { mappedOptions.rotation(rotation) }
-    icon?.let {
+
+    if (icon != null) {
         mappedOptions.icon(
             MarkerIconConverter.convertDrawableToBitmapDescriptor(
                 icon!!
             )
         )
-    }
-    backgroundColor?.let {
+    } else if (backgroundColor != null) {
         logger.logFeatureSetterPartiallySupported(
             "backgroundColor",
             "only hue (H) component of HSV color representation is controllable"
@@ -53,6 +53,8 @@ internal fun OmhMarkerOptions.toMarkerOptions(logger: UnsupportedFeatureLogger =
                 backgroundColor
             )
         )
+    } else {
+        mappedOptions.icon(null)
     }
 
     return mappedOptions

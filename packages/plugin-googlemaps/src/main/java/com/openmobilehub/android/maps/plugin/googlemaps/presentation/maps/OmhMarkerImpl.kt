@@ -109,10 +109,13 @@ internal class OmhMarkerImpl(
     }
 
     override fun setBackgroundColor(color: Int?) {
-        logger.logFeatureSetterPartiallySupported(
-            "setBackgroundColor",
-            "only hue (H) component of HSV color representation is controllable"
-        )
+        if (color != null) {
+            logger.logFeatureSetterPartiallySupported(
+                "setBackgroundColor",
+                "only hue (H) component of HSV color representation is controllable"
+            )
+        }
+
         marker.setIcon(MarkerIconConverter.convertColorToBitmapDescriptor(color))
     }
 }
