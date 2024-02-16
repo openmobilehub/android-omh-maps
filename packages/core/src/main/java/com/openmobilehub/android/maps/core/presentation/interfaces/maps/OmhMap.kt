@@ -86,6 +86,13 @@ interface OmhMap {
     fun setZoomGesturesEnabled(enableZoomGestures: Boolean)
 
     /**
+     * Enables or disables the rotate gestures in the map.
+     *
+     * @param enableRotateGestures true enables rotate gestures, false disables rotate gestures.
+     */
+    fun setRotateGesturesEnabled(enableRotateGestures: Boolean)
+
+    /**
      * Enables or disables the my location layer.
      *
      * @param enable true enables the my location layer, false disables the my location layer.

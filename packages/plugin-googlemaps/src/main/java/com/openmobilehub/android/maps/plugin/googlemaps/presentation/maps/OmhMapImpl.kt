@@ -83,6 +83,10 @@ internal class OmhMapImpl(private var googleMap: GoogleMap, private val context:
         googleMap.uiSettings.isZoomGesturesEnabled = enableZoomGestures
     }
 
+    override fun setRotateGesturesEnabled(enableRotateGestures: Boolean) {
+        googleMap.uiSettings.isRotateGesturesEnabled = enableRotateGestures
+    }
+
     @RequiresPermission(anyOf = [ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION])
     override fun setMyLocationEnabled(enable: Boolean) {
         googleMap.isMyLocationEnabled = enable

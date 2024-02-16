@@ -56,6 +56,7 @@ import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.Polygon
 import org.osmdroid.views.overlay.Polyline
+import org.osmdroid.views.overlay.gestures.RotationGestureOverlay
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 
@@ -74,6 +75,8 @@ internal class OmhMapImpl(
     private var polygonClickListener: OmhOnPolygonClickListener? = null
     private var markerClickListener: OmhOnMarkerClickListener? = null
     private var markerDragListener: OmhOnMarkerDragListener? = null
+    private var enableZoomGestures: Boolean = false
+    private var enableRotateGestures: Boolean = false
 
     private val polylines = mutableMapOf<Polyline, OmhPolyline>()
     private val polygons = mutableMapOf<Polygon, OmhPolygon>()
@@ -85,6 +88,7 @@ internal class OmhMapImpl(
         mapView.overlayManager.add(gestureOverlay)
 
         setZoomGesturesEnabled(true)
+        setRotateGesturesEnabled(true)
     }
 
     private fun applyOnMarkerClickListener(marker: Marker, omhMarker: OmhMarker) {
@@ -197,12 +201,29 @@ internal class OmhMapImpl(
         mapView.postInvalidate()
     }
 
+    private fun updateMultiTouchControlsSetting() {
+        mapView.setMultiTouchControls(enableZoomGestures || enableRotateGestures)
+    }
+
     override fun setZoomGesturesEnabled(enableZoomGestures: Boolean) {
+        this.enableZoomGestures = enableZoomGestures
+
         gestureOverlay.setEnableZoomGestures(enableZoomGestures)
-        mapView.setMultiTouchControls(enableZoomGestures)
         if (!enableZoomGestures) {
             mapView.zoomController.setVisibility(CustomZoomButtonsController.Visibility.NEVER)
         }
+
+        updateMultiTouchControlsSetting()
+    }
+
+    override fun setRotateGesturesEnabled(enableRotateGestures: Boolean) {
+        this.enableRotateGestures = enableRotateGestures
+
+        val rotationGestureOverlay = RotationGestureOverlay(mapView)
+        rotationGestureOverlay.isEnabled = true
+        mapView.overlayManager.add(rotationGestureOverlay)
+
+        updateMultiTouchControlsSetting()
     }
 
     override fun snapshot(omhSnapshotReadyCallback: OmhSnapshotReadyCallback) {
