@@ -42,6 +42,7 @@ import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolygonOptions
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolylineOptions
 import com.openmobilehub.android.maps.plugin.openstreetmap.R
+import com.openmobilehub.android.maps.plugin.openstreetmap.extensions.applyToMarker
 import com.openmobilehub.android.maps.plugin.openstreetmap.extensions.toGeoPoint
 import com.openmobilehub.android.maps.plugin.openstreetmap.extensions.toOmhCoordinate
 import com.openmobilehub.android.maps.plugin.openstreetmap.extensions.toPolygonOptions
@@ -71,28 +72,71 @@ internal class OmhMapImpl(
     private val gestureOverlay = GestureOverlay()
     private var polylineClickListener: OmhOnPolylineClickListener? = null
     private var polygonClickListener: OmhOnPolygonClickListener? = null
+    private var markerClickListener: OmhOnMarkerClickListener? = null
+    private var markerDragListener: OmhOnMarkerDragListener? = null
 
     private val polylines = mutableMapOf<Polyline, OmhPolyline>()
     private val polygons = mutableMapOf<Polygon, OmhPolygon>()
+    private val markers = mutableMapOf<Marker, OmhMarker>()
 
     init {
         mapView.addMapListener(mapListenerController)
         mapView.setOnTouchListener(MapTouchListener(mapListenerController))
         mapView.overlayManager.add(gestureOverlay)
+
         setZoomGesturesEnabled(true)
     }
 
-    override fun addMarker(options: OmhMarkerOptions): OmhMarker? {
-        val marker: Marker = Marker(mapView).apply {
-            position = options.position.toGeoPoint()
-            title = options.title
+    private fun applyOnMarkerClickListener(marker: Marker, omhMarker: OmhMarker) {
+        marker.setOnMarkerClickListener { _, _ ->
+            if (omhMarker.getIsVisible()) {
+                marker.showInfoWindow()
+                return@setOnMarkerClickListener markerClickListener?.onMarkerClick(omhMarker)
+                    ?: false
+            }
+
+            false
         }
+    }
+
+    private fun applyOnMarkerDragListener(marker: Marker, omhMarker: OmhMarker) {
+        marker.setOnMarkerDragListener(object : Marker.OnMarkerDragListener {
+            override fun onMarkerDrag(marker: Marker) {
+                if (omhMarker.getIsVisible()) {
+                    markerDragListener?.onMarkerDrag(omhMarker)
+                }
+            }
+
+            override fun onMarkerDragEnd(marker: Marker) {
+                if (omhMarker.getIsVisible()) {
+                    markerDragListener?.onMarkerDragEnd(omhMarker)
+                }
+            }
+
+            override fun onMarkerDragStart(marker: Marker) {
+                if (omhMarker.getIsVisible()) {
+                    markerDragListener?.onMarkerDragStart(omhMarker)
+                }
+            }
+        })
+    }
+
+    override fun addMarker(options: OmhMarkerOptions): OmhMarker? {
+        val marker = Marker(mapView)
+        options.applyToMarker(marker)
+
+        val omhMarker = OmhMarkerImpl(marker, mapView)
+        markers[marker] = omhMarker
+
+        applyOnMarkerClickListener(marker, omhMarker)
+        applyOnMarkerDragListener(marker, omhMarker)
+
         mapView.run {
             overlayManager.add(marker)
             postInvalidate()
         }
 
-        return OmhMarkerImpl(marker)
+        return omhMarker
     }
 
     override fun addPolyline(options: OmhPolylineOptions): OmhPolyline? {
@@ -235,11 +279,19 @@ internal class OmhMapImpl(
     }
 
     override fun setOnMarkerClickListener(listener: OmhOnMarkerClickListener) {
-        TODO("Not yet implemented")
+        markerClickListener = listener
+
+        markers.forEach() { (marker, omhMarker) ->
+            applyOnMarkerClickListener(marker, omhMarker)
+        }
     }
 
     override fun setOnMarkerDragListener(listener: OmhOnMarkerDragListener) {
-        TODO("Not yet implemented")
+        markerDragListener = listener
+
+        markers.forEach() { (marker, omhMarker) ->
+            applyOnMarkerDragListener(marker, omhMarker)
+        }
     }
 
     override fun setOnPolylineClickListener(listener: OmhOnPolylineClickListener) {

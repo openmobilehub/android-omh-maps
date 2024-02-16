@@ -21,16 +21,18 @@ import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMarke
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.plugin.openstreetmap.extensions.toGeoPoint
 import com.openmobilehub.android.maps.plugin.openstreetmap.extensions.toOmhCoordinate
+import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
 
 @SuppressWarnings("TooManyFunctions")
-internal class OmhMarkerImpl(private val marker: Marker) : OmhMarker {
+internal class OmhMarkerImpl(private val marker: Marker, private val mapView: MapView) : OmhMarker {
     override fun getPosition(): OmhCoordinate {
         return marker.position.toOmhCoordinate()
     }
 
     override fun setPosition(omhCoordinate: OmhCoordinate) {
         marker.position = omhCoordinate.toGeoPoint()
+        mapView.postInvalidate()
     }
 
     override fun getTitle(): String? {
@@ -38,7 +40,14 @@ internal class OmhMarkerImpl(private val marker: Marker) : OmhMarker {
     }
 
     override fun setTitle(title: String?) {
+        val shouldInvalidateInfoWindow = marker.title != title
+
         marker.title = title
+
+        mapView.postInvalidate()
+        if (shouldInvalidateInfoWindow) {
+            invalidateInfoWindow()
+        }
     }
 
     override fun getIsDraggable(): Boolean {
@@ -47,10 +56,12 @@ internal class OmhMarkerImpl(private val marker: Marker) : OmhMarker {
 
     override fun setIsDraggable(isDraggable: Boolean) {
         marker.isDraggable = isDraggable
+        mapView.postInvalidate()
     }
 
     override fun setAnchor(anchorU: Float, anchorV: Float) {
         marker.setAnchor(anchorU, anchorV)
+        mapView.postInvalidate()
     }
 
     override fun getAlpha(): Float {
@@ -59,6 +70,7 @@ internal class OmhMarkerImpl(private val marker: Marker) : OmhMarker {
 
     override fun setAlpha(alpha: Float) {
         marker.alpha = alpha
+        mapView.postInvalidate()
     }
 
     override fun getSnippet(): String? {
@@ -66,11 +78,20 @@ internal class OmhMarkerImpl(private val marker: Marker) : OmhMarker {
     }
 
     override fun setSnippet(snippet: String?) {
+        val shouldInvalidateInfoWindow = marker.snippet != snippet
+
         marker.snippet = snippet
+
+        if (shouldInvalidateInfoWindow) {
+            invalidateInfoWindow()
+        }
+
+        mapView.postInvalidate()
     }
 
     override fun setIcon(icon: Drawable?) {
         marker.icon = icon
+        mapView.postInvalidate()
     }
 
     override fun getIsVisible(): Boolean {
@@ -79,6 +100,12 @@ internal class OmhMarkerImpl(private val marker: Marker) : OmhMarker {
 
     override fun setIsVisible(visible: Boolean) {
         marker.setVisible(visible)
+
+        if (!visible && marker.isInfoWindowShown) {
+            marker.closeInfoWindow()
+        }
+
+        mapView.postInvalidate()
     }
 
     override fun getIsFlat(): Boolean {
@@ -87,6 +114,7 @@ internal class OmhMarkerImpl(private val marker: Marker) : OmhMarker {
 
     override fun setIsFlat(flat: Boolean) {
         marker.isFlat = flat
+        mapView.postInvalidate()
     }
 
     override fun getRotation(): Float {
@@ -95,13 +123,22 @@ internal class OmhMarkerImpl(private val marker: Marker) : OmhMarker {
 
     override fun setRotation(rotation: Float) {
         marker.rotation = rotation
+        mapView.postInvalidate()
     }
 
     override fun setBackgroundColor(color: Int?) {
         if (color == null) {
             marker.setDefaultIcon()
         } else {
+            marker.setTextIcon(" ")
             marker.textLabelBackgroundColor = color
+        }
+        mapView.postInvalidate()
+    }
+
+    private fun invalidateInfoWindow() {
+        if (marker.isInfoWindowShown) {
+            marker.showInfoWindow() // open or close & reopen to apply the new contents
         }
     }
 }
