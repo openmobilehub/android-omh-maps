@@ -1,5 +1,6 @@
 package com.openmobilehub.android.maps.plugin.openstreetmap.presentation.maps
 
+import com.openmobilehub.android.maps.core.utils.UnsupportedFeatureLogger
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
@@ -8,17 +9,21 @@ import io.mockk.verify
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
+import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
 
 class OmhMarkerImplTest {
 
     private lateinit var marker: Marker
     private lateinit var omhMarker: OmhMarkerImpl
+    private val mockMapView: MapView = mockk(relaxed = true)
+    private val mockLogger: UnsupportedFeatureLogger =
+        mockk<UnsupportedFeatureLogger>(relaxed = true)
 
     @Before
     fun setUp() {
         marker = mockk(relaxed = true)
-        omhMarker = OmhMarkerImpl(marker)
+        omhMarker = OmhMarkerImpl(marker, mockMapView, mockLogger)
     }
 
     @Test
