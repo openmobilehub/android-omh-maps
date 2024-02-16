@@ -34,6 +34,17 @@
     <string name="pattern_type_custom">Custom</string>
     <string name="clickable">Clickable</string>
     <string name="visible">Visible</string>
+    <string name="flat">Flat</string>
+    <string name="draggable">Draggable</string>
+    <string name="rotation">Rotation</string>
+    <string name="anchorU">Anchor U</string>
+    <string name="anchorV">Anchor V</string>
+    <string name="appearance">Appearance</string>
+    <string name="snippet">Snippet</string>
+    <string name="alpha">Alpha</string>
+    <string name="marker_appearance_type_default">Default</string>
+    <string name="marker_appearance_type_custom_icon">Custom icon</string>
+    <string name="marker_appearance_type_custom_color">Custom color</string>
     <string name="span">Span</string>
     <string name="gradient">Gradient</string>
     <string name="span_pattern">Span Pattern</string>

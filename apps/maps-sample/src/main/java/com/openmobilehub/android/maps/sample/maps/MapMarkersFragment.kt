@@ -18,19 +18,16 @@ package com.openmobilehub.android.maps.sample.maps
 
 import android.os.Bundle
 import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CheckBox
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
-import com.openmobilehub.android.maps.core.factories.OmhMapProvider
 import com.openmobilehub.android.maps.core.presentation.fragments.OmhMapFragment
-import com.openmobilehub.android.maps.core.presentation.interfaces.location.OmhFailureListener
-import com.openmobilehub.android.maps.core.presentation.interfaces.location.OmhSuccessListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMap
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMarker
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMapReadyCallback
@@ -40,24 +37,42 @@ import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
 import com.openmobilehub.android.maps.core.utils.NetworkConnectivityChecker
 import com.openmobilehub.android.maps.sample.R
+import com.openmobilehub.android.maps.sample.customviews.PanelSeekbar
+import com.openmobilehub.android.maps.sample.customviews.PanelSpinner
 import com.openmobilehub.android.maps.sample.databinding.FragmentMapMarkersBinding
-import com.openmobilehub.android.maps.sample.utils.Constants
 import com.openmobilehub.android.maps.sample.utils.Constants.DEFAULT_ZOOM_LEVEL
-import com.openmobilehub.android.maps.sample.utils.Constants.LOCATION_KEY
 import com.openmobilehub.android.maps.sample.utils.Constants.PERMISSIONS
 import com.openmobilehub.android.maps.sample.utils.Constants.PRIME_MERIDIAN
 import com.openmobilehub.android.maps.sample.utils.Constants.SHOW_MESSAGE_TIME
-import com.openmobilehub.android.maps.sample.utils.Constants.ZOOM_LEVEL_5
-import com.openmobilehub.android.maps.sample.utils.PermissionsUtils
 
 open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
-    private var currentLocation: OmhCoordinate = PRIME_MERIDIAN
     private var _binding: FragmentMapMarkersBinding? = null
     private val binding get() = _binding!!
     private var networkConnectivityChecker: NetworkConnectivityChecker? = null
     private var handler: Handler? = null
     private var runnable: Runnable? = null
-    private var handledCurrentLocation = false
+
+    private var customizableMarker: OmhMarker? = null
+
+    private var isDraggableCheckbox: CheckBox? = null
+    private var hasSnippetCheckbox: CheckBox? = null
+    private var isFlatCheckbox: CheckBox? = null
+    private var isVisibleCheckbox: CheckBox? = null
+    private var anchorUSeekbar: PanelSeekbar? = null
+    private var anchorVSeekbar: PanelSeekbar? = null
+    private var alphaSeekbar: PanelSeekbar? = null
+    private var appearanceSpinner: PanelSpinner? = null
+    private var colorIntSeekbar: PanelSeekbar? = null
+    private var rotationSeekbar: PanelSeekbar? = null
+    private var customizableMarkerAnchor: Pair<Float, Float> = Pair(0.5f, 0.5f)
+    private var customBackgroundColor: Int = 0
+    private var currentAppearancePosition: Int = 0
+
+    private val markerAppearanceTypeNameResourceID = intArrayOf(
+        R.string.marker_appearance_type_default,
+        R.string.marker_appearance_type_custom_icon,
+        R.string.marker_appearance_type_custom_color
+    )
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -82,9 +97,11 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
 
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
             val omhMapFragment =
-                childFragmentManager.findFragmentById(R.id.fragment_markers_demo_map_container) as? OmhMapFragment
+                childFragmentManager.findFragmentById(R.id.fragment_markers_map_container) as? OmhMapFragment
             omhMapFragment?.getMapAsync(this)
         }.launch(PERMISSIONS)
+
+        setupUI(view)
     }
 
     override fun onMapReady(omhMap: OmhMap) {
@@ -94,33 +111,34 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
         }
         omhMap.setZoomGesturesEnabled(true)
 
-        getCurrentLocation(omhMap)
+        omhMap.moveCamera(PRIME_MERIDIAN, DEFAULT_ZOOM_LEVEL)
 
         omhMap.addMarker(OmhMarkerOptions().apply {
             title = "Static icon marker (non-draggable)"
             position = OmhCoordinate().apply {
-                latitude = Constants.PRIME_MERIDIAN.latitude + 0.0016
-                longitude = Constants.PRIME_MERIDIAN.longitude + 0.0008
+                latitude = PRIME_MERIDIAN.latitude + 0.0016
+                longitude = PRIME_MERIDIAN.longitude + 0.0008
             }
-            icon = ResourcesCompat.getDrawable(resources, R.drawable.ic_map_marker, null);
+            icon = ResourcesCompat.getDrawable(resources, R.drawable.ic_map_marker, null)
         })
 
         omhMap.addMarker(OmhMarkerOptions().apply {
-            title = "Configurable test marker"
+            title = "Static colored marker (draggable)"
             position = OmhCoordinate().apply {
-                latitude = Constants.PRIME_MERIDIAN.latitude
-                longitude = Constants.PRIME_MERIDIAN.longitude + 0.0008
+                latitude = PRIME_MERIDIAN.latitude
+                longitude = PRIME_MERIDIAN.longitude - 0.0008
             }
+            backgroundColor = 0x00FF12 // green-ish
             isDraggable = true
         })
 
-        omhMap.addMarker(OmhMarkerOptions().apply {
-            title = "Static colored marker"
+        customizableMarker = omhMap.addMarker(OmhMarkerOptions().apply {
+            title = "Configurable test marker"
             position = OmhCoordinate().apply {
-                latitude = Constants.PRIME_MERIDIAN.latitude
-                longitude = Constants.PRIME_MERIDIAN.longitude - 0.0008
+                latitude = PRIME_MERIDIAN.latitude
+                longitude = PRIME_MERIDIAN.longitude + 0.0008
             }
-            backgroundColor = 0x00FF12 // green-ish
+            isDraggable = true
         })
 
         omhMap.setOnMarkerClickListener(OmhOnMarkerClickListener { marker ->
@@ -178,75 +196,112 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
                 ).show()
             }
         })
+
+        isVisibleCheckbox?.isChecked = customizableMarker?.getIsVisible() ?: true
+        isFlatCheckbox?.isChecked = customizableMarker?.getIsFlat() ?: false
+        isDraggableCheckbox?.isChecked = customizableMarker?.getIsDraggable() ?: true
+        hasSnippetCheckbox?.isChecked = customizableMarker?.getSnippet() != null
+        anchorUSeekbar?.setProgress(50)
+        anchorVSeekbar?.setProgress(50)
+        alphaSeekbar?.setProgress(100)
     }
 
-    private fun enableMyLocation(omhMap: OmhMap) {
-        if (PermissionsUtils.grantedRequiredPermissions(requireContext())) {
-            // Safe use of 'noinspection MissingPermission' since it is checking permissions in the if condition
-            // noinspection MissingPermission
-            omhMap.setMyLocationEnabled(true)
-            omhMap.setMyLocationButtonClickListener {
-                Toast.makeText(requireContext(), R.string.center_message, Toast.LENGTH_SHORT).show()
-                false
-            }
+    private fun applyCustomizableMarkerAnchor() {
+        customizableMarker?.setAnchor(
+            customizableMarkerAnchor.first,
+            customizableMarkerAnchor.second
+        )
+    }
+
+    private fun applyCustomizableMarkerAppearance() {
+        when (markerAppearanceTypeNameResourceID[currentAppearancePosition]) {
+            R.string.marker_appearance_type_default -> customizableMarker?.setIcon(null)
+
+            R.string.marker_appearance_type_custom_color -> customizableMarker?.setBackgroundColor(
+                customBackgroundColor
+            )
+
+            R.string.marker_appearance_type_custom_icon -> customizableMarker?.setIcon(
+                ResourcesCompat.getDrawable(resources, R.drawable.soccer_ball, null)
+            )
         }
     }
 
-    private fun getCurrentLocation(omhMap: OmhMap) {
-        if (PermissionsUtils.grantedRequiredPermissions(requireContext())) {
-            initializeRunnable()
-            runnable?.let { handler?.postDelayed(it, SHOW_MESSAGE_TIME) }
-            val onSuccessListener = OmhSuccessListener { omhCoordinate ->
-                currentLocation = omhCoordinate
-                handleAfterGetLocation(omhMap)
-            }
-            val onFailureListener = OmhFailureListener {
-                currentLocation = PRIME_MERIDIAN
-                handleAfterGetLocation(omhMap)
-            }
-            binding.progressIndicatorIcon.visibility = View.VISIBLE
-            // Safe use of 'noinspection MissingPermission' since it is checking permissions in the if condition
-            // noinspection MissingPermission
-            OmhMapProvider.getInstance().provideOmhLocation(requireContext())
-                .getCurrentLocation(onSuccessListener, onFailureListener)
-        } else {
-            moveToCurrentLocation(omhMap, ZOOM_LEVEL_5)
-            enableMyLocation(omhMap)
+    private fun setupUI(view: View) {
+        // isVisible
+        isVisibleCheckbox = view.findViewById(R.id.checkBox_isVisible)
+        isVisibleCheckbox?.setOnCheckedChangeListener { _, isChecked ->
+            customizableMarker?.setIsVisible(isChecked)
         }
-    }
 
-    private fun initializeRunnable() {
-        handler = Handler(Looper.getMainLooper())
-        runnable = Runnable {
-            Toast.makeText(requireContext(), R.string.move_message, Toast.LENGTH_LONG).show()
-            runnable?.let { validRunnable ->
-                handler?.postDelayed(validRunnable, SHOW_MESSAGE_TIME)
-            }
+        // isFlat
+        isFlatCheckbox = view.findViewById(R.id.checkBox_isFlat)
+        isFlatCheckbox?.setOnCheckedChangeListener { _, isChecked ->
+            customizableMarker?.setIsFlat(isChecked)
         }
-    }
 
-    private fun handleAfterGetLocation(omhMap: OmhMap) {
-        handledCurrentLocation = true
-        handler?.removeCallbacksAndMessages(null)
-        binding.progressIndicatorIcon.visibility = View.GONE
-        moveToCurrentLocation(omhMap, DEFAULT_ZOOM_LEVEL)
-        enableMyLocation(omhMap)
-    }
+        // isDraggable
+        isDraggableCheckbox = view.findViewById(R.id.checkBox_isDraggable)
+        isDraggableCheckbox?.setOnCheckedChangeListener { _, isChecked ->
+            customizableMarker?.setIsDraggable(isChecked)
+        }
 
-    private fun moveToCurrentLocation(omhMap: OmhMap, zoomLevel: Float) {
-        omhMap.moveCamera(currentLocation, zoomLevel)
+        // hasSnippet
+        hasSnippetCheckbox = view.findViewById(R.id.checkBox_hasSnippet)
+        hasSnippetCheckbox?.setOnCheckedChangeListener { _, isChecked ->
+            customizableMarker?.setSnippet(if (isChecked) "A sample snippet with long description" else null)
+        }
+
+        // anchorU
+        anchorUSeekbar = view.findViewById(R.id.panelSeekbar_anchorU)
+        anchorUSeekbar?.setOnProgressChangedCallback { progress: Int ->
+            customizableMarkerAnchor =
+                Pair(progress.toFloat() / 100f, customizableMarkerAnchor.second)
+            applyCustomizableMarkerAnchor()
+        }
+
+        // anchorV
+        anchorVSeekbar = view.findViewById(R.id.panelSeekbar_anchorV)
+        anchorVSeekbar?.setOnProgressChangedCallback { progress: Int ->
+            customizableMarkerAnchor =
+                Pair(customizableMarkerAnchor.first, progress.toFloat() / 100f)
+            applyCustomizableMarkerAnchor()
+        }
+
+        // alpha
+        alphaSeekbar = view.findViewById(R.id.panelSeekbar_alpha)
+        alphaSeekbar?.setOnProgressChangedCallback { alpha: Int ->
+            customizableMarker?.setAlpha(alpha.toFloat() / 100f)
+        }
+
+        // backgroundColor
+        colorIntSeekbar = view.findViewById(R.id.panelSeekbar_color)
+        colorIntSeekbar?.setOnProgressChangedCallback { color: Int ->
+            customBackgroundColor = color
+            applyCustomizableMarkerAppearance()
+        }
+
+        // rotation
+        rotationSeekbar = view.findViewById(R.id.panelSeekbar_rotation)
+        rotationSeekbar?.setOnProgressChangedCallback { rotation: Int ->
+            customizableMarker?.setRotation(rotation.toFloat())
+        }
+
+        // appearance
+        appearanceSpinner = view.findViewById(R.id.panelSpinner_markerAppearance)
+        appearanceSpinner?.setValues(requireContext(), markerAppearanceTypeNameResourceID)
+        appearanceSpinner?.setOnItemSelectedCallback { position: Int ->
+            currentAppearancePosition = position
+            applyCustomizableMarkerAppearance()
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putParcelable(LOCATION_KEY, currentLocation)
     }
 
     override fun onResume() {
         super.onResume()
-        if (handledCurrentLocation) {
-            return
-        }
         runnable?.let { validRunnable ->
             handler?.postDelayed(validRunnable, SHOW_MESSAGE_TIME)
         }
@@ -269,6 +324,6 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
             return MapMarkersFragment()
         }
 
-        val LOG_TAG: String = "MarkersDemoMapFragment"
+        val LOG_TAG: String = "MapMarkersFragment"
     }
 }

@@ -22,27 +22,107 @@
     tools:context=".maps.MapMarkersFragment">
 
     <fragment
-        android:id="@+id/fragment_markers_demo_map_container"
+        android:id="@+id/fragment_markers_map_container"
         android:name="com.openmobilehub.android.maps.core.presentation.fragments.OmhMapFragment"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/scrollView"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:layout="@layout/fragment_omh_map" />
 
-    <com.google.android.material.progressindicator.CircularProgressIndicator
-        android:id="@+id/progress_indicator_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="341dp"
-        android:indeterminate="true"
-        android:visibility="gone"
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_weight="0.5"
+        app:layout_constraintHeight_percent="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/fragment_markers_demo_map_container"
-        tools:visibility="visible" />
+        app:layout_constraintTop_toBottomOf="@+id/fragment_markers_map_container">
 
+        <LinearLayout
+            android:id="@+id/controlPanel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <CheckBox
+                android:id="@+id/checkBox_isVisible"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="@string/visible" />
+
+            <CheckBox
+                android:id="@+id/checkBox_isFlat"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="@string/flat" />
+
+            <CheckBox
+                android:id="@+id/checkBox_isDraggable"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="@string/draggable" />
+
+            <CheckBox
+                android:id="@+id/checkBox_hasSnippet"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="@string/snippet" />
+
+            <com.openmobilehub.android.maps.sample.customviews.PanelSeekbar
+                android:id="@+id/panelSeekbar_rotation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:maxValue="360"
+                app:minValue="0"
+                app:titleText="@string/rotation" />
+
+            <com.openmobilehub.android.maps.sample.customviews.PanelSeekbar
+                android:id="@+id/panelSeekbar_anchorU"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:maxValue="100"
+                app:minValue="0"
+                app:titleText="@string/anchorU" />
+
+            <com.openmobilehub.android.maps.sample.customviews.PanelSeekbar
+                android:id="@+id/panelSeekbar_anchorV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:maxValue="100"
+                app:minValue="0"
+                app:titleText="@string/anchorV" />
+
+            <com.openmobilehub.android.maps.sample.customviews.PanelSeekbar
+                android:id="@+id/panelSeekbar_alpha"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:maxValue="100"
+                app:minValue="0"
+                app:titleText="@string/alpha" />
+
+            <com.openmobilehub.android.maps.sample.customviews.PanelSpinner
+                android:id="@+id/panelSpinner_markerAppearance"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:titleText="@string/appearance" />
+
+            <com.openmobilehub.android.maps.sample.customviews.PanelSeekbar
+                android:id="@+id/panelSeekbar_color"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:maxValue="16777215"
+                app:minValue="0"
+                app:titleText="@string/color" />
+        </LinearLayout>
+    </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

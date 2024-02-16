@@ -43,6 +43,10 @@ class PanelSeekbar @JvmOverloads constructor(
         }
     }
 
+    fun setProgress(value: Int) {
+        customSeekBar.progress = value
+    }
+
     fun setOnProgressChangedCallback(callback: (progress: Int) -> Unit) {
         customSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
