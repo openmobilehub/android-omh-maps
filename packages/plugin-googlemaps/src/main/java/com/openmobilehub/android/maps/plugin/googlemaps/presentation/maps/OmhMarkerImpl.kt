@@ -112,7 +112,7 @@ internal class OmhMarkerImpl(
         if (color != null) {
             logger.logFeatureSetterPartiallySupported(
                 "setBackgroundColor",
-                "only hue (H) component of HSV color representation is controllable"
+                "only hue (H) component of HSV color representation is controllable, alpha channel is unsupported"
             )
         }
 

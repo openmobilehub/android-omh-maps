@@ -45,7 +45,7 @@ internal fun OmhMarkerOptions.toMarkerOptions(logger: UnsupportedFeatureLogger =
     } else if (backgroundColor != null) {
         logger.logFeatureSetterPartiallySupported(
             "backgroundColor",
-            "only hue (H) component of HSV color representation is controllable"
+            "only hue (H) component of HSV color representation is controllable, alpha channel is unsupported"
         )
 
         mappedOptions.icon(

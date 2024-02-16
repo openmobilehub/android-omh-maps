@@ -42,7 +42,7 @@ const val DEFAULT_ROTATION = 0f
  * @property isFlat Boolean representing whether the marker is flat (stuck to the map)
  * or is a billboard (rotates and tilts with the camera).
  * @property rotation The rotation of the marker (degrees, clockwise) with respect to the map. Default: `0f`
- * @property backgroundColor The color of the marker or resets the color to the provider's default value if null.
+ * @property backgroundColor The argb color of the marker or resets the color to the provider's default value if null.
  */
 @Keep
 @Parcelize

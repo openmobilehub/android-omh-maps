@@ -19,13 +19,19 @@ package com.openmobilehub.android.maps.plugin.openstreetmap.presentation.maps
 import android.graphics.drawable.Drawable
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMarker
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
+import com.openmobilehub.android.maps.core.utils.UnsupportedFeatureLogger
 import com.openmobilehub.android.maps.plugin.openstreetmap.extensions.toGeoPoint
 import com.openmobilehub.android.maps.plugin.openstreetmap.extensions.toOmhCoordinate
+import com.openmobilehub.android.maps.plugin.openstreetmap.utils.markerLogger
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
 
 @SuppressWarnings("TooManyFunctions")
-internal class OmhMarkerImpl(private val marker: Marker, private val mapView: MapView) : OmhMarker {
+internal class OmhMarkerImpl(
+    private val marker: Marker,
+    private val mapView: MapView,
+    private val logger: UnsupportedFeatureLogger = markerLogger
+) : OmhMarker {
     override fun getPosition(): OmhCoordinate {
         return marker.position.toOmhCoordinate()
     }
@@ -127,13 +133,7 @@ internal class OmhMarkerImpl(private val marker: Marker, private val mapView: Ma
     }
 
     override fun setBackgroundColor(color: Int?) {
-        if (color == null) {
-            marker.setDefaultIcon()
-        } else {
-            marker.setTextIcon(" ")
-            marker.textLabelBackgroundColor = color
-        }
-        mapView.postInvalidate()
+        logger.logSetterNotSupported("setBackgroundColor")
     }
 
     private fun invalidateInfoWindow() {

@@ -30,13 +30,7 @@ internal fun OmhMarkerOptions.applyToMarker(
     if (icon != null) {
         marker.icon = icon
     } else if (backgroundColor != null) {
-        logger.logFeatureSetterPartiallySupported(
-            "backgroundColor",
-            "only hue (H) component of HSV color representation is controllable"
-        )
-
-        marker.textLabelBackgroundColor = backgroundColor!!
-        marker.setTextIcon(" ")
+        logger.logSetterNotSupported("setBackgroundColor")
     } else {
         marker.setDefaultIcon()
     }

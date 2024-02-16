@@ -160,7 +160,7 @@ interface OmhMarker {
      * Sets the color of the marker or resets the color to the provider's default value if null.
      * Note: this overrides [setIcon].
      *
-     * @param color the color of the marker or null.
+     * @param color argb color of the marker or null.
      */
     fun setBackgroundColor(color: Int?)
 }
