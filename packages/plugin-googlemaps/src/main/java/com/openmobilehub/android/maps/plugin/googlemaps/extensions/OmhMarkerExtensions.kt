@@ -18,10 +18,12 @@ package com.openmobilehub.android.maps.plugin.googlemaps.extensions
 
 import com.google.android.gms.maps.model.MarkerOptions
 import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
+import com.openmobilehub.android.maps.core.utils.UnsupportedFeatureLogger
 import com.openmobilehub.android.maps.plugin.googlemaps.utils.CoordinateConverter
 import com.openmobilehub.android.maps.plugin.googlemaps.utils.MarkerIconConverter
+import com.openmobilehub.android.maps.plugin.googlemaps.utils.markerLogger
 
-internal fun OmhMarkerOptions.toMarkerOptions(): MarkerOptions {
+internal fun OmhMarkerOptions.toMarkerOptions(logger: UnsupportedFeatureLogger = markerLogger): MarkerOptions {
     val mappedOptions = MarkerOptions()
         .position(CoordinateConverter.convertToLatLng(position))
         .title(title)
@@ -29,11 +31,23 @@ internal fun OmhMarkerOptions.toMarkerOptions(): MarkerOptions {
 
     anchor.let { mappedOptions.anchor(anchor.first, anchor.second) }
     alpha.let { mappedOptions.alpha(alpha) }
-    snippet?.let { mappedOptions.snippet(snippet!!) }
+    snippet?.let { mappedOptions.snippet(snippet) }
     isVisible.let { mappedOptions.visible(isVisible) }
     isFlat.let { mappedOptions.flat(isFlat) }
     rotation.let { mappedOptions.rotation(rotation) }
-    backgroundColor.let {
+    icon?.let {
+        mappedOptions.icon(
+            MarkerIconConverter.convertDrawableToBitmapDescriptor(
+                icon!!
+            )
+        )
+    }
+    backgroundColor?.let {
+        logger.logFeatureSetterPartiallySupported(
+            "backgroundColor",
+            "only hue (H) component of HSV color representation is controllable"
+        )
+
         mappedOptions.icon(
             MarkerIconConverter.convertColorToBitmapDescriptor(
                 backgroundColor

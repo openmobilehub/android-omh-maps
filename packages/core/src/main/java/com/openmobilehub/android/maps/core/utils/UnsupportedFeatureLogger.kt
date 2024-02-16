@@ -10,10 +10,25 @@ class UnsupportedFeatureLogger(private val mapElement: String, private val provi
     }
 
     fun logGetterNotSupported(propertyName: String) {
-        Log.w(tag, "Getter for property $propertyName in $mapElement not supported by $providerName")
+        Log.w(
+            tag,
+            "Getter for property $propertyName in $mapElement not supported by $providerName"
+        )
     }
 
     fun logSetterNotSupported(propertyName: String) {
-        Log.w(tag, "Setter for property $propertyName in $mapElement not supported by $providerName")
+        Log.w(
+            tag,
+            "Setter for property $propertyName in $mapElement not supported by $providerName"
+        )
+    }
+
+    fun logFeatureSetterPartiallySupported(propertyName: String, extraInfo: String?) {
+        Log.w(
+            tag,
+            "Setter for property $propertyName in $mapElement is partially supported".plus(
+                " by $providerName${if (extraInfo == null) "" else " ($extraInfo)"}"
+            )
+        )
     }
 }

@@ -16,17 +16,20 @@
 
 package com.openmobilehub.android.maps.plugin.googlemaps.presentation.maps
 
-import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.Marker
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMarker
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
+import com.openmobilehub.android.maps.core.utils.UnsupportedFeatureLogger
 import com.openmobilehub.android.maps.plugin.googlemaps.utils.CoordinateConverter
 import com.openmobilehub.android.maps.plugin.googlemaps.utils.MarkerIconConverter
+import com.openmobilehub.android.maps.plugin.googlemaps.utils.markerLogger
 
 @SuppressWarnings("TooManyFunctions")
-internal class OmhMarkerImpl(private val marker: Marker) : OmhMarker {
+internal class OmhMarkerImpl(
+    private val marker: Marker,
+    private val logger: UnsupportedFeatureLogger = markerLogger
+) : OmhMarker {
     override fun getPosition(): OmhCoordinate {
         return CoordinateConverter.convertToOmhCoordinate(marker.position)
     }
@@ -76,7 +79,7 @@ internal class OmhMarkerImpl(private val marker: Marker) : OmhMarker {
             marker.setIcon(null)
         } else {
             marker.setIcon(
-                BitmapDescriptorFactory.fromBitmap((icon as BitmapDrawable).bitmap)
+                MarkerIconConverter.convertDrawableToBitmapDescriptor(icon)
             )
         }
     }
@@ -106,6 +109,10 @@ internal class OmhMarkerImpl(private val marker: Marker) : OmhMarker {
     }
 
     override fun setBackgroundColor(color: Int?) {
+        logger.logFeatureSetterPartiallySupported(
+            "setBackgroundColor",
+            "only hue (H) component of HSV color representation is controllable"
+        )
         marker.setIcon(MarkerIconConverter.convertColorToBitmapDescriptor(color))
     }
 }

@@ -25,6 +25,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import com.openmobilehub.android.maps.core.factories.OmhMapProvider
 import com.openmobilehub.android.maps.core.presentation.fragments.OmhMapFragment
@@ -96,15 +97,16 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
         getCurrentLocation(omhMap)
 
         omhMap.addMarker(OmhMarkerOptions().apply {
-            title = "Test #1 (non-draggable)"
+            title = "Static icon marker (non-draggable)"
             position = OmhCoordinate().apply {
-                latitude = Constants.PRIME_MERIDIAN.latitude + 0.002
+                latitude = Constants.PRIME_MERIDIAN.latitude + 0.0016
                 longitude = Constants.PRIME_MERIDIAN.longitude + 0.0008
             }
+            icon = ResourcesCompat.getDrawable(resources, R.drawable.ic_map_marker, null);
         })
 
         omhMap.addMarker(OmhMarkerOptions().apply {
-            title = "Test #2 (draggable)"
+            title = "Configurable test marker"
             position = OmhCoordinate().apply {
                 latitude = Constants.PRIME_MERIDIAN.latitude
                 longitude = Constants.PRIME_MERIDIAN.longitude + 0.0008
@@ -112,11 +114,27 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
             isDraggable = true
         })
 
+        omhMap.addMarker(OmhMarkerOptions().apply {
+            title = "Static colored marker"
+            position = OmhCoordinate().apply {
+                latitude = Constants.PRIME_MERIDIAN.latitude
+                longitude = Constants.PRIME_MERIDIAN.longitude - 0.0008
+            }
+            backgroundColor = 0x00FF12 // green-ish
+        })
+
         omhMap.setOnMarkerClickListener(OmhOnMarkerClickListener { marker ->
             Log.d(
                 LOG_TAG,
                 "User clicked marker '${marker.getTitle()}' at ${marker.getPosition().toString()}"
             )
+
+            Toast.makeText(
+                context,
+                "Marker '${marker.getTitle()}' has been clicked",
+                Toast.LENGTH_SHORT
+            ).show()
+
             false
         })
 
@@ -137,6 +155,12 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
                         marker.getPosition()
                     }"
                 )
+
+                Toast.makeText(
+                    context,
+                    "Marker '${marker.getTitle()}' has just ended being dragged",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
 
             override fun onMarkerDragStart(marker: OmhMarker) {
@@ -146,6 +170,12 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
                         marker.getPosition()
                     }"
                 )
+
+                Toast.makeText(
+                    context,
+                    "Marker '${marker.getTitle()}' is being dragged",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         })
     }
