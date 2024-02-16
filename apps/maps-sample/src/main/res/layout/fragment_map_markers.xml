@@ -116,12 +116,10 @@
                 android:layout_height="wrap_content"
                 app:titleText="@string/appearance" />
 
-            <com.openmobilehub.android.maps.sample.customviews.PanelSeekbar
+            <com.openmobilehub.android.maps.sample.customviews.PanelColorSeekbar
                 android:id="@+id/panelSeekbar_color"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:maxValue="16777215"
-                app:minValue="0"
                 app:titleText="@string/color" />
         </LinearLayout>
     </ScrollView>

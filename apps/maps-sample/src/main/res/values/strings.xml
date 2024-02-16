@@ -45,6 +45,7 @@
     <string name="marker_appearance_type_default">Default</string>
     <string name="marker_appearance_type_custom_icon">Custom icon</string>
     <string name="marker_appearance_type_custom_color">Custom color</string>
+    <string name="option_unavailable_for_provider">Option unavailable for this provider</string>
     <string name="span">Span</string>
     <string name="gradient">Gradient</string>
     <string name="span_pattern">Span Pattern</string>

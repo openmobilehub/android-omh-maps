@@ -37,6 +37,7 @@ import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
 import com.openmobilehub.android.maps.core.utils.NetworkConnectivityChecker
 import com.openmobilehub.android.maps.sample.R
+import com.openmobilehub.android.maps.sample.customviews.PanelColorSeekbar
 import com.openmobilehub.android.maps.sample.customviews.PanelSeekbar
 import com.openmobilehub.android.maps.sample.customviews.PanelSpinner
 import com.openmobilehub.android.maps.sample.databinding.FragmentMapMarkersBinding
@@ -62,11 +63,13 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
     private var anchorVSeekbar: PanelSeekbar? = null
     private var alphaSeekbar: PanelSeekbar? = null
     private var appearanceSpinner: PanelSpinner? = null
-    private var colorIntSeekbar: PanelSeekbar? = null
+    private var colorSeekbar: PanelColorSeekbar? = null
     private var rotationSeekbar: PanelSeekbar? = null
     private var customizableMarkerAnchor: Pair<Float, Float> = Pair(0.5f, 0.5f)
     private var customBackgroundColor: Int = 0
     private var currentAppearancePosition: Int = 0
+    private var mapProviderName: String? = null
+    private var disabledAppearancePositions: HashSet<Int>? = null
 
     private val markerAppearanceTypeNameResourceID = intArrayOf(
         R.string.marker_appearance_type_default,
@@ -99,12 +102,15 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
             val omhMapFragment =
                 childFragmentManager.findFragmentById(R.id.fragment_markers_map_container) as? OmhMapFragment
             omhMapFragment?.getMapAsync(this)
+
         }.launch(PERMISSIONS)
 
         setupUI(view)
     }
 
     override fun onMapReady(omhMap: OmhMap) {
+        mapProviderName = omhMap.providerName
+
         if (networkConnectivityChecker?.isNetworkAvailable() != true) {
             Toast.makeText(requireContext(), R.string.no_internet_connection, Toast.LENGTH_LONG)
                 .show()
@@ -204,6 +210,11 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
         anchorUSeekbar?.setProgress(50)
         anchorVSeekbar?.setProgress(50)
         alphaSeekbar?.setProgress(100)
+
+        if (mapProviderName == "OpenStreetMap") {
+            disabledAppearancePositions =
+                hashSetOf(markerAppearanceTypeNameResourceID.indexOf(R.string.marker_appearance_type_custom_color))
+        }
     }
 
     private fun applyCustomizableMarkerAnchor() {
@@ -275,8 +286,8 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
         }
 
         // backgroundColor
-        colorIntSeekbar = view.findViewById(R.id.panelSeekbar_color)
-        colorIntSeekbar?.setOnProgressChangedCallback { color: Int ->
+        colorSeekbar = view.findViewById(R.id.panelSeekbar_color)
+        colorSeekbar?.setOnColorChangedCallback { color: Int ->
             customBackgroundColor = color
             applyCustomizableMarkerAppearance()
         }
@@ -289,10 +300,22 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
 
         // appearance
         appearanceSpinner = view.findViewById(R.id.panelSpinner_markerAppearance)
-        appearanceSpinner?.setValues(requireContext(), markerAppearanceTypeNameResourceID)
+        appearanceSpinner?.setValues(
+            requireContext(), markerAppearanceTypeNameResourceID
+        )
         appearanceSpinner?.setOnItemSelectedCallback { position: Int ->
-            currentAppearancePosition = position
-            applyCustomizableMarkerAppearance()
+            if (disabledAppearancePositions?.contains(position) == true) {
+                Toast.makeText(
+                    context,
+                    context?.getString(R.string.option_unavailable_for_provider),
+                    Toast.LENGTH_SHORT
+                ).show()
+
+                appearanceSpinner?.spinner?.setSelection(currentAppearancePosition)
+            } else {
+                currentAppearancePosition = position
+                applyCustomizableMarkerAppearance()
+            }
         }
     }
 
