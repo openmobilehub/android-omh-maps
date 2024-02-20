@@ -27,6 +27,9 @@ dependencies {
     // Open Street Map
     implementation(Libs.osmdroid)
 
+    // Mapbox
+    implementation(Libs.mapbox)
+
     // Test dependencies
     testImplementation(Libs.junit)
     androidTestImplementation(Libs.androidJunit)

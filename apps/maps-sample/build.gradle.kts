@@ -61,6 +61,11 @@ android {
     defaultConfig {
         versionCode = 1
         versionName = "1.0"
+        resValue(
+            "string",
+            "mapbox_access_token",
+            (getValueFromEnvOrProperties("MAPBOX_PUBLIC_SECRET", rootDir) as String? ?: "")
+        )
     }
 
     signingConfigs {
@@ -69,12 +74,13 @@ android {
         // The alternative would be to pass all the environment variables for signing apk to the packages workflows.
         create("release") {
             val storeFileName =
-                getValueFromEnvOrProperties("SAMPLE_APP_KEYSTORE_FILE_NAME") as? String
+                getValueFromEnvOrProperties("SAMPLE_APP_KEYSTORE_FILE_NAME", ".") as? String
             val storePassword =
-                getValueFromEnvOrProperties("SAMPLE_APP_KEYSTORE_STORE_PASSWORD") as? String
-            val keyAlias = getValueFromEnvOrProperties("SAMPLE_APP_KEYSTORE_KEY_ALIAS") as? String
+                getValueFromEnvOrProperties("SAMPLE_APP_KEYSTORE_STORE_PASSWORD", ".") as? String
+            val keyAlias =
+                getValueFromEnvOrProperties("SAMPLE_APP_KEYSTORE_KEY_ALIAS", ".") as? String
             val keyPassword =
-                getValueFromEnvOrProperties("SAMPLE_APP_KEYSTORE_KEY_PASSWORD") as? String
+                getValueFromEnvOrProperties("SAMPLE_APP_KEYSTORE_KEY_PASSWORD", ".") as? String
 
             if (storeFileName != null && storePassword != null && keyAlias != null && keyPassword != null) {
                 this.storeFile = file(storeFileName)
@@ -133,7 +139,7 @@ dependencies {
     }
 }
 
-fun getValueFromEnvOrProperties(name: String): Any? {
-    val localProperties = gradleLocalProperties(file("."))
+fun getValueFromEnvOrProperties(name: String, propertiesFilePath: Any): Any? {
+    val localProperties = gradleLocalProperties(file(propertiesFilePath))
     return System.getenv(name) ?: localProperties[name]
 }

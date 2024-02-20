@@ -26,6 +26,9 @@ object Libs {
     // Open Street Map
     val osmdroid by lazy { "org.osmdroid:osmdroid-android:${Versions.osmdroid}" }
 
+    // Mapbox
+    val mapbox by lazy { "com.mapbox.maps:android:${Versions.mapbox}" }
+
     // Testing
     val junit by lazy { "junit:junit:${Versions.junit}" }
     val androidJunit by lazy { "androidx.test.ext:junit:${Versions.androidJunit}" }

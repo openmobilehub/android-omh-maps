@@ -38,16 +38,17 @@ subprojects {
             mavenLocal()
             gradlePluginPortal()
             google()
+            configureMapboxMaven()
         }
     } else {
         repositories {
             mavenCentral()
             google()
             maven("https://s01.oss.sonatype.org/content/groups/staging/")
+            configureMapboxMaven()
         }
     }
 }
-
 
 tasks.register("installPrePushHook", Copy::class) {
     from("tools/scripts/pre-push")
@@ -119,4 +120,13 @@ fun getValueFromEnvOrProperties(name: String): Any? {
 fun getBooleanFromProperties(name: String): Boolean {
     val localProperties = gradleLocalProperties(rootDir)
     return (project.ext.has(name) && project.ext.get(name) == "true") || localProperties[name] == "true"
+}
+
+fun RepositoryHandler.configureMapboxMaven() {
+    maven {
+        url = uri("https://api.mapbox.com/downloads/v2/releases/maven")
+        credentials.username = "mapbox"
+        credentials.password = providers.gradleProperty("MAPBOX_DOWNLOADS_TOKEN").get()
+        authentication.create<BasicAuthentication>("basic")
+    }
 }
