@@ -1,45 +1,64 @@
 # Google Maps Plugin
 
+## Overview
+
 This plugin provides support for Google Maps by utilizing the [Google Maps Android SDK](https://developers.google.com/maps/documentation/android-sdk/overview).
 
-## Getting started
+## Getting Started
+
+### Set up the development environment
+
+1. Android Studio is required. If you haven't already done so, [download](https://developer.android.com/studio/index.html) and [install](https://developer.android.com/studio/install.html?pkg=studio) it.
+2. Ensure that you are using the [Android Gradle plugin](https://developer.android.com/studio/releases/gradle-plugin) version 7.0 or later in Android Studio.
+
+### Set up your Google Cloud project for applications with Google Services (Google Maps)
+
+Complete the required Cloud Console setup following the next steps, for more information see:
+ - [Official Documentation](https://developers.google.com/maps/documentation/android-sdk/cloud-setup)
+ - [Google Cloud Console Guide](/packages//plugin-googlemaps/docs/advanced/CLOUD_CONSOLE_SETUP.md)
+
+### Set up the project
 
 1. Add the plugin to the project by following one of the guides:
-- [Adding plugin with omh-core plugin](TODO: Add missing link)
-- [Adding plugin without omh-core plugin](TODO: Add missing link)
+- [Setup with omh-core plugin](./packages/core/docs/SETUP_WITH_OMH_CORE_PLUGIN.md)
+- [Setup without omh-core plugin](./packages/core/docs/SETUP_WITHOUT_OMH_CORE_PLUGIN.md)
 
-2. Open the `local.properties` in the project level directory, and then add the following code. Replace `YOUR_API_KEY` with your API key. For more information about retrieving the API KEY, follow the [Google Cloud Console Guide](TODO: Add missing link).
+2. Open the `local.properties` in the project level directory, and then add the following code. Replace `YOUR_API_KEY` with your API key.
 
-    ```properties
-    MAPS_API_KEY=YOUR_API_KEY
-    ```
+   ```properties
+   MAPS_API_KEY=YOUR_API_KEY
+   ```
 
-3. In your app's module level `AndroidManifest.xml`file, under the `application` element add the `meta-data` element as follows:
+    You should not check your API key into your version control system, so it is recommended
+    storing it in the `local.properties` file, which is located in the root directory of your project.
+    For more information about the `local.properties` file, see [Gradle properties files](https://developer.android.com/studio/build#properties-files).
 
-    ```xml
-    <manifest ...>
-        <application ...>
-            ...
-            <meta-data
-                android:name="com.google.android.geo.API_KEY"
-                android:value="${MAPS_API_KEY}" />
-        </application>
-    </manifest>
-    ```
+2. In your app's module level `AndroidManifest.xml`file, under the `application` element add the `meta-data` element as follows:
 
-4. In your app's module-level `AndroidManifest.xml` add the required permissions, for more information see [permissions](https://developer.android.com/training/permissions/declaring).
+   ```xml
+   <manifest ...>
+      <application ...>
+         ...
+         <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="${MAPS_API_KEY}" />
+      </application>
+   </manifest>
+   ```
 
-    ```xml
-    <manifest ...>
-        <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-        <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-        <uses-permission android:name="android.permission.INTERNET" />
-        <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-        <application ...>
-            ...
-        </application>
-    </manifest>
-    ```
+3. In your app's module-level `AndroidManifest.xml` add the required permissions, for more information see [permissions](https://developer.android.com/training/permissions/declaring).
+
+   ```xml
+   <manifest ...>
+      <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+      <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+      <uses-permission android:name="android.permission.INTERNET" />
+      <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+      <application ...>
+         ...
+      </application>
+   </manifest>
+   ```
 
 ## Compatibility matrix
 
@@ -177,11 +196,11 @@ This plugin provides support for Google Maps by utilizing the [Google Maps Andro
 
 ## Documentation
 
-- [Advanced documentation](TODO: Add missing link)
+- [Advanced documentation](/packages//plugin-googlemaps/docs/advanced/README.md)
 
 ## Contributing
 
-Please contribute! We will gladly review any pull requests. Make sure to read the [Contributing](TODO: Add missing link) page first though.
+Please contribute! We will gladly review any pull requests. Make sure to read the [Contributing](/CONTRIBUTING.md) page first though.
 
 ## License
 

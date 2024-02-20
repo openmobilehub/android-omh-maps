@@ -1,14 +1,14 @@
-## Utilities
+# Utilities
 There is a utility or helper class to check the network connectivity.
 
-### Network connectivity checker
+## Network connectivity checker
 Helper class `NetworkConnectivityChecker` to check the network connectivity.
 
 ```kotlin
 val networkConnectivityChecker = NetworkConnectivityChecker(context)
 ```
 
-### On lost Connection
+## On lost Connection
 Inner class `OmhOnLostConnection` to handle when the network disconnects or otherwise no longer satisfies this request or callback.
 The method to execute is `fun onLost(Network)`.
 
@@ -18,7 +18,7 @@ val omhOnLostConnection = NetworkConnectivityChecker.OmhOnLostConnection {
 }
 ```
 
-### Start listening for connectivity changes
+## Start listening for connectivity changes
 Register callbacks to receive notifications when different network states change.
 In this method a `OmhOnLostConnection` will be registered.
 
@@ -30,14 +30,14 @@ val omhOnLostConnection = NetworkConnectivityChecker.OmhOnLostConnection {
 networkConnectivityChecker.startListeningForConnectivityChanges(omhOnLostConnection)
 ```
 
-### Stop listening for connectivity
+## Stop listening for connectivity
 Unregisters the all registered callbacks if possible.
 
 ```kotlin
 networkConnectivityChecker.stopListeningForConnectivity()
 ```
 
-### Is network available
+## Is network available
 Checks if there is internet connection.
 
 ```kotlin

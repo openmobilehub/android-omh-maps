@@ -1,4 +1,4 @@
-### Display your current location
+# Display your current location
 
 An `OmhMap` must be acquired using `getMapAsync(OmhOnMapReadyCallback)`. This class automatically initializes the maps system and the view.
 

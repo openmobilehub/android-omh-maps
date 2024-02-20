@@ -1,23 +1,23 @@
-### Add OMH Core plugin
+# Gradle Setup with Omh Core Plugin
 
-To incorporate OMH Maps into your project, you have two options: utilize the OMH Core Plugin or directly include the OMH Client libraries dependencies. The subsequent instructions will outline the necessary steps for including the OMH Core Plugin as a Gradle dependency.
+To incorporate Omh Maps into your project, you have two options: utilize the Omh Core Plugin or directly include the Omh Client libraries dependencies. The subsequent instructions will outline the necessary steps for including the Omh Core Plugin as a Gradle dependency.
 
 1. In your app's module-level `build.gradle`under the `plugins` element add the plugin id.
 
    ```kotlin
    plugins {
       ...
-      id("com.openmobilehub.android.omh-core")
+      id("com.openmobilehub.android.Omh-core")
    }
    ```
 
 2. Save the file and [sync Project with Gradle Files](https://developer.android.com/studio/build#sync-files).
 
-### Configure the OMH Core plugin
+## Configure the Omh Core plugin
 
-In this sample app, we utilize the `omhConfig` definition to expand the capabilities of the existing Android Studio variants. For more details, refer to the [OMH Core Plugin Docs](https://github.com/openmobilehub/omh-core/tree/release/1.0).
+In this sample app, we utilize the `OmhConfig` definition to expand the capabilities of the existing Android Studio variants. For more details, refer to the [Omh Core Plugin Docs](https://github.com/openmobilehub/Omh-core/tree/release/1.0).
 
-#### Basic configuration
+### Basic configuration
 
 1.  In your app's module-level `build.gradle` file add the following code at the end of the file.
 
@@ -27,7 +27,7 @@ dependencies {
    ...
 }
 
-omhConfig {
+OmhConfig {
    bundle("singleBuild") {
       maps {
          gmsService {
@@ -55,7 +55,7 @@ omhConfig {
 }
 ```
 
-In this step, you defined the OMH Core Plugin bundles to generate multiple build variants with specific suffixes as their names. For example, if your project has `release` and `debug` variants with `singleBuild`, `gms`, and `nonGms` OMH bundles, the following build variants will be generated:
+In this step, you defined the Omh Core Plugin bundles to generate multiple build variants with specific suffixes as their names. For example, if your project has `release` and `debug` variants with `singleBuild`, `gms`, and `nonGms` Omh bundles, the following build variants will be generated:
 
 - `releaseSingleBuild`, `releaseGms`, and `releaseNonGms`
 - `debugSingleBuild`, `debugGms`, and `debugNonGms`
@@ -127,3 +127,4 @@ In this step, you defined the OMH Core Plugin bundles to generate multiple build
    - Select `Build` from the menu at the top in Android Studio.
    - Click on `Clean Project` and await.
    - Click on `Rebuild Project` and await.
+   - 

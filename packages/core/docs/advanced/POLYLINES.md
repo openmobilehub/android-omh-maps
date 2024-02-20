@@ -7,7 +7,7 @@ To add a polyline call the function `fun addPolyline(OmhPolylineOptions): OmhPol
 
 ## Polyline options
 Define polyline options for a `Polyline`.
-Many properties can be set. To get the full list of properties, see the [OmhPolylineOptions](TODO: Add link to OmhPolylineOptions) class.
+Many properties can be set. To get the full list of properties, see the [OmhPolylineOptions](TODO: Add missing link) class.
 Example of usage of `OmhPolylineOptions` and `addPolyline(OmhPolylineOptions)`:
 
 ```kotlin
@@ -26,7 +26,7 @@ val polyline = omhMap.addPolyline(omhPolylineOptions)
 
 ## Modifying an existing polyline
 Once a polyline is added to the map, you can modify its properties by calling the methods of the `OmhPolyline` class.
-To get the full list of methods, see the [OmhPolyline](TODO: Add link to OmhPolyline) class. Example of usage of `OmhPolyline` methods:
+To get the full list of methods, see the [OmhPolyline](TODO: Add missing link) class. Example of usage of `OmhPolyline` methods:
 
 ```kotlin
 polyline.setColor(Color.BLUE)

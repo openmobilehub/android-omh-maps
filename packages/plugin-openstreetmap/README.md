@@ -1,26 +1,35 @@
 # OpenStreetMap Plugin
 
+## Overview
+
 This plugin provides support for OpenStreetMap maps by utilizing the [osmdroid](https://github.com/osmdroid/osmdroid) library.
 
-## Getting started
+## Getting Started
+
+### Set up the development environment
+
+1. Android Studio is required. If you haven't already done so, [download](https://developer.android.com/studio/index.html) and [install](https://developer.android.com/studio/install.html?pkg=studio) it.
+2. Ensure that you are using the [Android Gradle plugin](https://developer.android.com/studio/releases/gradle-plugin) version 7.0 or later in Android Studio.
+
+### Set up the project
 
 1. Add the plugin to the project by following one of the guides:
-- [Adding plugin with omh-core plugin](TODO: Add missing link)
-- [Adding plugin without omh-core plugin](TODO: Add missing link)
+- [Setup with omh-core plugin](./packages/core/docs/SETUP_WITH_OMH_CORE_PLUGIN.md)
+- [Setup without omh-core plugin](./packages/core/docs/SETUP_WITHOUT_OMH_CORE_PLUGIN.md)
 
 2. In your app's module-level `AndroidManifest.xml` add the required permissions, for more information see [permissions](https://developer.android.com/training/permissions/declaring).
 
-    ```xml
-    <manifest ...>
-        <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-        <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-        <uses-permission android:name="android.permission.INTERNET" />
-        <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-        <application ...>
-            ...
-        </application>
-    </manifest>
-    ```
+   ```xml
+   <manifest ...>
+      <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+      <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+      <uses-permission android:name="android.permission.INTERNET" />
+      <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+      <application ...>
+         ...
+      </application>
+   </manifest>
+   ```
 
 ## Compatibility matrix
 
@@ -158,11 +167,11 @@ This plugin provides support for OpenStreetMap maps by utilizing the [osmdroid](
 
 ## Documentation
 
-- [Advanced documentation](TODO: Add missing link)
+- [Advanced documentation](/packages/plugin-openstreetmap/docs/advanced/README.md)
 
 ## Contributing
 
-Please contribute! We will gladly review any pull requests. Make sure to read the [Contributing](TODO: Add missing link) page first though.
+Please contribute! We will gladly review any pull requests. Make sure to read the [Contributing](/CONTRIBUTING.md) page first though.
 
 ## License
 
