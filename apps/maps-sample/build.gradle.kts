@@ -14,11 +14,13 @@ plugins {
 
 var googlemapsDependency = "com.openmobilehub.android.maps:plugin-googlemaps:2.0.0-beta"
 var openstreetmapDependency = "com.openmobilehub.android.maps:plugin-openstreetmap:2.0.0-beta"
+var mapboxDependency = "com.openmobilehub.android.maps:plugin-mapbox:2.0.0-beta"
 
 var googlemapsPath =
     "com.openmobilehub.android.maps.plugin.googlemaps.presentation.OmhMapFactoryImpl"
 var openstreetmapPath =
     "com.openmobilehub.android.maps.plugin.openstreetmap.presentation.OmhMapFactoryImpl"
+var mapboxPath = "com.openmobilehub.android.maps.plugin.mapbox.presentation.OmhMapFactoryImpl"
 
 omhConfig {
     enableLocalProjects = useLocalProjects
@@ -127,6 +129,7 @@ dependencies {
         implementation(project(":packages:core"))
         implementation(project(":packages:plugin-googlemaps"))
         implementation(project(":packages:plugin-openstreetmap"))
+        implementation(project(":packages:plugin-mapbox"))
     }
 }
 

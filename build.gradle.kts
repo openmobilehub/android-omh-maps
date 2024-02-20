@@ -69,6 +69,8 @@ tasks.register("publishAllToMavenLocal") {
         ":packages:plugin-googlemaps:publishToMavenLocal",
         ":packages:plugin-openstreetmap:assembleRelease",
         ":packages:plugin-openstreetmap:publishToMavenLocal",
+        ":packages:plugin-mapbox:assembleRelease",
+        ":packages:plugin-mapbox:publishToMavenLocal",
     )
 }
 
