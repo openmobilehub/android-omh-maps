@@ -1,0 +1,3 @@
+# OHM Map SDK - Advanced Features
+
+The OHM Map SDK Advanced Topics provide a deeper understanding of the SDK and its advanced features. These topics include working with map markers, utilizing the My Location layer, managing gestures, accessing device location services, and creating custom map implementations or plugins. By exploring these advanced topics, you can enhance your map integration and create powerful map experiences. The OHM Map SDK allows you to display maps using common components for both GMS and non-GMS devices, making it versatile across different device configurations. Whether your device includes GMS or not, you can leverage the OHM Map SDK to create interactive and customized map functionalities in your Android application.
