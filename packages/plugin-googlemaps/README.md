@@ -20,8 +20,8 @@ Complete the required Cloud Console setup following the next steps, for more inf
 ### Set up the project
 
 1. Add the plugin to the project by following one of the guides:
-- [Setup with omh-core plugin](./packages/core/docs/SETUP_WITH_OMH_CORE_PLUGIN.md)
-- [Setup without omh-core plugin](./packages/core/docs/SETUP_WITHOUT_OMH_CORE_PLUGIN.md)
+- [Setup with omh-core plugin](/packages/core/docs/SETUP_WITH_OMH_CORE_PLUGIN.md)
+- [Setup without omh-core plugin](/packages/core/docs/SETUP_WITHOUT_OMH_CORE_PLUGIN.md)
 
 2. Open the `local.properties` in the project level directory, and then add the following code. Replace `YOUR_API_KEY` with your API key.
 

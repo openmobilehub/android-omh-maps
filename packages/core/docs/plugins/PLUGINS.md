@@ -69,4 +69,4 @@ internal class OmhLocationImpl(context: Context) : OmhLocation {
 }
 ```
 
-For more information about the Omh Map functions,see [Docs](https://openmobilehub.github.io/Omh-maps).
+For more information about the Omh Map functions,see [Docs](https://openmobilehub.github.io/omh-maps).

@@ -1,4 +1,3 @@
-
 # Omh Location
 The main entry point for location services integration. In order to use most location APIs, clients are required to hold either the [Manifest.permission.ACCESS_COARSE_LOCATION](https://developer.android.com/reference/android/Manifest.permission.html#ACCESS_COARSE_LOCATION) permission or the [Manifest.permission.ACCESS_FINE_LOCATION](https://developer.android.com/reference/android/Manifest.permission.html#ACCESS_FINE_LOCATION).
 

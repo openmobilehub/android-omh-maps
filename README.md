@@ -3,12 +3,12 @@
 
 <!--
 // TODO - enable when the repo gets released and is public
-![GitHub contributors](https://img.shields.io/github/contributors/openmobilehub/Omh-maps)
+![GitHub contributors](https://img.shields.io/github/contributors/openmobilehub/omh-maps)
 -->
 
-[![Publish Maps API](https://github.com/openmobilehub/Omh-maps/actions/workflows/publish_maps_api.yml/badge.svg)](https://github.com/openmobilehub/Omh-maps/actions/workflows/publish_maps_api.yml)
-[![Publish Maps API Google Maps Implementation](https://github.com/openmobilehub/Omh-maps/actions/workflows/publish_maps_api_gms.yml/badge.svg)](https://github.com/openmobilehub/Omh-maps/actions/workflows/publish_maps_api_gms.yml)
-[![Publish Maps API OpenStreetMap Implementation](https://github.com/openmobilehub/Omh-maps/actions/workflows/publish_maps_api_ngms.yml/badge.svg)](https://github.com/openmobilehub/Omh-maps/actions/workflows/publish_maps_api_ngms.yml)
+[![Publish Maps API](https://github.com/openmobilehub/omh-maps/actions/workflows/publish_maps_api.yml/badge.svg)](https://github.com/openmobilehub/omh-maps/actions/workflows/publish_maps_api.yml)
+[![Publish Maps API Google Maps Implementation](https://github.com/openmobilehub/omh-maps/actions/workflows/publish_maps_api_gms.yml/badge.svg)](https://github.com/openmobilehub/omh-maps/actions/workflows/publish_maps_api_gms.yml)
+[![Publish Maps API OpenStreetMap Implementation](https://github.com/openmobilehub/omh-maps/actions/workflows/publish_maps_api_ngms.yml/badge.svg)](https://github.com/openmobilehub/omh-maps/actions/workflows/publish_maps_api_ngms.yml)
 
 # Omh Maps Client Library
 
@@ -24,7 +24,7 @@ For instance, the following screenshots showcase multiple devices with Android, 
 
 | Non-GMS Device</br>Kindle Fire HD 10 Kids      | Non-GMS Android Emulator Image</br>Pixel 6 Pro  | Non-GMS Device</br>Huawei P60                      | GMS Device</br>Pixel 6a                      |
 | ---------------------------------------------- | ----------------------------------------------- | -------------------------------------------------- | -------------------------------------------- |
-| <img src="images/Omh-maps-non-gms-kindle.gif"> | <img src="images/Omh-maps-non-gms-pixel-6.gif"> | <img src="images/Omh-maps-non-gms-huawei-p60.gif"> | <img src="images/Omh-maps-gms-pixel-6a.gif"> |
+| <img src="images/omh-maps-non-gms-kindle.gif"> | <img src="images/omh-maps-non-gms-pixel-6.gif"> | <img src="images/omh-maps-non-gms-huawei-p60.gif"> | <img src="images/omh-maps-gms-pixel-6a.gif"> |
 
 </div>
 
@@ -44,7 +44,7 @@ This section describes how to setup an Android Studio project to use the Omh Map
 To clone the repository and checkout the `starter-code` branch, use the following command in your Terminal:
 
 ```
-git clone --branch starter-code https://github.com/openmobilehub/Omh-maps.git
+git clone --branch starter-code https://github.com/openmobilehub/omh-maps.git
 ```
 
 ### Set up your Google Cloud project for applications with Google Services (Google Maps)
@@ -56,8 +56,8 @@ Complete the required Cloud Console setup following the next steps, for more inf
 ### Set up the project
 
 1. Add the plugin to the project by following one of the guides:
-- [Setup with Omh-core plugin](./packages/core/docs/SETUP_WITH_OMH_CORE_PLUGIN.md)
-- [Setup without Omh-core plugin](./packages/core/docs/SETUP_WITHOUT_OMH_CORE_PLUGIN.md)
+- [Setup with omh-core plugin](./packages/core/docs/SETUP_WITH_OMH_CORE_PLUGIN.md)
+- [Setup without omh-core plugin](./packages/core/docs/SETUP_WITHOUT_OMH_CORE_PLUGIN.md)
 
 2. Open the `local.properties` in the project level directory, and then add the following code. Replace `YOUR_API_KEY` with your API key.
 
@@ -162,7 +162,7 @@ Omh Maps SDK is open-source, promoting community collaboration and plugin suppor
 
 ## Documentation
 
-- Check out the [API Reference Docs](https://openmobilehub.github.io/Omh-maps)
+- Check out the [API Reference Docs](https://openmobilehub.github.io/omh-maps)
 - Check out the [Core Package documentation](/packages/core/README.md)
 - Check out the [Google Maps Plugin documentation](/packages/plugin-googlemaps/README.md)
 - Check out the [OpenStreetMap Plugin documentation](/packages/plugin-openstreetmap/README.md)

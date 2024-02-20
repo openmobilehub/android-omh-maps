@@ -35,7 +35,7 @@ polygon.setWidth(20f)
 
 ## Polygon events
 You can listen to click events on a Polygon by setting a listener on the map and calling the `setOnPolygonClickListener` method.
-The `onPolygonClick` method will be called with the `OmhPolygon` as a parameter.
+The `onPolygonClick` method will be called with the `OmhPolygon` as an argument.
 
 ```kotlin
 val omhOnPolygonClickListener = OmhOnPolygonClickListener { polygon ->

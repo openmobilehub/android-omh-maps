@@ -7,7 +7,7 @@ To incorporate Omh Maps into your project, you have two options: utilize the Omh
    ```kotlin
    plugins {
       ...
-      id("com.openmobilehub.android.Omh-core")
+      id("com.openmobilehub.android.omh-core")
    }
    ```
 
@@ -15,7 +15,7 @@ To incorporate Omh Maps into your project, you have two options: utilize the Omh
 
 ## Configure the Omh Core plugin
 
-In this sample app, we utilize the `OmhConfig` definition to expand the capabilities of the existing Android Studio variants. For more details, refer to the [Omh Core Plugin Docs](https://github.com/openmobilehub/Omh-core/tree/release/1.0).
+In this sample app, we utilize the `OmhConfig` definition to expand the capabilities of the existing Android Studio variants. For more details, refer to the [Omh Core Plugin Docs](https://github.com/openmobilehub/omh-core/tree/release/1.0).
 
 ### Basic configuration
 
@@ -127,4 +127,3 @@ In this step, you defined the Omh Core Plugin bundles to generate multiple build
    - Select `Build` from the menu at the top in Android Studio.
    - Click on `Clean Project` and await.
    - Click on `Rebuild Project` and await.
-   - 

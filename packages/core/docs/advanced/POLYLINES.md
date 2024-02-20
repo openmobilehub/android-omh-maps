@@ -35,7 +35,7 @@ polyline.setWidth(20f)
 
 ## Polyline events
 You can listen to click events on a polyline by setting a listener on the map and calling the `setOnPolylineClickListener` method.
-The `onPolylineClick` method will be called with the `OmhPolyline` as a parameter.
+The `onPolylineClick` method will be called with the `OmhPolyline` as an argument.
 
 ```kotlin
 val omhOnPolylineClickListener = OmhOnPolylineClickListener { polyline ->
