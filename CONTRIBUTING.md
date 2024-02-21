@@ -13,31 +13,38 @@ Bug reports and pull requests from users are what keep this project working.
 
 ## Development
 
-For using the plugins for development locally, there are two approaches:
+For using the plugins for development locally, there are two approaches.
 
-1. Using Maven Local
-   This scenario includes primarily three things to be achieved compared to standard development scenario:
+### Using local modules in the project
 
-   - `repositories` need to include `mavenLocal()`
-   - publishing needs to happen to maven local
-   - signing needs to be disabled for publishing
+This scenario utilizes the local modules (subprojects) residing inside `packages/` to be used in place of dependencies so that between modifying the code in a plugin and running it in the sample app there is no need to publish to Maven.
 
-   This project has been preconfigured with such conditional configuration that can be enabled as follows:
+This project has been pre-configured with such conditional configuration that can be enabled as follows:
 
-   - Via root project's `local.properties` (applies both to Android Studio and `gradlew`): add `useMavenLocal=true`
-   - Via a CLI flag: `./gradlew -PuseMavenLocal=true ...`
+- Via root project's `local.properties` (applies both to Android Studio and `gradlew`): add `useLocalProjects=true`
+- Via a CLI flag: `./gradlew -PuseLocalProjects=true ...`
 
-2. Using local modules in the project
-   This scenario utilizes the local modules (subprojects) residing inside `packages/` to be used in place of dependencies so that between modifying the code in a plugin and running it in the sample app there is no need to publish to Maven.
+### Using Maven Local
+This scenario includes primarily three things to be achieved compared to standard development scenario:
 
-   This project has been preconfigured with such conditional configuration that can be enabled as follows:
+- `repositories` need to include `mavenLocal()`
+- publishing needs to happen to maven local
+- signing needs to be disabled for publishing
 
-   - Via root project's `local.properties` (applies both to Android Studio and `gradlew`): add `useLocalProjects=true`
-   - Via a CLI flag: `./gradlew -PuseLocalProjects=true ...`
+This project has been pre-configured with such conditional configuration that can be enabled as follows:
 
-## Publishing
+- Via root project's `local.properties` (applies both to Android Studio and `gradlew`): add `useMavenLocal=true`
+- Via a CLI flag: `./gradlew -PuseMavenLocal=true ...`
 
-1. With Android Studio -> Gradle tab and run the `publishToMavenLocal` for modules: `packages > core`, `packages > plugin-googlemaps` and `packages > plugin-openstreetmap`:
+Once you have made a change in any of the `packages/core`, `packages/core-google maps` or `packages/plugin-openstreetmap` modules, you must `publishToMavenLocal` in that module in order to see the changes.
+
+#### Publishing to Maven Local
+
+##### Step 1: Publish the plugins to Maven Local
+
+###### With Android Studio 
+
+- Open the `Gradle` tab and run the `publishToMavenLocal` for modules: `packages > core`, `packages > plugin-googlemaps` and `packages > plugin-openstreetmap`:
 
 ![gradle-core](https://github.com/openmobilehub/omh-maps/assets/124717244/7a8aeb52-fcf2-4c8c-a0e8-e249e69b3fea)
 ![gradle-core-gms](https://github.com/openmobilehub/omh-maps/assets/124717244/e5a370d9-1429-4234-a884-b39a23c6dadb)
@@ -45,7 +52,7 @@ For using the plugins for development locally, there are two approaches:
 
 **Note**: to publish all modules in `packages/`, you can simply run the task `publishToMavenLocal` in the root project. Please also remember to publish the `core` module first.
 
-2. With the CLI:
+###### With the CLI:
 
 - first publish `./gradlew :packages:core:publishToMavenLocal`
 - then:
@@ -54,15 +61,15 @@ For using the plugins for development locally, there are two approaches:
 
 **Note**: to publish all modules in `packages/`, you can simply run the task `publishToMavenLocal` in the root project directory. Please also remember to publish the `core` module first.
 
-#### Step 2: Verify plugin is published
+##### Step 2: Verify plugin is published
 
 Go to `/Users/your_user/.m2` dot folder and you'll find the plugin.
 
-#### Step 3: Debug
+##### Step 3: Debug
 
 Add some prints to debug the code
 
-#### Step 4: Test it
+##### Step 4: Test it
 
 Create a sample project, add the plugin and sync the project with gradle and you'll see logs in the `Build` tab in Android Studio.
 
@@ -75,19 +82,24 @@ You can verify your code with the following tasks:
 ./gradlew detekt
 ```
 
-Once you have made a change in any of the `packages/core`, `packages/core-google maps` or `packages/plugin-openstreetmap` modules, you must `publishToMavenLocal` in that module in order to see the changes.
-
 ## Write documentation
 
 This project has documentation in a few places:
 
 ### Introduction and usage
 
-A friendly [README.md](https://github.com/openmobilehub/omh-maps/blob/refactor/documentation/README.md) written for many audiences.
+A friendly `README.md` files written for many audiences:
+- [root project](README.md)
+- [core](packages/core/README.md)
+- [plugin-googlemaps](packages/plugin-googlemaps/README.md)
+- [plugin-openstreetmap](packages/plugin-openstreetmap/README.md)
 
 ### Examples and advanced usage
 
-You can find more information in the [wiki](https://github.com/openmobilehub/omh-maps/wiki).
+You can find more information in the advanced sections of each package:
+- [core](packages/core/docs/advanced/)
+- [plugin-googlemaps](packages/plugin-googlemaps/docs/advanced/)
+- [plugin-openstreetmap](packages/plugin-openstreetmap/docs/advanced/)
 
 ## Releasing a new version
 
