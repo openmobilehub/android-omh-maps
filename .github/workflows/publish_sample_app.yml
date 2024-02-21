@@ -16,8 +16,8 @@ jobs:
 
     env:
       SAMPLE_APP_PATH: "./apps/maps-sample"
-      GRADLE_ASSEMBLE_TASK: ":apps:maps-sample:assembleReleaseSingleBuild"
-      APK_PATH: "./apps/maps-sample/build/outputs/apk/releaseSingleBuild/maps-sample-releaseSingleBuild.apk"
+      GRADLE_ASSEMBLE_TASK: ":apps:maps-sample:assembleRelease"
+      APK_PATH: "./apps/maps-sample/build/outputs/apk/release/maps-sample-release.apk"
 
     steps:
       - name: Checkout code
@@ -70,3 +70,4 @@ jobs:
           file: ${{ env.APK_PATH }}
           notifyTesters: true
           debug: true
+          gitReleaseNotes: true
