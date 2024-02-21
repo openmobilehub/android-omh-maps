@@ -61,7 +61,6 @@
             app:popUpToInclusive="true" />
     </fragment>
 
-
     <fragment
         android:id="@+id/mapMarkersFragment"
         android:name="com.openmobilehub.android.maps.sample.maps.MapMarkersFragment"
