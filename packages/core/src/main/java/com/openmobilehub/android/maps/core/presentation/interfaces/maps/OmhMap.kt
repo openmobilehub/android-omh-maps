@@ -144,7 +144,7 @@ interface OmhMap {
     fun setOnMarkerClickListener(listener: OmhOnMarkerClickListener)
 
     /**
-     * The callback to be executed when the marker is clicked.
+     * The callbacks to be executed on proper marker drag events.
      */
     fun setOnMarkerDragListener(listener: OmhOnMarkerDragListener)
 
