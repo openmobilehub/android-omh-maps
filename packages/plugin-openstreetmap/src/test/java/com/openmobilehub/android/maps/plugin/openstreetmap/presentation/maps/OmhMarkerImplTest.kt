@@ -16,14 +16,56 @@ class OmhMarkerImplTest {
 
     private lateinit var marker: Marker
     private lateinit var omhMarker: OmhMarkerImpl
-    private val mockMapView: MapView = mockk(relaxed = true)
-    private val mockLogger: UnsupportedFeatureLogger =
-        mockk<UnsupportedFeatureLogger>(relaxed = true)
+    private lateinit var mockMapView: MapView
+    private lateinit var mockLogger: UnsupportedFeatureLogger
+    private val initiallyClickable = true
 
     @Before
     fun setUp() {
         marker = mockk(relaxed = true)
-        omhMarker = OmhMarkerImpl(marker, mockMapView, mockLogger)
+        mockMapView = mockk(relaxed = true)
+        mockLogger = mockk<UnsupportedFeatureLogger>(relaxed = true)
+        omhMarker = OmhMarkerImpl(marker, mockMapView, initiallyClickable, mockLogger)
+    }
+
+    @Test
+    fun `backgroundColor should return null and log getter not supported`() {
+        // Act
+        val actual = omhMarker.getBackgroundColor()
+
+        // Assert
+        verify { mockLogger.logGetterNotSupported("backgroundColor") }
+        assertEquals(null, actual)
+    }
+
+    @Test
+    fun `backgroundColor should log setter not supported`() {
+        // Act
+        val actual = omhMarker.setBackgroundColor(255)
+
+        // Assert
+        verify { mockLogger.logSetterNotSupported("backgroundColor") }
+    }
+
+    @Test
+    fun `getClickable returns clickable state`() {
+        // Act
+        val clickable = omhMarker.getClickable()
+
+        // Assert
+        assertEquals(initiallyClickable, clickable)
+    }
+
+    @Test
+    fun `setClickable sets clickable state`() {
+        // Arrange
+        val expectedValue = false
+
+        // Act
+        omhMarker.setClickable(expectedValue)
+
+        // Assert
+        assertEquals(expectedValue, omhMarker.getClickable())
     }
 
     @Test

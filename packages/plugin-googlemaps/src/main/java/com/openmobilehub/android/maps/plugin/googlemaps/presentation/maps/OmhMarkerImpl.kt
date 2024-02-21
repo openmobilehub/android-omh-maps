@@ -139,7 +139,7 @@ internal class OmhMarkerImpl(
     override fun setBackgroundColor(color: Int?) {
         if (color != null) {
             logger.logFeatureSetterPartiallySupported(
-                "setBackgroundColor",
+                "backgroundColor",
                 "only hue (H) component of HSV color representation is controllable, alpha channel is unsupported"
             )
         }

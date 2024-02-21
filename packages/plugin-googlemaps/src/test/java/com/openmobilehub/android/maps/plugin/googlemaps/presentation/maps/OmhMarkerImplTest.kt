@@ -1,7 +1,10 @@
 package com.openmobilehub.android.maps.plugin.googlemaps.presentation.maps
 
+import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.Marker
+import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
 import com.openmobilehub.android.maps.plugin.googlemaps.utils.CoordinateConverter
+import com.openmobilehub.android.maps.plugin.googlemaps.utils.MarkerIconConverter
 import com.openmobilehub.android.maps.plugin.googlemaps.utils.PatternConverter
 import io.mockk.every
 import io.mockk.just
@@ -17,13 +20,64 @@ class OmhMarkerImplTest {
 
     private lateinit var marker: Marker
     private lateinit var omhMarker: OmhMarkerImpl
+    private lateinit var mockLogger: UnsupportedFeatureLogger
+    private val initiallyClickable = true
 
     @Before
     fun setUp() {
         marker = mockk(relaxed = true)
-        omhMarker = OmhMarkerImpl(marker)
+        mockLogger = mockk<UnsupportedFeatureLogger>(relaxed = true)
+        omhMarker = OmhMarkerImpl(marker, initiallyClickable, mockLogger)
         mockkObject(CoordinateConverter)
         mockkObject(PatternConverter)
+        mockkObject(MarkerIconConverter)
+    }
+
+    @Test
+    fun `backgroundColor should return null and log getter not supported`() {
+        // Act
+        val actual = omhMarker.getBackgroundColor()
+
+        // Assert
+        verify { mockLogger.logGetterNotSupported("backgroundColor") }
+        assertEquals(null, actual)
+    }
+
+    @Test
+    fun `backgroundColor should log setter partially supported`() {
+        // Arrange
+        val colorBitmapDescriptor = mockk<BitmapDescriptor>()
+        every { MarkerIconConverter.convertColorToBitmapDescriptor(any()) } returns colorBitmapDescriptor
+
+        val color = 255
+
+        // Act
+        val actual = omhMarker.setBackgroundColor(color)
+
+        // Assert
+        verify { mockLogger.logFeatureSetterPartiallySupported("backgroundColor", any()) }
+        verify { marker.setIcon(colorBitmapDescriptor) }
+    }
+
+    @Test
+    fun `getClickable returns clickable state`() {
+        // Act
+        val clickable = omhMarker.getClickable()
+
+        // Assert
+        assertEquals(initiallyClickable, clickable)
+    }
+
+    @Test
+    fun `setClickable sets clickable state`() {
+        // Arrange
+        val expectedValue = false
+
+        // Act
+        omhMarker.setClickable(expectedValue)
+
+        // Assert
+        assertEquals(expectedValue, omhMarker.getClickable())
     }
 
     @Test

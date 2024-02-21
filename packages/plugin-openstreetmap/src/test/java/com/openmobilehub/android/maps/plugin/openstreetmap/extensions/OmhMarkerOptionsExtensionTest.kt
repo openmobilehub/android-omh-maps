@@ -85,7 +85,7 @@ internal class OmhMarkerOptionsExtensionTest {
 
         assertEquals(omhMarkerOptionsWithIcon.title, markerOptions.title)
 
-        assertEquals(omhMarkerOptionsWithIcon.draggable, markerOptions.draggable)
+        assertEquals(omhMarkerOptionsWithIcon.draggable, markerOptions.isDraggable)
 
         assertEquals(omhMarkerOptionsWithIcon.alpha, markerOptions.alpha)
 

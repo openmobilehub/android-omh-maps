@@ -109,5 +109,6 @@ internal class OmhMarkerOptionsTest {
         assertEquals(omhMarkerOptions.rotation, DEFAULT_ROTATION)
         assertEquals(omhMarkerOptions.backgroundColor, null)
         assertEquals(omhMarkerOptions.icon, null)
+        assertEquals(omhMarkerOptions.clickable, true)
     }
 }

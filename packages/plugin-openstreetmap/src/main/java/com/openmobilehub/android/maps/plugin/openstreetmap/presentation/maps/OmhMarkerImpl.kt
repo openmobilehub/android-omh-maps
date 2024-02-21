@@ -149,7 +149,7 @@ internal class OmhMarkerImpl(
     }
 
     override fun setBackgroundColor(color: Int?) {
-        logger.logSetterNotSupported("setBackgroundColor")
+        logger.logSetterNotSupported("backgroundColor")
     }
 
     private fun invalidateInfoWindow() {

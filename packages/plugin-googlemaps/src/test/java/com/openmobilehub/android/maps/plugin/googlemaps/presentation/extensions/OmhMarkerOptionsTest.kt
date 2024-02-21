@@ -18,6 +18,9 @@ package com.openmobilehub.android.maps.plugin.googlemaps.presentation.extensions
 
 import android.graphics.drawable.Drawable
 import com.google.android.gms.maps.model.BitmapDescriptor
+import com.openmobilehub.android.maps.core.presentation.models.DEFAULT_ALPHA
+import com.openmobilehub.android.maps.core.presentation.models.DEFAULT_ANCHOR
+import com.openmobilehub.android.maps.core.presentation.models.DEFAULT_ROTATION
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
 import com.openmobilehub.android.maps.plugin.googlemaps.extensions.toMarkerOptions
@@ -137,5 +140,21 @@ internal class OmhMarkerOptionsTest {
         assertEquals(omhMarkerOptionsWithBackgroundColor.rotation, markerOptions.rotation)
 
         assertEquals(colorBitmapDescriptor, markerOptions.icon)
+    }
+
+    @Test
+    fun `toMarkerOptions has proper default constructor arguments`() {
+        val defaultOmhMarkerOptions = OmhMarkerOptions()
+
+        assertEquals(defaultOmhMarkerOptions.draggable, false)
+        assertEquals(defaultOmhMarkerOptions.anchor, Pair(DEFAULT_ANCHOR, DEFAULT_ANCHOR))
+        assertEquals(defaultOmhMarkerOptions.alpha, DEFAULT_ALPHA)
+        assertEquals(defaultOmhMarkerOptions.snippet, null)
+        assertEquals(defaultOmhMarkerOptions.isVisible, true)
+        assertEquals(defaultOmhMarkerOptions.isFlat, false)
+        assertEquals(defaultOmhMarkerOptions.rotation, DEFAULT_ROTATION)
+        assertEquals(defaultOmhMarkerOptions.backgroundColor, null)
+        assertEquals(defaultOmhMarkerOptions.icon, null)
+        assertEquals(defaultOmhMarkerOptions.clickable, true)
     }
 }
