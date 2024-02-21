@@ -66,8 +66,6 @@ internal class OmhMapImpl(
     private val mapView: MapView,
     private val mapListenerController: MapListenerController
 ) : OmhMap {
-    override val providerName: String
-        get() = "OpenStreetMap"
 
     private var myLocationNewOverlay: MyLocationNewOverlay? = null
     private var myLocationIconOverlay: MyLocationIconOverlay? = null
