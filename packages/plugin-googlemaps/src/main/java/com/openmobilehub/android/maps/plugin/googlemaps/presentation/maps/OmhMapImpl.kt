@@ -41,16 +41,23 @@ import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolygonOptions
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolylineOptions
+import com.openmobilehub.android.maps.core.utils.logging.Logger
 import com.openmobilehub.android.maps.plugin.googlemaps.extensions.toMarkerOptions
 import com.openmobilehub.android.maps.plugin.googlemaps.extensions.toPolygonOptions
 import com.openmobilehub.android.maps.plugin.googlemaps.extensions.toPolylineOptions
+import com.openmobilehub.android.maps.plugin.googlemaps.utils.Constants
 import com.openmobilehub.android.maps.plugin.googlemaps.utils.CoordinateConverter
+import com.openmobilehub.android.maps.plugin.googlemaps.utils.commonLogger
 
 @SuppressWarnings("TooManyFunctions")
-internal class OmhMapImpl(private var googleMap: GoogleMap, private val context: Context) : OmhMap {
+internal class OmhMapImpl(
+    private var googleMap: GoogleMap,
+    private val context: Context,
+    private val logger: Logger = commonLogger
+) : OmhMap {
 
     override val providerName: String
-        get() = "Google"
+        get() = Constants.PROVIDER_NAME
 
     override fun addMarker(options: OmhMarkerOptions): OmhMarker? {
         val googleOptions = options.toMarkerOptions()
@@ -137,8 +144,12 @@ internal class OmhMapImpl(private var googleMap: GoogleMap, private val context:
     override fun setMapStyle(json: Int?) {
         if (json == null) {
             googleMap.setMapStyle(null)
-        } else {
+            return
+        }
+        val isStyleApplied =
             googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(context, json))
+        if (!isStyleApplied) {
+            logger.logWarning("Failed to apply custom map style. Check logs from Google Maps SDK.")
         }
     }
 

@@ -46,7 +46,7 @@ class MapStylesFragment : Fragment(), OmhOnMapReadyCallback {
 
 
     private val mapStyles: Map<String, MapStyle> = mapOf(
-        "Google" to object : MapStyle {
+        "GoogleMaps" to object : MapStyle {
             override val dark = R.raw.google_style_dark
             override val retro = R.raw.google_style_retro
             override val silver = R.raw.google_style_silver

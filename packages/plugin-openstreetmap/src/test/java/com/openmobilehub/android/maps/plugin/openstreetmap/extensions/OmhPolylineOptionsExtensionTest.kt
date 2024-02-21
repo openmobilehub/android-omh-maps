@@ -27,7 +27,7 @@ import com.openmobilehub.android.maps.core.presentation.models.OmhRoundCap
 import com.openmobilehub.android.maps.core.presentation.models.OmhSquareCap
 import com.openmobilehub.android.maps.core.presentation.models.OmhStyleSpanGradient
 import com.openmobilehub.android.maps.core.presentation.models.OmhStyleSpanMonochromatic
-import com.openmobilehub.android.maps.core.utils.UnsupportedFeatureLogger
+import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
 import com.openmobilehub.android.maps.plugin.openstreetmap.utils.ConverterUtils
 import io.mockk.every
 import io.mockk.mockk

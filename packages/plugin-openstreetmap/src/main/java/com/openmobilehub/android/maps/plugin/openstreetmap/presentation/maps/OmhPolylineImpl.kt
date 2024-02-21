@@ -21,7 +21,7 @@ import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhPatte
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhPolyline
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhStyleSpan
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
-import com.openmobilehub.android.maps.core.utils.UnsupportedFeatureLogger
+import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
 import com.openmobilehub.android.maps.plugin.openstreetmap.utils.ConverterUtils
 import com.openmobilehub.android.maps.plugin.openstreetmap.utils.polylineLogger
 import org.osmdroid.views.MapView

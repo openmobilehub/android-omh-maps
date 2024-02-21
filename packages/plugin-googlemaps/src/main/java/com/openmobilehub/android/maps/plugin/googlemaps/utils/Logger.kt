@@ -16,6 +16,8 @@
 
 package com.openmobilehub.android.maps.plugin.googlemaps.utils
 
-import com.openmobilehub.android.maps.core.utils.UnsupportedFeatureLogger
+import com.openmobilehub.android.maps.core.utils.logging.Logger
+import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
 
-val polylineLogger = UnsupportedFeatureLogger("OmhPolyline", "OpenStreetMap")
+val commonLogger = Logger(Constants.PROVIDER_NAME)
+val polylineLogger = UnsupportedFeatureLogger(Constants.PROVIDER_NAME, "OmhPolyline")

@@ -17,6 +17,8 @@
 package com.openmobilehub.android.maps.plugin.openstreetmap.utils
 
 internal object Constants {
+    // Common
+    const val PROVIDER_NAME = "OpenStreetMap"
 
     // Location
     const val MIN_TIME_EXECUTION_MS = 0L

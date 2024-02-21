@@ -121,6 +121,7 @@ class MapPolygonsFragment : Fragment(), OmhOnMapReadyCallback {
         omhMap.setOnPolygonClickListener(omhOnPolygonClickListener)
 
         customizablePolygon = DebugPolygonHelper.addDebugPolygon(omhMap)
+        DebugPolygonHelper.addReferencePolygon(omhMap)
     }
 
     private fun mapSpinnerPositionToOmhPattern(position: Int): List<OmhPatternItem>? {
