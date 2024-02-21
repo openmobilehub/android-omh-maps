@@ -43,7 +43,13 @@ internal class OmhMarkerImpl(
     }
 
     override fun setTitle(title: String?) {
+        val shouldInvalidateInfoWindow = marker.title != title
+
         marker.title = title
+
+        if (shouldInvalidateInfoWindow) {
+            invalidateInfoWindow()
+        }
     }
 
     override fun getIsDraggable(): Boolean {
@@ -71,7 +77,13 @@ internal class OmhMarkerImpl(
     }
 
     override fun setSnippet(snippet: String?) {
+        val shouldInvalidateInfoWindow = marker.snippet != snippet
+
         marker.snippet = snippet
+
+        if (shouldInvalidateInfoWindow) {
+            invalidateInfoWindow()
+        }
     }
 
     override fun setIcon(icon: Drawable?) {
@@ -117,5 +129,11 @@ internal class OmhMarkerImpl(
         }
 
         marker.setIcon(MarkerIconConverter.convertColorToBitmapDescriptor(color))
+    }
+
+    private fun invalidateInfoWindow() {
+        if (marker.isInfoWindowShown) {
+            marker.showInfoWindow() // open or close & reopen to apply the new contents
+        }
     }
 }
