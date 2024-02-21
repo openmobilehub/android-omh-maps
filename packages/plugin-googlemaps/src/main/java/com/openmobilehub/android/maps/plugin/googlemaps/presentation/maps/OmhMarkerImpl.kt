@@ -20,7 +20,7 @@ import android.graphics.drawable.Drawable
 import com.google.android.gms.maps.model.Marker
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMarker
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
-import com.openmobilehub.android.maps.core.utils.UnsupportedFeatureLogger
+import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
 import com.openmobilehub.android.maps.plugin.googlemaps.utils.CoordinateConverter
 import com.openmobilehub.android.maps.plugin.googlemaps.utils.MarkerIconConverter
 import com.openmobilehub.android.maps.plugin.googlemaps.utils.markerLogger

@@ -1,7 +1,7 @@
 package com.openmobilehub.android.maps.plugin.openstreetmap.extensions
 
 import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
-import com.openmobilehub.android.maps.core.utils.UnsupportedFeatureLogger
+import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
 import com.openmobilehub.android.maps.plugin.openstreetmap.utils.markerLogger
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker

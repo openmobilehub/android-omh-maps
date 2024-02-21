@@ -1,6 +1,6 @@
 package com.openmobilehub.android.maps.plugin.openstreetmap.presentation.maps
 
-import com.openmobilehub.android.maps.core.utils.UnsupportedFeatureLogger
+import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
