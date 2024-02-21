@@ -35,7 +35,7 @@ internal fun OmhMarkerOptions.toMarkerOptions(
     if (icon != null) {
         marker.icon = icon
     } else if (backgroundColor != null) {
-        logger.logSetterNotSupported("setBackgroundColor")
+        logger.logSetterNotSupported("backgroundColor")
     } else {
         marker.setDefaultIcon()
     }

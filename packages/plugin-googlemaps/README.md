@@ -14,12 +14,14 @@ This plugin provides support for Google Maps by utilizing the [Google Maps Andro
 ### Set up your Google Cloud project for applications with Google Services (Google Maps)
 
 Complete the required Cloud Console setup following the next steps, for more information see:
- - [Official Documentation](https://developers.google.com/maps/documentation/android-sdk/cloud-setup)
- - [Google Cloud Console Guide](/packages//plugin-googlemaps/docs/advanced/CLOUD_CONSOLE_SETUP.md)
+
+- [Official Documentation](https://developers.google.com/maps/documentation/android-sdk/cloud-setup)
+- [Google Cloud Console Guide](/packages//plugin-googlemaps/docs/advanced/CLOUD_CONSOLE_SETUP.md)
 
 ### Set up the project
 
 1. Add the plugin to the project by following one of the guides:
+
 - [Setup with omh-core plugin](/packages/core/docs/SETUP_WITH_OMH_CORE_PLUGIN.md)
 - [Setup without omh-core plugin](/packages/core/docs/SETUP_WITHOUT_OMH_CORE_PLUGIN.md)
 
@@ -29,11 +31,11 @@ Complete the required Cloud Console setup following the next steps, for more inf
    MAPS_API_KEY=YOUR_API_KEY
    ```
 
-    You should not check your API key into your version control system, so it is recommended
-    storing it in the `local.properties` file, which is located in the root directory of your project.
-    For more information about the `local.properties` file, see [Gradle properties files](https://developer.android.com/studio/build#properties-files).
+   You should not check your API key into your version control system, so it is recommended
+   storing it in the `local.properties` file, which is located in the root directory of your project.
+   For more information about the `local.properties` file, see [Gradle properties files](https://developer.android.com/studio/build#properties-files).
 
-2. In your app's module level `AndroidManifest.xml`file, under the `application` element add the `meta-data` element as follows:
+3. In your app's module level `AndroidManifest.xml`file, under the `application` element add the `meta-data` element as follows:
 
    ```xml
    <manifest ...>
@@ -46,7 +48,7 @@ Complete the required Cloud Console setup following the next steps, for more inf
    </manifest>
    ```
 
-3. In your app's module-level `AndroidManifest.xml` add the required permissions, for more information see [permissions](https://developer.android.com/training/permissions/declaring).
+4. In your app's module-level `AndroidManifest.xml` add the required permissions, for more information see [permissions](https://developer.android.com/training/permissions/declaring).
 
    ```xml
    <manifest ...>
@@ -66,133 +68,133 @@ Complete the required Cloud Console setup following the next steps, for more inf
 
 #### OmhMap
 
-| Method                            | Supported? |
-|-----------------------------------|:----------:|
-| addMarker                         |      ✅     |
-| addPolyline                       |      ✅     |
-| addPolygon                        |      ✅     |
-| getCameraPositionCoordinate       |      ✅     |
-| moveCamera                        |      ✅     |
-| setZoomGesturesEnabled            |      ✅     |
-| setMyLocationEnabled              |      ✅     |
-| isMyLocationEnabled               |      ✅     |
-| setMyLocationButtonClickListener  |      ✅     |
-| setOnCameraMoveStartedListener    |      ✅     |
-| setOnCameraIdleListener           |      ✅     |
-| setOnMapLoadedCallback            |      ✅     |
-| setOnPolylineClickListener        |      ✅     |
-| setOnPolygonClickListener         |      ✅     |
-| snapshot                          |      ✅     |
-| setMapStyle                       |      ✅     |
+| Method                           | Supported? |
+| -------------------------------- | :--------: |
+| addMarker                        |     ✅     |
+| addPolyline                      |     ✅     |
+| addPolygon                       |     ✅     |
+| getCameraPositionCoordinate      |     ✅     |
+| moveCamera                       |     ✅     |
+| setZoomGesturesEnabled           |     ✅     |
+| setMyLocationEnabled             |     ✅     |
+| isMyLocationEnabled              |     ✅     |
+| setMyLocationButtonClickListener |     ✅     |
+| setOnCameraMoveStartedListener   |     ✅     |
+| setOnCameraIdleListener          |     ✅     |
+| setOnMapLoadedCallback           |     ✅     |
+| setOnPolylineClickListener       |     ✅     |
+| setOnPolygonClickListener        |     ✅     |
+| snapshot                         |     ✅     |
+| setMapStyle                      |     ✅     |
 
 ### Marker
 
 #### OmhMarkerOptions
 
-| Property    | Supported? |
-|-------------|:----------:|
-| position    |      ✅     |
-| title       |      ✅     |
+| Property | Supported? |
+| -------- | :--------: |
+| position |     ✅     |
+| title    |     ✅     |
 
 #### OmhMarker
 
-| Method       | Supported? |
-|--------------|:----------:|
-| getPosition  |      ✅     |
-| setPosition  |      ✅     |
-| getTitle     |      ✅     |
-| setTitle     |      ✅     |
+| Method      | Supported? |
+| ----------- | :--------: |
+| getPosition |     ✅     |
+| setPosition |     ✅     |
+| getTitle    |     ✅     |
+| setTitle    |     ✅     |
 
 ### Polyline
 
 #### OmhPolylineOptions
 
 | Property  | Supported? |
-|-----------|:----------:|
-| points    |      ✅     |
-| clickable |      ✅     |
-| color     |      ✅     |
-| width     |      ✅     |
-| isVisible |      ✅     |
-| zIndex    |      ✅     |
-| jointType |      ✅     |
-| pattern   |      ✅     |
-| startCap  |      ✅     |
-| endCap    |      ✅     |
-| spans     |      ✅     |
+| --------- | :--------: |
+| points    |     ✅     |
+| clickable |     ✅     |
+| color     |     ✅     |
+| width     |     ✅     |
+| isVisible |     ✅     |
+| zIndex    |     ✅     |
+| jointType |     ✅     |
+| pattern   |     ✅     |
+| startCap  |     ✅     |
+| endCap    |     ✅     |
+| spans     |     ✅     |
 
 #### OmhPolyline
 
 | Method       | Supported? |
-|--------------|:----------:|
-| isClickable  |      ✅     |
-| setClickable |      ✅     |
-| getColor     |      ✅     |
-| setColor     |      ✅     |
-| getEndCap    |      ✅     |
-| setEndCap    |      ✅     |
-| getJoinType  |      ✅     |
-| setJoinType  |      ✅     |
-| getPattern   |      ✅     |
-| setPattern   |      ✅     |
-| getPoints    |      ✅     |
-| setPoints    |      ✅     |
-| getSpans     |      ✅     |
-| setSpans     |      ✅     |
-| getStartCap  |      ✅     |
-| setStartCap  |      ✅     |
-| getTag       |      ✅     |
-| setTag       |      ✅     |
-| getWidth     |      ✅     |
-| setWidth     |      ✅     |
-| getZIndex    |      ✅     |
-| setZIndex    |      ✅     |
-| isVisible    |      ✅     |
-| setVisible   |      ✅     |
+| ------------ | :--------: |
+| isClickable  |     ✅     |
+| setClickable |     ✅     |
+| getColor     |     ✅     |
+| setColor     |     ✅     |
+| getEndCap    |     ✅     |
+| setEndCap    |     ✅     |
+| getJoinType  |     ✅     |
+| setJoinType  |     ✅     |
+| getPattern   |     ✅     |
+| setPattern   |     ✅     |
+| getPoints    |     ✅     |
+| setPoints    |     ✅     |
+| getSpans     |     ✅     |
+| setSpans     |     ✅     |
+| getStartCap  |     ✅     |
+| setStartCap  |     ✅     |
+| getTag       |     ✅     |
+| setTag       |     ✅     |
+| getWidth     |     ✅     |
+| setWidth     |     ✅     |
+| getZIndex    |     ✅     |
+| setZIndex    |     ✅     |
+| isVisible    |     ✅     |
+| setVisible   |     ✅     |
 
 ### Polygon
 
 #### OmhPolygonOptions
 
 | Property        | Supported? |
-|-----------------|:----------:|
-| outline         |      ✅     |
-| clickable       |      ✅     |
-| fillColor       |      ✅     |
-| holes           |      ✅     |
-| isVisible       |      ✅     |
-| strokeColor     |      ✅     |
-| strokeJointType |      ✅     |
-| strokePattern   |      ✅     |
-| strokeWidth     |      ✅     |
-| zIndex          |      ✅     |
+| --------------- | :--------: |
+| outline         |     ✅     |
+| clickable       |     ✅     |
+| fillColor       |     ✅     |
+| holes           |     ✅     |
+| isVisible       |     ✅     |
+| strokeColor     |     ✅     |
+| strokeJointType |     ✅     |
+| strokePattern   |     ✅     |
+| strokeWidth     |     ✅     |
+| zIndex          |     ✅     |
 
 #### OmhPolygon
 
 | Method             | Supported? |
-|--------------------|:----------:|
-| getClickable       |      ✅     |
-| setClickable       |      ✅     |
-| getStrokeColor     |      ✅     |
-| setStrokeColor     |      ✅     |
-| getFillColor       |      ✅     |
-| setFillColor       |      ✅     |
-| getStrokeJointType |      ✅     |
-| setStrokeJointType |      ✅     |
-| getStrokePattern   |      ✅     |
-| setStrokePattern   |      ✅     |
-| getOutline         |      ✅     |
-| setOutline         |      ✅     |
-| getHoles           |      ✅     |
-| setHoles           |      ✅     |
-| getTag             |      ✅     |
-| setTag             |      ✅     |
-| getStrokeWidth     |      ✅     |
-| setStrokeWidth     |      ✅     |
-| getZIndex          |      ✅     |
-| setZIndex          |      ✅     |
-| isVisible          |      ✅     |
-| setVisible         |      ✅     |
+| ------------------ | :--------: |
+| getClickable       |     ✅     |
+| setClickable       |     ✅     |
+| getStrokeColor     |     ✅     |
+| setStrokeColor     |     ✅     |
+| getFillColor       |     ✅     |
+| setFillColor       |     ✅     |
+| getStrokeJointType |     ✅     |
+| setStrokeJointType |     ✅     |
+| getStrokePattern   |     ✅     |
+| setStrokePattern   |     ✅     |
+| getOutline         |     ✅     |
+| setOutline         |     ✅     |
+| getHoles           |     ✅     |
+| setHoles           |     ✅     |
+| getTag             |     ✅     |
+| setTag             |     ✅     |
+| getStrokeWidth     |     ✅     |
+| setStrokeWidth     |     ✅     |
+| getZIndex          |     ✅     |
+| setZIndex          |     ✅     |
+| isVisible          |     ✅     |
+| setVisible         |     ✅     |
 
 ## Documentation
 
