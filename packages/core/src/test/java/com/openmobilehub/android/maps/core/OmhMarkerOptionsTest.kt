@@ -16,21 +16,18 @@
 
 package com.openmobilehub.android.maps.core
 
-import android.os.Parcel
 import com.openmobilehub.android.maps.core.Constants.ANOTHER_MARKER_TITLE
 import com.openmobilehub.android.maps.core.Constants.LATITUDE
 import com.openmobilehub.android.maps.core.Constants.LONGITUDE
 import com.openmobilehub.android.maps.core.Constants.MARKER_TITLE
+import com.openmobilehub.android.maps.core.presentation.models.DEFAULT_ALPHA
+import com.openmobilehub.android.maps.core.presentation.models.DEFAULT_ANCHOR
+import com.openmobilehub.android.maps.core.presentation.models.DEFAULT_ROTATION
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
-import io.mockk.every
-import io.mockk.mockk
-import kotlinx.parcelize.parcelableCreator
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNull
-import org.junit.Assert.assertTrue
 import org.junit.Test
 
 internal class OmhMarkerOptionsTest {
@@ -84,7 +81,7 @@ internal class OmhMarkerOptionsTest {
     }
 
     @Test
-    fun `given a OmhMarkerOptions, when compared to another with a different OmhCoordinate, then is false`() {
+    fun `given a OmhMarkerOptions, comparison to another with a different OmhCoordinate results in false`() {
         val compareOmhCoordinate = OmhCoordinate()
         val compareOmhMarkerOptions = OmhMarkerOptions().apply { position = compareOmhCoordinate }
 
@@ -92,7 +89,7 @@ internal class OmhMarkerOptionsTest {
     }
 
     @Test
-    fun `given a OmhMarkerOptions, when compared to another with a different title, then is false`() {
+    fun `given a OmhMarkerOptions, comparison to another with a different title results in false`() {
         val compareOmhMarkerOptions = OmhMarkerOptions().apply {
             position = omhCoordinate
             title = ANOTHER_MARKER_TITLE
@@ -102,116 +99,15 @@ internal class OmhMarkerOptionsTest {
     }
 
     @Test
-    fun `given a Parcel, when createFromParcel and compared to another with same properties, then is true`() {
-        val parcel = createOmhMarkerOptionsParcel(omhMarkerOptions)
-        val createdFromParcel = parcelableCreator<OmhMarkerOptions>().createFromParcel(parcel)
-
-        assertEquals(omhMarkerOptions.position, createdFromParcel.position)
-    }
-
-    @Test
-    fun `given a Parcel, when createFromParcel and compared to another with different OmhCoordinate, then is false`() {
-        val compareOmhCoordinate = OmhCoordinate()
-        val compareOmhMarkerOptions = OmhMarkerOptions().apply { position = compareOmhCoordinate }
-        val parcel = createOmhMarkerOptionsParcel(omhMarkerOptions)
-        val createdFromParcel = parcelableCreator<OmhMarkerOptions>().createFromParcel(parcel)
-
-        assertNotEquals(compareOmhMarkerOptions.position, createdFromParcel.position)
-    }
-
-    @Test
-    fun `given a Parcel, when createFromParcel and compared to another with a different title, then is false`() {
-        val compareOmhMarkerOptions = OmhMarkerOptions().apply {
-            position = omhCoordinate
-            title = ANOTHER_MARKER_TITLE
-        }
-        val parcel = createOmhMarkerOptionsParcel(omhMarkerOptions)
-        val createdFromParcel = parcelableCreator<OmhMarkerOptions>().createFromParcel(parcel)
-
-        assertNotEquals(compareOmhMarkerOptions.title, createdFromParcel.title)
-    }
-
-    @Test
-    fun `given a Parcel, when createFromParcel and compared to another without title, then is false`() {
-        val compareOmhMarkerOptions = OmhMarkerOptions().apply {
-            position = omhCoordinate
-        }
-        val parcel = createOmhMarkerOptionsParcel(omhMarkerOptions)
-        val createdFromParcel = parcelableCreator<OmhMarkerOptions>().createFromParcel(parcel)
-
-        assertNotEquals(compareOmhMarkerOptions.title, createdFromParcel.title)
-    }
-
-    @Test
-    fun `given a Parcel without title, when createFromParcel, then title is null`() {
-        val omhMarkerOptions = OmhMarkerOptions().apply {
-            position = omhCoordinate
-        }
-        val parcel = createOmhMarkerOptionsParcel(omhMarkerOptions)
-        val createdFromParcel = parcelableCreator<OmhMarkerOptions>().createFromParcel(parcel)
-
-        assertNull(createdFromParcel.title)
-    }
-
-    @Test
-    fun `given a Parcel without isDraggable, when createFromParcel, then isDraggable is false`() {
-        val omhMarkerOptions = OmhMarkerOptions().apply {
-            position = omhCoordinate
-        }
-        val parcel = createOmhMarkerOptionsParcel(omhMarkerOptions)
-        val createdFromParcel = parcelableCreator<OmhMarkerOptions>().createFromParcel(parcel)
-
-        assertFalse(createdFromParcel.isDraggable)
-    }
-
-    @Test
-    fun `given a Parcel with isDraggable that is true, when createFromParcel, then isDraggable is true`() {
-        val omhMarkerOptions = OmhMarkerOptions().apply {
-            position = omhCoordinate
-            isDraggable = true
-        }
-        val parcel = createOmhMarkerOptionsParcel(omhMarkerOptions)
-        val createdFromParcel = parcelableCreator<OmhMarkerOptions>().createFromParcel(parcel)
-
-        assertTrue(createdFromParcel.isDraggable)
-    }
-
-    private fun createOmhMarkerOptionsParcel(omhMarkerOptions: OmhMarkerOptions): Parcel {
-        val parcel = mockk<Parcel>()
-
-        every { parcel.writeParcelable(any(), any()) } returns Unit
-        every { parcel.writeString(any()) } returns Unit
-        every { parcel.writeFloat(any()) } returns Unit
-        every { parcel.writeInt(any()) } returns Unit
-        every { parcel.writeByte(any()) } returns Unit
-        every { parcel.writeBoolean(any()) } returns Unit
-        every { parcel.writeSerializable(any()) } returns Unit
-        every {
-            parcel.readParcelable<OmhCoordinate>(OmhCoordinate::class.java.classLoader)
-        } returns omhMarkerOptions.position
-        every { parcel.readString() } returnsMany listOf(
-            omhMarkerOptions.title,
-            omhMarkerOptions.snippet
-        )
-        every { parcel.readSerializable() } returnsMany listOf(
-            omhMarkerOptions.anchor,
-        )
-        every { parcel.readInt() } returnsMany listOf(
-            omhMarkerOptions.isDraggable,
-            omhMarkerOptions.isVisible,
-            omhMarkerOptions.isFlat,
-            omhMarkerOptions.backgroundColor
-        ).map { it?.let { if (it as Boolean) 1 else 0 } ?: -1 }
-        every { parcel.readFloat() } returnsMany listOf(
-            omhMarkerOptions.alpha,
-            omhMarkerOptions.rotation
-        )
-
-        omhMarkerOptions.writeToParcel(parcel, omhMarkerOptions.describeContents())
-
-        every { parcel.setDataPosition(any()) } returns Unit
-        every { parcel.dataPosition() } returns 0
-
-        return parcel
+    fun `when initializing OmhMarkerOptions, all default constructor arguments are applied as expected`() {
+        assertEquals(omhMarkerOptions.isDraggable, false)
+        assertEquals(omhMarkerOptions.anchor, Pair(DEFAULT_ANCHOR, DEFAULT_ANCHOR))
+        assertEquals(omhMarkerOptions.alpha, DEFAULT_ALPHA)
+        assertEquals(omhMarkerOptions.snippet, null)
+        assertEquals(omhMarkerOptions.isVisible, true)
+        assertEquals(omhMarkerOptions.isFlat, false)
+        assertEquals(omhMarkerOptions.rotation, DEFAULT_ROTATION)
+        assertEquals(omhMarkerOptions.backgroundColor, null)
+        assertEquals(omhMarkerOptions.icon, null)
     }
 }
