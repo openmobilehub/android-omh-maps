@@ -26,6 +26,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkObject
 import org.junit.Assert.assertEquals
+import org.junit.Before
 import org.junit.Test
 
 internal class OmhMarkerOptionsTest {
@@ -57,9 +58,13 @@ internal class OmhMarkerOptionsTest {
         icon = null
     }
 
+    @Before
+    fun setUp() {
+        mockkObject(MarkerIconConverter)
+    }
+
     @Test
     fun `toMarkerOptions converts OmhMarkerOptions with icon to MarkerOptions`() {
-        mockkObject(MarkerIconConverter)
         val iconBitmapDescriptor = mockk<BitmapDescriptor>()
         every { MarkerIconConverter.convertDrawableToBitmapDescriptor(any()) } returns iconBitmapDescriptor
 
@@ -98,7 +103,6 @@ internal class OmhMarkerOptionsTest {
 
     @Test
     fun `toMarkerOptions converts OmhMarkerOptions with backgroundColor to MarkerOptions`() {
-        mockkObject(MarkerIconConverter)
         val colorBitmapDescriptor = mockk<BitmapDescriptor>()
         every { MarkerIconConverter.convertColorToBitmapDescriptor(any()) } returns colorBitmapDescriptor
 

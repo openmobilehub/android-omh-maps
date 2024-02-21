@@ -42,8 +42,8 @@ import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolygonOptions
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolylineOptions
 import com.openmobilehub.android.maps.plugin.openstreetmap.R
-import com.openmobilehub.android.maps.plugin.openstreetmap.extensions.applyToMarker
 import com.openmobilehub.android.maps.plugin.openstreetmap.extensions.toGeoPoint
+import com.openmobilehub.android.maps.plugin.openstreetmap.extensions.toMarkerOptions
 import com.openmobilehub.android.maps.plugin.openstreetmap.extensions.toOmhCoordinate
 import com.openmobilehub.android.maps.plugin.openstreetmap.extensions.toPolygonOptions
 import com.openmobilehub.android.maps.plugin.openstreetmap.extensions.toPolylineOptions
@@ -126,8 +126,7 @@ internal class OmhMapImpl(
     }
 
     override fun addMarker(options: OmhMarkerOptions): OmhMarker? {
-        val marker = Marker(mapView)
-        options.applyToMarker(marker)
+        val marker = options.toMarkerOptions(mapView)
 
         val omhMarker = OmhMarkerImpl(marker, mapView)
         markers[marker] = omhMarker
