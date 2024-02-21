@@ -44,6 +44,7 @@ import com.openmobilehub.android.maps.plugin.openstreetmap.extensions.toGeoPoint
 import com.openmobilehub.android.maps.plugin.openstreetmap.extensions.toOmhCoordinate
 import com.openmobilehub.android.maps.plugin.openstreetmap.extensions.toPolygonOptions
 import com.openmobilehub.android.maps.plugin.openstreetmap.extensions.toPolylineOptions
+import com.openmobilehub.android.maps.plugin.openstreetmap.utils.Constants
 import com.openmobilehub.android.maps.plugin.openstreetmap.utils.Constants.DEFAULT_ZOOM_LEVEL
 import com.openmobilehub.android.maps.plugin.openstreetmap.utils.MapListenerController
 import com.openmobilehub.android.maps.plugin.openstreetmap.utils.MapTouchListener
@@ -78,7 +79,7 @@ internal class OmhMapImpl(
     }
 
     override val providerName: String
-        get() = "OpenStreetMap"
+        get() = Constants.PROVIDER_NAME
 
     override fun addMarker(options: OmhMarkerOptions): OmhMarker? {
         val marker: Marker = Marker(mapView).apply {
