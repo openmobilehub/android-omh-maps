@@ -30,7 +30,7 @@ class OmhMarkerImplTest {
     fun `getDraggable returns draggable state`() {
         // Arrange
         val expected = listOf(true, false)
-        every { marker.draggable } returnsMany expected
+        every { marker.isDraggable } returnsMany expected
 
         // Act
         val actual = expected.map { omhMarker.getDraggable() }
@@ -43,13 +43,13 @@ class OmhMarkerImplTest {
     fun `setDraggable sets draggable state`() {
         // Arrange
         val expectedValue = true
-        every { marker.draggable = any() } just runs
+        every { marker.isDraggable = any() } just runs
 
         // Act
         omhMarker.setDraggable(expectedValue)
 
         // Assert
-        verify { marker.draggable = expectedValue }
+        verify { marker.isDraggable = expectedValue }
     }
 
     @Test
