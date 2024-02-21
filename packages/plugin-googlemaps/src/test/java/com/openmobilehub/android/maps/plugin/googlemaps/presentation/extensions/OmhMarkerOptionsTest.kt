@@ -23,16 +23,21 @@ import com.openmobilehub.android.maps.core.presentation.models.DEFAULT_ANCHOR
 import com.openmobilehub.android.maps.core.presentation.models.DEFAULT_ROTATION
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
+import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
 import com.openmobilehub.android.maps.plugin.googlemaps.extensions.toMarkerOptions
 import com.openmobilehub.android.maps.plugin.googlemaps.utils.MarkerIconConverter
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkObject
+import io.mockk.verify
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 
 internal class OmhMarkerOptionsTest {
+    private lateinit var mockLogger: UnsupportedFeatureLogger
+    private lateinit var colorBitmapDescriptor: BitmapDescriptor
+
     private val omhCoordinate = OmhCoordinate(16.9, 166.0)
     private val omhMarkerOptionsWithIcon = OmhMarkerOptions().apply {
         position = omhCoordinate
@@ -63,7 +68,11 @@ internal class OmhMarkerOptionsTest {
 
     @Before
     fun setUp() {
+        mockLogger = mockk<UnsupportedFeatureLogger>(relaxed = true)
+        colorBitmapDescriptor = mockk<BitmapDescriptor>(relaxed = true)
+
         mockkObject(MarkerIconConverter)
+        every { MarkerIconConverter.convertColorToBitmapDescriptor(any()) } returns colorBitmapDescriptor
     }
 
     @Test
@@ -71,7 +80,7 @@ internal class OmhMarkerOptionsTest {
         val iconBitmapDescriptor = mockk<BitmapDescriptor>()
         every { MarkerIconConverter.convertDrawableToBitmapDescriptor(any()) } returns iconBitmapDescriptor
 
-        val markerOptions = omhMarkerOptionsWithIcon.toMarkerOptions()
+        val markerOptions = omhMarkerOptionsWithIcon.toMarkerOptions(mockLogger)
 
         assertEquals(
             omhMarkerOptionsWithIcon.position.latitude,
@@ -106,10 +115,7 @@ internal class OmhMarkerOptionsTest {
 
     @Test
     fun `toMarkerOptions converts OmhMarkerOptions with backgroundColor to MarkerOptions`() {
-        val colorBitmapDescriptor = mockk<BitmapDescriptor>()
-        every { MarkerIconConverter.convertColorToBitmapDescriptor(any()) } returns colorBitmapDescriptor
-
-        val markerOptions = omhMarkerOptionsWithBackgroundColor.toMarkerOptions()
+        val markerOptions = omhMarkerOptionsWithBackgroundColor.toMarkerOptions(mockLogger)
 
         assertEquals(
             omhMarkerOptionsWithBackgroundColor.position.latitude,
@@ -156,5 +162,14 @@ internal class OmhMarkerOptionsTest {
         assertEquals(defaultOmhMarkerOptions.backgroundColor, null)
         assertEquals(defaultOmhMarkerOptions.icon, null)
         assertEquals(defaultOmhMarkerOptions.clickable, true)
+    }
+
+    @Test
+    fun `toMarkerOptions should return log setter not supported for backgroundColor property`() {
+        OmhMarkerOptions().apply {
+            backgroundColor = 0xFFFFFF
+        }.toMarkerOptions(mockLogger)
+
+        verify { mockLogger.logFeatureSetterPartiallySupported("backgroundColor", any()) }
     }
 }

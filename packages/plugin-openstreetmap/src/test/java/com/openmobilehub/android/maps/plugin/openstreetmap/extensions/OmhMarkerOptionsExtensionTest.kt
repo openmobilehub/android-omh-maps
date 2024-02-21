@@ -21,8 +21,10 @@ import android.content.res.Resources
 import android.graphics.drawable.Drawable
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
+import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.osmdroid.views.MapView
@@ -52,7 +54,8 @@ internal class OmhMarkerOptionsExtensionTest {
     }
 
     private val mapView = mockk<MapView>()
-
+    private val mockLogger: UnsupportedFeatureLogger =
+        mockk<UnsupportedFeatureLogger>(relaxed = true)
     private val context = mockk<Context>()
     private val repository = mockk<MapViewRepository>()
     private val defaultMarkerInfoWindow = mockk<MarkerInfoWindow>()
@@ -70,7 +73,7 @@ internal class OmhMarkerOptionsExtensionTest {
 
     @Test
     fun `toMarkerOptions converts OmhMarkerOptions with icon to MarkerOptions`() {
-        val markerOptions = omhMarkerOptionsWithIcon.toMarkerOptions(mapView)
+        val markerOptions = omhMarkerOptionsWithIcon.toMarkerOptions(mapView, mockLogger)
 
         assertEquals(
             omhMarkerOptionsWithIcon.position.latitude,
@@ -100,7 +103,7 @@ internal class OmhMarkerOptionsExtensionTest {
 
     @Test
     fun `toMarkerOptions converts OmhMarkerOptions with isVisible set to false to MarkerOptions`() {
-        val markerOptions = omhMarkerOptionsInvisible.toMarkerOptions(mapView)
+        val markerOptions = omhMarkerOptionsInvisible.toMarkerOptions(mapView, mockLogger)
 
         assertEquals(
             omhMarkerOptionsInvisible.position.latitude,
@@ -117,5 +120,14 @@ internal class OmhMarkerOptionsExtensionTest {
 
         // visible set to false results in alpha = 0f
         assertEquals(0f, markerOptions.alpha)
+    }
+
+    @Test
+    fun `toMarkerOptions should return log setter not supported for backgroundColor property`() {
+        OmhMarkerOptions().apply {
+            backgroundColor = 0xFFFFFF
+        }.toMarkerOptions(mapView, mockLogger)
+
+        verify { mockLogger.logSetterNotSupported("backgroundColor") }
     }
 }
