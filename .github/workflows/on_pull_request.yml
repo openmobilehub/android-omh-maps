@@ -21,7 +21,7 @@ jobs:
 
       - name: Setup secrets
         run: |
-          echo MAPBOX_DOWNLOADS_TOKEN=${{ secrets.MAPBOX_SECRET_TOKEN }} >> ~/.gradle/gradle.properties
+          echo MAPBOX_DOWNLOADS_TOKEN=${{ secrets.MAPBOX_SECRET_TOKEN }} >> ./gradle.properties
           echo MAPS_API_KEY=${{ secrets.GOOGLE_MAPS_API_KEY }} >> ./local.properties
           echo MAPBOX_PUBLIC_TOKEN=${{ secrets.MAPBOX_PUBLIC_TOKEN }} >> ./local.properties
       - name: Set useMavenLocal flag
@@ -48,7 +48,7 @@ jobs:
           cache: gradle
       - name: Setup secrets
         run: |
-          echo MAPBOX_DOWNLOADS_TOKEN=${{ secrets.MAPBOX_SECRET_TOKEN }} >> ~/.gradle/gradle.properties
+          echo MAPBOX_DOWNLOADS_TOKEN=${{ secrets.MAPBOX_SECRET_TOKEN }} >> ./gradle.properties
           echo MAPS_API_KEY=${{ secrets.GOOGLE_MAPS_API_KEY }} >> ./local.properties
           echo MAPBOX_PUBLIC_TOKEN=${{ secrets.MAPBOX_PUBLIC_TOKEN }} >> ./local.properties
       - name: Set useMavenLocal flag
