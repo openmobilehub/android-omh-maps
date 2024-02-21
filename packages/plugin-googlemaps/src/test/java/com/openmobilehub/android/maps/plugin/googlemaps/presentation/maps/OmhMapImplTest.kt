@@ -178,7 +178,7 @@ class OmhMapImplTest {
     }
 
     @Test
-    fun `setOnMarkerDragListener triggers listener on marker click`() {
+    fun `setOnMarkerDragListener triggers listener on marker drag events`() {
         // Assert
         val capturedListener = slot<GoogleMap.OnMarkerDragListener>()
         every { googleMap.setOnMarkerDragListener(capture(capturedListener)) } answers {}
