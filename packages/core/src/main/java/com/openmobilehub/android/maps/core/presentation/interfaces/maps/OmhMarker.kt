@@ -174,7 +174,7 @@ interface OmhMarker {
     /**
      * Gets the background color of the marker.
      *
-     * @return the argb color of the marker or null if not set.
+     * @return the color of the marker or null if not set.
      */
     fun getBackgroundColor(): Int?
 
@@ -182,7 +182,7 @@ interface OmhMarker {
      * Sets the color of the marker or resets the color to the provider's default value if null.
      * Note: this overrides [setIcon].
      *
-     * @param color argb color of the marker or null.
+     * @param color color of the marker or null.
      */
     fun setBackgroundColor(color: Int?)
 }
