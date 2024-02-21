@@ -157,6 +157,13 @@ interface OmhMarker {
     fun setRotation(rotation: Float)
 
     /**
+     * Gets the background color of the marker.
+     *
+     * @return the argb color of the marker or null if not set.
+     */
+    fun getBackgroundColor(): Int?
+
+    /**
      * Sets the color of the marker or resets the color to the provider's default value if null.
      * Note: this overrides [setIcon].
      *

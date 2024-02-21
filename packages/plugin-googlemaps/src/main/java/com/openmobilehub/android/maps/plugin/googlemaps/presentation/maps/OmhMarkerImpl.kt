@@ -120,6 +120,12 @@ internal class OmhMarkerImpl(
         marker.rotation = rotation
     }
 
+    override fun getBackgroundColor(): Int? {
+        logger.logGetterNotSupported("backgroundColor")
+
+        return null
+    }
+
     override fun setBackgroundColor(color: Int?) {
         if (color != null) {
             logger.logFeatureSetterPartiallySupported(

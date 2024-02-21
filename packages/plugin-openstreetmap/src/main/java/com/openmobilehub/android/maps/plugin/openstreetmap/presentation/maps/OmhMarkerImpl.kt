@@ -132,6 +132,12 @@ internal class OmhMarkerImpl(
         mapView.postInvalidate()
     }
 
+    override fun getBackgroundColor(): Int? {
+        logger.logGetterNotSupported("backgroundColor")
+
+        return null
+    }
+
     override fun setBackgroundColor(color: Int?) {
         logger.logSetterNotSupported("setBackgroundColor")
     }
