@@ -35,6 +35,7 @@ import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolygonOptions
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolylineOptions
+import com.openmobilehub.android.maps.plugin.mapbox.utils.Constants
 
 @SuppressWarnings("TooManyFunctions")
 internal class OmhMapImpl(
@@ -43,7 +44,7 @@ internal class OmhMapImpl(
 ) : OmhMap {
 
     override val providerName: String
-        get() = "Mapbox"
+        get() = Constants.PROVIDER_NAME
 
     override fun addMarker(options: OmhMarkerOptions): OmhMarker? {
         return null
