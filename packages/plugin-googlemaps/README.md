@@ -64,137 +64,172 @@ Complete the required Cloud Console setup following the next steps, for more inf
 
 ## Compatibility matrix
 
+Legend of support levels:
+
+| Support level       | Symbol |
+| ------------------- | :----: |
+| Fully supported     |   ✅   |
+| Partially supported |   🟨   |
+| Not supported       |   ❌   |
+
 ### Map
 
 #### OmhMap
 
-| Method                           | Supported? |
-| -------------------------------- | :--------: |
-| addMarker                        |     ✅     |
-| addPolyline                      |     ✅     |
-| addPolygon                       |     ✅     |
-| getCameraPositionCoordinate      |     ✅     |
-| moveCamera                       |     ✅     |
-| setZoomGesturesEnabled           |     ✅     |
-| setMyLocationEnabled             |     ✅     |
-| isMyLocationEnabled              |     ✅     |
-| setMyLocationButtonClickListener |     ✅     |
-| setOnCameraMoveStartedListener   |     ✅     |
-| setOnCameraIdleListener          |     ✅     |
-| setOnMapLoadedCallback           |     ✅     |
-| setOnPolylineClickListener       |     ✅     |
-| setOnPolygonClickListener        |     ✅     |
-| snapshot                         |     ✅     |
-| setMapStyle                      |     ✅     |
+| Method                           | Support level |
+| -------------------------------- | :-----------: |
+| addMarker                        |      ✅       |
+| addPolyline                      |      ✅       |
+| addPolygon                       |      ✅       |
+| getCameraPositionCoordinate      |      ✅       |
+| moveCamera                       |      ✅       |
+| setZoomGesturesEnabled           |      ✅       |
+| setMyLocationEnabled             |      ✅       |
+| isMyLocationEnabled              |      ✅       |
+| setMyLocationButtonClickListener |      ✅       |
+| setOnCameraMoveStartedListener   |      ✅       |
+| setOnCameraIdleListener          |      ✅       |
+| setOnMapLoadedCallback           |      ✅       |
+| setOnPolylineClickListener       |      ✅       |
+| setOnPolygonClickListener        |      ✅       |
+| snapshot                         |      ✅       |
+| setMapStyle                      |      ✅       |
 
 ### Marker
 
 #### OmhMarkerOptions
 
-| Property | Supported? |
-| -------- | :--------: |
-| position |     ✅     |
-| title    |     ✅     |
+| Property        | Support level |
+| --------------- | :-----------: |
+| position        |      ✅       |
+| title           |      ✅       |
+| draggable       |      ✅       |
+| anchor          |      ✅       |
+| alpha           |      ✅       |
+| snippet         |      ✅       |
+| isVisible       |      ✅       |
+| isFlat          |      ✅       |
+| rotation        |      ✅       |
+| backgroundColor |      🟨       |
+| clickable       |      ✅       |
 
 #### OmhMarker
 
-| Method      | Supported? |
-| ----------- | :--------: |
-| getPosition |     ✅     |
-| setPosition |     ✅     |
-| getTitle    |     ✅     |
-| setTitle    |     ✅     |
+| Method             | Support level |
+| ------------------ | :-----------: |
+| getPosition        |      ✅       |
+| setPosition        |      ✅       |
+| getTitle           |      ✅       |
+| setTitle           |      ✅       |
+| getClickable       |      ✅       |
+| setClickable       |      ✅       |
+| getDraggable       |      ✅       |
+| setDraggable       |      ✅       |
+| setAnchor          |      ✅       |
+| getAlpha           |      ✅       |
+| setAlpha           |      ✅       |
+| getSnippet         |      ✅       |
+| setSnippet         |      ✅       |
+| setIcon            |      ✅       |
+| getIsVisible       |      ✅       |
+| setIsVisible       |      ✅       |
+| getIsFlat          |      ✅       |
+| setIsFlat          |      ✅       |
+| getRotation        |      ✅       |
+| setRotation        |      ✅       |
+| getBackgroundColor |      ❌       |
+| setBackgroundColor |      🟨       |
 
 ### Polyline
 
 #### OmhPolylineOptions
 
-| Property  | Supported? |
-| --------- | :--------: |
-| points    |     ✅     |
-| clickable |     ✅     |
-| color     |     ✅     |
-| width     |     ✅     |
-| isVisible |     ✅     |
-| zIndex    |     ✅     |
-| jointType |     ✅     |
-| pattern   |     ✅     |
-| startCap  |     ✅     |
-| endCap    |     ✅     |
-| spans     |     ✅     |
+| Property  | Support level |
+| --------- | :-----------: |
+| points    |      ✅       |
+| clickable |      ✅       |
+| color     |      ✅       |
+| width     |      ✅       |
+| isVisible |      ✅       |
+| zIndex    |      ✅       |
+| jointType |      ✅       |
+| pattern   |      ✅       |
+| startCap  |      ✅       |
+| endCap    |      ✅       |
+| spans     |      ✅       |
 
 #### OmhPolyline
 
-| Method       | Supported? |
-| ------------ | :--------: |
-| isClickable  |     ✅     |
-| setClickable |     ✅     |
-| getColor     |     ✅     |
-| setColor     |     ✅     |
-| getEndCap    |     ✅     |
-| setEndCap    |     ✅     |
-| getJoinType  |     ✅     |
-| setJoinType  |     ✅     |
-| getPattern   |     ✅     |
-| setPattern   |     ✅     |
-| getPoints    |     ✅     |
-| setPoints    |     ✅     |
-| getSpans     |     ✅     |
-| setSpans     |     ✅     |
-| getStartCap  |     ✅     |
-| setStartCap  |     ✅     |
-| getTag       |     ✅     |
-| setTag       |     ✅     |
-| getWidth     |     ✅     |
-| setWidth     |     ✅     |
-| getZIndex    |     ✅     |
-| setZIndex    |     ✅     |
-| isVisible    |     ✅     |
-| setVisible   |     ✅     |
+| Method       | Support level |
+| ------------ | :-----------: |
+| isClickable  |      ✅       |
+| setClickable |      ✅       |
+| getColor     |      ✅       |
+| setColor     |      ✅       |
+| getEndCap    |      ✅       |
+| setEndCap    |      ✅       |
+| getJoinType  |      ✅       |
+| setJoinType  |      ✅       |
+| getPattern   |      ✅       |
+| setPattern   |      ✅       |
+| getPoints    |      ✅       |
+| setPoints    |      ✅       |
+| getSpans     |      ✅       |
+| setSpans     |      ✅       |
+| getStartCap  |      ✅       |
+| setStartCap  |      ✅       |
+| getTag       |      ✅       |
+| setTag       |      ✅       |
+| getWidth     |      ✅       |
+| setWidth     |      ✅       |
+| getZIndex    |      ✅       |
+| setZIndex    |      ✅       |
+| isVisible    |      ✅       |
+| setVisible   |      ✅       |
 
 ### Polygon
 
 #### OmhPolygonOptions
 
-| Property        | Supported? |
-| --------------- | :--------: |
-| outline         |     ✅     |
-| clickable       |     ✅     |
-| fillColor       |     ✅     |
-| holes           |     ✅     |
-| isVisible       |     ✅     |
-| strokeColor     |     ✅     |
-| strokeJointType |     ✅     |
-| strokePattern   |     ✅     |
-| strokeWidth     |     ✅     |
-| zIndex          |     ✅     |
+| Property        | Support level |
+| --------------- | :-----------: |
+| outline         |      ✅       |
+| clickable       |      ✅       |
+| fillColor       |      ✅       |
+| holes           |      ✅       |
+| isVisible       |      ✅       |
+| strokeColor     |      ✅       |
+| strokeJointType |      ✅       |
+| strokePattern   |      ✅       |
+| strokeWidth     |      ✅       |
+| zIndex          |      ✅       |
 
 #### OmhPolygon
 
-| Method             | Supported? |
-| ------------------ | :--------: |
-| getClickable       |     ✅     |
-| setClickable       |     ✅     |
-| getStrokeColor     |     ✅     |
-| setStrokeColor     |     ✅     |
-| getFillColor       |     ✅     |
-| setFillColor       |     ✅     |
-| getStrokeJointType |     ✅     |
-| setStrokeJointType |     ✅     |
-| getStrokePattern   |     ✅     |
-| setStrokePattern   |     ✅     |
-| getOutline         |     ✅     |
-| setOutline         |     ✅     |
-| getHoles           |     ✅     |
-| setHoles           |     ✅     |
-| getTag             |     ✅     |
-| setTag             |     ✅     |
-| getStrokeWidth     |     ✅     |
-| setStrokeWidth     |     ✅     |
-| getZIndex          |     ✅     |
-| setZIndex          |     ✅     |
-| isVisible          |     ✅     |
-| setVisible         |     ✅     |
+| Method             | Support level |
+| ------------------ | :-----------: |
+| getClickable       |      ✅       |
+| setClickable       |      ✅       |
+| getStrokeColor     |      ✅       |
+| setStrokeColor     |      ✅       |
+| getFillColor       |      ✅       |
+| setFillColor       |      ✅       |
+| getStrokeJointType |      ✅       |
+| setStrokeJointType |      ✅       |
+| getStrokePattern   |      ✅       |
+| setStrokePattern   |      ✅       |
+| getOutline         |      ✅       |
+| setOutline         |      ✅       |
+| getHoles           |      ✅       |
+| setHoles           |      ✅       |
+| getTag             |      ✅       |
+| setTag             |      ✅       |
+| getStrokeWidth     |      ✅       |
+| setStrokeWidth     |      ✅       |
+| getZIndex          |      ✅       |
+| setZIndex          |      ✅       |
+| isVisible          |      ✅       |
+| setVisible         |      ✅       |
 
 ## Documentation
 
