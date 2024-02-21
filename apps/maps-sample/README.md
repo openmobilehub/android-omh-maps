@@ -37,7 +37,7 @@ The app integrates both Google Maps and Mapbox, requiring setup for each.
 
 2. **Public Token**: Add your Mapbox public API key to the project's `local.properties`:
    ```
-   MAPBOX_PUBLIC_SECRET=YOUR_PUBLIC_MAPBOX_ACCESS_TOKEN
+   MAPBOX_PUBLIC_TOKEN=YOUR_PUBLIC_MAPBOX_ACCESS_TOKEN
    ```
    Replace `YOUR_PUBLIC_MAPBOX_ACCESS_TOKEN` with your Mapbox public token.
 

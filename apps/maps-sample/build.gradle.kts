@@ -20,7 +20,7 @@ android {
         resValue(
             "string",
             "mapbox_access_token_value",
-            (getValueFromEnvOrProperties("MAPBOX_PUBLIC_SECRET", rootDir) as String? ?: "")
+            (getValueFromEnvOrProperties("MAPBOX_PUBLIC_TOKEN", rootDir) as String? ?: "")
         )
     }
 

@@ -37,8 +37,11 @@ jobs:
           path: ~/.m2/repository
           key: ${{ inputs.input-cache-prefix }}-${{ github.run_id }}
       
-      - name: Update local properties for secrets
-        run: echo MAPS_API_KEY= ${{ secrets.GOOGLE_MAPS_API_KEY }} > ./local.properties
+      - name: Setup secrets
+        run: |
+          echo MAPBOX_DOWNLOADS_TOKEN=${{ secrets.MAPBOX_SECRET_TOKEN }} >> ~/.gradle/gradle.properties
+          echo MAPS_API_KEY=${{ secrets.GOOGLE_MAPS_API_KEY }} >> ./local.properties
+          echo MAPBOX_PUBLIC_TOKEN=${{ secrets.MAPBOX_PUBLIC_TOKEN }} >> ./local.properties
 
       - name: Set useMavenLocal flag
         run: echo useMavenLocal=true >> local.properties
