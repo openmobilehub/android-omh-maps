@@ -28,7 +28,7 @@ dependencies {
     implementation(Libs.osmdroid)
 
     // Mapbox
-    implementation(Libs.mapbox)
+    api(Libs.mapbox)
 
     // Test dependencies
     testImplementation(Libs.junit)
