@@ -95,7 +95,7 @@ internal class OmhMapImpl(
 
     private fun applyOnMarkerClickListener(marker: Marker, omhMarker: OmhMarker) {
         marker.setOnMarkerClickListener { _, _ ->
-            if (omhMarker.getIsVisible()) {
+            if (omhMarker.getIsVisible() && omhMarker.getClickable()) {
                 marker.showInfoWindow()
                 return@setOnMarkerClickListener markerClickListener?.onMarkerClick(omhMarker)
                     ?: false
@@ -129,8 +129,9 @@ internal class OmhMapImpl(
 
     override fun addMarker(options: OmhMarkerOptions): OmhMarker? {
         val marker = options.toMarkerOptions(mapView)
+        val initiallyClickable = options.clickable
 
-        val omhMarker = OmhMarkerImpl(marker, mapView)
+        val omhMarker = OmhMarkerImpl(marker, mapView, initiallyClickable)
         markers[marker] = omhMarker
 
         applyOnMarkerClickListener(marker, omhMarker)

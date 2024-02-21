@@ -58,6 +58,7 @@ class OmhMarkerOptions(
     var isFlat: Boolean = false,
     var rotation: Float = DEFAULT_ROTATION,
     var backgroundColor: Int? = null,
+    var clickable: Boolean = true
 ) : Parcelable {
     @IgnoredOnParcel
     var icon: Drawable? = null

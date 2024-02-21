@@ -28,8 +28,10 @@ import com.openmobilehub.android.maps.plugin.googlemaps.utils.markerLogger
 @SuppressWarnings("TooManyFunctions")
 internal class OmhMarkerImpl(
     private val marker: Marker,
+    private var clickable: Boolean = true,
     private val logger: UnsupportedFeatureLogger = markerLogger
 ) : OmhMarker {
+
     override fun getPosition(): OmhCoordinate {
         return CoordinateConverter.convertToOmhCoordinate(marker.position)
     }
@@ -52,12 +54,20 @@ internal class OmhMarkerImpl(
         }
     }
 
+    override fun getClickable(): Boolean {
+        return clickable
+    }
+
+    override fun setClickable(clickable: Boolean) {
+        this.clickable = clickable
+    }
+
     override fun getDraggable(): Boolean {
-        return marker.draggable
+        return marker.isDraggable
     }
 
     override fun setDraggable(draggable: Boolean) {
-        marker.draggable = draggable
+        marker.isDraggable = draggable
     }
 
     override fun setAnchor(anchorU: Float, anchorV: Float) {

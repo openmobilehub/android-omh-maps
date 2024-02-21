@@ -55,6 +55,7 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
 
     private var customizableMarker: OmhMarker? = null
 
+    private var isClickableCheckbox: CheckBox? = null
     private var isDraggableCheckbox: CheckBox? = null
     private var hasSnippetCheckbox: CheckBox? = null
     private var isFlatCheckbox: CheckBox? = null
@@ -205,7 +206,8 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
 
         isVisibleCheckbox?.isChecked = customizableMarker?.getIsVisible() ?: true
         isFlatCheckbox?.isChecked = customizableMarker?.getIsFlat() ?: false
-        isDraggableCheckbox?.isChecked = customizableMarker?.getDraggable() ?: true
+        isClickableCheckbox?.isClickable = customizableMarker?.getClickable() ?: true
+        isDraggableCheckbox?.isChecked = customizableMarker?.getDraggable() ?: false
         hasSnippetCheckbox?.isChecked = customizableMarker?.getSnippet() != null
         anchorUSeekbar?.setProgress(50)
         anchorVSeekbar?.setProgress(50)
@@ -249,6 +251,12 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
         isFlatCheckbox = view.findViewById(R.id.checkBox_isFlat)
         isFlatCheckbox?.setOnCheckedChangeListener { _, isChecked ->
             customizableMarker?.setIsFlat(isChecked)
+        }
+
+        // isClickable
+        isClickableCheckbox = view.findViewById(R.id.checkBox_isClickable)
+        isClickableCheckbox?.setOnCheckedChangeListener { _, isChecked ->
+            customizableMarker?.setClickable(isChecked)
         }
 
         // isDraggable

@@ -30,8 +30,10 @@ import org.osmdroid.views.overlay.Marker
 internal class OmhMarkerImpl(
     private val marker: Marker,
     private val mapView: MapView,
+    private var clickable: Boolean = true,
     private val logger: UnsupportedFeatureLogger = markerLogger
 ) : OmhMarker {
+
     override fun getPosition(): OmhCoordinate {
         return marker.position.toOmhCoordinate()
     }
@@ -56,12 +58,20 @@ internal class OmhMarkerImpl(
         }
     }
 
+    override fun getClickable(): Boolean {
+        return clickable
+    }
+
+    override fun setClickable(clickable: Boolean) {
+        this.clickable = clickable
+    }
+
     override fun getDraggable(): Boolean {
-        return marker.draggable
+        return marker.isDraggable
     }
 
     override fun setDraggable(draggable: Boolean) {
-        marker.draggable = draggable
+        marker.isDraggable = draggable
         mapView.postInvalidate()
     }
 

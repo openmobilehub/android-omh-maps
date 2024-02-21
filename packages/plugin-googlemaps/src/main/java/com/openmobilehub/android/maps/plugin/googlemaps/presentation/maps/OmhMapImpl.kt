@@ -61,11 +61,19 @@ internal class OmhMapImpl(
     override val providerName: String
         get() = Constants.PROVIDER_NAME
 
+    private val markers = mutableMapOf<Marker, OmhMarker>()
+
     override fun addMarker(options: OmhMarkerOptions): OmhMarker? {
         val googleOptions = options.toMarkerOptions()
         val marker: Marker? = googleMap.addMarker(googleOptions)
+        val initiallyClickable = options.clickable
 
-        return marker?.let { OmhMarkerImpl(marker) }
+        return marker?.let {
+            val omhMarker = OmhMarkerImpl(marker, initiallyClickable)
+            markers[marker] = omhMarker
+
+            return@let omhMarker
+        }
     }
 
     override fun addPolyline(options: OmhPolylineOptions): OmhPolyline {
@@ -131,23 +139,35 @@ internal class OmhMapImpl(
     }
 
     override fun setOnMarkerClickListener(listener: OmhOnMarkerClickListener) {
-        this.googleMap.setOnMarkerClickListener { marker ->
-            listener.onMarkerClick(OmhMarkerImpl(marker))
+        this.googleMap.setOnMarkerClickListener ClickHandler@{ marker ->
+            val omhMarker = markers[marker]
+
+            if (omhMarker != null && omhMarker.getClickable()) {
+                return@ClickHandler listener.onMarkerClick(omhMarker)
+            }
+
+            true
         }
     }
 
     override fun setOnMarkerDragListener(listener: OmhOnMarkerDragListener) {
         this.googleMap.setOnMarkerDragListener(object : GoogleMap.OnMarkerDragListener {
             override fun onMarkerDrag(marker: Marker) {
-                listener.onMarkerDrag(OmhMarkerImpl(marker))
+                markers[marker]?.let { omhMarker ->
+                    listener.onMarkerDrag(omhMarker)
+                }
             }
 
             override fun onMarkerDragEnd(marker: Marker) {
-                listener.onMarkerDragEnd(OmhMarkerImpl(marker))
+                markers[marker]?.let { omhMarker ->
+                    listener.onMarkerDragEnd(omhMarker)
+                }
             }
 
             override fun onMarkerDragStart(marker: Marker) {
-                listener.onMarkerDragStart(OmhMarkerImpl(marker))
+                markers[marker]?.let { omhMarker ->
+                    listener.onMarkerDragStart(omhMarker)
+                }
             }
         })
     }

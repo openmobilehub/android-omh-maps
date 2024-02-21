@@ -54,6 +54,21 @@ interface OmhMarker {
     fun setTitle(title: String?)
 
     /**
+     * Checks whether the marker is clickable.
+     * Default: `true`.
+     *
+     * @return a boolean indicating whether the marker is clickable.
+     */
+    fun getClickable(): Boolean
+
+    /**
+     * Sets whether the marker is clickable.
+     *
+     * @param clickable sets whether the marker is clickable.
+     */
+    fun setClickable(clickable: Boolean)
+
+    /**
      * Checks whether the marker is draggable.
      * Default: `false`.
      *

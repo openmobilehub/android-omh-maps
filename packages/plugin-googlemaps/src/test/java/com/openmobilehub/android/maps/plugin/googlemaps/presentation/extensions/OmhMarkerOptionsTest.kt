@@ -83,7 +83,7 @@ internal class OmhMarkerOptionsTest {
 
         assertEquals(omhMarkerOptionsWithIcon.title, markerOptions.title)
 
-        assertEquals(omhMarkerOptionsWithIcon.draggable, markerOptions.draggable)
+        assertEquals(omhMarkerOptionsWithIcon.draggable, markerOptions.isDraggable)
 
         assertEquals(omhMarkerOptionsWithIcon.anchor.first, markerOptions.anchorU)
         assertEquals(omhMarkerOptionsWithIcon.anchor.second, markerOptions.anchorV)
@@ -121,7 +121,7 @@ internal class OmhMarkerOptionsTest {
 
         assertEquals(omhMarkerOptionsWithBackgroundColor.title, markerOptions.title)
 
-        assertEquals(omhMarkerOptionsWithBackgroundColor.draggable, markerOptions.draggable)
+        assertEquals(omhMarkerOptionsWithBackgroundColor.draggable, markerOptions.isDraggable)
 
         assertEquals(omhMarkerOptionsWithBackgroundColor.anchor.first, markerOptions.anchorU)
         assertEquals(omhMarkerOptionsWithBackgroundColor.anchor.second, markerOptions.anchorV)
