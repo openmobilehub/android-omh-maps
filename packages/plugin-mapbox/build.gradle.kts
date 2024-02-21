@@ -22,13 +22,9 @@ dependencies {
     // Android
     implementation(Libs.androidAppCompat)
     implementation(Libs.material)
-    implementation(Libs.preference)
-
-    // Open Street Map
-    implementation(Libs.osmdroid)
 
     // Mapbox
-    api(Libs.mapbox)
+    implementation(Libs.mapbox)
 
     // Test dependencies
     testImplementation(Libs.junit)

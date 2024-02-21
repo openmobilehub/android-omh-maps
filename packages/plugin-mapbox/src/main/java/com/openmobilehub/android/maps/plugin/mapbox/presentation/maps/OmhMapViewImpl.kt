@@ -19,16 +19,9 @@ package com.openmobilehub.android.maps.plugin.mapbox.presentation.maps
 import android.content.Context
 import android.os.Bundle
 import android.view.View
-import androidx.preference.PreferenceManager
+import com.mapbox.maps.MapView
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMapView
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMapReadyCallback
-import com.openmobilehub.android.maps.plugin.mapbox.utils.Constants.MAX_ZOOM_LEVEL
-import com.openmobilehub.android.maps.plugin.mapbox.utils.Constants.MIN_ZOOM_LEVEL
-import com.openmobilehub.android.maps.plugin.mapbox.utils.MapListenerController
-import org.osmdroid.config.Configuration
-import org.osmdroid.tileprovider.tilesource.TileSourceFactory
-import org.osmdroid.util.BoundingBox
-import org.osmdroid.views.MapView
 
 @Suppress("TooManyFunctions") // Suppress issue since interface has more than 12 functions.
 internal class OmhMapViewImpl(context: Context) : OmhMapView {
@@ -36,71 +29,58 @@ internal class OmhMapViewImpl(context: Context) : OmhMapView {
     private var mapView: MapView
 
     init {
-        Configuration.getInstance()
-            .load(context, PreferenceManager.getDefaultSharedPreferences(context))
-        mapView = MapView(context).apply {
-            minZoomLevel = MIN_ZOOM_LEVEL
-            maxZoomLevel = MAX_ZOOM_LEVEL
-            isHorizontalMapRepetitionEnabled = false
-            isVerticalMapRepetitionEnabled = false
-            limitScrollArea()
-            postInvalidate()
-        }
+        mapView = MapView(context)
     }
 
-    private fun MapView.limitScrollArea() {
-        val tileSystem = MapView.getTileSystem()
-        setScrollableAreaLimitDouble(
-            BoundingBox(
-                tileSystem.maxLatitude,
-                tileSystem.maxLongitude,
-                tileSystem.minLatitude,
-                tileSystem.minLongitude
-            )
-        )
-    }
-
-    override fun getView(): View? {
+    override fun getView(): View {
         return mapView
     }
 
     override fun getMapAsync(omhOnMapReadyCallback: OmhOnMapReadyCallback) {
         mapView.let { secureMapView ->
-            val omhMapView = OmhMapImpl(secureMapView, MapListenerController())
+            val omhMapView = OmhMapImpl(secureMapView)
             omhOnMapReadyCallback.onMapReady(omhMapView)
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        mapView.setTileSource(TileSourceFactory.MAPNIK)
+        // It's not required to call this method for mapbox
+        // https://docs.mapbox.com/android/maps/guides/migrate-to-v10/#simplified-lifecycle-management
     }
 
     override fun onDestroy() {
-        // osmdroid doesn't implement this method
+        // It's not required to call this method for mapbox
+        // https://docs.mapbox.com/android/maps/guides/migrate-to-v10/#simplified-lifecycle-management
     }
 
     override fun onLowMemory() {
-        // osmdroid doesn't implement this method
+        // It's not required to call this method for mapbox
+        // https://docs.mapbox.com/android/maps/guides/migrate-to-v10/#simplified-lifecycle-management
     }
 
     override fun onPause() {
-        mapView.onPause()
+        // It's not required to call this method for mapbox
+        // https://docs.mapbox.com/android/maps/guides/migrate-to-v10/#simplified-lifecycle-management
     }
 
     override fun onResume() {
-        mapView.onResume()
+        // It's not required to call this method for mapbox
+        // https://docs.mapbox.com/android/maps/guides/migrate-to-v10/#simplified-lifecycle-management
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        // osmdroid doesn't implement this method
+        // It's not required to call this method for mapbox
+        // https://docs.mapbox.com/android/maps/guides/migrate-to-v10/#simplified-lifecycle-management
     }
 
     override fun onStart() {
-        // osmdroid doesn't implement this method
+        // It's not required to call this method for mapbox
+        // https://docs.mapbox.com/android/maps/guides/migrate-to-v10/#simplified-lifecycle-management
     }
 
     override fun onStop() {
-        // osmdroid doesn't implement this method
+        // It's not required to call this method for mapbox
+        // https://docs.mapbox.com/android/maps/guides/migrate-to-v10/#simplified-lifecycle-management
     }
 
     internal class Builder : OmhMapView.Builder {

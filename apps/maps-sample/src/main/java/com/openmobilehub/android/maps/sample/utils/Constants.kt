@@ -50,4 +50,12 @@ object Constants {
 
     // Loading
     const val SHOW_MESSAGE_TIME = 5000L
+
+    // Paths
+    const val GOOGLE_MAPS_PATH =
+        "com.openmobilehub.android.maps.plugin.googlemaps.presentation.OmhMapFactoryImpl"
+    const val OPEN_STREET_MAP_PATH =
+        "com.openmobilehub.android.maps.plugin.openstreetmap.presentation.OmhMapFactoryImpl"
+    const val MAPBOX_PATH = "com.openmobilehub.android.maps.plugin.mapbox.presentation.OmhMapFactoryImpl"
+
 }

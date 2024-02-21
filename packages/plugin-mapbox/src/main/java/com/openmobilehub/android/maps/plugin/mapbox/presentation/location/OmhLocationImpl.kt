@@ -19,33 +19,18 @@ package com.openmobilehub.android.maps.plugin.mapbox.presentation.location
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.content.Context
-import android.location.Location
 import androidx.annotation.RequiresPermission
 import com.openmobilehub.android.maps.core.presentation.interfaces.location.OmhFailureListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.location.OmhLocation
 import com.openmobilehub.android.maps.core.presentation.interfaces.location.OmhSuccessListener
-import com.openmobilehub.android.maps.core.presentation.models.OmhMapException
-import com.openmobilehub.android.maps.core.presentation.models.OmhMapStatusCodes.NULL_LOCATION
-import com.openmobilehub.android.maps.core.presentation.models.OmhMapStatusCodes.getStatusCodeString
-import com.openmobilehub.android.maps.plugin.mapbox.extensions.toOmhCoordinate
-import com.openmobilehub.android.maps.plugin.mapbox.utils.LocationProviderClient
 
 internal class OmhLocationImpl(context: Context) : OmhLocation {
-    private val locationProviderClient = LocationProviderClient(context)
-
     @RequiresPermission(anyOf = [ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION])
     override fun getCurrentLocation(
         omhOnSuccessListener: OmhSuccessListener,
         omhOnFailureListener: OmhFailureListener
     ) {
-        locationProviderClient.getCurrentLocation(
-            onSuccess = { location: Location? ->
-                handleOnSuccess(location, omhOnFailureListener, omhOnSuccessListener)
-            },
-            onFailure = { exception: Exception ->
-                omhOnFailureListener.onFailure(exception)
-            }
-        )
+        // To be implemented
     }
 
     @RequiresPermission(anyOf = [ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION])
@@ -53,30 +38,7 @@ internal class OmhLocationImpl(context: Context) : OmhLocation {
         omhOnSuccessListener: OmhSuccessListener,
         omhOnFailureListener: OmhFailureListener
     ) {
-        locationProviderClient.getLastLocation(
-            onSuccess = { location: Location? ->
-                handleOnSuccess(location, omhOnFailureListener, omhOnSuccessListener)
-            },
-            onFailure = { exception: Exception ->
-                omhOnFailureListener.onFailure(exception)
-            }
-        )
-    }
-
-    private fun handleOnSuccess(
-        location: Location?,
-        omhOnFailureListener: OmhFailureListener,
-        omhOnSuccessListener: OmhSuccessListener
-    ) {
-        if (location == null) {
-            omhOnFailureListener.onFailure(
-                exception = OmhMapException.NullLocation(
-                    cause = IllegalStateException(getStatusCodeString(NULL_LOCATION))
-                )
-            )
-        } else {
-            omhOnSuccessListener.onSuccess(location.toOmhCoordinate())
-        }
+        // To be implemented
     }
 
     internal class Builder : OmhLocation.Builder {

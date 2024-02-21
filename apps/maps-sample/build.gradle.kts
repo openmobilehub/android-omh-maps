@@ -8,51 +8,7 @@ plugins {
     `android-application`
     id("org.jetbrains.kotlin.android")
     id("androidx.navigation.safeargs.kotlin") version "2.5.3" apply true
-    id("com.openmobilehub.android.omh-core")
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
-}
-
-var googlemapsDependency = "com.openmobilehub.android.maps:plugin-googlemaps:2.0.0-beta"
-var openstreetmapDependency = "com.openmobilehub.android.maps:plugin-openstreetmap:2.0.0-beta"
-var mapboxDependency = "com.openmobilehub.android.maps:plugin-mapbox:2.0.0-beta"
-
-var googlemapsPath =
-    "com.openmobilehub.android.maps.plugin.googlemaps.presentation.OmhMapFactoryImpl"
-var openstreetmapPath =
-    "com.openmobilehub.android.maps.plugin.openstreetmap.presentation.OmhMapFactoryImpl"
-var mapboxPath = "com.openmobilehub.android.maps.plugin.mapbox.presentation.OmhMapFactoryImpl"
-
-omhConfig {
-    enableLocalProjects = useLocalProjects
-    
-    bundle("singleBuild") {
-        maps {
-            gmsService {
-                if (!useLocalProjects) dependency = googlemapsDependency
-                path = googlemapsPath
-            }
-            nonGmsService {
-                if (!useLocalProjects) dependency = openstreetmapDependency
-                path = openstreetmapPath
-            }
-        }
-    }
-    bundle("gms") {
-        maps {
-            gmsService {
-                if (!useLocalProjects) dependency = googlemapsDependency
-                path = googlemapsPath
-            }
-        }
-    }
-    bundle("nongms") {
-        maps {
-            nonGmsService {
-                if (!useLocalProjects) dependency = openstreetmapDependency
-                path = openstreetmapPath
-            }
-        }
-    }
 }
 
 android {
@@ -63,7 +19,7 @@ android {
         versionName = "1.0"
         resValue(
             "string",
-            "mapbox_access_token",
+            "mapbox_access_token_value",
             (getValueFromEnvOrProperties("MAPBOX_PUBLIC_SECRET", rootDir) as String? ?: "")
         )
     }
@@ -122,6 +78,7 @@ dependencies {
     implementation(Libs.androidAppCompat)
     implementation(Libs.material)
     implementation(Libs.reflection)
+    implementation(Libs.googlePlayBase)
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("androidx.navigation:navigation-fragment-ktx:2.5.3")
     implementation("androidx.navigation:navigation-ui-ktx:2.5.3")
@@ -136,6 +93,10 @@ dependencies {
         implementation(project(":packages:plugin-googlemaps"))
         implementation(project(":packages:plugin-openstreetmap"))
         implementation(project(":packages:plugin-mapbox"))
+    } else {
+        implementation("com.openmobilehub.android.maps:plugin-googlemaps:2.0.0-beta")
+        implementation("com.openmobilehub.android.maps:plugin-openstreetmap:2.0.0-beta")
+        implementation("com.openmobilehub.android.maps:plugin-mapbox:1.0.0-beta")
     }
 }
 
