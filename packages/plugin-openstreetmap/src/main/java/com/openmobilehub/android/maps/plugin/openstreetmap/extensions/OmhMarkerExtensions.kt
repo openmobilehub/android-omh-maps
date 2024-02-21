@@ -14,7 +14,7 @@ internal fun OmhMarkerOptions.toMarkerOptions(
 
     marker.position = position.toGeoPoint()
     marker.title = title
-    marker.isDraggable = isDraggable
+    marker.isDraggable = draggable
 
     marker.setAnchor(anchor.first, anchor.second)
     marker.alpha = alpha

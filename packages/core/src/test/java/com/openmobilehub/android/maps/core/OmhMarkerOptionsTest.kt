@@ -100,7 +100,7 @@ internal class OmhMarkerOptionsTest {
 
     @Test
     fun `when initializing OmhMarkerOptions, all default constructor arguments are applied as expected`() {
-        assertEquals(omhMarkerOptions.isDraggable, false)
+        assertEquals(omhMarkerOptions.draggable, false)
         assertEquals(omhMarkerOptions.anchor, Pair(DEFAULT_ANCHOR, DEFAULT_ANCHOR))
         assertEquals(omhMarkerOptions.alpha, DEFAULT_ALPHA)
         assertEquals(omhMarkerOptions.snippet, null)

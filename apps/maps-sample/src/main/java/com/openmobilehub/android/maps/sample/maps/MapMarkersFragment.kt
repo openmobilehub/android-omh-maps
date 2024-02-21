@@ -135,7 +135,7 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
                 longitude = PRIME_MERIDIAN.longitude - 0.0008
             }
             backgroundColor = 0x00FF12 // green-ish
-            isDraggable = true
+            draggable = true
         })
 
         customizableMarker = omhMap.addMarker(OmhMarkerOptions().apply {
@@ -144,7 +144,7 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
                 latitude = PRIME_MERIDIAN.latitude
                 longitude = PRIME_MERIDIAN.longitude + 0.0008
             }
-            isDraggable = true
+            draggable = true
         })
 
         omhMap.setOnMarkerClickListener(OmhOnMarkerClickListener { marker ->
@@ -205,7 +205,7 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
 
         isVisibleCheckbox?.isChecked = customizableMarker?.getIsVisible() ?: true
         isFlatCheckbox?.isChecked = customizableMarker?.getIsFlat() ?: false
-        isDraggableCheckbox?.isChecked = customizableMarker?.getIsDraggable() ?: true
+        isDraggableCheckbox?.isChecked = customizableMarker?.getDraggable() ?: true
         hasSnippetCheckbox?.isChecked = customizableMarker?.getSnippet() != null
         anchorUSeekbar?.setProgress(50)
         anchorVSeekbar?.setProgress(50)
@@ -254,7 +254,7 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
         // isDraggable
         isDraggableCheckbox = view.findViewById(R.id.checkBox_isDraggable)
         isDraggableCheckbox?.setOnCheckedChangeListener { _, isChecked ->
-            customizableMarker?.setIsDraggable(isChecked)
+            customizableMarker?.setDraggable(isChecked)
         }
 
         // hasSnippet

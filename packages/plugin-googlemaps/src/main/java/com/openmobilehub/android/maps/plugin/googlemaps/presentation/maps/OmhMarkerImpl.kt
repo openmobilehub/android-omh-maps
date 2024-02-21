@@ -52,12 +52,12 @@ internal class OmhMarkerImpl(
         }
     }
 
-    override fun getIsDraggable(): Boolean {
-        return marker.isDraggable
+    override fun getDraggable(): Boolean {
+        return marker.draggable
     }
 
-    override fun setIsDraggable(isDraggable: Boolean) {
-        marker.isDraggable = isDraggable
+    override fun setDraggable(draggable: Boolean) {
+        marker.draggable = draggable
     }
 
     override fun setAnchor(anchorU: Float, anchorV: Float) {

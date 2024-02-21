@@ -59,14 +59,14 @@ interface OmhMarker {
      *
      * @return a boolean indicating whether the marker is draggable.
      */
-    fun getIsDraggable(): Boolean
+    fun getDraggable(): Boolean
 
     /**
      * Sets whether the marker is draggable.
      *
-     * @param isDraggable sets whether the marker is draggable.
+     * @param draggable sets whether the marker is draggable.
      */
-    fun setIsDraggable(isDraggable: Boolean)
+    fun setDraggable(draggable: Boolean)
 
     /**
      * Sets the anchor point of marker image.

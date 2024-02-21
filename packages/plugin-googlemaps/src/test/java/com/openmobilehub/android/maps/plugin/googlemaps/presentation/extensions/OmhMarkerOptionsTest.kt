@@ -34,7 +34,7 @@ internal class OmhMarkerOptionsTest {
     private val omhMarkerOptionsWithIcon = OmhMarkerOptions().apply {
         position = omhCoordinate
         title = "Marker Title 1"
-        isDraggable = true
+        draggable = true
         anchor = Pair(0.5f, 0.5f)
         alpha = 0.5f
         snippet = "Marker Snippet 1"
@@ -47,7 +47,7 @@ internal class OmhMarkerOptionsTest {
     private val omhMarkerOptionsWithBackgroundColor = OmhMarkerOptions().apply {
         position = omhCoordinate
         title = "Marker Title 2"
-        isDraggable = false
+        draggable = false
         anchor = Pair(0.2f, 0.73f)
         alpha = 0.98f
         snippet = "Marker Snippet 2"
@@ -83,7 +83,7 @@ internal class OmhMarkerOptionsTest {
 
         assertEquals(omhMarkerOptionsWithIcon.title, markerOptions.title)
 
-        assertEquals(omhMarkerOptionsWithIcon.isDraggable, markerOptions.isDraggable)
+        assertEquals(omhMarkerOptionsWithIcon.draggable, markerOptions.draggable)
 
         assertEquals(omhMarkerOptionsWithIcon.anchor.first, markerOptions.anchorU)
         assertEquals(omhMarkerOptionsWithIcon.anchor.second, markerOptions.anchorV)
@@ -121,7 +121,7 @@ internal class OmhMarkerOptionsTest {
 
         assertEquals(omhMarkerOptionsWithBackgroundColor.title, markerOptions.title)
 
-        assertEquals(omhMarkerOptionsWithBackgroundColor.isDraggable, markerOptions.isDraggable)
+        assertEquals(omhMarkerOptionsWithBackgroundColor.draggable, markerOptions.draggable)
 
         assertEquals(omhMarkerOptionsWithBackgroundColor.anchor.first, markerOptions.anchorU)
         assertEquals(omhMarkerOptionsWithBackgroundColor.anchor.second, markerOptions.anchorV)

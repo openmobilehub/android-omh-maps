@@ -27,7 +27,7 @@ internal fun OmhMarkerOptions.toMarkerOptions(logger: UnsupportedFeatureLogger =
     val mappedOptions = MarkerOptions()
         .position(CoordinateConverter.convertToLatLng(position))
         .title(title)
-        .draggable(isDraggable)
+        .draggable(draggable)
 
     anchor.let { mappedOptions.anchor(anchor.first, anchor.second) }
     alpha.let { mappedOptions.alpha(alpha) }

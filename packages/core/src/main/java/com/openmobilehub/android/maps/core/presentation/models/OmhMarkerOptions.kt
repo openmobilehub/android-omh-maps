@@ -34,7 +34,7 @@ const val DEFAULT_ROTATION = 0f
  *
  * @property position The location for the marker.
  * @property title The title for the marker.
- * @property isDraggable Whether the marker is draggable. Default value: `false`
+ * @property draggable Whether the marker is draggable. Default value: `false`
  * @property anchor The anchor for the marker image. Default: `Pair(0.5f, 0.5f)`
  * @property alpha The alpha (transparency) of the marker. Default: `1.0f`
  * @property snippet The text snippet to be shown below marker title.
@@ -50,7 +50,7 @@ const val DEFAULT_ROTATION = 0f
 class OmhMarkerOptions(
     var position: OmhCoordinate = OmhCoordinate(),
     var title: String? = null,
-    var isDraggable: Boolean = false,
+    var draggable: Boolean = false,
     var anchor: Pair<Float, Float> = Pair(DEFAULT_ANCHOR, DEFAULT_ANCHOR),
     var alpha: Float = DEFAULT_ALPHA,
     var snippet: String? = null,
