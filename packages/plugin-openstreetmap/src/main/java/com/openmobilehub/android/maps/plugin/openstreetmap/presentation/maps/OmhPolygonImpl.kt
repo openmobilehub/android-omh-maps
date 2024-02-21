@@ -19,7 +19,7 @@ package com.openmobilehub.android.maps.plugin.openstreetmap.presentation.maps
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhPatternItem
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhPolygon
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
-import com.openmobilehub.android.maps.core.utils.UnsupportedFeatureLogger
+import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
 import com.openmobilehub.android.maps.plugin.openstreetmap.utils.ConverterUtils
 import com.openmobilehub.android.maps.plugin.openstreetmap.utils.polylineLogger
 import org.osmdroid.views.MapView
