@@ -71,4 +71,5 @@
     <string name="retro">Retro</string>
     <string name="silver">Silver</string>
     <string name="map_style_radio_group_title">Select a map style:</string>
+    <string name="provider">Provider</string>
 </resources>

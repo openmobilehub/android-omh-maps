@@ -1,0 +1,12 @@
+name: Publish Mapbox Plugin
+
+on:
+  workflow_dispatch:
+
+jobs:
+  publish:
+    name: Publish Mapbox Plugin
+    uses: ./.github/workflows/build_and_publish_to_maven_remotely.yml
+    with:
+      package-name: :packages:plugin-mapbox
+    secrets: inherit
