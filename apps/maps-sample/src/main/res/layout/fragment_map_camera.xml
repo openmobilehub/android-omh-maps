@@ -35,6 +35,33 @@
             android:orientation="vertical"
             android:padding="16dp">
 
+            <CheckBox
+                android:id="@+id/checkBox_zoomGesturesEnabled"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="@string/zoom_gestures" />
+
+            <Button
+                android:id="@+id/button_showCameraPositionCoordinate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/show_camera_position_coordinate" />
+
+            <Button
+                android:id="@+id/button_moveMapToEverest"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/move_map_to_everest" />
+
+            <Button
+                android:id="@+id/button_moveMapSahara"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/move_map_to_sahara" />
+
+
+
         </LinearLayout>
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

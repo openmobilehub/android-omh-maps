@@ -59,4 +59,8 @@
     <string name="silver">Silver</string>
     <string name="map_style_radio_group_title">Select a map style:</string>
     <string name="provider">Provider</string>
+    <string name="zoom_gestures">Zoom Gestures</string>
+    <string name="show_camera_position_coordinate">Show Camera Position Coordinate</string>
+    <string name="move_map_to_everest">Move Map to Everest</string>
+    <string name="move_map_to_sahara">Move Map to Sahara</string>
 </resources>

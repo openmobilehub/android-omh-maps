@@ -19,11 +19,10 @@ package com.openmobilehub.android.maps.plugin.mapbox.presentation.maps
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import androidx.annotation.RequiresPermission
-import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraOptions
-import com.mapbox.maps.EdgeInsets
 import com.mapbox.maps.MapView
 import com.mapbox.maps.plugin.animation.camera
+import com.mapbox.maps.plugin.gestures.gestures
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMap
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMapLoadedCallback
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMarker
@@ -40,6 +39,7 @@ import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolygonOptions
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolylineOptions
 import com.openmobilehub.android.maps.plugin.mapbox.utils.Constants
+import com.openmobilehub.android.maps.plugin.mapbox.utils.CoordinateConverter
 
 @SuppressWarnings("TooManyFunctions")
 internal class OmhMapImpl(
@@ -66,16 +66,25 @@ internal class OmhMapImpl(
 
     override fun getCameraPositionCoordinate(): OmhCoordinate {
         // To be implemented
-        mapView.mapboxMap.cameraState
-        return OmhCoordinate(0.0, 0.0)
+        mapView.mapboxMap.cameraState.center.let {
+            return CoordinateConverter.convertToOmhCoordinate(it)
+        }
     }
 
     override fun moveCamera(coordinate: OmhCoordinate, zoomLevel: Float) {
-        // To be implemented
+        val cameraPosition = CameraOptions.Builder()
+            .zoom(zoomLevel.toDouble())
+            .center(CoordinateConverter.convertToPoint(coordinate))
+            .build()
+
+        mapView.mapboxMap.setCamera(cameraPosition)
     }
 
     override fun setZoomGesturesEnabled(enableZoomGestures: Boolean) {
-        // To be implemented
+        mapView.gestures.apply {
+            pinchToZoomEnabled = enableZoomGestures
+            doubleTapToZoomInEnabled = enableZoomGestures
+        }
     }
 
     override fun snapshot(omhSnapshotReadyCallback: OmhSnapshotReadyCallback) {
@@ -103,7 +112,6 @@ internal class OmhMapImpl(
     }
 
     override fun setOnMapLoadedCallback(callback: OmhMapLoadedCallback?) {
-        // To be implemented
         mapView.mapboxMap.subscribeMapLoaded {
             callback?.onMapLoaded()
         }
