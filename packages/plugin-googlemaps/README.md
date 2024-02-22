@@ -1,4 +1,4 @@
-# Google Maps Plugin
+# Module plugin-googlemaps
 
 ## Overview
 
@@ -112,6 +112,12 @@ Legend of support levels:
 | rotation        |      ✅       |
 | backgroundColor |      🟨       |
 | clickable       |      ✅       |
+
+Comments for partially supported 🟨 properties:
+
+| Property        | Comments                                                                                         |
+| --------------- | ------------------------------------------------------------------------------------------------ |
+| backgroundColor | hue (H) component of HSV color representation is controllable <br/> alpha channel is unsupported |
 
 #### OmhMarker
 
