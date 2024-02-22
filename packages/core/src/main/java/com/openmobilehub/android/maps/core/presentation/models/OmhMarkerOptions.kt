@@ -22,9 +22,11 @@ import androidx.annotation.Keep
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 
-const val DEFAULT_ANCHOR = 0.5f
-const val DEFAULT_ALPHA = 1.0f
-const val DEFAULT_ROTATION = 0f
+object Constants {
+    const val DEFAULT_ANCHOR = 0.5f
+    const val DEFAULT_ALPHA = 1.0f
+    const val DEFAULT_ROTATION = 0f
+}
 
 /**
  * Defines [OmhMarkerOptions] for a marker.
@@ -51,12 +53,12 @@ class OmhMarkerOptions(
     var position: OmhCoordinate = OmhCoordinate(),
     var title: String? = null,
     var draggable: Boolean = false,
-    var anchor: Pair<Float, Float> = Pair(DEFAULT_ANCHOR, DEFAULT_ANCHOR),
-    var alpha: Float = DEFAULT_ALPHA,
+    var anchor: Pair<Float, Float> = Pair(Constants.DEFAULT_ANCHOR, Constants.DEFAULT_ANCHOR),
+    var alpha: Float = Constants.DEFAULT_ALPHA,
     var snippet: String? = null,
     var isVisible: Boolean = true,
     var isFlat: Boolean = false,
-    var rotation: Float = DEFAULT_ROTATION,
+    var rotation: Float = Constants.DEFAULT_ROTATION,
     var backgroundColor: Int? = null,
     var clickable: Boolean = true
 ) : Parcelable {

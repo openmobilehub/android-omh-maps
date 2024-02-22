@@ -18,9 +18,9 @@ package com.openmobilehub.android.maps.plugin.googlemaps.presentation.extensions
 
 import android.graphics.drawable.Drawable
 import com.google.android.gms.maps.model.BitmapDescriptor
-import com.openmobilehub.android.maps.core.presentation.models.DEFAULT_ALPHA
-import com.openmobilehub.android.maps.core.presentation.models.DEFAULT_ANCHOR
-import com.openmobilehub.android.maps.core.presentation.models.DEFAULT_ROTATION
+import com.openmobilehub.android.maps.core.presentation.models.Constants.DEFAULT_ALPHA
+import com.openmobilehub.android.maps.core.presentation.models.Constants.DEFAULT_ANCHOR
+import com.openmobilehub.android.maps.core.presentation.models.Constants.DEFAULT_ROTATION
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
 import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger

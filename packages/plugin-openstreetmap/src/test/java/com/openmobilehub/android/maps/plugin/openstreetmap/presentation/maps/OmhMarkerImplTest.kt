@@ -41,7 +41,7 @@ class OmhMarkerImplTest {
     @Test
     fun `backgroundColor should log setter not supported`() {
         // Act
-        val actual = omhMarker.setBackgroundColor(255)
+        omhMarker.setBackgroundColor(255)
 
         // Assert
         verify { mockLogger.logSetterNotSupported("backgroundColor") }

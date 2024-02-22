@@ -52,7 +52,7 @@ class OmhMarkerImplTest {
         val color = 255
 
         // Act
-        val actual = omhMarker.setBackgroundColor(color)
+        omhMarker.setBackgroundColor(color)
 
         // Assert
         verify { mockLogger.logFeatureSetterPartiallySupported("backgroundColor", any()) }

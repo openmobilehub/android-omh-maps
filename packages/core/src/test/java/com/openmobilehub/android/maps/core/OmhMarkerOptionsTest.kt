@@ -20,9 +20,9 @@ import com.openmobilehub.android.maps.core.Constants.ANOTHER_MARKER_TITLE
 import com.openmobilehub.android.maps.core.Constants.LATITUDE
 import com.openmobilehub.android.maps.core.Constants.LONGITUDE
 import com.openmobilehub.android.maps.core.Constants.MARKER_TITLE
-import com.openmobilehub.android.maps.core.presentation.models.DEFAULT_ALPHA
-import com.openmobilehub.android.maps.core.presentation.models.DEFAULT_ANCHOR
-import com.openmobilehub.android.maps.core.presentation.models.DEFAULT_ROTATION
+import com.openmobilehub.android.maps.core.presentation.models.Constants.DEFAULT_ALPHA
+import com.openmobilehub.android.maps.core.presentation.models.Constants.DEFAULT_ANCHOR
+import com.openmobilehub.android.maps.core.presentation.models.Constants.DEFAULT_ROTATION
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
 import org.junit.Assert.assertEquals
