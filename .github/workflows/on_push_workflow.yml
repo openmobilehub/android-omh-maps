@@ -13,8 +13,7 @@ jobs:
     uses: ./.github/workflows/build_and_publish_to_maven_local.yml
     with:
       output-cache-prefix: mavenLocal-core
-      release-build-command: ':packages:core:assembleRelease'
-      publish-to-maven-local-command: ':packages:core:publishToMavenLocal'
+      gradle-command: 'publishCoreToMavenLocal'
     secrets: inherit
     
   # Build and publish all plugins to MavenLocal
@@ -24,8 +23,7 @@ jobs:
     with:
       input-cache-prefix: mavenLocal-core
       output-cache-prefix: mavenLocal-core-and-plugins
-      release-build-command: 'assembleRelease'
-      publish-to-maven-local-command: 'publishToMavenLocal'
+      gradle-command: 'publishPluginsToMavenLocal'
     secrets: inherit
 
   # Build and publish Sample App
