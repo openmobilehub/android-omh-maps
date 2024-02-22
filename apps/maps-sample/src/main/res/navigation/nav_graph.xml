@@ -45,6 +45,12 @@
         tools:layout="@layout/fragment_map_styles" />
 
     <fragment
+        android:id="@+id/mapCameraFragment"
+        android:name="com.openmobilehub.android.maps.sample.maps.MapCameraFragment"
+        android:label="@string/map_camera_fragment_text"
+        tools:layout="@layout/fragment_map_camera" />
+
+    <fragment
         android:id="@+id/mapFragment"
         android:name="com.openmobilehub.android.maps.sample.maps.MapFragment"
         android:label="@string/map_fragment_text"
@@ -78,6 +84,9 @@
         <action
             android:id="@+id/action_menuFragment_to_mapStylesFragment"
             app:destination="@id/mapStylesFragment" />
+        <action
+            android:id="@+id/action_menuFragment_to_mapCameraFragment"
+            app:destination="@id/mapCameraFragment" />
     </fragment>
 
 </navigation>

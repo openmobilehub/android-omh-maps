@@ -19,7 +19,11 @@ package com.openmobilehub.android.maps.plugin.mapbox.presentation.maps
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import androidx.annotation.RequiresPermission
+import com.mapbox.geojson.Point
+import com.mapbox.maps.CameraOptions
+import com.mapbox.maps.EdgeInsets
 import com.mapbox.maps.MapView
+import com.mapbox.maps.plugin.animation.camera
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMap
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMapLoadedCallback
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMarker
@@ -62,6 +66,7 @@ internal class OmhMapImpl(
 
     override fun getCameraPositionCoordinate(): OmhCoordinate {
         // To be implemented
+        mapView.mapboxMap.cameraState
         return OmhCoordinate(0.0, 0.0)
     }
 
@@ -99,6 +104,9 @@ internal class OmhMapImpl(
 
     override fun setOnMapLoadedCallback(callback: OmhMapLoadedCallback?) {
         // To be implemented
+        mapView.mapboxMap.subscribeMapLoaded {
+            callback?.onMapLoaded()
+        }
     }
 
     override fun setOnPolylineClickListener(listener: OmhOnPolylineClickListener) {

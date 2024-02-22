@@ -19,6 +19,10 @@ package com.openmobilehub.android.maps.plugin.mapbox.presentation.maps
 import android.content.Context
 import android.os.Bundle
 import android.view.View
+import com.mapbox.geojson.Point
+import com.mapbox.maps.CameraOptions
+import com.mapbox.maps.EdgeInsets
+import com.mapbox.maps.MapInitOptions
 import com.mapbox.maps.MapView
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMapView
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMapReadyCallback
@@ -29,7 +33,21 @@ internal class OmhMapViewImpl(context: Context) : OmhMapView {
     private var mapView: MapView
 
     init {
-        mapView = MapView(context)
+        val defaultCameraOptions = CameraOptions.Builder()
+            .center(
+                Point.fromLngLat(
+                    0.0,0.0
+                )
+            )
+            .zoom(2.0)
+            .build()
+
+        val mapInitOptions = MapInitOptions(
+            context = context,
+            cameraOptions = defaultCameraOptions,
+        )
+
+        mapView = MapView(context, mapInitOptions)
     }
 
     override fun getView(): View {
