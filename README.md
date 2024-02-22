@@ -10,11 +10,11 @@
 [![Publish Maps API Google Maps Implementation](https://github.com/openmobilehub/omh-maps/actions/workflows/publish_maps_api_gms.yml/badge.svg)](https://github.com/openmobilehub/omh-maps/actions/workflows/publish_maps_api_gms.yml)
 [![Publish Maps API OpenStreetMap Implementation](https://github.com/openmobilehub/omh-maps/actions/workflows/publish_maps_api_ngms.yml/badge.svg)](https://github.com/openmobilehub/omh-maps/actions/workflows/publish_maps_api_ngms.yml)
 
-# Omh Maps Client Library
+# OMH Maps Client Library
 
 ## Overview
 
-Omh Maps Client Library is an Android SDK that simplifies the integration of maps on both Google Mobile Services (GMS) and non-GMS devices. It provides a unified interface and components for a consistent map experience, eliminating the need for separate codebases for different Android builds. This repository contains a detailed Getting Started guide to help developers learn and effectively implement the Omh Maps Client Library into their Android projects. For a general overview and understanding of the philosophy behind Omh, please visit the official website at https://www.openmobilehub.com.
+OMH Maps Client Library is an Android SDK that simplifies the integration of maps on both Google Mobile Services (GMS) and non-GMS devices. It provides a unified interface and components for a consistent map experience, eliminating the need for separate codebases for different Android builds. This repository contains a detailed Getting Started guide to help developers learn and effectively implement the OMH Maps Client Library into their Android projects. For a general overview and understanding of the philosophy behind Omh, please visit the official website at https://www.openmobilehub.com.
 
 ### A single codebase, running seamlessly on any device
 
@@ -30,9 +30,9 @@ For instance, the following screenshots showcase multiple devices with Android, 
 
 ## Getting Started
 
-This section describes how to setup an Android Studio project to use the Omh Maps SDK for Android. For greater ease, a base code will be used within the repository.
+This section describes how to setup an Android Studio project to use the OMH Maps SDK for Android. For greater ease, a base code will be used within the repository.
 
-**Note: To quickly run a full-featured app with all Omh Maps functionality, refer to the [`Sample App`](#sample-app) section and follow the provided steps.**
+**Note: To quickly run a full-featured app with all OMH Maps functionality, refer to the [`Sample App`](#sample-app) section and follow the provided steps.**
 
 ### Set up the development environment
 
@@ -152,13 +152,13 @@ Fragment has to declare `android:name` that sets the class name of the fragment 
 
 ## Sample App
 
-This repository includes a [maps-sample](/apps/maps-sample) that demonstrates the functionality of the Omh Maps Client Library. By cloning the repo and executing the app, you can explore the various features offered by the library.
+This repository includes a [maps-sample](/apps/maps-sample) that demonstrates the functionality of the OMH Maps Client Library. By cloning the repo and executing the app, you can explore the various features offered by the library.
 
-However, if you prefer a step-by-step approach to learn the SDK from scratch, we recommend following the detailed Getting Started guide provided in this repository. The guide will walk you through the implementation process and help you integrate the Omh Maps Client Library into your projects effectively.
+However, if you prefer a step-by-step approach to learn the SDK from scratch, we recommend following the detailed Getting Started guide provided in this repository. The guide will walk you through the implementation process and help you integrate the OMH Maps Client Library into your projects effectively.
 
 ## Provider Implementations / Plugins
 
-Omh Maps SDK is open-source, promoting community collaboration and plugin support from other map providers to enhance capabilities and expand supported map services. More details can be found [here](./packages/core/docs/plugins/PLUGINS.md).
+OMH Maps SDK is open-source, promoting community collaboration and plugin support from other map providers to enhance capabilities and expand supported map services. More details can be found [here](./packages/core/docs/plugins/PLUGINS.md).
 
 ## Documentation
 
