@@ -21,9 +21,8 @@ jobs:
         with:
           distribution: adopt
           java-version: 11
-
-      - name: Update local properties for secrets
-        run: echo MAPS_API_KEY= ${{ secrets.GOOGLE_MAPS_API_KEY }} > ./local.properties
+      - name: Setup secrets
+        run: bash ./.github/scripts/setup_secrets.sh "${{ secrets.MAPBOX_SECRET_TOKEN }}" "${{ secrets.GOOGLE_MAPS_API_KEY }}" "${{ secrets.MAPBOX_PUBLIC_TOKEN }}"
 
       - name: Release build
         run: ./gradlew ${{ inputs.package-name }}:assembleRelease

@@ -19,8 +19,8 @@ jobs:
           distribution: 'temurin'
           cache: gradle
 
-      - name: Update local properties for secrets
-        run: echo MAPS_API_KEY= ${{ secrets.GOOGLE_MAPS_API_KEY }} > ./local.properties
+      - name: Setup secrets
+        run: bash ./.github/scripts/setup_secrets.sh "${{ secrets.MAPBOX_SECRET_TOKEN }}" "${{ secrets.GOOGLE_MAPS_API_KEY }}" "${{ secrets.MAPBOX_PUBLIC_TOKEN }}"
       - name: Set useMavenLocal flag
         run: echo useMavenLocal=true >> local.properties
       - name: Publish Core to MavenLocal
@@ -43,8 +43,8 @@ jobs:
           java-version: '11'
           distribution: 'temurin'
           cache: gradle
-      - name: Update local properties for secrets
-        run: echo MAPS_API_KEY= ${{ secrets.GOOGLE_MAPS_API_KEY }} > ./local.properties
+      - name: Setup secrets
+        run: bash ./.github/scripts/setup_secrets.sh "${{ secrets.MAPBOX_SECRET_TOKEN }}" "${{ secrets.GOOGLE_MAPS_API_KEY }}" "${{ secrets.MAPBOX_PUBLIC_TOKEN }}"
       - name: Set useMavenLocal flag
         run: echo useMavenLocal=true >> local.properties
       - name: Publish Core to MavenLocal

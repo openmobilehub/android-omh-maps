@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-package com.openmobilehub.android.maps.sample
+package com.openmobilehub.android.maps.plugin.mapbox.utils
 
-import android.app.Application
-class DemoApp : Application()
+internal object Constants {
+    // Common
+    const val PROVIDER_NAME = "Mapbox"
+}

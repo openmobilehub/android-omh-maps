@@ -1,5 +1,5 @@
-# Customize Omh Map
-This is the main class of the Omh Maps SDK for Android and is the entry point for all methods related to the map. You cannot instantiate a `OmhMap` object directly, rather, you must obtain one from the `getMapAsync()` method on a `OmhMapFragment` or `OmhMapView` that you have added to your application.
+# Customize OMH Map
+This is the main class of the OMH Maps SDK for Android and is the entry point for all methods related to the map. You cannot instantiate a `OmhMap` object directly, rather, you must obtain one from the `getMapAsync()` method on a `OmhMapFragment` or `OmhMapView` that you have added to your application.
 
 **Note:** Similar to a `View` object, an `OmhMap` can only be read and modified from the Android UI thread. Calling `OmhMap` methods from another thread will result in an exception.
 
@@ -45,7 +45,7 @@ override fun onMapReady(OmhMap: OmhMap) {
 ```
 
 ## Map
-`OmhMap` is the main class of the Omh Maps SDK for Android and is the entry point for all methods related to the map. You cannot instantiate a `OmhMap` object directly, rather, you must obtain one from the `getMapAsync() `method on a `OmhMapFragment` or `OmhMapView` that you have added to your application.
+`OmhMap` is the main class of the OMH Maps SDK for Android and is the entry point for all methods related to the map. You cannot instantiate a `OmhMap` object directly, rather, you must obtain one from the `getMapAsync() `method on a `OmhMapFragment` or `OmhMapView` that you have added to your application.
 
 **Note:** Similar to a `View` object, an `OmhMap` can only be read and modified from the Android UI thread. Calling `OmhMap` methods from another thread will result in an exception.
 

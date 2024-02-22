@@ -16,8 +16,8 @@ jobs:
 
     env:
       SAMPLE_APP_PATH: "./apps/maps-sample"
-      GRADLE_ASSEMBLE_TASK: ":apps:maps-sample:assembleReleaseSingleBuild"
-      APK_PATH: "./apps/maps-sample/build/outputs/apk/releaseSingleBuild/maps-sample-releaseSingleBuild.apk"
+      GRADLE_ASSEMBLE_TASK: ":apps:maps-sample:assembleRelease"
+      APK_PATH: "./apps/maps-sample/build/outputs/apk/release/maps-sample-release.apk"
 
     steps:
       - name: Checkout code
@@ -37,8 +37,8 @@ jobs:
           path: ~/.m2/repository
           key: ${{ inputs.input-cache-prefix }}-${{ github.run_id }}
       
-      - name: Update local properties for secrets
-        run: echo MAPS_API_KEY= ${{ secrets.GOOGLE_MAPS_API_KEY }} > ./local.properties
+      - name: Setup secrets
+        run: bash ./.github/scripts/setup_secrets.sh "${{ secrets.MAPBOX_SECRET_TOKEN }}" "${{ secrets.GOOGLE_MAPS_API_KEY }}" "${{ secrets.MAPBOX_PUBLIC_TOKEN }}"
 
       - name: Set useMavenLocal flag
         run: echo useMavenLocal=true >> local.properties
@@ -70,3 +70,4 @@ jobs:
           file: ${{ env.APK_PATH }}
           notifyTesters: true
           debug: true
+          gitReleaseNotes: true

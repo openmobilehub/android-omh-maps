@@ -22,6 +22,9 @@ object Versions {
     // Open Street Map
     const val osmdroid = "6.1.11"
 
+    // Mapbox
+    const val mapbox = "11.1.0"
+
     // Testing
     const val junit = "4.13.2"
     const val androidJunit = "1.1.5"
