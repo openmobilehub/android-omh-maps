@@ -60,7 +60,11 @@
                 android:layout_height="wrap_content"
                 android:text="@string/move_map_to_sahara" />
 
-
+            <Button
+                android:id="@+id/button_makeSnapshot"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/make_snapshot" />
 
         </LinearLayout>
     </ScrollView>

@@ -28,8 +28,9 @@ fun interface OmhOnCameraMoveStartedListener {
      * REASON_GESTURE: User gestures on the map.
      * REASON_API_ANIMATION: Default animations resulting from user interaction.
      * REASON_DEVELOPER_ANIMATION: Developer animations.
+     * null: Map provider does not provide the reason for the camera change.
      */
-    fun onCameraMoveStarted(reason: Int)
+    fun onCameraMoveStarted(reason: Int?)
 
     /**
      * int	[REASON_API_ANIMATION] Non-gesture animation initiated in response to user actions.

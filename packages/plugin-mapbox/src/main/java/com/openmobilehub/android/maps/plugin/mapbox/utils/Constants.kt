@@ -19,4 +19,9 @@ package com.openmobilehub.android.maps.plugin.mapbox.utils
 internal object Constants {
     // Common
     const val PROVIDER_NAME = "Mapbox"
+
+    // To have parity with Google Maps
+    const val INITIAL_REGION_LATITUDE = 0.0
+    const val INITIAL_REGION_LONGITUDE = 0.0
+    const val INITIAL_REGION_ZOOM = 0.0
 }

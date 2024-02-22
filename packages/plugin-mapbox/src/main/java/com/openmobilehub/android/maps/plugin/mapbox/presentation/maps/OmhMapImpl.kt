@@ -19,9 +19,10 @@ package com.openmobilehub.android.maps.plugin.mapbox.presentation.maps
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import androidx.annotation.RequiresPermission
+import com.mapbox.maps.CameraChangedCallback
 import com.mapbox.maps.CameraOptions
+import com.mapbox.maps.MapIdleCallback
 import com.mapbox.maps.MapView
-import com.mapbox.maps.plugin.animation.camera
 import com.mapbox.maps.plugin.gestures.gestures
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMap
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMapLoadedCallback
@@ -46,6 +47,8 @@ internal class OmhMapImpl(
     @SuppressWarnings("UnusedPrivateMember")
     private val mapView: MapView,
 ) : OmhMap {
+
+    private var isCameraMoving = false
 
     override val providerName: String
         get() = Constants.PROVIDER_NAME
@@ -88,7 +91,9 @@ internal class OmhMapImpl(
     }
 
     override fun snapshot(omhSnapshotReadyCallback: OmhSnapshotReadyCallback) {
-        // To be implemented
+        mapView.snapshot {
+            omhSnapshotReadyCallback.onSnapshotReady(it)
+        }
     }
 
     @RequiresPermission(anyOf = [ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION])
@@ -108,7 +113,14 @@ internal class OmhMapImpl(
     }
 
     override fun setOnCameraMoveStartedListener(listener: OmhOnCameraMoveStartedListener) {
-        // To be implemented
+        val callback = CameraChangedCallback { _ ->
+            if (!isCameraMoving) {
+                listener.onCameraMoveStarted(null)
+            }
+
+            isCameraMoving = true
+        }
+        mapView.mapboxMap.subscribeCameraChanged(callback)
     }
 
     override fun setOnMapLoadedCallback(callback: OmhMapLoadedCallback?) {
@@ -126,7 +138,11 @@ internal class OmhMapImpl(
     }
 
     override fun setOnCameraIdleListener(listener: OmhOnCameraIdleListener) {
-        // To be implemented
+        val callback = MapIdleCallback { _ ->
+            isCameraMoving = false
+            listener.onCameraIdle()
+        }
+        mapView.mapboxMap.subscribeMapIdle(callback)
     }
 
     override fun setMapStyle(json: Int?) {

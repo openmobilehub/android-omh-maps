@@ -63,4 +63,7 @@
     <string name="show_camera_position_coordinate">Show Camera Position Coordinate</string>
     <string name="move_map_to_everest">Move Map to Everest</string>
     <string name="move_map_to_sahara">Move Map to Sahara</string>
+    <string name="make_snapshot">Make snapshot</string>
+    <string name="close">Close</string>
+    <string name="map_snapshot">Map Snapshot</string>
 </resources>

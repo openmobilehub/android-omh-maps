@@ -16,12 +16,16 @@
 
 package com.openmobilehub.android.maps.sample.maps
 
+import android.app.Dialog
+import android.content.Context
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.CheckBox
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.openmobilehub.android.maps.core.presentation.fragments.OmhMapFragment
@@ -41,12 +45,6 @@ class MapCameraFragment : Fragment(), OmhOnMapReadyCallback {
 
     private var omhMap: OmhMap? = null
 
-    private var zoomGesturesCheckbox: CheckBox? = null
-    private var showCameraPositionCoordinateButton: Button? = null
-    private var moveMapToEverestButton: Button? = null
-    private var moveMapToSaharaButton: Button? = null
-
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -63,7 +61,7 @@ class MapCameraFragment : Fragment(), OmhOnMapReadyCallback {
                 Toast.makeText(
                     requireContext(),
                     R.string.lost_internet_connection,
-                    Toast.LENGTH_LONG
+                    Toast.LENGTH_SHORT
                 ).show()
             }
         }
@@ -72,67 +70,100 @@ class MapCameraFragment : Fragment(), OmhOnMapReadyCallback {
             childFragmentManager.findFragmentById(R.id.fragment_map_container) as? OmhMapFragment
         omhMapFragment?.getMapAsync(this)
 
+
         setupUI(view)
     }
 
     override fun onMapReady(omhMap: OmhMap) {
         this.omhMap = omhMap
         if (networkConnectivityChecker?.isNetworkAvailable() != true) {
-            Toast.makeText(requireContext(), R.string.no_internet_connection, Toast.LENGTH_LONG)
+            Toast.makeText(requireContext(), R.string.no_internet_connection, Toast.LENGTH_SHORT)
                 .show()
         }
 
         omhMap.setOnMapLoadedCallback {
-            Toast.makeText(requireContext(), "Map Loaded", Toast.LENGTH_LONG).show()
+            Toast.makeText(requireContext(), "Map Loaded", Toast.LENGTH_SHORT).show()
         }
 
         omhMap.setZoomGesturesEnabled(true)
-        omhMap.setOnCameraMoveStartedListener{
-            val reason = when(it) {
+        omhMap.setOnCameraMoveStartedListener {
+            val reason = when (it) {
                 OmhOnCameraMoveStartedListener.REASON_API_ANIMATION -> "API Animation"
                 OmhOnCameraMoveStartedListener.REASON_DEVELOPER_ANIMATION -> "Developer Animation"
                 OmhOnCameraMoveStartedListener.REASON_GESTURE -> "Gesture"
-                else -> "Unknown"
+                else -> "Unknown Action"
             }
-            Toast.makeText(requireContext(), "Camera move started by $reason", Toast.LENGTH_LONG).show()
+            Toast.makeText(requireContext(), "Camera move started by $reason", Toast.LENGTH_SHORT)
+                .show()
+        }
+
+        omhMap.setOnCameraIdleListener {
+            Toast.makeText(requireContext(), "Camera is idle", Toast.LENGTH_SHORT).show()
         }
     }
 
     private fun setupUI(view: View) {
         // zoomGestures
-        zoomGesturesCheckbox = view.findViewById(R.id.checkBox_zoomGesturesEnabled)
+        val zoomGesturesCheckbox = view.findViewById<CheckBox>(R.id.checkBox_zoomGesturesEnabled)
         zoomGesturesCheckbox?.setOnCheckedChangeListener { _, isChecked ->
             omhMap?.setZoomGesturesEnabled(isChecked)
         }
         // Show camera position coordinate
-        showCameraPositionCoordinateButton = view.findViewById(R.id.button_showCameraPositionCoordinate)
+        val showCameraPositionCoordinateButton =
+            view.findViewById<Button>(R.id.button_showCameraPositionCoordinate)
         showCameraPositionCoordinateButton?.setOnClickListener {
             val cameraPositionCoordinate = omhMap?.getCameraPositionCoordinate()
             Toast.makeText(
                 requireContext(),
                 "Camera position coordinate: $cameraPositionCoordinate",
-                Toast.LENGTH_LONG
+                Toast.LENGTH_SHORT
             ).show()
         }
         // Move camera
-        moveMapToEverestButton = view.findViewById(R.id.button_moveMapToEverest)
+        val moveMapToEverestButton = view.findViewById<Button>(R.id.button_moveMapToEverest)
         moveMapToEverestButton?.setOnClickListener {
+            val everestCoordinate = OmhCoordinate(27.9881, 86.9250)
             omhMap?.moveCamera(
-                OmhCoordinate(
-                    27.9881,
-                    86.9250
-                ), 15f
+                everestCoordinate, 15f
             )
         }
-        moveMapToSaharaButton = view.findViewById(R.id.button_moveMapSahara)
+        val moveMapToSaharaButton = view.findViewById<Button>(R.id.button_moveMapSahara)
         moveMapToSaharaButton?.setOnClickListener {
+            val saharaCoordinate = OmhCoordinate(23.4162, 25.6628)
             omhMap?.moveCamera(
-                OmhCoordinate(
-                    23.4162,
-                    25.6628
-                ), 5f
+                saharaCoordinate, 5f
             )
         }
+
+        // Snapshot
+        val makeSnapshotButton = view.findViewById<Button>(R.id.button_makeSnapshot)
+        makeSnapshotButton?.setOnClickListener {
+            omhMap?.snapshot {
+                if (it !== null) {
+                    showDialogWithImage(requireContext(), it)
+                } else {
+                    Toast.makeText(
+                        requireContext(),
+                        "Failed to take snapshot",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        }
+    }
+
+    private fun showDialogWithImage(context: Context, bitmap: Bitmap) {
+        val snapshotDialog = Dialog(context)
+        snapshotDialog.setContentView(R.layout.snapshot_dialog_image)
+
+        val imageView = snapshotDialog.findViewById<ImageView>(R.id.image_snapshot)
+        imageView?.setImageBitmap(bitmap)
+
+        val closeButton = snapshotDialog.findViewById<Button>(R.id.button_close)
+        closeButton?.setOnClickListener {
+            snapshotDialog.dismiss()
+        }
+        snapshotDialog.show()
     }
 
     override fun onDestroyView() {
