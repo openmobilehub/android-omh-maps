@@ -3,15 +3,21 @@ package com.openmobilehub.android.maps.plugin.googlemaps.presentation.maps
 import android.content.Context
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.MapStyleOptions
+import com.google.android.gms.maps.model.Marker
+import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.Polygon
 import com.google.android.gms.maps.model.PolygonOptions
 import com.google.android.gms.maps.model.Polyline
 import com.google.android.gms.maps.model.PolylineOptions
+import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMarker
+import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMarkerClickListener
+import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMarkerDragListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnPolygonClickListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnPolylineClickListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhPolygon
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhPolyline
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
+import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolygonOptions
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolylineOptions
 import com.openmobilehub.android.maps.core.utils.logging.Logger
@@ -30,13 +36,17 @@ class OmhMapImplTest {
     private lateinit var omhMapImpl: OmhMapImpl
     private val googleMap = mockk<GoogleMap>()
     private val context = mockk<Context>()
+    private val omhOnMarkerClickListener = mockk<OmhOnMarkerClickListener>(relaxed = true)
+    private val setOnMarkerDragListener = mockk<OmhOnMarkerDragListener>(relaxed = true)
     private val omhOnPolylineClickListener = mockk<OmhOnPolylineClickListener>(relaxed = true)
     private val omhOnPolygonClickListener = mockk<OmhOnPolygonClickListener>(relaxed = true)
+    private val mockedMarker = mockk<Marker>(relaxed = true)
 
     private val logger = mockk<Logger>(relaxed = true)
 
     @Before
     fun setUp() {
+        every { googleMap.addMarker(any<MarkerOptions>()) } returns mockedMarker
         omhMapImpl = OmhMapImpl(googleMap, context, logger)
     }
 
@@ -92,6 +102,19 @@ class OmhMapImplTest {
     }
 
     @Test
+    fun `addMarker adds marker to map and returns OmhMarker`() {
+        // Arrange
+        val omhMarkerOptions = OmhMarkerOptions()
+
+        // Act
+        val result = omhMapImpl.addMarker(omhMarkerOptions)
+
+        // Assert
+        verify { googleMap.addMarker(any<MarkerOptions>()) }
+        Assert.assertNotNull(result)
+    }
+
+    @Test
     fun `setMapStyle applies custom style when JSON resource ID provided`() {
         // Arrange
         val jsonStyleResId = 1
@@ -138,8 +161,54 @@ class OmhMapImplTest {
     }
 
     @Test
-    fun `setOnPolylineClickListener triggers listener on polyline click`() {
+    fun `setOnMarkerClickListener triggers listener on marker click`() {
+        // Arrange
+        omhMapImpl.addMarker(
+            OmhMarkerOptions().apply {
+                clickable = true
+                draggable = true
+            }
+        )
+        val capturedListener = slot<GoogleMap.OnMarkerClickListener>()
+        every { googleMap.setOnMarkerClickListener(capture(capturedListener)) } answers {}
+
+        // Act
+        omhMapImpl.setOnMarkerClickListener(omhOnMarkerClickListener)
+        capturedListener.captured.onMarkerClick(mockedMarker)
+
         // Assert
+        verify { omhOnMarkerClickListener.onMarkerClick(any<OmhMarker>()) }
+    }
+
+    @Test
+    fun `setOnMarkerDragListener triggers listener on marker drag events`() {
+        // Arrange
+        omhMapImpl.addMarker(
+            OmhMarkerOptions().apply {
+                clickable = true
+                draggable = true
+            }
+        )
+        val capturedListener = slot<GoogleMap.OnMarkerDragListener>()
+        every { googleMap.setOnMarkerDragListener(capture(capturedListener)) } answers {}
+
+        // Act
+        omhMapImpl.setOnMarkerDragListener(setOnMarkerDragListener)
+        capturedListener.captured.onMarkerDragStart(mockedMarker)
+        capturedListener.captured.onMarkerDrag(mockedMarker)
+        capturedListener.captured.onMarkerDragEnd(mockedMarker)
+
+        // Assert
+        verify {
+            setOnMarkerDragListener.onMarkerDragStart(any<OmhMarker>())
+            setOnMarkerDragListener.onMarkerDrag(any<OmhMarker>())
+            setOnMarkerDragListener.onMarkerDragEnd(any<OmhMarker>())
+        }
+    }
+
+    @Test
+    fun `setOnPolylineClickListener triggers listener on polyline click`() {
+        // Arrange
         val capturedListener = slot<GoogleMap.OnPolylineClickListener>()
         every { googleMap.setOnPolylineClickListener(capture(capturedListener)) } answers {}
         val polyline = mockk<Polyline>(relaxed = true)
@@ -154,7 +223,7 @@ class OmhMapImplTest {
 
     @Test
     fun `setOnPolygonClickListener triggers listener on polygon click`() {
-        // Assert
+        // Arrange
         val capturedListener = slot<GoogleMap.OnPolygonClickListener>()
         every { googleMap.setOnPolygonClickListener(capture(capturedListener)) } answers {}
         val polygon = mockk<Polygon>(relaxed = true)

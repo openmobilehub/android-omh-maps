@@ -41,9 +41,14 @@ class MenuFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val items = listOf(
             MyListItem(
+                "Location Sharing Map",
+                "Map showcasing location sharing via deep links",
+                R.id.action_menuFragment_to_mapLocationPickerFragment
+            ),
+            MyListItem(
                 "Marker Map",
                 "Map showcasing the markers",
-                R.id.action_menuFragment_to_mapFragment
+                R.id.action_menuFragment_to_mapMarkersFragment
             ),
             MyListItem(
                 "Polyline Map",

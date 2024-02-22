@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">OMH Maps demo</string>
     <string name="title_activity_main">MainActivity</string>
-    <string name="open_map">Open Map</string>
+    <string name="back_to_menu_fragment">Back to Menu fragment</string>
     <string name="open_polyline_map">Open Polyline Map</string>
     <string name="drop_pin">Drop pin</string>
     <string name="button_to_share_location">Button to share location</string>
@@ -10,7 +10,7 @@
     <string name="center_message">Centering location</string>
     <string name="share_link">"Share link"</string>
     <string name="latitude_longitude_text">Lat: %1$s \nLng: %2$s</string>
-    <string name="initial_fragment_text">Initial Fragment</string>
+    <string name="location_result_fragment_text">Location Result Fragment</string>
     <string name="map_fragment_text">Map Fragment</string>
     <string name="menu_fragment_text">Menu Fragment</string>
     <string name="map_polylines_fragment_text">Map Polylines Fragment</string>
@@ -19,6 +19,8 @@
     <string name="no_internet_connection">"No internet connection"</string>
     <string name="lost_internet_connection">"Lost internet connection"</string>
     <string name="move_message">"For more accuracy move to an open space"</string>
+    <string name="map_markers_fragment_text">Map Markers Fragment</string>
+    <string name="open_markers_demo_map">Open Markers Demo</string>
     <string name="joint_type_miter">Miter</string>
     <string name="joint_type_round">Round</string>
     <string name="joint_type_bevel">Bevel</string>
@@ -32,6 +34,18 @@
     <string name="pattern_type_custom">Custom</string>
     <string name="clickable">Clickable</string>
     <string name="visible">Visible</string>
+    <string name="flat">Flat</string>
+    <string name="draggable">Draggable</string>
+    <string name="rotation">Rotation</string>
+    <string name="anchorU">Anchor U</string>
+    <string name="anchorV">Anchor V</string>
+    <string name="appearance">Appearance</string>
+    <string name="snippet">Snippet</string>
+    <string name="alpha">Alpha</string>
+    <string name="marker_appearance_type_default">Default</string>
+    <string name="marker_appearance_type_custom_icon">Custom icon</string>
+    <string name="marker_appearance_type_custom_color">Custom color</string>
+    <string name="option_unavailable_for_provider">Option unavailable for this provider</string>
     <string name="span">Span</string>
     <string name="gradient">Gradient</string>
     <string name="span_pattern">Span Pattern</string>

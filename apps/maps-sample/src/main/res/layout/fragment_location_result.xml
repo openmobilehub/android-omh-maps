@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright 2023 Open Mobile Hub
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,19 +19,22 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".start.InitialFragment">
+    tools:context=".start.LocationResultFragment">
 
     <Button
-        android:id="@+id/button_open_map"
+        android:id="@+id/button_back_to_menu_fragment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/small_4"
-        android:text="@string/open_map"
-        app:layout_constraintBottom_toTopOf="@+id/textView_coordinate"
+        android:layout_marginStart="@dimen/normal_16"
+        android:layout_marginTop="168dp"
+        android:layout_marginEnd="@dimen/normal_16"
+        android:text="@string/back_to_menu_fragment"
+        android:textAlignment="center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="packed" />
+        app:layout_constraintVertical_chainStyle="packed"
+        tools:visibility="visible" />
 
     <TextView
         android:id="@+id/textView_coordinate"
@@ -44,8 +46,10 @@
         android:textAlignment="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button_open_map"
+        app:layout_constraintTop_toBottomOf="@+id/button_back_to_menu_fragment"
+        app:layout_constraintVertical_bias="0.332"
         tools:text="@string/example_coordinate" />
 
     <Button
@@ -53,7 +57,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/normal_16"
-        android:layout_marginTop="@dimen/small_4"
+        android:layout_marginTop="24dp"
         android:layout_marginEnd="@dimen/normal_16"
         android:text="@string/share_location"
         android:textAlignment="center"

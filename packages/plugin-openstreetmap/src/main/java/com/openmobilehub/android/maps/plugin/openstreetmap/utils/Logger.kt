@@ -19,4 +19,5 @@ package com.openmobilehub.android.maps.plugin.openstreetmap.utils
 import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
 
 val polylineLogger = UnsupportedFeatureLogger(Constants.PROVIDER_NAME, "OmhPolyline")
-val polygonLogger = UnsupportedFeatureLogger(Constants.PROVIDER_NAME, "OpenStreetMap")
+val polygonLogger = UnsupportedFeatureLogger(Constants.PROVIDER_NAME, "OmhPolygon")
+val markerLogger = UnsupportedFeatureLogger(Constants.PROVIDER_NAME, "OmhMarker")
