@@ -71,4 +71,43 @@ class UnsupportedFeatureLoggerTest {
             )
         }
     }
+
+    @Test
+    fun `logFeatureSetterPartiallySupported logs correct message when logging is enabled without extra info`() {
+        // Arrange
+        val logger = UnsupportedFeatureLogger("TestProvider", "TestMapElement")
+        val propertyName = "TestProperty"
+
+        // Act
+        logger.logFeatureSetterPartiallySupported(propertyName)
+
+        // Assert
+        verify {
+            Log.w(
+                Constants.LOG_TAG,
+                "[TestProvider]: Setter for property $propertyName in TestMapElement is partially supported"
+            )
+        }
+    }
+
+    @Test
+    fun `logFeatureSetterPartiallySupported logs correct message when logging is enabled with extra info`() {
+        // Arrange
+        val logger = UnsupportedFeatureLogger("TestProvider", "TestMapElement")
+        val propertyName = "TestProperty"
+        val extraInfo = "TestExtraInfo"
+
+        // Act
+        logger.logFeatureSetterPartiallySupported(propertyName, extraInfo)
+
+        // Assert
+        verify {
+            Log.w(
+                Constants.LOG_TAG,
+                "[TestProvider]: Setter for property $propertyName in TestMapElement is ".plus(
+                    "partially supported ($extraInfo)"
+                )
+            )
+        }
+    }
 }

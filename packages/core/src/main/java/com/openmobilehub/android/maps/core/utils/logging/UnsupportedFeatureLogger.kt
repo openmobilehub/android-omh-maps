@@ -25,7 +25,8 @@ package com.openmobilehub.android.maps.core.utils.logging
  * @property providerName The name of the provider. This is used to identify the source of the log message.
  * @property mapElement The name of the map element that contains the unsupported feature.
  */
-class UnsupportedFeatureLogger(providerName: String, private val mapElement: String) : Logger(providerName) {
+class UnsupportedFeatureLogger(providerName: String, private val mapElement: String) :
+    Logger(providerName) {
 
     /**
      * Logs a warning message indicating that a certain property in the map element is not supported.
@@ -52,5 +53,19 @@ class UnsupportedFeatureLogger(providerName: String, private val mapElement: Str
      */
     fun logSetterNotSupported(propertyName: String) {
         logWarning("Setter for property $propertyName in $mapElement not supported.")
+    }
+
+    /**
+     * Logs a warning message indicating that the setter for a certain property in the map element is
+     * partially supported.
+     *
+     * @param propertyName The name of the property whose setter is partially supported.
+     */
+    fun logFeatureSetterPartiallySupported(propertyName: String, extraInfo: String? = null) {
+        logWarning(
+            "Setter for property $propertyName in $mapElement is partially supported".plus(
+                if (extraInfo == null) "" else " ($extraInfo)"
+            )
+        )
     }
 }

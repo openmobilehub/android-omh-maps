@@ -25,6 +25,8 @@ import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMapLo
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMarker
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnCameraIdleListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnCameraMoveStartedListener
+import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMarkerClickListener
+import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMarkerDragListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMyLocationButtonClickListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnPolygonClickListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnPolylineClickListener
@@ -73,6 +75,10 @@ internal class OmhMapImpl(
         // To be implemented
     }
 
+    override fun setRotateGesturesEnabled(enableRotateGestures: Boolean) {
+        // To be implemented
+    }
+
     override fun snapshot(omhSnapshotReadyCallback: OmhSnapshotReadyCallback) {
         // To be implemented
     }
@@ -98,6 +104,14 @@ internal class OmhMapImpl(
     }
 
     override fun setOnMapLoadedCallback(callback: OmhMapLoadedCallback?) {
+        // To be implemented
+    }
+
+    override fun setOnMarkerClickListener(listener: OmhOnMarkerClickListener) {
+        // To be implemented
+    }
+
+    override fun setOnMarkerDragListener(listener: OmhOnMarkerDragListener) {
         // To be implemented
     }
 

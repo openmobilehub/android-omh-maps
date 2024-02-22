@@ -16,93 +16,52 @@
 
 package com.openmobilehub.android.maps.core.presentation.models
 
-import android.os.Build
-import android.os.Parcel
+import android.graphics.drawable.Drawable
 import android.os.Parcelable
 import androidx.annotation.Keep
+import kotlinx.parcelize.IgnoredOnParcel
+import kotlinx.parcelize.Parcelize
+
+object Constants {
+    const val DEFAULT_ANCHOR = 0.5f
+    const val DEFAULT_ALPHA = 1.0f
+    const val DEFAULT_ROTATION = 0f
+}
 
 /**
- * Defines OmhMarkerOptions for a marker.
+ * Defines [OmhMarkerOptions] for a marker.
+ * You can customize marker appearance by changing its properties.
  *
  * Implements Parcelable interface to facilitate the usage.
+ *
+ * @property position The location for the marker.
+ * @property title The title for the marker.
+ * @property draggable Whether the marker is draggable. Default value: `false`
+ * @property anchor The anchor for the marker image. Default: `Pair(0.5f, 0.5f)`
+ * @property alpha The alpha (transparency) of the marker. Default: `1.0f`
+ * @property snippet The text snippet to be shown below marker title.
+ * @property isVisible Boolean indicating whether the marker is visible.
+ * @property isFlat Boolean representing whether the marker is flat (stuck to the map)
+ * or is a billboard (rotates and tilts with the camera).
+ * @property rotation The rotation of the marker (degrees, clockwise) with respect to the map. Default: `0f`
+ * @property backgroundColor The color of the marker or resets the color to the provider's default value if null.
  */
 @Keep
-class OmhMarkerOptions() : Parcelable {
-    /**
-     * The location for the marker.
-     * Create a default position because the position cannot be null.
-     */
-    var position: OmhCoordinate = OmhCoordinate()
-
-    /**
-     * The title for the marker.
-     */
-    var title: String? = null
-
-    /**
-     * Constructs a OmhMarkerOptions with the given Parcel.
-     *
-     * @param parcel container for the OmhCoordinate.
-     */
-    constructor(parcel: Parcel) : this() {
-        val omhCoordinate: OmhCoordinate? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            parcel.readParcelable(OmhCoordinate::class.java.classLoader, OmhCoordinate::class.java)
-        } else {
-            // Before Android 13, API level 33(Tiramisu) use:
-            // fun <T : Parcelable?> readParcelable(loader: ClassLoader?): T
-            @Suppress("DEPRECATION")
-            parcel.readParcelable(OmhCoordinate::class.java.classLoader)
-        }
-        if (omhCoordinate != null) {
-            position = omhCoordinate
-        }
-        title = parcel.readString()
-    }
-
-    /**
-     * Describe the kinds of special objects contained in this Parcelable instance's marshaled representation.
-     * Value is either 0 or CONTENTS_FILE_DESCRIPTOR
-     *
-     * @return a bitmask indicating the set of special object types marshaled by this Parcelable object instance.
-     */
-    override fun describeContents(): Int {
-        return 0
-    }
-
-    /**
-     * Flatten this object in to a Parcel.
-     *
-     * @param parcel the Parcel in which the object should be written. This value cannot be null.
-     * @param flags additional flags about how the object should be written.
-     */
-    override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeParcelable(position, flags)
-        parcel.writeString(title)
-    }
-
-    /**
-     * public CREATOR field that generates instances of your Parcelable class from a Parcel.
-     */
-    companion object CREATOR : Parcelable.Creator<OmhMarkerOptions> {
-        /**
-         * Create a new instance of the Parcelable class,
-         * instantiating it from the given Parcel whose data had previously been written by Parcelable.writeToParcel().
-         *
-         * @param parcel the Parcel to read the object's data from.
-         * @return a new instance of the Parcelable class.
-         */
-        override fun createFromParcel(parcel: Parcel): OmhMarkerOptions {
-            return OmhMarkerOptions(parcel)
-        }
-
-        /**
-         * Create a new array of the Parcelable class.
-         *
-         * @param size size of the array.
-         * @return an array of the Parcelable class, with every entry initialized to null.
-         */
-        override fun newArray(size: Int): Array<OmhMarkerOptions?> {
-            return arrayOfNulls(size)
-        }
-    }
+@Parcelize
+@SuppressWarnings("LongParameterList")
+class OmhMarkerOptions(
+    var position: OmhCoordinate = OmhCoordinate(),
+    var title: String? = null,
+    var draggable: Boolean = false,
+    var anchor: Pair<Float, Float> = Pair(Constants.DEFAULT_ANCHOR, Constants.DEFAULT_ANCHOR),
+    var alpha: Float = Constants.DEFAULT_ALPHA,
+    var snippet: String? = null,
+    var isVisible: Boolean = true,
+    var isFlat: Boolean = false,
+    var rotation: Float = Constants.DEFAULT_ROTATION,
+    var backgroundColor: Int? = null,
+    var clickable: Boolean = true
+) : Parcelable {
+    @IgnoredOnParcel
+    var icon: Drawable? = null
 }
