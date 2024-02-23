@@ -74,10 +74,14 @@ class MapSharedLocationFragment : Fragment(), OmhOnMapReadyCallback {
                 .show()
         }
 
+        displaySharedLocation(omhMap)
+    }
+
+    private fun displaySharedLocation(omhMap: OmhMap) {
         args.coordinate?.let {
             val markerOptions = OmhMarkerOptions().apply {
                 position = it
-                title = "Shared Position"
+                title = "Shared Location"
             }
             omhMap.addMarker(markerOptions)
             omhMap.moveCamera(it, 15.0f)

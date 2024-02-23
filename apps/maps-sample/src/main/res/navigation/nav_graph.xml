@@ -97,7 +97,7 @@
     <fragment
         android:id="@+id/mapSharedLocationFragment"
         android:name="com.openmobilehub.android.maps.sample.maps.MapSharedLocationFragment"
-        android:label="SHARED LOCATION"
+        android:label="@string/map_shared_location_fragment_text"
         tools:layout="@layout/fragment_shared_location_map">
         <argument
             android:name="coordinate"

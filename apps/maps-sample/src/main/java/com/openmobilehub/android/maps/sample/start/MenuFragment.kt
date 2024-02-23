@@ -11,12 +11,10 @@ import android.widget.Spinner
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.openmobilehub.android.maps.core.factories.OmhMapProvider
-import com.openmobilehub.android.maps.sample.model.MapProvider
 import com.openmobilehub.android.maps.sample.R
 import com.openmobilehub.android.maps.sample.adapter.MenuListViewAdapter
 import com.openmobilehub.android.maps.sample.model.MenuListItem
-import com.openmobilehub.android.maps.sample.utils.Constants
-import com.openmobilehub.android.maps.sample.utils.GooglePlayServicesUtil
+import com.openmobilehub.android.maps.sample.utils.MapProvidersUtils
 
 class MenuFragment : Fragment() {
     override fun onCreateView(
@@ -36,13 +34,7 @@ class MenuFragment : Fragment() {
     private fun setupMapProviderSpinner(view: View) {
         val mapProviderSpinner: Spinner = view.findViewById(R.id.spinner_mapProvider)
 
-        val mapProviders = mutableListOf(
-            MapProvider("OpenStreetMap", Constants.OPEN_STREET_MAP_PATH),
-            MapProvider("Mapbox", Constants.MAPBOX_PATH)
-        )
-        if (GooglePlayServicesUtil.isGooglePlayServicesAvailable(requireContext())) {
-            mapProviders.add(0, MapProvider("Google", Constants.GOOGLE_MAPS_PATH))
-        }
+        val mapProviders = MapProvidersUtils.getAvailableMapProviders(requireContext())
 
         val adapterMapProvider =
             ArrayAdapter(

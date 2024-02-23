@@ -17,6 +17,7 @@
     <string name="map_polygons_fragment_text">Map Polygons Fragment</string>
     <string name="map_styles_fragment_text">Map Styles Fragment</string>
     <string name="map_camera_fragment_text">Map Camera Fragment</string>
+    <string name="map_shared_location_fragment_text">Map Shared Location Fragment</string>
     <string name="no_internet_connection">"No internet connection"</string>
     <string name="lost_internet_connection">"Lost internet connection"</string>
     <string name="move_message">"For more accuracy move to an open space"</string>
