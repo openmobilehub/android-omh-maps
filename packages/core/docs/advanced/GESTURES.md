@@ -6,7 +6,7 @@ parent: Core module
 
 # Gestures
 
-By default the gestures are enabled for zoom in and zoom out.
+By default all gestures are enabled.
 The `OmhMap` allows to enable or disable the gestures.
 
 ## Enable zoom gestures
@@ -19,4 +19,16 @@ omhMap.setZoomGesturesEnabled(true)
 
 ```kotlin
 omhMap.setZoomGesturesEnabled(false)
+```
+
+## Enable rotate gestures
+
+```kotlin
+omhMap.setRotateGesturesEnabled(true)
+```
+
+## Disable rotate gestures
+
+```kotlin
+omhMap.setRotateGesturesEnabled(false)
 ```

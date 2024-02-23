@@ -7,9 +7,49 @@
 
     <action
         android:id="@+id/action_global_mapLocationPickerFragment"
-        app:destination="@+id/mapLocationPickerFragment"
-        app:popUpTo="@id/mapLocationPickerFragment"
-        app:popUpToInclusive="true" />
+        app:destination="@+id/mapSharedLocationFragment"
+        app:popUpTo="@id/menuFragment" />
+
+    <fragment
+        android:id="@+id/menuFragment"
+        android:name="com.openmobilehub.android.maps.sample.start.MenuFragment"
+        android:label="@string/menu_fragment_text"
+        tools:layout="@layout/fragment_menu">
+        <action
+            android:id="@+id/action_menuFragment_to_mapCameraFragment"
+            app:destination="@id/mapCameraFragment" />
+        <action
+            android:id="@+id/action_menuFragment_to_mapLocationPickerFragment"
+            app:destination="@id/mapLocationPickerFragment" />
+        <action
+            android:id="@+id/action_menuFragment_to_mapMarkersFragment"
+            app:destination="@id/mapMarkersFragment" />
+        <action
+            android:id="@+id/action_menuFragment_to_mapPolylinesFragment"
+            app:destination="@id/mapPolylinesFragment" />
+        <action
+            android:id="@+id/action_menuFragment_to_mapPolygonsFragment"
+            app:destination="@id/mapPolygonsFragment" />
+        <action
+            android:id="@+id/action_menuFragment_to_mapStylesFragment"
+            app:destination="@id/mapStylesFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/mapCameraFragment"
+        android:name="com.openmobilehub.android.maps.sample.maps.MapCameraFragment"
+        android:label="@string/map_camera_fragment_text"
+        tools:layout="@layout/fragment_map_camera" />
+
+    <fragment
+        android:id="@+id/mapLocationPickerFragment"
+        android:name="com.openmobilehub.android.maps.sample.maps.MapLocationPickerFragment"
+        android:label="@string/map_fragment_text"
+        tools:layout="@layout/fragment_location_picker_map">
+        <action
+            android:id="@+id/action_mapLocationPickerFragment_to_locationResultFragment"
+            app:destination="@id/locationResultFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/locationResultFragment"
@@ -21,10 +61,14 @@
             android:defaultValue="@null"
             app:argType="com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate"
             app:nullable="true" />
-        <action
-            android:id="@+id/action_locationResultFragment_to_menuFragment"
-            app:destination="@id/menuFragment" />
     </fragment>
+
+
+    <fragment
+        android:id="@+id/mapMarkersFragment"
+        android:name="com.openmobilehub.android.maps.sample.maps.MapMarkersFragment"
+        android:label="@string/map_markers_fragment_text"
+        tools:layout="@layout/fragment_map_markers"></fragment>
 
     <fragment
         android:id="@+id/mapPolylinesFragment"
@@ -43,56 +87,22 @@
         android:name="com.openmobilehub.android.maps.sample.maps.MapStylesFragment"
         android:label="@string/map_styles_fragment_text"
         tools:layout="@layout/fragment_map_styles" />
+    
+    <fragment
+        android:id="@+id/mapCameraFragment"
+        android:name="com.openmobilehub.android.maps.sample.maps.MapCameraFragment"
+        android:label="@string/map_camera_fragment_text"
+        tools:layout="@layout/fragment_map_camera" />
 
     <fragment
-        android:id="@+id/mapLocationPickerFragment"
-        android:name="com.openmobilehub.android.maps.sample.maps.MapLocationPickerFragment"
-        android:label="@string/map_fragment_text"
-        tools:layout="@layout/fragment_map">
+        android:id="@+id/mapSharedLocationFragment"
+        android:name="com.openmobilehub.android.maps.sample.maps.MapSharedLocationFragment"
+        android:label="@string/map_shared_location_fragment_text"
+        tools:layout="@layout/fragment_shared_location_map">
         <argument
             android:name="coordinate"
             android:defaultValue="@null"
             app:argType="com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate"
             app:nullable="true" />
-        <action
-            android:id="@+id/action_mapLocationPickerFragment_to_locationResultFragment"
-            app:destination="@id/locationResultFragment"
-            app:popUpTo="@id/nav_graph"
-            app:popUpToInclusive="true" />
     </fragment>
-
-    <fragment
-        android:id="@+id/mapMarkersFragment"
-        android:name="com.openmobilehub.android.maps.sample.maps.MapMarkersFragment"
-        android:label="@string/map_markers_fragment_text"
-        tools:layout="@layout/fragment_map_markers">
-        <action
-            android:id="@+id/action_mapMarkersFragment_to_locationResultFragment"
-            app:destination="@id/locationResultFragment"
-            app:popUpTo="@id/nav_graph"
-            app:popUpToInclusive="true" />
-    </fragment>
-
-    <fragment
-        android:id="@+id/menuFragment"
-        android:name="com.openmobilehub.android.maps.sample.start.MenuFragment"
-        android:label="@string/menu_fragment_text"
-        tools:layout="@layout/fragment_menu">
-        <action
-            android:id="@+id/action_menuFragment_to_mapMarkersFragment"
-            app:destination="@id/mapMarkersFragment" />
-        <action
-            android:id="@+id/action_menuFragment_to_mapLocationPickerFragment"
-            app:destination="@id/mapLocationPickerFragment" />
-        <action
-            android:id="@+id/action_menuFragment_to_mapPolylinesFragment"
-            app:destination="@id/mapPolylinesFragment" />
-        <action
-            android:id="@+id/action_menuFragment_to_mapPolygonsFragment"
-            app:destination="@id/mapPolygonsFragment" />
-        <action
-            android:id="@+id/action_menuFragment_to_mapStylesFragment"
-            app:destination="@id/mapStylesFragment" />
-    </fragment>
-
 </navigation>

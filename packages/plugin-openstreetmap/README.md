@@ -57,13 +57,19 @@ Legend of support levels:
 | setMyLocationEnabled             |     ✅     |
 | isMyLocationEnabled              |     ✅     |
 | setMyLocationButtonClickListener |     ✅     |
-| setOnCameraMoveStartedListener   |     ✅     |
+| setOnCameraMoveStartedListener   |     🟨     |
 | setOnCameraIdleListener          |     ✅     |
 | setOnMapLoadedCallback           |     ✅     |
 | setOnPolylineClickListener       |     ✅     |
 | setOnPolygonClickListener        |     ✅     |
 | snapshot                         |     ✅     |
 | setMapStyle                      |     ❌     |
+
+Comments for partially supported 🟨 properties:
+
+| Property                       | Comments                                            |
+| ------------------------------ | --------------------------------------------------- |
+| setOnCameraMoveStartedListener | The reason of the camera changed started is unknown |
 
 ### Marker
 

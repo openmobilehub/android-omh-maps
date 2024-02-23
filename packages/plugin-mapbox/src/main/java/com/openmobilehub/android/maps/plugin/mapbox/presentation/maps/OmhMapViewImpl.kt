@@ -19,9 +19,13 @@ package com.openmobilehub.android.maps.plugin.mapbox.presentation.maps
 import android.content.Context
 import android.os.Bundle
 import android.view.View
+import com.mapbox.geojson.Point
+import com.mapbox.maps.CameraOptions
+import com.mapbox.maps.MapInitOptions
 import com.mapbox.maps.MapView
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMapView
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMapReadyCallback
+import com.openmobilehub.android.maps.plugin.mapbox.utils.Constants
 
 @Suppress("TooManyFunctions") // Suppress issue since interface has more than 12 functions.
 internal class OmhMapViewImpl(context: Context) : OmhMapView {
@@ -29,7 +33,22 @@ internal class OmhMapViewImpl(context: Context) : OmhMapView {
     private var mapView: MapView
 
     init {
-        mapView = MapView(context)
+        val defaultCameraOptions = CameraOptions.Builder()
+            .center(
+                Point.fromLngLat(
+                    Constants.INITIAL_REGION_LATITUDE,
+                    Constants.INITIAL_REGION_LONGITUDE
+                )
+            )
+            .zoom(Constants.INITIAL_REGION_ZOOM)
+            .build()
+
+        val mapInitOptions = MapInitOptions(
+            context = context,
+            cameraOptions = defaultCameraOptions,
+        )
+
+        mapView = MapView(context, mapInitOptions)
     }
 
     override fun getView(): View {
