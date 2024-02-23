@@ -11,9 +11,9 @@ import android.widget.Spinner
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.openmobilehub.android.maps.core.factories.OmhMapProvider
+import com.openmobilehub.android.maps.sample.model.MapProvider
 import com.openmobilehub.android.maps.sample.R
 import com.openmobilehub.android.maps.sample.adapter.MenuListViewAdapter
-import com.openmobilehub.android.maps.sample.model.MapProvider
 import com.openmobilehub.android.maps.sample.model.MenuListItem
 import com.openmobilehub.android.maps.sample.utils.Constants
 import com.openmobilehub.android.maps.sample.utils.GooglePlayServicesUtil
@@ -72,6 +72,11 @@ class MenuFragment : Fragment() {
         val listView: ListView = view.findViewById(R.id.listView)
 
         val items = listOf(
+            MenuListItem(
+                "Camera Map",
+                "Map showcasing the camera features",
+                R.id.action_menuFragment_to_mapCameraFragment
+            ),
             MenuListItem(
                 "Marker Map",
                 "Map showcasing the markers",

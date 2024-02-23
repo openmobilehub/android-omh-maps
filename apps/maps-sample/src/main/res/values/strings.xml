@@ -16,6 +16,7 @@
     <string name="map_polylines_fragment_text">Map Polylines Fragment</string>
     <string name="map_polygons_fragment_text">Map Polygons Fragment</string>
     <string name="map_styles_fragment_text">Map Styles Fragment</string>
+    <string name="map_camera_fragment_text">Map Camera Fragment</string>
     <string name="no_internet_connection">"No internet connection"</string>
     <string name="lost_internet_connection">"Lost internet connection"</string>
     <string name="move_message">"For more accuracy move to an open space"</string>
@@ -72,4 +73,12 @@
     <string name="silver">Silver</string>
     <string name="map_style_radio_group_title">Select a map style:</string>
     <string name="provider">Provider</string>
+    <string name="zoom_gestures">Zoom Gestures</string>
+    <string name="show_camera_position_coordinate">Show Camera Position Coordinate</string>
+    <string name="move_map_to_everest">Move Map to Everest</string>
+    <string name="move_map_to_sahara">Move Map to Sahara</string>
+    <string name="make_snapshot">Make snapshot</string>
+    <string name="close">Close</string>
+    <string name="map_snapshot">Map Snapshot</string>
+    <string name="rotate_gestures">Rotate Gestures</string>
 </resources>
