@@ -25,12 +25,14 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
+import com.openmobilehub.android.maps.core.factories.OmhMapProvider
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.sample.NavGraphDirections
 import com.openmobilehub.android.maps.sample.R
 import com.openmobilehub.android.maps.sample.databinding.ActivityMainBinding
 import com.openmobilehub.android.maps.sample.utils.Constants.LAT_PARAM
 import com.openmobilehub.android.maps.sample.utils.Constants.LNG_PARAM
+import com.openmobilehub.android.maps.sample.utils.MapProvidersUtils
 
 class MainActivity : AppCompatActivity() {
     private lateinit var appBarConfiguration: AppBarConfiguration
@@ -61,6 +63,13 @@ class MainActivity : AppCompatActivity() {
             if (latitude != null && longitude != null) {
                 val coordinate = OmhCoordinate(latitude.toDouble(), longitude.toDouble())
                 val action = NavGraphDirections.actionGlobalMapLocationPickerFragment(coordinate)
+                try {
+                    OmhMapProvider.getInstance()
+                } catch (e: IllegalStateException) {
+                    OmhMapProvider.Initiator()
+                        .addNonGmsPath(MapProvidersUtils.getDefaultMapProvider(this).path)
+                        .initialize()
+                }
                 findNavController(R.id.nav_host_fragment_content_main).navigate(action)
             }
         }

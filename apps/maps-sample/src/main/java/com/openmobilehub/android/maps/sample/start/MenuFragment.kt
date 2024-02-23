@@ -15,8 +15,7 @@ import com.openmobilehub.android.maps.sample.R
 import com.openmobilehub.android.maps.sample.adapter.MenuListViewAdapter
 import com.openmobilehub.android.maps.sample.model.MapProvider
 import com.openmobilehub.android.maps.sample.model.MenuListItem
-import com.openmobilehub.android.maps.sample.utils.Constants
-import com.openmobilehub.android.maps.sample.utils.GooglePlayServicesUtil
+import com.openmobilehub.android.maps.sample.utils.MapProvidersUtils
 
 class MenuFragment : Fragment() {
     override fun onCreateView(
@@ -36,13 +35,7 @@ class MenuFragment : Fragment() {
     private fun setupMapProviderSpinner(view: View) {
         val mapProviderSpinner: Spinner = view.findViewById(R.id.spinner_mapProvider)
 
-        val mapProviders = mutableListOf(
-            MapProvider("OpenStreetMap", Constants.OPEN_STREET_MAP_PATH),
-            MapProvider("Mapbox", Constants.MAPBOX_PATH)
-        )
-        if (GooglePlayServicesUtil.isGooglePlayServicesAvailable(requireContext())) {
-            mapProviders.add(0, MapProvider("Google", Constants.GOOGLE_MAPS_PATH))
-        }
+        val mapProviders = MapProvidersUtils.getAvailableMapProviders(requireContext())
 
         val adapterMapProvider =
             ArrayAdapter(
@@ -72,6 +65,16 @@ class MenuFragment : Fragment() {
         val listView: ListView = view.findViewById(R.id.listView)
 
         val items = listOf(
+            MenuListItem(
+                "Camera Map",
+                "Map showcasing the camera features",
+                R.id.action_menuFragment_to_mapCameraFragment
+            ),
+            MenuListItem(
+                "Location Sharing Map",
+                "Map showcasing location sharing via deep links",
+                R.id.action_menuFragment_to_mapLocationPickerFragment
+            ),
             MenuListItem(
                 "Marker Map",
                 "Map showcasing the markers",
