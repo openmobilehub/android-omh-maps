@@ -44,19 +44,26 @@ This plugin provides support for Mapbox by utilizing the [Mapbox Android SDK](ht
 | addMarker                         |      ?     |
 | addPolyline                       |      ?     |
 | addPolygon                        |      ?     |
-| getCameraPositionCoordinate       |      ?     |
-| moveCamera                        |      ?     |
-| setZoomGesturesEnabled            |      ?     |
+| getCameraPositionCoordinate       |      ✅     |
+| moveCamera                        |      ✅     |
+| setZoomGesturesEnabled            |      ✅     |
+| setRotateGesturesEnabled          |      ✅     |
 | setMyLocationEnabled              |      ?     |
 | isMyLocationEnabled               |      ?     |
 | setMyLocationButtonClickListener  |      ?     |
-| setOnCameraMoveStartedListener    |      ?     |
-| setOnCameraIdleListener           |      ?     |
-| setOnMapLoadedCallback            |      ?     |
+| setOnCameraMoveStartedListener    |      🟨     |
+| setOnCameraIdleListener           |      ✅     |
+| setOnMapLoadedCallback            |      ✅     |
 | setOnPolylineClickListener        |      ?     |
 | setOnPolygonClickListener         |      ?     |
 | snapshot                          |      ?     |
-| setMapStyle                       |      ?     |
+| setMapStyle                       |      ✅     |
+
+Comments for partially supported 🟨 properties:
+
+| Property                       | Comments                                            |
+| ------------------------------ | --------------------------------------------------- |
+| setOnCameraMoveStartedListener | The reason of the camera changed started is unknown |
 
 ### Marker
 
