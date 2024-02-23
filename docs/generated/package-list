@@ -1,0 +1,15 @@
+$dokka.format:html-v1
+$dokka.linkExtension:html
+
+module:core
+com.openmobilehub.android.maps.core.factories
+com.openmobilehub.android.maps.core.presentation.fragments
+com.openmobilehub.android.maps.core.presentation.interfaces.location
+com.openmobilehub.android.maps.core.presentation.interfaces.maps
+com.openmobilehub.android.maps.core.presentation.models
+com.openmobilehub.android.maps.core.utils
+com.openmobilehub.android.maps.core.utils.logging
+module:plugin-googlemaps
+com.openmobilehub.android.maps.plugin.googlemaps.utils
+module:plugin-openstreetmap
+com.openmobilehub.android.maps.plugin.openstreetmap.utils

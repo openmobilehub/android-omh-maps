@@ -32,3 +32,7 @@ android {
         }
     }
 }
+
+dependencies {
+    implementation(Libs.dokka)
+}

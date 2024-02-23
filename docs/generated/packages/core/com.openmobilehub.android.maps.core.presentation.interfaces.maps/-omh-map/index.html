@@ -1,0 +1,389 @@
+<!doctype html>
+<html class="no-js">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>OmhMap</title>
+<link href="../../../../images/logo-icon.svg" rel="icon" type="image/svg">    <script>var pathToRoot = "../../../../";</script>
+    <script>document.documentElement.classList.replace("no-js","js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async></script>
+<script type="text/javascript" src="../../../../scripts/sourceset_dependencies.js" async></script>
+<link href="../../../../styles/style.css" rel="Stylesheet">
+<link href="../../../../styles/main.css" rel="Stylesheet">
+<link href="../../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../../styles/font-jb-sans-auto.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../../scripts/clipboard.js" async></script>
+<script type="text/javascript" src="../../../../scripts/navigation-loader.js" async></script>
+<script type="text/javascript" src="../../../../scripts/platform-content-handler.js" async></script>
+<script type="text/javascript" src="../../../../scripts/main.js" defer></script>
+<script type="text/javascript" src="../../../../scripts/prism.js" async></script>
+<script type="text/javascript" src="../../../../scripts/symbol-parameters-wrapper_deferred.js" defer></script></head>
+<body>
+    <div class="root">
+<nav class="navigation" id="navigation-wrapper">
+    <div class="navigation--inner">
+        <div class="navigation-title">
+            <button class="menu-toggle" id="menu-toggle" type="button">toggle menu</button>
+            <div class="library-name">
+<a class="library-name--link" href="../../../../index.html">
+                            OMH Maps
+                    </a>            </div>
+            <div class="library-version">
+            </div>
+        </div>
+        <div class="filter-section" id="filter-section">
+                <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":packages:core:dokkaHtmlPartial/release">androidJvm</button>
+        </div>
+    </div>
+    <div class="navigation-controls">
+        <button class="navigation-controls--btn navigation-controls--theme" id="theme-toggle-button" type="button">switch theme</button>
+        <div class="navigation-controls--btn navigation-controls--search" id="searchBar" role="button">search in API</div>
+    </div>
+</nav>
+        <div id="container">
+            <div class="sidebar" id="leftColumn">
+                <div class="sidebar--inner" id="sideMenu"></div>
+            </div>
+            <div id="main">
+<div class="main-content" data-page-type="classlike" id="content" pageids="core::com.openmobilehub.android.maps.core.presentation.interfaces.maps/OmhMap///PointingToDeclaration//-1753205735">
+  <div class="breadcrumbs"><a href="../../index.html">core</a><span class="delimiter">/</span><a href="../index.html">com.openmobilehub.android.maps.core.presentation.interfaces.maps</a><span class="delimiter">/</span><span class="current">OmhMap</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Omh</span><wbr><span><span>Map</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":packages:core:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">interface </span><a href="index.html">OmhMap</a></div><p class="paragraph">Abstraction to provide access to the OmhMap. This is the main class of OMH Maps SDK for Android and is the entry point for all methods related to the map. You cannot instantiate a GoogleMap object directly, rather, you must obtain one from the getMapAsync() method on a OmhMapView that you have added to your application.</p></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="PROPERTY">
+        <h2 class="">Properties</h2>
+        <div class="table"><a data-name="-1501170189%2FProperties%2F-1753205735" anchor-label="providerName" id="-1501170189%2FProperties%2F-1753205735" data-filterable-set=":packages:core:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":packages:core:dokkaHtmlPartial/release" data-filterable-set=":packages:core:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="provider-name.html"><span>provider</span><wbr><span><span>Name</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1501170189%2FProperties%2F-1753205735"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":packages:core:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">val </span><a href="provider-name.html">providerName</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a></div><div class="brief "><p class="paragraph">The name of the map provider. This is a read-only property.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="FUNCTION">
+        <h2 class="">Functions</h2>
+        <div class="table"><a data-name="889901373%2FFunctions%2F-1753205735" anchor-label="addMarker" id="889901373%2FFunctions%2F-1753205735" data-filterable-set=":packages:core:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":packages:core:dokkaHtmlPartial/release" data-filterable-set=":packages:core:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="add-marker.html"><span>add</span><wbr><span><span>Marker</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="889901373%2FFunctions%2F-1753205735"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":packages:core:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="add-marker.html"><span class="token function">addMarker</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">options<span class="token operator">: </span><a href="../../com.openmobilehub.android.maps.core.presentation.models/-omh-marker-options/index.html">OmhMarkerOptions</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-omh-marker/index.html">OmhMarker</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Adds a marker to this map. The marker's icon is rendered on the map at the position.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-489589737%2FFunctions%2F-1753205735" anchor-label="addPolygon" id="-489589737%2FFunctions%2F-1753205735" data-filterable-set=":packages:core:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":packages:core:dokkaHtmlPartial/release" data-filterable-set=":packages:core:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="add-polygon.html"><span>add</span><wbr><span><span>Polygon</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-489589737%2FFunctions%2F-1753205735"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":packages:core:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="add-polygon.html"><span class="token function">addPolygon</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">options<span class="token operator">: </span><a href="../../com.openmobilehub.android.maps.core.presentation.models/-omh-polygon-options/index.html">OmhPolygonOptions</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-omh-polygon/index.html">OmhPolygon</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Adds a polygon to this map. The polygon is rendered on the map based on the provided options.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1511691843%2FFunctions%2F-1753205735" anchor-label="addPolyline" id="-1511691843%2FFunctions%2F-1753205735" data-filterable-set=":packages:core:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":packages:core:dokkaHtmlPartial/release" data-filterable-set=":packages:core:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="add-polyline.html"><span>add</span><wbr><span><span>Polyline</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1511691843%2FFunctions%2F-1753205735"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":packages:core:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="add-polyline.html"><span class="token function">addPolyline</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">options<span class="token operator">: </span><a href="../../com.openmobilehub.android.maps.core.presentation.models/-omh-polyline-options/index.html">OmhPolylineOptions</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-omh-polyline/index.html">OmhPolyline</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Adds a polyline to this map. The polyline is rendered on the map based on the provided options.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-922669777%2FFunctions%2F-1753205735" anchor-label="getCameraPositionCoordinate" id="-922669777%2FFunctions%2F-1753205735" data-filterable-set=":packages:core:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":packages:core:dokkaHtmlPartial/release" data-filterable-set=":packages:core:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-camera-position-coordinate.html"><span>get</span><wbr><span>Camera</span><wbr><span>Position</span><wbr><span><span>Coordinate</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-922669777%2FFunctions%2F-1753205735"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":packages:core:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="get-camera-position-coordinate.html"><span class="token function">getCameraPositionCoordinate</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../com.openmobilehub.android.maps.core.presentation.models/-omh-coordinate/index.html">OmhCoordinate</a></div><div class="brief "><p class="paragraph">Gets the camera's position.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="645205749%2FFunctions%2F-1753205735" anchor-label="isMyLocationEnabled" id="645205749%2FFunctions%2F-1753205735" data-filterable-set=":packages:core:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":packages:core:dokkaHtmlPartial/release" data-filterable-set=":packages:core:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="is-my-location-enabled.html"><span>is</span><wbr><span>My</span><wbr><span>Location</span><wbr><span><span>Enabled</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="645205749%2FFunctions%2F-1753205735"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":packages:core:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="is-my-location-enabled.html"><span class="token function">isMyLocationEnabled</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Gets the status of the my-location layer.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="636626992%2FFunctions%2F-1753205735" anchor-label="moveCamera" id="636626992%2FFunctions%2F-1753205735" data-filterable-set=":packages:core:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":packages:core:dokkaHtmlPartial/release" data-filterable-set=":packages:core:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="move-camera.html"><span>move</span><wbr><span><span>Camera</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="636626992%2FFunctions%2F-1753205735"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":packages:core:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="move-camera.html"><span class="token function">moveCamera</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">coordinate<span class="token operator">: </span><a href="../../com.openmobilehub.android.maps.core.presentation.models/-omh-coordinate/index.html">OmhCoordinate</a><span class="token punctuation">, </span></span><span class="parameter ">zoomLevel<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html">Float</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Moves the camera's position to a specific position.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1344215503%2FFunctions%2F-1753205735" anchor-label="setMapStyle" id="-1344215503%2FFunctions%2F-1753205735" data-filterable-set=":packages:core:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":packages:core:dokkaHtmlPartial/release" data-filterable-set=":packages:core:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-map-style.html"><span>set</span><wbr><span>Map</span><wbr><span><span>Style</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1344215503%2FFunctions%2F-1753205735"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":packages:core:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="set-map-style.html"><span class="token function">setMapStyle</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">json<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator">?</span></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Sets the style of the map based on a JSON resource. The JSON file should define the styles for the map elements.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1313666604%2FFunctions%2F-1753205735" anchor-label="setMyLocationButtonClickListener" id="1313666604%2FFunctions%2F-1753205735" data-filterable-set=":packages:core:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":packages:core:dokkaHtmlPartial/release" data-filterable-set=":packages:core:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-my-location-button-click-listener.html"><span>set</span><wbr><span>My</span><wbr><span>Location</span><wbr><span>Button</span><wbr><span>Click</span><wbr><span><span>Listener</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1313666604%2FFunctions%2F-1753205735"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":packages:core:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="set-my-location-button-click-listener.html"><span class="token function">setMyLocationButtonClickListener</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">omhOnMyLocationButtonClickListener<span class="token operator">: </span><a href="../-omh-on-my-location-button-click-listener/index.html">OmhOnMyLocationButtonClickListener</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Sets a callback that's invoked when the my location button is clicked.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1881393558%2FFunctions%2F-1753205735" anchor-label="setMyLocationEnabled" id="1881393558%2FFunctions%2F-1753205735" data-filterable-set=":packages:core:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":packages:core:dokkaHtmlPartial/release" data-filterable-set=":packages:core:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-my-location-enabled.html"><span>set</span><wbr><span>My</span><wbr><span>Location</span><wbr><span><span>Enabled</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1881393558%2FFunctions%2F-1753205735"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":packages:core:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/RequiresPermission.html"><span class="token annotation builtin">RequiresPermission</span></a><span class="token punctuation">(</span><span>anyOf<span class="token operator"> = </span><span class="token punctuation">[</span><span><span class="breakable-word"><span class="token string">"android.permission.ACCESS_COARSE_LOCATION"</span></span><span class="token punctuation">, </span></span><wbr><span><span class="breakable-word"><span class="token string">"android.permission.ACCESS_FINE_LOCATION"</span></span></span><wbr><span class="token punctuation">]</span></span><wbr><span class="token punctuation">)</span></div></div><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="set-my-location-enabled.html"><span class="token function">setMyLocationEnabled</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">enable<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Enables or disables the my location layer.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-166859563%2FFunctions%2F-1753205735" anchor-label="setOnCameraIdleListener" id="-166859563%2FFunctions%2F-1753205735" data-filterable-set=":packages:core:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":packages:core:dokkaHtmlPartial/release" data-filterable-set=":packages:core:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-on-camera-idle-listener.html"><span>set</span><wbr><span>On</span><wbr><span>Camera</span><wbr><span>Idle</span><wbr><span><span>Listener</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-166859563%2FFunctions%2F-1753205735"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":packages:core:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="set-on-camera-idle-listener.html"><span class="token function">setOnCameraIdleListener</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">listener<span class="token operator">: </span><a href="../-omh-on-camera-idle-listener/index.html">OmhOnCameraIdleListener</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Sets the callback that is invoked when the camera movement has ended.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-65891251%2FFunctions%2F-1753205735" anchor-label="setOnCameraMoveStartedListener" id="-65891251%2FFunctions%2F-1753205735" data-filterable-set=":packages:core:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":packages:core:dokkaHtmlPartial/release" data-filterable-set=":packages:core:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-on-camera-move-started-listener.html"><span>set</span><wbr><span>On</span><wbr><span>Camera</span><wbr><span>Move</span><wbr><span>Started</span><wbr><span><span>Listener</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-65891251%2FFunctions%2F-1753205735"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":packages:core:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="set-on-camera-move-started-listener.html"><span class="token function">setOnCameraMoveStartedListener</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">listener<span class="token operator">: </span><a href="../-omh-on-camera-move-started-listener/index.html">OmhOnCameraMoveStartedListener</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Sets the callback that's invoked when the camera starts moving or the reason for camera motion has changed.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1559215221%2FFunctions%2F-1753205735" anchor-label="setOnMapLoadedCallback" id="1559215221%2FFunctions%2F-1753205735" data-filterable-set=":packages:core:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":packages:core:dokkaHtmlPartial/release" data-filterable-set=":packages:core:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-on-map-loaded-callback.html"><span>set</span><wbr><span>On</span><wbr><span>Map</span><wbr><span>Loaded</span><wbr><span><span>Callback</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1559215221%2FFunctions%2F-1753205735"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":packages:core:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="set-on-map-loaded-callback.html"><span class="token function">setOnMapLoadedCallback</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">callback<span class="token operator">: </span><a href="../-omh-map-loaded-callback/index.html">OmhMapLoadedCallback</a><span class="token operator">?</span></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Sets a callback that's invoked when this map has finished rendering. The callback will only be invoked once. If this method is called when the map is fully rendered, the callback will be invoked immediately. This event will not fire if the map never loads due to connectivity issues, or if the map is continuously changing and never completes loading due to the user constantly interacting with the map.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="938914861%2FFunctions%2F-1753205735" anchor-label="setOnMarkerClickListener" id="938914861%2FFunctions%2F-1753205735" data-filterable-set=":packages:core:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":packages:core:dokkaHtmlPartial/release" data-filterable-set=":packages:core:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-on-marker-click-listener.html"><span>set</span><wbr><span>On</span><wbr><span>Marker</span><wbr><span>Click</span><wbr><span><span>Listener</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="938914861%2FFunctions%2F-1753205735"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":packages:core:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="set-on-marker-click-listener.html"><span class="token function">setOnMarkerClickListener</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">listener<span class="token operator">: </span><a href="../-omh-on-marker-click-listener/index.html">OmhOnMarkerClickListener</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">The callback to be executed when the marker is clicked.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-173277205%2FFunctions%2F-1753205735" anchor-label="setOnMarkerDragListener" id="-173277205%2FFunctions%2F-1753205735" data-filterable-set=":packages:core:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":packages:core:dokkaHtmlPartial/release" data-filterable-set=":packages:core:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-on-marker-drag-listener.html"><span>set</span><wbr><span>On</span><wbr><span>Marker</span><wbr><span>Drag</span><wbr><span><span>Listener</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-173277205%2FFunctions%2F-1753205735"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":packages:core:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="set-on-marker-drag-listener.html"><span class="token function">setOnMarkerDragListener</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">listener<span class="token operator">: </span><a href="../-omh-on-marker-drag-listener/index.html">OmhOnMarkerDragListener</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">The callbacks to be executed on proper marker drag events.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1378532885%2FFunctions%2F-1753205735" anchor-label="setOnPolygonClickListener" id="-1378532885%2FFunctions%2F-1753205735" data-filterable-set=":packages:core:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":packages:core:dokkaHtmlPartial/release" data-filterable-set=":packages:core:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-on-polygon-click-listener.html"><span>set</span><wbr><span>On</span><wbr><span>Polygon</span><wbr><span>Click</span><wbr><span><span>Listener</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1378532885%2FFunctions%2F-1753205735"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":packages:core:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="set-on-polygon-click-listener.html"><span class="token function">setOnPolygonClickListener</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">listener<span class="token operator">: </span><a href="../-omh-on-polygon-click-listener/index.html">OmhOnPolygonClickListener</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Sets a callback that's invoked when a polygon on the map is clicked.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1250292947%2FFunctions%2F-1753205735" anchor-label="setOnPolylineClickListener" id="-1250292947%2FFunctions%2F-1753205735" data-filterable-set=":packages:core:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":packages:core:dokkaHtmlPartial/release" data-filterable-set=":packages:core:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-on-polyline-click-listener.html"><span>set</span><wbr><span>On</span><wbr><span>Polyline</span><wbr><span>Click</span><wbr><span><span>Listener</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1250292947%2FFunctions%2F-1753205735"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":packages:core:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="set-on-polyline-click-listener.html"><span class="token function">setOnPolylineClickListener</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">listener<span class="token operator">: </span><a href="../-omh-on-polyline-click-listener/index.html">OmhOnPolylineClickListener</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Sets a callback that's invoked when a polyline on the map is clicked.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1128039898%2FFunctions%2F-1753205735" anchor-label="setRotateGesturesEnabled" id="1128039898%2FFunctions%2F-1753205735" data-filterable-set=":packages:core:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":packages:core:dokkaHtmlPartial/release" data-filterable-set=":packages:core:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-rotate-gestures-enabled.html"><span>set</span><wbr><span>Rotate</span><wbr><span>Gestures</span><wbr><span><span>Enabled</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1128039898%2FFunctions%2F-1753205735"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":packages:core:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="set-rotate-gestures-enabled.html"><span class="token function">setRotateGesturesEnabled</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">enableRotateGestures<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Enables or disables the rotate gestures in the map.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="231974738%2FFunctions%2F-1753205735" anchor-label="setZoomGesturesEnabled" id="231974738%2FFunctions%2F-1753205735" data-filterable-set=":packages:core:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":packages:core:dokkaHtmlPartial/release" data-filterable-set=":packages:core:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-zoom-gestures-enabled.html"><span>set</span><wbr><span>Zoom</span><wbr><span>Gestures</span><wbr><span><span>Enabled</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="231974738%2FFunctions%2F-1753205735"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":packages:core:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="set-zoom-gestures-enabled.html"><span class="token function">setZoomGesturesEnabled</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">enableZoomGestures<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Enables or disables the zoom gestures in the map.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="610094511%2FFunctions%2F-1753205735" anchor-label="snapshot" id="610094511%2FFunctions%2F-1753205735" data-filterable-set=":packages:core:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":packages:core:dokkaHtmlPartial/release" data-filterable-set=":packages:core:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="snapshot.html"><span><span>snapshot</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="610094511%2FFunctions%2F-1753205735"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":packages:core:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="snapshot.html"><span class="token function">snapshot</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">omhSnapshotReadyCallback<span class="token operator">: </span><a href="../-omh-snapshot-ready-callback/index.html">OmhSnapshotReadyCallback</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Takes a snapshot of the map.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      <div class="footer">
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2024 Copyright</span><span class="pull-right"><span>Generated by </span><a href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
+      </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

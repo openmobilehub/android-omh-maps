@@ -1,0 +1,415 @@
+<!doctype html>
+<html class="no-js">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>OmhPolygon</title>
+<link href="../../../../images/logo-icon.svg" rel="icon" type="image/svg">    <script>var pathToRoot = "../../../../";</script>
+    <script>document.documentElement.classList.replace("no-js","js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async></script>
+<script type="text/javascript" src="../../../../scripts/sourceset_dependencies.js" async></script>
+<link href="../../../../styles/style.css" rel="Stylesheet">
+<link href="../../../../styles/main.css" rel="Stylesheet">
+<link href="../../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../../styles/font-jb-sans-auto.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../../scripts/clipboard.js" async></script>
+<script type="text/javascript" src="../../../../scripts/navigation-loader.js" async></script>
+<script type="text/javascript" src="../../../../scripts/platform-content-handler.js" async></script>
+<script type="text/javascript" src="../../../../scripts/main.js" defer></script>
+<script type="text/javascript" src="../../../../scripts/prism.js" async></script>
+<script type="text/javascript" src="../../../../scripts/symbol-parameters-wrapper_deferred.js" defer></script></head>
+<body>
+    <div class="root">
+<nav class="navigation" id="navigation-wrapper">
+    <div class="navigation--inner">
+        <div class="navigation-title">
+            <button class="menu-toggle" id="menu-toggle" type="button">toggle menu</button>
+            <div class="library-name">
+<a class="library-name--link" href="../../../../index.html">
+                            OMH Maps
+                    </a>            </div>
+            <div class="library-version">
+            </div>
+        </div>
+        <div class="filter-section" id="filter-section">
+                <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":packages:core:dokkaHtmlPartial/release">androidJvm</button>
+        </div>
+    </div>
+    <div class="navigation-controls">
+        <button class="navigation-controls--btn navigation-controls--theme" id="theme-toggle-button" type="button">switch theme</button>
+        <div class="navigation-controls--btn navigation-controls--search" id="searchBar" role="button">search in API</div>
+    </div>
+</nav>
+        <div id="container">
+            <div class="sidebar" id="leftColumn">
+                <div class="sidebar--inner" id="sideMenu"></div>
+            </div>
+            <div id="main">
+<div class="main-content" data-page-type="classlike" id="content" pageids="core::com.openmobilehub.android.maps.core.presentation.interfaces.maps/OmhPolygon///PointingToDeclaration//-1753205735">
+  <div class="breadcrumbs"><a href="../../index.html">core</a><span class="delimiter">/</span><a href="../index.html">com.openmobilehub.android.maps.core.presentation.interfaces.maps</a><span class="delimiter">/</span><span class="current">OmhPolygon</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Omh</span><wbr><span><span>Polygon</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":packages:core:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">interface </span><a href="index.html">OmhPolygon</a></div><p class="paragraph"><a href="index.html">OmhPolygon</a> is an interface that provides an abstraction for a polygon on a map. A polygon is a shape with multiple edges on a map. You can customize the appearance of the polygon by changing its properties.</p></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="FUNCTION">
+        <h2 class="">Functions</h2>
+        <div class="table"><a data-name="2113086145%2FFunctions%2F-1753205735" anchor-label="getClickable" id="2113086145%2FFunctions%2F-1753205735" data-filterable-set=":packages:core:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":packages:core:dokkaHtmlPartial/release" data-filterable-set=":packages:core:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-clickable.html"><span>get</span><wbr><span><span>Clickable</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2113086145%2FFunctions%2F-1753205735"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":packages:core:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="get-clickable.html"><span class="token function">getClickable</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Checks if the polygon is clickable.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1679124419%2FFunctions%2F-1753205735" anchor-label="getFillColor" id="1679124419%2FFunctions%2F-1753205735" data-filterable-set=":packages:core:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":packages:core:dokkaHtmlPartial/release" data-filterable-set=":packages:core:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-fill-color.html"><span>get</span><wbr><span>Fill</span><wbr><span><span>Color</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1679124419%2FFunctions%2F-1753205735"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":packages:core:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="get-fill-color.html"><span class="token function">getFillColor</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Gets the color of the polygon.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1259140624%2FFunctions%2F-1753205735" anchor-label="getHoles" id="1259140624%2FFunctions%2F-1753205735" data-filterable-set=":packages:core:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":packages:core:dokkaHtmlPartial/release" data-filterable-set=":packages:core:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-holes.html"><span>get</span><wbr><span><span>Holes</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1259140624%2FFunctions%2F-1753205735"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":packages:core:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="get-holes.html"><span class="token function">getHoles</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="../../com.openmobilehub.android.maps.core.presentation.models/-omh-coordinate/index.html">OmhCoordinate</a><span class="token operator">&gt;</span><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Gets the holes in the polygon.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="600141537%2FFunctions%2F-1753205735" anchor-label="getOutline" id="600141537%2FFunctions%2F-1753205735" data-filterable-set=":packages:core:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":packages:core:dokkaHtmlPartial/release" data-filterable-set=":packages:core:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-outline.html"><span>get</span><wbr><span><span>Outline</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="600141537%2FFunctions%2F-1753205735"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":packages:core:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="get-outline.html"><span class="token function">getOutline</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="../../com.openmobilehub.android.maps.core.presentation.models/-omh-coordinate/index.html">OmhCoordinate</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Gets the points that make up the polygon.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1766992952%2FFunctions%2F-1753205735" anchor-label="getStrokeColor" id="1766992952%2FFunctions%2F-1753205735" data-filterable-set=":packages:core:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":packages:core:dokkaHtmlPartial/release" data-filterable-set=":packages:core:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-stroke-color.html"><span>get</span><wbr><span>Stroke</span><wbr><span><span>Color</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1766992952%2FFunctions%2F-1753205735"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":packages:core:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="get-stroke-color.html"><span class="token function">getStrokeColor</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Gets the color of the polygon's stroke.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-829802281%2FFunctions%2F-1753205735" anchor-label="getStrokeJointType" id="-829802281%2FFunctions%2F-1753205735" data-filterable-set=":packages:core:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":packages:core:dokkaHtmlPartial/release" data-filterable-set=":packages:core:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-stroke-joint-type.html"><span>get</span><wbr><span>Stroke</span><wbr><span>Joint</span><wbr><span><span>Type</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-829802281%2FFunctions%2F-1753205735"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":packages:core:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="get-stroke-joint-type.html"><span class="token function">getStrokeJointType</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Gets the joint type of the polygon's stroke.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="626844971%2FFunctions%2F-1753205735" anchor-label="getStrokePattern" id="626844971%2FFunctions%2F-1753205735" data-filterable-set=":packages:core:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":packages:core:dokkaHtmlPartial/release" data-filterable-set=":packages:core:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-stroke-pattern.html"><span>get</span><wbr><span>Stroke</span><wbr><span><span>Pattern</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="626844971%2FFunctions%2F-1753205735"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":packages:core:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="get-stroke-pattern.html"><span class="token function">getStrokePattern</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="../-omh-pattern-item/index.html">OmhPatternItem</a><span class="token operator">&gt;</span><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Gets the pattern of the polygon's stroke.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="75502389%2FFunctions%2F-1753205735" anchor-label="getStrokeWidth" id="75502389%2FFunctions%2F-1753205735" data-filterable-set=":packages:core:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":packages:core:dokkaHtmlPartial/release" data-filterable-set=":packages:core:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-stroke-width.html"><span>get</span><wbr><span>Stroke</span><wbr><span><span>Width</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="75502389%2FFunctions%2F-1753205735"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":packages:core:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="get-stroke-width.html"><span class="token function">getStrokeWidth</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html">Float</a></div><div class="brief "><p class="paragraph">Gets the width of the polygon's stroke.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1563471241%2FFunctions%2F-1753205735" anchor-label="getTag" id="1563471241%2FFunctions%2F-1753205735" data-filterable-set=":packages:core:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":packages:core:dokkaHtmlPartial/release" data-filterable-set=":packages:core:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-tag.html"><span>get</span><wbr><span><span>Tag</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1563471241%2FFunctions%2F-1753205735"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":packages:core:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="get-tag.html"><span class="token function">getTag</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html">Any</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Get the tag associated with the polygon.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="457704543%2FFunctions%2F-1753205735" anchor-label="getZIndex" id="457704543%2FFunctions%2F-1753205735" data-filterable-set=":packages:core:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":packages:core:dokkaHtmlPartial/release" data-filterable-set=":packages:core:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-z-index.html"><span>get</span><wbr><span><span>ZIndex</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="457704543%2FFunctions%2F-1753205735"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":packages:core:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="get-z-index.html"><span class="token function">getZIndex</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html">Float</a></div><div class="brief "><p class="paragraph">Gets the z-index of the polygon.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1786183387%2FFunctions%2F-1753205735" anchor-label="isVisible" id="-1786183387%2FFunctions%2F-1753205735" data-filterable-set=":packages:core:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":packages:core:dokkaHtmlPartial/release" data-filterable-set=":packages:core:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="is-visible.html"><span>is</span><wbr><span><span>Visible</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1786183387%2FFunctions%2F-1753205735"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":packages:core:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="is-visible.html"><span class="token function">isVisible</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Gets the visibility of the polygon.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1236011346%2FFunctions%2F-1753205735" anchor-label="setClickable" id="1236011346%2FFunctions%2F-1753205735" data-filterable-set=":packages:core:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":packages:core:dokkaHtmlPartial/release" data-filterable-set=":packages:core:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-clickable.html"><span>set</span><wbr><span><span>Clickable</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1236011346%2FFunctions%2F-1753205735"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":packages:core:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="set-clickable.html"><span class="token function">setClickable</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">clickable<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Sets the clickable state of the polygon.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1126918995%2FFunctions%2F-1753205735" anchor-label="setFillColor" id="-1126918995%2FFunctions%2F-1753205735" data-filterable-set=":packages:core:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":packages:core:dokkaHtmlPartial/release" data-filterable-set=":packages:core:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-fill-color.html"><span>set</span><wbr><span>Fill</span><wbr><span><span>Color</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1126918995%2FFunctions%2F-1753205735"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":packages:core:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="set-fill-color.html"><span class="token function">setFillColor</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">color<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Sets the fill color of the polygon.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="161154219%2FFunctions%2F-1753205735" anchor-label="setHoles" id="161154219%2FFunctions%2F-1753205735" data-filterable-set=":packages:core:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":packages:core:dokkaHtmlPartial/release" data-filterable-set=":packages:core:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-holes.html"><span>set</span><wbr><span><span>Holes</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="161154219%2FFunctions%2F-1753205735"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":packages:core:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="set-holes.html"><span class="token function">setHoles</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">omhCoordinates<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="../../com.openmobilehub.android.maps.core.presentation.models/-omh-coordinate/index.html">OmhCoordinate</a><span class="token operator">&gt;</span><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Sets the holes in the polygon.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-2019666846%2FFunctions%2F-1753205735" anchor-label="setOutline" id="-2019666846%2FFunctions%2F-1753205735" data-filterable-set=":packages:core:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":packages:core:dokkaHtmlPartial/release" data-filterable-set=":packages:core:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-outline.html"><span>set</span><wbr><span><span>Outline</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2019666846%2FFunctions%2F-1753205735"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":packages:core:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="set-outline.html"><span class="token function">setOutline</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">omhCoordinates<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="../../com.openmobilehub.android.maps.core.presentation.models/-omh-coordinate/index.html">OmhCoordinate</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Sets the points that make up the polygon.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="86734818%2FFunctions%2F-1753205735" anchor-label="setStrokeColor" id="86734818%2FFunctions%2F-1753205735" data-filterable-set=":packages:core:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":packages:core:dokkaHtmlPartial/release" data-filterable-set=":packages:core:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-stroke-color.html"><span>set</span><wbr><span>Stroke</span><wbr><span><span>Color</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="86734818%2FFunctions%2F-1753205735"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":packages:core:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="set-stroke-color.html"><span class="token function">setStrokeColor</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">color<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Sets the color of the polygon's stroke.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="454861761%2FFunctions%2F-1753205735" anchor-label="setStrokeJointType" id="454861761%2FFunctions%2F-1753205735" data-filterable-set=":packages:core:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":packages:core:dokkaHtmlPartial/release" data-filterable-set=":packages:core:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-stroke-joint-type.html"><span>set</span><wbr><span>Stroke</span><wbr><span>Joint</span><wbr><span><span>Type</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="454861761%2FFunctions%2F-1753205735"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":packages:core:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="set-stroke-joint-type.html"><span class="token function">setStrokeJointType</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">jointType<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Sets the joint type of the polygon's stroke.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="102590553%2FFunctions%2F-1753205735" anchor-label="setStrokePattern" id="102590553%2FFunctions%2F-1753205735" data-filterable-set=":packages:core:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":packages:core:dokkaHtmlPartial/release" data-filterable-set=":packages:core:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-stroke-pattern.html"><span>set</span><wbr><span>Stroke</span><wbr><span><span>Pattern</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="102590553%2FFunctions%2F-1753205735"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":packages:core:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="set-stroke-pattern.html"><span class="token function">setStrokePattern</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">pattern<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="../-omh-pattern-item/index.html">OmhPatternItem</a><span class="token operator">&gt;</span><span class="token operator">?</span></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Sets the pattern of the polygon's stroke.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="884682322%2FFunctions%2F-1753205735" anchor-label="setStrokeWidth" id="884682322%2FFunctions%2F-1753205735" data-filterable-set=":packages:core:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":packages:core:dokkaHtmlPartial/release" data-filterable-set=":packages:core:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-stroke-width.html"><span>set</span><wbr><span>Stroke</span><wbr><span><span>Width</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="884682322%2FFunctions%2F-1753205735"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":packages:core:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="set-stroke-width.html"><span class="token function">setStrokeWidth</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">width<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html">Float</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Sets the width of the polygon's stroke.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="904690765%2FFunctions%2F-1753205735" anchor-label="setTag" id="904690765%2FFunctions%2F-1753205735" data-filterable-set=":packages:core:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":packages:core:dokkaHtmlPartial/release" data-filterable-set=":packages:core:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-tag.html"><span>set</span><wbr><span><span>Tag</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="904690765%2FFunctions%2F-1753205735"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":packages:core:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="set-tag.html"><span class="token function">setTag</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">tag<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html">Any</a><span class="token operator">?</span></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Sets the tag associated with the polygon.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1712672190%2FFunctions%2F-1753205735" anchor-label="setVisible" id="-1712672190%2FFunctions%2F-1753205735" data-filterable-set=":packages:core:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":packages:core:dokkaHtmlPartial/release" data-filterable-set=":packages:core:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-visible.html"><span>set</span><wbr><span><span>Visible</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1712672190%2FFunctions%2F-1753205735"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":packages:core:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="set-visible.html"><span class="token function">setVisible</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">visible<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Sets the visibility of the polygon.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1521872612%2FFunctions%2F-1753205735" anchor-label="setZIndex" id="1521872612%2FFunctions%2F-1753205735" data-filterable-set=":packages:core:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":packages:core:dokkaHtmlPartial/release" data-filterable-set=":packages:core:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-z-index.html"><span>set</span><wbr><span><span>ZIndex</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1521872612%2FFunctions%2F-1753205735"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":packages:core:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="set-z-index.html"><span class="token function">setZIndex</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">zIndex<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html">Float</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Sets the z-index of the polygon.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      <div class="footer">
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2024 Copyright</span><span class="pull-right"><span>Generated by </span><a href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
+      </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

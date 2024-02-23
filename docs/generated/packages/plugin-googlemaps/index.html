@@ -1,0 +1,96 @@
+<!doctype html>
+<html class="no-js">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>plugin-googlemaps</title>
+<link href="../../images/logo-icon.svg" rel="icon" type="image/svg">    <script>var pathToRoot = "../../";</script>
+    <script>document.documentElement.classList.replace("no-js","js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async></script>
+<script type="text/javascript" src="../../scripts/sourceset_dependencies.js" async></script>
+<link href="../../styles/style.css" rel="Stylesheet">
+<link href="../../styles/main.css" rel="Stylesheet">
+<link href="../../styles/prism.css" rel="Stylesheet">
+<link href="../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../styles/font-jb-sans-auto.css" rel="Stylesheet">
+<script type="text/javascript" src="../../scripts/clipboard.js" async></script>
+<script type="text/javascript" src="../../scripts/navigation-loader.js" async></script>
+<script type="text/javascript" src="../../scripts/platform-content-handler.js" async></script>
+<script type="text/javascript" src="../../scripts/main.js" defer></script>
+<script type="text/javascript" src="../../scripts/prism.js" async></script>
+<script type="text/javascript" src="../../scripts/symbol-parameters-wrapper_deferred.js" defer></script></head>
+<body>
+    <div class="root">
+<nav class="navigation" id="navigation-wrapper">
+    <div class="navigation--inner">
+        <div class="navigation-title">
+            <button class="menu-toggle" id="menu-toggle" type="button">toggle menu</button>
+            <div class="library-name">
+<a class="library-name--link" href="../../index.html">
+                            OMH Maps
+                    </a>            </div>
+            <div class="library-version">
+            </div>
+        </div>
+        <div class="filter-section" id="filter-section">
+                <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":packages:plugin-googlemaps:dokkaHtmlPartial/release">androidJvm</button>
+        </div>
+    </div>
+    <div class="navigation-controls">
+        <button class="navigation-controls--btn navigation-controls--theme" id="theme-toggle-button" type="button">switch theme</button>
+        <div class="navigation-controls--btn navigation-controls--search" id="searchBar" role="button">search in API</div>
+    </div>
+</nav>
+        <div id="container">
+            <div class="sidebar" id="leftColumn">
+                <div class="sidebar--inner" id="sideMenu"></div>
+            </div>
+            <div id="main">
+<div class="main-content" id="content" pageids="plugin-googlemaps::////PointingToDeclaration//-1505631210">
+  <div class="breadcrumbs"></div>
+  <div class="cover ">
+    <h1 class="cover"><span><span>plugin-googlemaps</span></span></h1>
+    <div class="platform-hinted UnderCoverText" data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":packages:plugin-googlemaps:dokkaHtmlPartial/release"><h2 class=""> Overview</h2><p class="paragraph">This plugin provides support for Google Maps by utilizing the <a href="https://developers.google.com/maps/documentation/android-sdk/overview">Google Maps Android SDK</a>.</p><h2 class=""> Getting Started</h2><h3 class=""> Set up the development environment</h3><ol><li><p class="paragraph">Android Studio is required. If you haven't already done so, <a href="https://developer.android.com/studio/index.html">download</a> and <a href="https://developer.android.com/studio/install.html?pkg=studio">install</a> it.</p></li><li><p class="paragraph">Ensure that you are using the <a href="https://developer.android.com/studio/releases/gradle-plugin">Android Gradle plugin</a> version 7.0 or later in Android Studio.</p></li></ol><h3 class=""> Set up your Google Cloud project for applications with Google Services (Google Maps)</h3><p class="paragraph">Complete the required Cloud Console setup following the next steps, for more information see:</p><ul><li><p class="paragraph"><a href="https://developers.google.com/maps/documentation/android-sdk/cloud-setup">Official Documentation</a></p></li><li><p class="paragraph">/packages//plugin-googlemaps/docs/advanced/CLOUD_CONSOLE_SETUP.md</p></li></ul><h3 class=""> Set up the project</h3><ol><li><p class="paragraph">Add the plugin to the project by following one of the guides:</p></li></ol><ul><li><p class="paragraph">/packages/core/docs/SETUP_WITH_OMH_CORE_PLUGIN.md</p></li><li><p class="paragraph">/packages/core/docs/SETUP_WITHOUT_OMH_CORE_PLUGIN.md</p></li></ul><ol><li><p class="paragraph">Open the <code class="lang-kotlin">local.properties</code> in the project level directory, and then add the following code. Replace <code class="lang-kotlin">YOUR_API_KEY</code> with your API key.</p><div class="sample-container"><pre><code class="block lang-properties" theme="idea">MAPS_API_KEY=YOUR_API_KEY</code></pre><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><p class="paragraph">You should not check your API key into your version control system, so it is recommended    storing it in the <code class="lang-kotlin">local.properties</code> file, which is located in the root directory of your project.    For more information about the <code class="lang-kotlin">local.properties</code> file, see <a href="https://developer.android.com/studio/build#properties-files">Gradle properties files</a>.</p></li><li><p class="paragraph">In your app's module level <code class="lang-kotlin">AndroidManifest.xml</code>file, under the <code class="lang-kotlin">application</code> element add the <code class="lang-kotlin">meta-data</code> element as follows:</p><div class="sample-container"><pre><code class="block lang-xml" theme="idea">&lt;manifest ...&gt;<br>   &lt;application ...&gt;<br>      ...<br>      &lt;meta-data<br>         android:name="com.google.android.geo.API_KEY"<br>         android:value="${MAPS_API_KEY}" /&gt;<br>   &lt;/application&gt;<br>&lt;/manifest&gt;</code></pre><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></li><li><p class="paragraph">In your app's module-level <code class="lang-kotlin">AndroidManifest.xml</code> add the required permissions, for more information see <a href="https://developer.android.com/training/permissions/declaring">permissions</a>.</p><div class="sample-container"><pre><code class="block lang-xml" theme="idea">&lt;manifest ...&gt;<br>   &lt;uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /&gt;<br>   &lt;uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /&gt;<br>   &lt;uses-permission android:name="android.permission.INTERNET" /&gt;<br>   &lt;uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /&gt;<br>   &lt;application ...&gt;<br>      ...<br>   &lt;/application&gt;<br>&lt;/manifest&gt;</code></pre><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></li></ol><h2 class=""> Compatibility matrix</h2><p class="paragraph">Legend of support levels:</p><table><thead><tr><th></th><th></th></tr></thead><tbody><tr><td>Fully supported</td><td>✅</td></tr><tr><td>Partially supported</td><td>🟨</td></tr><tr><td>Not supported</td><td>❌</td></tr></tbody></table><h3 class=""> Map</h3><h4 class=""> OmhMap</h4><table><thead><tr><th></th><th></th></tr></thead><tbody><tr><td>addMarker</td><td>✅</td></tr><tr><td>addPolyline</td><td>✅</td></tr><tr><td>addPolygon</td><td>✅</td></tr><tr><td>getCameraPositionCoordinate</td><td>✅</td></tr><tr><td>moveCamera</td><td>✅</td></tr><tr><td>setZoomGesturesEnabled</td><td>✅</td></tr><tr><td>setMyLocationEnabled</td><td>✅</td></tr><tr><td>isMyLocationEnabled</td><td>✅</td></tr><tr><td>setMyLocationButtonClickListener</td><td>✅</td></tr><tr><td>setOnCameraMoveStartedListener</td><td>✅</td></tr><tr><td>setOnCameraIdleListener</td><td>✅</td></tr><tr><td>setOnMapLoadedCallback</td><td>✅</td></tr><tr><td>setOnPolylineClickListener</td><td>✅</td></tr><tr><td>setOnPolygonClickListener</td><td>✅</td></tr><tr><td>snapshot</td><td>✅</td></tr><tr><td>setMapStyle</td><td>✅</td></tr></tbody></table><h3 class=""> Marker</h3><h4 class=""> OmhMarkerOptions</h4><table><thead><tr><th></th><th></th></tr></thead><tbody><tr><td>position</td><td>✅</td></tr><tr><td>title</td><td>✅</td></tr><tr><td>draggable</td><td>✅</td></tr><tr><td>anchor</td><td>✅</td></tr><tr><td>alpha</td><td>✅</td></tr><tr><td>snippet</td><td>✅</td></tr><tr><td>isVisible</td><td>✅</td></tr><tr><td>isFlat</td><td>✅</td></tr><tr><td>rotation</td><td>✅</td></tr><tr><td>backgroundColor</td><td>🟨</td></tr><tr><td>clickable</td><td>✅</td></tr></tbody></table><h4 class=""> OmhMarker</h4><table><thead><tr><th></th><th></th></tr></thead><tbody><tr><td>getPosition</td><td>✅</td></tr><tr><td>setPosition</td><td>✅</td></tr><tr><td>getTitle</td><td>✅</td></tr><tr><td>setTitle</td><td>✅</td></tr><tr><td>getClickable</td><td>✅</td></tr><tr><td>setClickable</td><td>✅</td></tr><tr><td>getDraggable</td><td>✅</td></tr><tr><td>setDraggable</td><td>✅</td></tr><tr><td>setAnchor</td><td>✅</td></tr><tr><td>getAlpha</td><td>✅</td></tr><tr><td>setAlpha</td><td>✅</td></tr><tr><td>getSnippet</td><td>✅</td></tr><tr><td>setSnippet</td><td>✅</td></tr><tr><td>setIcon</td><td>✅</td></tr><tr><td>getIsVisible</td><td>✅</td></tr><tr><td>setIsVisible</td><td>✅</td></tr><tr><td>getIsFlat</td><td>✅</td></tr><tr><td>setIsFlat</td><td>✅</td></tr><tr><td>getRotation</td><td>✅</td></tr><tr><td>setRotation</td><td>✅</td></tr><tr><td>getBackgroundColor</td><td>❌</td></tr><tr><td>setBackgroundColor</td><td>🟨</td></tr></tbody></table><h3 class=""> Polyline</h3><h4 class=""> OmhPolylineOptions</h4><table><thead><tr><th></th><th></th></tr></thead><tbody><tr><td>points</td><td>✅</td></tr><tr><td>clickable</td><td>✅</td></tr><tr><td>color</td><td>✅</td></tr><tr><td>width</td><td>✅</td></tr><tr><td>isVisible</td><td>✅</td></tr><tr><td>zIndex</td><td>✅</td></tr><tr><td>jointType</td><td>✅</td></tr><tr><td>pattern</td><td>✅</td></tr><tr><td>startCap</td><td>✅</td></tr><tr><td>endCap</td><td>✅</td></tr><tr><td>spans</td><td>✅</td></tr></tbody></table><h4 class=""> OmhPolyline</h4><table><thead><tr><th></th><th></th></tr></thead><tbody><tr><td>isClickable</td><td>✅</td></tr><tr><td>setClickable</td><td>✅</td></tr><tr><td>getColor</td><td>✅</td></tr><tr><td>setColor</td><td>✅</td></tr><tr><td>getEndCap</td><td>✅</td></tr><tr><td>setEndCap</td><td>✅</td></tr><tr><td>getJoinType</td><td>✅</td></tr><tr><td>setJoinType</td><td>✅</td></tr><tr><td>getPattern</td><td>✅</td></tr><tr><td>setPattern</td><td>✅</td></tr><tr><td>getPoints</td><td>✅</td></tr><tr><td>setPoints</td><td>✅</td></tr><tr><td>getSpans</td><td>✅</td></tr><tr><td>setSpans</td><td>✅</td></tr><tr><td>getStartCap</td><td>✅</td></tr><tr><td>setStartCap</td><td>✅</td></tr><tr><td>getTag</td><td>✅</td></tr><tr><td>setTag</td><td>✅</td></tr><tr><td>getWidth</td><td>✅</td></tr><tr><td>setWidth</td><td>✅</td></tr><tr><td>getZIndex</td><td>✅</td></tr><tr><td>setZIndex</td><td>✅</td></tr><tr><td>isVisible</td><td>✅</td></tr><tr><td>setVisible</td><td>✅</td></tr></tbody></table><h3 class=""> Polygon</h3><h4 class=""> OmhPolygonOptions</h4><table><thead><tr><th></th><th></th></tr></thead><tbody><tr><td>outline</td><td>✅</td></tr><tr><td>clickable</td><td>✅</td></tr><tr><td>fillColor</td><td>✅</td></tr><tr><td>holes</td><td>✅</td></tr><tr><td>isVisible</td><td>✅</td></tr><tr><td>strokeColor</td><td>✅</td></tr><tr><td>strokeJointType</td><td>✅</td></tr><tr><td>strokePattern</td><td>✅</td></tr><tr><td>strokeWidth</td><td>✅</td></tr><tr><td>zIndex</td><td>✅</td></tr></tbody></table><h4 class=""> OmhPolygon</h4><table><thead><tr><th></th><th></th></tr></thead><tbody><tr><td>getClickable</td><td>✅</td></tr><tr><td>setClickable</td><td>✅</td></tr><tr><td>getStrokeColor</td><td>✅</td></tr><tr><td>setStrokeColor</td><td>✅</td></tr><tr><td>getFillColor</td><td>✅</td></tr><tr><td>setFillColor</td><td>✅</td></tr><tr><td>getStrokeJointType</td><td>✅</td></tr><tr><td>setStrokeJointType</td><td>✅</td></tr><tr><td>getStrokePattern</td><td>✅</td></tr><tr><td>setStrokePattern</td><td>✅</td></tr><tr><td>getOutline</td><td>✅</td></tr><tr><td>setOutline</td><td>✅</td></tr><tr><td>getHoles</td><td>✅</td></tr><tr><td>setHoles</td><td>✅</td></tr><tr><td>getTag</td><td>✅</td></tr><tr><td>setTag</td><td>✅</td></tr><tr><td>getStrokeWidth</td><td>✅</td></tr><tr><td>setStrokeWidth</td><td>✅</td></tr><tr><td>getZIndex</td><td>✅</td></tr><tr><td>setZIndex</td><td>✅</td></tr><tr><td>isVisible</td><td>✅</td></tr><tr><td>setVisible</td><td>✅</td></tr></tbody></table><h2 class=""> Documentation</h2><ul><li><p class="paragraph">/packages//plugin-googlemaps/docs/advanced/README.md</p></li></ul><h2 class=""> Contributing</h2><p class="paragraph">Please contribute! We will gladly review any pull requests. Make sure to read the /CONTRIBUTING.md page first though.</p><h2 class=""> License</h2><div class="sample-container"><pre><code class="block lang-kotlin" theme="idea">Copyright 2023 Open Mobile Hub<br><br>Licensed under the Apache License, Version 2.0 (the "License");<br>you may not use this file except in compliance with the License.<br>You may obtain a copy of the License at<br><br>    https://www.apache.org/licenses/LICENSE-2.0<br><br>Unless required by applicable law or agreed to in writing, software<br>distributed under the License is distributed on an "AS IS" BASIS,<br>WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<br>See the License for the specific language governing permissions and<br>limitations under the License.</code></pre><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+  <h2 class="">Packages</h2>
+  <div class="table"><a data-name="1310101738%2FPackages%2F-1505631210" anchor-label="com.openmobilehub.android.maps.plugin.googlemaps.utils" id="1310101738%2FPackages%2F-1505631210" data-filterable-set=":packages:plugin-googlemaps:dokkaHtmlPartial/release"></a>
+    <div class="table-row" data-filterable-current=":packages:plugin-googlemaps:dokkaHtmlPartial/release" data-filterable-set=":packages:plugin-googlemaps:dokkaHtmlPartial/release">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="com.openmobilehub.android.maps.plugin.googlemaps.utils/index.html">com.openmobilehub.android.maps.plugin.googlemaps.utils</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1310101738%2FPackages%2F-1505631210"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">androidJvm</div>
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+  </div>
+</div>
+      <div class="footer">
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2024 Copyright</span><span class="pull-right"><span>Generated by </span><a href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
+      </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

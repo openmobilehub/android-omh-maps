@@ -31,6 +31,11 @@ downloadLicenses {
     dependencyConfiguration = "debugRuntimeClasspath"
 }
 
+buildscript {
+    dependencies {
+        classpath("org.jetbrains.dokka:dokka-base:${Versions.dokka}")
+    }
+}
 
 subprojects {
     if(useMavenLocal) {
