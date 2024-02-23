@@ -217,6 +217,8 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
             disabledAppearancePositions =
                 hashSetOf(markerAppearanceTypeNameResourceID.indexOf(R.string.marker_appearance_type_custom_color))
         }
+
+        appearanceSpinner?.setDisabledPositions(disabledAppearancePositions)
     }
 
     private fun applyCustomizableMarkerAnchor() {
@@ -227,7 +229,9 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
     }
 
     private fun applyCustomizableMarkerAppearance() {
-        when (markerAppearanceTypeNameResourceID[currentAppearancePosition]) {
+        val appearance = markerAppearanceTypeNameResourceID[currentAppearancePosition]
+
+        when (appearance) {
             R.string.marker_appearance_type_default -> customizableMarker?.setIcon(null)
 
             R.string.marker_appearance_type_custom_color -> customizableMarker?.setBackgroundColor(
@@ -238,6 +242,8 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
                 ResourcesCompat.getDrawable(resources, R.drawable.soccer_ball, null)
             )
         }
+
+        colorSeekbar?.isEnabled = appearance == R.string.marker_appearance_type_custom_color
     }
 
     private fun setupUI(view: View) {
@@ -312,18 +318,8 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
             requireContext(), markerAppearanceTypeNameResourceID
         )
         appearanceSpinner?.setOnItemSelectedCallback { position: Int ->
-            if (disabledAppearancePositions?.contains(position) == true) {
-                Toast.makeText(
-                    context,
-                    context?.getString(R.string.option_unavailable_for_provider),
-                    Toast.LENGTH_SHORT
-                ).show()
-
-                appearanceSpinner?.spinner?.setSelection(currentAppearancePosition)
-            } else {
-                currentAppearancePosition = position
-                applyCustomizableMarkerAppearance()
-            }
+            currentAppearancePosition = position
+            applyCustomizableMarkerAppearance()
         }
     }
 
