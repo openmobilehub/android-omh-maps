@@ -1,3 +1,9 @@
+---
+title: Display your current location
+has_children: false
+parent: Core module
+---
+
 # Display your current location
 
 An `OmhMap` must be acquired using `getMapAsync(OmhOnMapReadyCallback)`. This class automatically initializes the maps system and the view.

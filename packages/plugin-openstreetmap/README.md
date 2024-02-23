@@ -1,4 +1,4 @@
-# OpenStreetMap Plugin
+# Module plugin-openstreetmap
 
 ## Overview
 

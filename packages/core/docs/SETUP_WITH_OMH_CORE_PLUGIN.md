@@ -1,6 +1,11 @@
-# Gradle Setup with OMH Core Plugin
+---
+title: Setup with omh-core plugin
+has_children: false
+---
 
-To incorporate OMH Maps into your project, you have two options: utilize the OMH Core Plugin or directly include the OMH Client libraries dependencies. The subsequent instructions will outline the necessary steps for including the OMH Core Plugin as a Gradle dependency.
+# Gradle Setup with Omh Core Plugin
+
+To incorporate Omh Maps into your project, you have two options: utilize the Omh Core Plugin or directly include the Omh Client libraries dependencies. The subsequent instructions will outline the necessary steps for including the Omh Core Plugin as a Gradle dependency.
 
 1. In your app's module-level `build.gradle`under the `plugins` element add the plugin id.
 

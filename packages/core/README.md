@@ -1,4 +1,4 @@
-# Core Package
+# Module core
 
 ## Overview
 
