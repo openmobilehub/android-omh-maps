@@ -92,7 +92,7 @@ jobs:
         run: bash ./gradlew jacocoCoverageVerification --stacktrace --continue
 
   build_documentation:
-    # if: github.event.pull_request.merged == true
+    if: github.event.pull_request.merged == true
     needs: [assemble_modules, code_quality_analysis]
     name: Build documentation
     runs-on: ubuntu-latest
