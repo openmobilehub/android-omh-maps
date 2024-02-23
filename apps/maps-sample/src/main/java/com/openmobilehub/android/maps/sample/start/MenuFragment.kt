@@ -95,11 +95,6 @@ class MenuFragment : Fragment() {
                 "Map showcasing custom styles",
                 R.id.action_menuFragment_to_mapStylesFragment
             ),
-            MenuListItem(
-                "Location Sharing Map",
-                "Map showcasing location sharing via deep links",
-                R.id.action_menuFragment_to_mapLocationPickerFragment
-            ),
         )
 
         val adapter = MenuListViewAdapter(requireContext(), items)
