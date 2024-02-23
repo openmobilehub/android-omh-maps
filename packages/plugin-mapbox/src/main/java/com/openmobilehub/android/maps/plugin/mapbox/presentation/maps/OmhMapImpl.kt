@@ -22,6 +22,7 @@ import androidx.annotation.RequiresPermission
 import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.MapView
 import com.mapbox.maps.plugin.gestures.gestures
+import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhInfoWindowViewFactory
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMap
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMapLoadedCallback
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMarker
@@ -160,6 +161,14 @@ internal class OmhMapImpl(
     }
 
     override fun setMapStyle(json: Int?) {
+        // To be implemented
+    }
+
+    override fun setCustomInfoWindowViewFactory(factory: OmhInfoWindowViewFactory?) {
+        // To be implemented
+    }
+
+    override fun setCustomInfoWindowContentsViewFactory(factory: OmhInfoWindowViewFactory?) {
         // To be implemented
     }
 }

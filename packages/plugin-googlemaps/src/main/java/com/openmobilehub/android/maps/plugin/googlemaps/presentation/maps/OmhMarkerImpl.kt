@@ -147,9 +147,21 @@ internal class OmhMarkerImpl(
         marker.setIcon(MarkerIconConverter.convertColorToBitmapDescriptor(color))
     }
 
+    override fun showInfoWindow() {
+        marker.showInfoWindow()
+    }
+
+    override fun hideInfoWindow() {
+        marker.hideInfoWindow()
+    }
+
+    override fun getIsInfoWindowShown(): Boolean {
+        return marker.isInfoWindowShown
+    }
+
     private fun invalidateInfoWindow() {
         if (marker.isInfoWindowShown) {
-            marker.showInfoWindow() // open or close & reopen to apply the new contents
+            marker.showInfoWindow() // open or close-and-reopen to apply the new contents
         }
     }
 }

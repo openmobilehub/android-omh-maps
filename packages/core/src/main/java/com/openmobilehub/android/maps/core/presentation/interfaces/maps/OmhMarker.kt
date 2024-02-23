@@ -47,14 +47,16 @@ interface OmhMarker {
     fun getTitle(): String?
 
     /**
-     * Sets the title of the marker.
+     * Sets the title of the marker. Wit null, the info window associated with this marker is disabled.
      *
-     * @param title sets the title. If null, the title is cleared.
+     * @param title sets the title. If null, the title is cleared & info window is disabled.
      */
     fun setTitle(title: String?)
 
     /**
      * Checks whether the marker is clickable.
+     * If the marker is not clickable, the info window associated with this marker
+     * will be disabled and no click events will be propagated.
      * Default: `true`.
      *
      * @return a boolean indicating whether the marker is clickable.
@@ -137,6 +139,8 @@ interface OmhMarker {
 
     /**
      * Sets whether the marker is visible.
+     * If the marker is not visible, the info window associated with this marker
+     * will be disabled and no interaction events will be propagated.
      *
      * @param visible sets whether the marker is visible.
      */
@@ -185,4 +189,24 @@ interface OmhMarker {
      * @param color color of the marker or null.
      */
     fun setBackgroundColor(color: Int?)
+
+    /**
+     * Imperatively shows the info window associated with this marker.
+     * If custom info window is set and the window is already shown, it will be re-rendered.
+     * Note: this overrides the info-window-disabling behaviour based on the value of [setIsVisible] and [setClickable].
+     */
+    fun showInfoWindow()
+
+    /**
+     * Imperatively hides the info window associated with this marker.
+     * Note: this overrides the info-window-disabling behaviour based on the value of [setIsVisible] and [setClickable].
+     */
+    fun hideInfoWindow()
+
+    /**
+     * Gets whether the info window associated with this marker is currently being shown.
+     *
+     * @return a boolean indicating whether the info window is currently being shown.
+     */
+    fun getIsInfoWindowShown(): Boolean
 }

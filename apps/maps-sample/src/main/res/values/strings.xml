@@ -81,4 +81,15 @@
     <string name="close">Close</string>
     <string name="map_snapshot">Map Snapshot</string>
     <string name="rotate_gestures">Rotate Gestures</string>
+    <string name="map_info_windows_fragment_text">Info Windows Fragment</string>
+    <string name="label_imperative_usage">Imperative usage</string>
+    <string name="label_demo_behaviour">Demo behaviour</string>
+    <string name="open_info_window">Open Info Window</string>
+    <string name="hide_info_window">Close Info Window</string>
+    <string name="info_window_appearance_type_default">Default</string>
+    <string name="info_window_appearance_type_custom_window_view">Custom window view</string>
+    <string name="info_window_appearance_type_custom_contents_view">Custom contents view</string>
+    <string name="custom_image">Custom image</string>
+    <string name="window_should_rerender_on_drag">Re-render info window when dragging</string>
+    <string name="label_info_window_properties">Info window properties</string>
 </resources>

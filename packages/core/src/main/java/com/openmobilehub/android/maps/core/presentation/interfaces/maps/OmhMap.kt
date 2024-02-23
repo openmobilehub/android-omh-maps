@@ -185,4 +185,27 @@ interface OmhMap {
      * If null, the map style will be reset to the default style.
      */
     fun setMapStyle(json: Int?)
+
+    /**
+     * Customizes the design of the info window. The passed-in factory is called with instances of [OmhMarker]
+     * and should return a [android.view.View] to be used as the info window.
+     * If the factory is set to null, the default info window appearance will be used.
+     *
+     * Overrides [setCustomInfoWindowContentsViewFactory] if set to a non-null value.
+     *
+     * Default: null
+     */
+    fun setCustomInfoWindowViewFactory(factory: OmhInfoWindowViewFactory?)
+
+    /**
+     * Customizes the design of the info window contents.
+     * Only applicable if [setCustomInfoWindowViewFactory] is not set or has been set to null.
+     *
+     * Customizes the design of the info window. The passed-in factory is called with instances of [OmhMarker]
+     * and should return a [android.view.View] to be used as the info window.
+     * If the factory is set to null, the default info window appearance will be used.
+     *
+     * Default: null
+     */
+    fun setCustomInfoWindowContentsViewFactory(factory: OmhInfoWindowViewFactory?)
 }

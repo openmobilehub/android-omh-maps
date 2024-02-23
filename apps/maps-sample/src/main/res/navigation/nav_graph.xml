@@ -16,6 +16,9 @@
         android:label="@string/menu_fragment_text"
         tools:layout="@layout/fragment_menu">
         <action
+            android:id="@+id/action_menuFragment_to_mapInfoWindowsFragment"
+            app:destination="@id/mapInfoWindowsFragment" />
+        <action
             android:id="@+id/action_menuFragment_to_mapCameraFragment"
             app:destination="@id/mapCameraFragment" />
         <action
@@ -34,12 +37,6 @@
             android:id="@+id/action_menuFragment_to_mapStylesFragment"
             app:destination="@id/mapStylesFragment" />
     </fragment>
-
-    <fragment
-        android:id="@+id/mapCameraFragment"
-        android:name="com.openmobilehub.android.maps.sample.maps.MapCameraFragment"
-        android:label="@string/map_camera_fragment_text"
-        tools:layout="@layout/fragment_map_camera" />
 
     <fragment
         android:id="@+id/mapLocationPickerFragment"
@@ -63,12 +60,11 @@
             app:nullable="true" />
     </fragment>
 
-
     <fragment
         android:id="@+id/mapMarkersFragment"
         android:name="com.openmobilehub.android.maps.sample.maps.MapMarkersFragment"
         android:label="@string/map_markers_fragment_text"
-        tools:layout="@layout/fragment_map_markers"></fragment>
+        tools:layout="@layout/fragment_map_markers" />
 
     <fragment
         android:id="@+id/mapPolylinesFragment"
@@ -87,12 +83,18 @@
         android:name="com.openmobilehub.android.maps.sample.maps.MapStylesFragment"
         android:label="@string/map_styles_fragment_text"
         tools:layout="@layout/fragment_map_styles" />
-    
+
     <fragment
         android:id="@+id/mapCameraFragment"
         android:name="com.openmobilehub.android.maps.sample.maps.MapCameraFragment"
         android:label="@string/map_camera_fragment_text"
         tools:layout="@layout/fragment_map_camera" />
+
+    <fragment
+        android:id="@+id/mapInfoWindowsFragment"
+        android:name="com.openmobilehub.android.maps.sample.maps.MapInfoWindowsFragment"
+        android:label="@string/map_info_windows_fragment_text"
+        tools:layout="@layout/fragment_map_info_windows" />
 
     <fragment
         android:id="@+id/mapSharedLocationFragment"

@@ -20,12 +20,15 @@ import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.content.Context
 import android.graphics.Bitmap
+import android.view.View
 import androidx.annotation.RequiresPermission
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.Marker
+import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhInfoWindowViewFactory
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMap
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMapLoadedCallback
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMarker
@@ -62,6 +65,28 @@ internal class OmhMapImpl(
         get() = Constants.PROVIDER_NAME
 
     private val markers = mutableMapOf<Marker, OmhMarker>()
+    private var customInfoWindowViewFactory: OmhInfoWindowViewFactory? = null
+    private var customInfoWindowContentsViewFactory: OmhInfoWindowViewFactory? = null
+
+    init {
+        // enable control of the info window behaviour handling with a placeholder listener
+        setOnMarkerClickListener { false }
+
+        // hook up the custom info window adapter
+        googleMap.setInfoWindowAdapter(object : InfoWindowAdapter {
+            override fun getInfoContents(marker: Marker): View? {
+                val omhMarker = markers[marker] ?: return null
+
+                return this@OmhMapImpl.customInfoWindowContentsViewFactory?.let { it(omhMarker) }
+            }
+
+            override fun getInfoWindow(marker: Marker): View? {
+                val omhMarker = markers[marker] ?: return null
+
+                return this@OmhMapImpl.customInfoWindowViewFactory?.let { it(omhMarker) }
+            }
+        })
+    }
 
     override fun addMarker(options: OmhMarkerOptions): OmhMarker? {
         val googleOptions = options.toMarkerOptions()
@@ -142,11 +167,15 @@ internal class OmhMapImpl(
         this.googleMap.setOnMarkerClickListener ClickHandler@{ marker ->
             val omhMarker = markers[marker]
 
-            if (omhMarker != null && omhMarker.getClickable()) {
-                return@ClickHandler listener.onMarkerClick(omhMarker)
+            if (omhMarker != null) {
+                if (omhMarker.getClickable()) {
+                    return@ClickHandler listener.onMarkerClick(omhMarker)
+                } else {
+                    return@ClickHandler true
+                }
             }
 
-            true
+            return@ClickHandler false
         }
     }
 
@@ -200,6 +229,25 @@ internal class OmhMapImpl(
         if (!isStyleApplied) {
             logger.logWarning("Failed to apply custom map style. Check logs from Google Maps SDK.")
         }
+    }
+
+    private fun reopenActiveInfoWindows() {
+        markers.forEach() { (marker, _) ->
+            // if open, re-open the info window to apply changes
+            if (marker.isInfoWindowShown) {
+                marker.showInfoWindow()
+            }
+        }
+    }
+
+    override fun setCustomInfoWindowViewFactory(factory: OmhInfoWindowViewFactory?) {
+        customInfoWindowViewFactory = factory
+        reopenActiveInfoWindows()
+    }
+
+    override fun setCustomInfoWindowContentsViewFactory(factory: OmhInfoWindowViewFactory?) {
+        customInfoWindowContentsViewFactory = factory
+        reopenActiveInfoWindows()
     }
 
     override fun moveCamera(coordinate: OmhCoordinate, zoomLevel: Float) {

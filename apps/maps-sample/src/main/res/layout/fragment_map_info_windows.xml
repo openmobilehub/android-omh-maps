@@ -13,15 +13,16 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
+
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".maps.MapMarkersFragment">
+    tools:context=".maps.MapInfoWindowsFragment">
 
     <fragment
-        android:id="@+id/fragment_markers_map_container"
+        android:id="@+id/fragment_info_windows_map_container"
         android:name="com.openmobilehub.android.maps.core.presentation.fragments.OmhMapFragment"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -40,7 +41,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_percent="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/fragment_markers_map_container">
+        app:layout_constraintTop_toBottomOf="@+id/fragment_info_windows_map_container">
 
         <LinearLayout
             android:id="@+id/controlPanel"
@@ -48,6 +49,15 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="16dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="10dp"
+                android:gravity="center"
+                android:text="@string/label_info_window_properties"
+                android:textSize="18dp" />
 
             <CheckBox
                 android:id="@+id/checkBox_isVisible"
@@ -57,25 +67,11 @@
                 android:text="@string/visible" />
 
             <CheckBox
-                android:id="@+id/checkBox_isFlat"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:checked="true"
-                android:text="@string/flat" />
-
-            <CheckBox
                 android:id="@+id/checkBox_isClickable"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:checked="true"
                 android:text="@string/clickable" />
-
-            <CheckBox
-                android:id="@+id/checkBox_isDraggable"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:checked="true"
-                android:text="@string/draggable" />
 
             <CheckBox
                 android:id="@+id/checkBox_hasSnippet"
@@ -84,61 +80,58 @@
                 android:checked="true"
                 android:text="@string/snippet" />
 
-            <com.openmobilehub.android.maps.sample.customviews.PanelSeekbar
-                android:id="@+id/panelSeekbar_rotation"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
-                android:layout_marginBottom="15dp"
-                app:maxValue="360"
-                app:minValue="0"
-                app:titleText="@string/rotation" />
-
-            <com.openmobilehub.android.maps.sample.customviews.PanelSeekbar
-                android:id="@+id/panelSeekbar_anchorU"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
-                android:layout_marginBottom="15dp"
-                app:maxValue="100"
-                app:minValue="0"
-                app:titleText="@string/anchorU" />
-
-            <com.openmobilehub.android.maps.sample.customviews.PanelSeekbar
-                android:id="@+id/panelSeekbar_anchorV"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
-                android:layout_marginBottom="15dp"
-                app:maxValue="100"
-                app:minValue="0"
-                app:titleText="@string/anchorV" />
-
-            <com.openmobilehub.android.maps.sample.customviews.PanelSeekbar
-                android:id="@+id/panelSeekbar_alpha"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
-                android:layout_marginBottom="15dp"
-                app:maxValue="100"
-                app:minValue="0"
-                app:titleText="@string/alpha" />
-
             <com.openmobilehub.android.maps.sample.customviews.PanelSpinner
-                android:id="@+id/panelSpinner_markerAppearance"
+                android:id="@+id/panelSpinner_infoWindowAppearance"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
                 android:layout_marginBottom="15dp"
                 app:titleText="@string/appearance" />
 
-            <com.openmobilehub.android.maps.sample.customviews.PanelColorSeekbar
-                android:id="@+id/panelSeekbar_color"
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/divider" />
+
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
-                android:layout_marginBottom="15dp"
-                app:titleText="@string/color" />
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="10dp"
+                android:gravity="center"
+                android:text="@string/label_demo_behaviour"
+                android:textSize="18dp" />
+
+            <CheckBox
+                android:id="@+id/checkBox_demoShouldReRenderInfoWindowOnDragging"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="@string/window_should_rerender_on_drag" />
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/divider" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="10dp"
+                android:gravity="center"
+                android:text="@string/label_imperative_usage"
+                android:textSize="18dp" />
+
+            <Button
+                android:id="@+id/button_openInfoWindow"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/open_info_window" />
+
+            <Button
+                android:id="@+id/button_hideInfoWindow"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/hide_info_window" />
         </LinearLayout>
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

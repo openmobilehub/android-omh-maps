@@ -13,7 +13,6 @@ import androidx.navigation.fragment.findNavController
 import com.openmobilehub.android.maps.core.factories.OmhMapProvider
 import com.openmobilehub.android.maps.sample.R
 import com.openmobilehub.android.maps.sample.adapter.MenuListViewAdapter
-import com.openmobilehub.android.maps.sample.model.MapProvider
 import com.openmobilehub.android.maps.sample.model.MenuListItem
 import com.openmobilehub.android.maps.sample.utils.MapProvidersUtils
 
@@ -65,6 +64,11 @@ class MenuFragment : Fragment() {
         val listView: ListView = view.findViewById(R.id.listView)
 
         val items = listOf(
+            MenuListItem(
+                "Info Windows Map",
+                "Map showcasing info windows",
+                R.id.action_menuFragment_to_mapInfoWindowsFragment
+            ),
             MenuListItem(
                 "Camera Map",
                 "Map showcasing the camera features",
