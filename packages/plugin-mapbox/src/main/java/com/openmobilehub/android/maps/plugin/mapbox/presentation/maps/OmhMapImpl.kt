@@ -19,9 +19,7 @@ package com.openmobilehub.android.maps.plugin.mapbox.presentation.maps
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import androidx.annotation.RequiresPermission
-import com.mapbox.maps.CameraChangedCallback
 import com.mapbox.maps.CameraOptions
-import com.mapbox.maps.MapIdleCallback
 import com.mapbox.maps.MapView
 import com.mapbox.maps.plugin.gestures.gestures
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMap
@@ -48,6 +46,9 @@ internal class OmhMapImpl(
     private val mapView: MapView,
 ) : OmhMap {
 
+    /**
+     * This flag is used to prevent the onCameraMoveStarted listener from being called multiple times
+     */
     private var isCameraMoving = false
 
     override val providerName: String
@@ -113,14 +114,13 @@ internal class OmhMapImpl(
     }
 
     override fun setOnCameraMoveStartedListener(listener: OmhOnCameraMoveStartedListener) {
-        val callback = CameraChangedCallback { _ ->
+        mapView.mapboxMap.subscribeCameraChanged {
             if (!isCameraMoving) {
                 listener.onCameraMoveStarted(null)
             }
 
             isCameraMoving = true
         }
-        mapView.mapboxMap.subscribeCameraChanged(callback)
     }
 
     override fun setOnMapLoadedCallback(callback: OmhMapLoadedCallback?) {
@@ -138,11 +138,10 @@ internal class OmhMapImpl(
     }
 
     override fun setOnCameraIdleListener(listener: OmhOnCameraIdleListener) {
-        val callback = MapIdleCallback { _ ->
+        mapView.mapboxMap.subscribeMapIdle {
             isCameraMoving = false
             listener.onCameraIdle()
         }
-        mapView.mapboxMap.subscribeMapIdle(callback)
     }
 
     override fun setMapStyle(json: Int?) {
