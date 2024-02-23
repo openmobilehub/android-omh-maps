@@ -27,7 +27,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import com.openmobilehub.android.maps.core.factories.OmhMapProvider
 import com.openmobilehub.android.maps.core.presentation.fragments.OmhMapFragment
 import com.openmobilehub.android.maps.core.presentation.interfaces.location.OmhFailureListener
@@ -37,16 +36,14 @@ import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnCam
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnCameraMoveStartedListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMapReadyCallback
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
-import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
 import com.openmobilehub.android.maps.core.utils.NetworkConnectivityChecker
 import com.openmobilehub.android.maps.sample.R
-import com.openmobilehub.android.maps.sample.databinding.FragmentMapBinding
+import com.openmobilehub.android.maps.sample.databinding.FragmentLocationPickerMapBinding
 import com.openmobilehub.android.maps.sample.utils.Constants.ANIMATION_DURATION
 import com.openmobilehub.android.maps.sample.utils.Constants.DEFAULT_ZOOM_LEVEL
 import com.openmobilehub.android.maps.sample.utils.Constants.FINAL_TRANSLATION
 import com.openmobilehub.android.maps.sample.utils.Constants.INITIAL_TRANSLATION
 import com.openmobilehub.android.maps.sample.utils.Constants.LOCATION_KEY
-import com.openmobilehub.android.maps.sample.utils.Constants.ONLY_DISPLAY_KEY
 import com.openmobilehub.android.maps.sample.utils.Constants.OVERSHOOT_INTERPOLATOR
 import com.openmobilehub.android.maps.sample.utils.Constants.PERMISSIONS
 import com.openmobilehub.android.maps.sample.utils.Constants.PRIME_MERIDIAN
@@ -57,10 +54,8 @@ import com.openmobilehub.android.maps.sample.utils.getOmhCoordinate
 
 class MapLocationPickerFragment : Fragment(), OmhOnMapReadyCallback {
     private var currentLocation: OmhCoordinate = PRIME_MERIDIAN
-    private var _binding: FragmentMapBinding? = null
+    private var _binding: FragmentLocationPickerMapBinding? = null
     private val binding get() = _binding!!
-    private var displayOnlyCoordinate = false
-    private val args: MapLocationPickerFragmentArgs by navArgs()
     private var networkConnectivityChecker: NetworkConnectivityChecker? = null
     private var handler: Handler? = null
     private var runnable: Runnable? = null
@@ -68,7 +63,6 @@ class MapLocationPickerFragment : Fragment(), OmhOnMapReadyCallback {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        displayOnlyCoordinate = savedInstanceState?.getBoolean(ONLY_DISPLAY_KEY, false) ?: false
         val coordinate = savedInstanceState?.getOmhCoordinate(LOCATION_KEY)
         coordinate?.let {
             currentLocation = coordinate
@@ -79,18 +73,12 @@ class MapLocationPickerFragment : Fragment(), OmhOnMapReadyCallback {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentMapBinding.inflate(inflater, container, false)
+        _binding = FragmentLocationPickerMapBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        val coordinate: OmhCoordinate? = args.coordinate
-        coordinate?.let {
-            currentLocation = coordinate
-            displayOnlyCoordinate = true
-        }
 
         networkConnectivityChecker = NetworkConnectivityChecker(requireContext()).apply {
             startListeningForConnectivityChanges {
@@ -135,10 +123,6 @@ class MapLocationPickerFragment : Fragment(), OmhOnMapReadyCallback {
         }
         omhMap.setZoomGesturesEnabled(true)
 
-        if (displayOnlyCoordinate) {
-            displaySharedLocation(omhMap)
-        }
-
         val omhOnCameraMoveStartedListener = OmhOnCameraMoveStartedListener {
             binding.markerImageView.animate()
                 .translationY(INITIAL_TRANSLATION)
@@ -166,22 +150,6 @@ class MapLocationPickerFragment : Fragment(), OmhOnMapReadyCallback {
 
         omhMap.setOnCameraIdleListener(omhOnCameraIdleListener)
         getCurrentLocation(omhMap)
-    }
-
-    private fun displaySharedLocation(omhMap: OmhMap) {
-        binding.fabShareLocation.visibility = View.GONE
-        binding.markerImageView.visibility = View.GONE
-        binding.markerShadowImageView.visibility = View.GONE
-        val omhMarkerOptions = OmhMarkerOptions().apply {
-            position = currentLocation
-            title = getString(
-                R.string.latitude_longitude_text,
-                currentLocation.latitude.toString(),
-                currentLocation.longitude.toString()
-            )
-        }
-        omhMap.addMarker(omhMarkerOptions)
-        moveToCurrentLocation(omhMap, DEFAULT_ZOOM_LEVEL)
     }
 
     private fun enableMyLocation(omhMap: OmhMap) {
@@ -244,7 +212,6 @@ class MapLocationPickerFragment : Fragment(), OmhOnMapReadyCallback {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putParcelable(LOCATION_KEY, currentLocation)
-        outState.putBoolean(ONLY_DISPLAY_KEY, displayOnlyCoordinate)
     }
 
     override fun onResume() {

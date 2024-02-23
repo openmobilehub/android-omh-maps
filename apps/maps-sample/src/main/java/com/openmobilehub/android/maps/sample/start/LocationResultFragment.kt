@@ -42,14 +42,6 @@ class LocationResultFragment : Fragment() {
     private val binding get() = _binding!!
     private val args: LocationResultFragmentArgs by navArgs()
 
-    private val mapPermissionLauncher =
-        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
-            val allPermissionsGranted = permissions.all { it.value }
-            if (allPermissionsGranted) {
-                findNavController().navigate(R.id.action_locationResultFragment_to_menuFragment)
-            }
-        }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -67,9 +59,6 @@ class LocationResultFragment : Fragment() {
             binding.buttonShareLocation.setOnClickListener {
                 intentSend(coordinate)
             }
-        }
-        binding.buttonBackToMenuFragment.setOnClickListener {
-            mapPermissionLauncher.launch(PERMISSIONS)
         }
     }
 

@@ -78,6 +78,11 @@ class MenuFragment : Fragment() {
                 R.id.action_menuFragment_to_mapCameraFragment
             ),
             MenuListItem(
+                "Location Sharing Map",
+                "Map showcasing location sharing via deep links",
+                R.id.action_menuFragment_to_mapLocationPickerFragment
+            ),
+            MenuListItem(
                 "Marker Map",
                 "Map showcasing the markers",
                 R.id.action_menuFragment_to_mapMarkersFragment
@@ -96,11 +101,6 @@ class MenuFragment : Fragment() {
                 "Custom Styles Map",
                 "Map showcasing custom styles",
                 R.id.action_menuFragment_to_mapStylesFragment
-            ),
-            MenuListItem(
-                "Location Sharing Map",
-                "Map showcasing location sharing via deep links",
-                R.id.action_menuFragment_to_mapLocationPickerFragment
             ),
         )
 
