@@ -19,7 +19,9 @@ package com.openmobilehub.android.maps.plugin.mapbox.presentation.maps
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import androidx.annotation.RequiresPermission
+import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.MapView
+import com.mapbox.maps.plugin.gestures.gestures
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMap
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMapLoadedCallback
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMarker
@@ -38,12 +40,18 @@ import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolygonOptions
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolylineOptions
 import com.openmobilehub.android.maps.plugin.mapbox.utils.Constants
+import com.openmobilehub.android.maps.plugin.mapbox.utils.CoordinateConverter
 
 @SuppressWarnings("TooManyFunctions")
 internal class OmhMapImpl(
     @SuppressWarnings("UnusedPrivateMember")
     private val mapView: MapView,
 ) : OmhMap {
+
+    /**
+     * This flag is used to prevent the onCameraMoveStarted listener from being called multiple times
+     */
+    private var isCameraMoving = false
 
     override val providerName: String
         get() = Constants.PROVIDER_NAME
@@ -63,24 +71,37 @@ internal class OmhMapImpl(
     }
 
     override fun getCameraPositionCoordinate(): OmhCoordinate {
-        // To be implemented
-        return OmhCoordinate(0.0, 0.0)
+        mapView.mapboxMap.cameraState.center.let {
+            return CoordinateConverter.convertToOmhCoordinate(it)
+        }
     }
 
     override fun moveCamera(coordinate: OmhCoordinate, zoomLevel: Float) {
-        // To be implemented
+        val cameraPosition = CameraOptions.Builder()
+            .zoom(zoomLevel.toDouble())
+            .center(CoordinateConverter.convertToPoint(coordinate))
+            .build()
+
+        mapView.mapboxMap.setCamera(cameraPosition)
     }
 
     override fun setZoomGesturesEnabled(enableZoomGestures: Boolean) {
-        // To be implemented
+        mapView.gestures.apply {
+            pinchToZoomEnabled = enableZoomGestures
+            doubleTapToZoomInEnabled = enableZoomGestures
+        }
     }
 
     override fun setRotateGesturesEnabled(enableRotateGestures: Boolean) {
-        // To be implemented
+        mapView.gestures.apply {
+            rotateEnabled = enableRotateGestures
+        }
     }
 
     override fun snapshot(omhSnapshotReadyCallback: OmhSnapshotReadyCallback) {
-        // To be implemented
+        mapView.snapshot {
+            omhSnapshotReadyCallback.onSnapshotReady(it)
+        }
     }
 
     @RequiresPermission(anyOf = [ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION])
@@ -100,11 +121,26 @@ internal class OmhMapImpl(
     }
 
     override fun setOnCameraMoveStartedListener(listener: OmhOnCameraMoveStartedListener) {
-        // To be implemented
+        mapView.mapboxMap.subscribeCameraChanged {
+            if (!isCameraMoving) {
+                listener.onCameraMoveStarted(null)
+            }
+
+            isCameraMoving = true
+        }
+    }
+
+    override fun setOnCameraIdleListener(listener: OmhOnCameraIdleListener) {
+        mapView.mapboxMap.subscribeMapIdle {
+            isCameraMoving = false
+            listener.onCameraIdle()
+        }
     }
 
     override fun setOnMapLoadedCallback(callback: OmhMapLoadedCallback?) {
-        // To be implemented
+        mapView.mapboxMap.subscribeMapLoaded {
+            callback?.onMapLoaded()
+        }
     }
 
     override fun setOnMarkerClickListener(listener: OmhOnMarkerClickListener) {
@@ -120,10 +156,6 @@ internal class OmhMapImpl(
     }
 
     override fun setOnPolygonClickListener(listener: OmhOnPolygonClickListener) {
-        // To be implemented
-    }
-
-    override fun setOnCameraIdleListener(listener: OmhOnCameraIdleListener) {
         // To be implemented
     }
 

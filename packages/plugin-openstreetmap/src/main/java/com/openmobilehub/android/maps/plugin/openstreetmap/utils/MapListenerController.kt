@@ -20,7 +20,6 @@ import android.os.Handler
 import android.os.Looper
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnCameraIdleListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnCameraMoveStartedListener
-import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnCameraMoveStartedListener.Companion.REASON_GESTURE
 import com.openmobilehub.android.maps.plugin.openstreetmap.utils.Constants.DELAY_MS
 import org.osmdroid.events.MapListener
 import org.osmdroid.events.ScrollEvent
@@ -71,7 +70,7 @@ internal class MapListenerController : MapListener {
     }
 
     private fun cameraMoveStarted() {
-        onCameraMoveStartedListener?.onCameraMoveStarted(REASON_GESTURE)
+        onCameraMoveStartedListener?.onCameraMoveStarted(null)
     }
 
     private fun idleCamera() {
