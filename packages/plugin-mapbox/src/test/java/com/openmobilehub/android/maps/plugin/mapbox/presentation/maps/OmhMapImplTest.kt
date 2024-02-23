@@ -102,6 +102,22 @@ class OmhMapImplTest {
     }
 
     @Test
+    fun `setRotateGesturesEnabled enables rotation when true is passed`() {
+        // Arrange
+        val rotateGestureEnabled = true
+
+        every { map.gestures.rotateEnabled = any() } just runs
+
+        // Act
+        omhMapImpl.setRotateGesturesEnabled(rotateGestureEnabled)
+
+        // Assert
+        verify {
+            map.gestures.rotateEnabled = rotateGestureEnabled
+        }
+    }
+
+    @Test
     fun `snapshot triggers onSnapshotReady with the correct bitmap`() {
         // Arrange
         val omhSnapshotReadyCallback = mockk<OmhSnapshotReadyCallback>(relaxed = true)

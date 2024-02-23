@@ -80,4 +80,5 @@
     <string name="make_snapshot">Make snapshot</string>
     <string name="close">Close</string>
     <string name="map_snapshot">Map Snapshot</string>
+    <string name="rotate_gestures">Rotate Gestures</string>
 </resources>

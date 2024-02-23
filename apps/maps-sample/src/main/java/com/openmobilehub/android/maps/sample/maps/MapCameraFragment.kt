@@ -108,6 +108,11 @@ class MapCameraFragment : Fragment(), OmhOnMapReadyCallback {
         zoomGesturesCheckbox?.setOnCheckedChangeListener { _, isChecked ->
             omhMap?.setZoomGesturesEnabled(isChecked)
         }
+        // rotateGestures
+        val rotateGesturesCheckbox = view.findViewById<CheckBox>(R.id.checkBox_rotateGesturesEnabled)
+        rotateGesturesCheckbox?.setOnCheckedChangeListener { _, isChecked ->
+            omhMap?.setRotateGesturesEnabled(isChecked)
+        }
         // Show camera position coordinate
         val showCameraPositionCoordinateButton =
             view.findViewById<Button>(R.id.button_showCameraPositionCoordinate)
