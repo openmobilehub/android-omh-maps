@@ -56,8 +56,8 @@ This plugin provides support for Mapbox by utilizing the [Mapbox Android SDK](ht
 | setOnMapLoadedCallback            |      ✅     |
 | setOnPolylineClickListener        |      ?     |
 | setOnPolygonClickListener         |      ?     |
-| snapshot                          |      ?     |
-| setMapStyle                       |      ✅     |
+| snapshot                          |      ✅     |
+| setMapStyle                       |      ?     |
 
 Comments for partially supported 🟨 properties:
 

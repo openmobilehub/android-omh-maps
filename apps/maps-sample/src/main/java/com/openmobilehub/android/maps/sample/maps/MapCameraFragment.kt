@@ -70,7 +70,6 @@ class MapCameraFragment : Fragment(), OmhOnMapReadyCallback {
             childFragmentManager.findFragmentById(R.id.fragment_map_container) as? OmhMapFragment
         omhMapFragment?.getMapAsync(this)
 
-
         setupUI(view)
     }
 
@@ -103,16 +102,18 @@ class MapCameraFragment : Fragment(), OmhOnMapReadyCallback {
     }
 
     private fun setupUI(view: View) {
-        // zoomGestures
+        // Zoom Gestures
         val zoomGesturesCheckbox = view.findViewById<CheckBox>(R.id.checkBox_zoomGesturesEnabled)
         zoomGesturesCheckbox?.setOnCheckedChangeListener { _, isChecked ->
             omhMap?.setZoomGesturesEnabled(isChecked)
         }
-        // rotateGestures
+
+        // Rotate Gestures
         val rotateGesturesCheckbox = view.findViewById<CheckBox>(R.id.checkBox_rotateGesturesEnabled)
         rotateGesturesCheckbox?.setOnCheckedChangeListener { _, isChecked ->
             omhMap?.setRotateGesturesEnabled(isChecked)
         }
+
         // Show camera position coordinate
         val showCameraPositionCoordinateButton =
             view.findViewById<Button>(R.id.button_showCameraPositionCoordinate)
@@ -124,6 +125,7 @@ class MapCameraFragment : Fragment(), OmhOnMapReadyCallback {
                 Toast.LENGTH_SHORT
             ).show()
         }
+
         // Move camera
         val moveMapToEverestButton = view.findViewById<Button>(R.id.button_moveMapToEverest)
         moveMapToEverestButton?.setOnClickListener {

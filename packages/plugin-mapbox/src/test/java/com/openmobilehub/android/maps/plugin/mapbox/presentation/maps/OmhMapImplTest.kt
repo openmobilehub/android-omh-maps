@@ -156,7 +156,7 @@ class OmhMapImplTest {
     }
 
     @Test
-    fun `setOnCameraMoveStartedListener triggers only 1 callback when camera changes multiple time`() {
+    fun `setOnCameraMoveStartedListener triggers only 1 callback when camera changes multiple times`() {
         // Arrange
         val slot = slot<CameraChangedCallback>()
         val cameraChanged = mockk<CameraChanged>(relaxed = true)

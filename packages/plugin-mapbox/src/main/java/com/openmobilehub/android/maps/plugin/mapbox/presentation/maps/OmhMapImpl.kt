@@ -71,7 +71,6 @@ internal class OmhMapImpl(
     }
 
     override fun getCameraPositionCoordinate(): OmhCoordinate {
-        // To be implemented
         mapView.mapboxMap.cameraState.center.let {
             return CoordinateConverter.convertToOmhCoordinate(it)
         }
