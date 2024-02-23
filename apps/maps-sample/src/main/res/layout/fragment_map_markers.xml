@@ -89,6 +89,8 @@
                 android:id="@+id/panelSeekbar_rotation"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="15dp"
                 app:maxValue="360"
                 app:minValue="0"
                 app:titleText="@string/rotation" />
@@ -97,6 +99,8 @@
                 android:id="@+id/panelSeekbar_anchorU"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="15dp"
                 app:maxValue="100"
                 app:minValue="0"
                 app:titleText="@string/anchorU" />
@@ -105,6 +109,8 @@
                 android:id="@+id/panelSeekbar_anchorV"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="15dp"
                 app:maxValue="100"
                 app:minValue="0"
                 app:titleText="@string/anchorV" />
@@ -113,6 +119,8 @@
                 android:id="@+id/panelSeekbar_alpha"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="15dp"
                 app:maxValue="100"
                 app:minValue="0"
                 app:titleText="@string/alpha" />
@@ -121,12 +129,16 @@
                 android:id="@+id/panelSpinner_markerAppearance"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="15dp"
                 app:titleText="@string/appearance" />
 
             <com.openmobilehub.android.maps.sample.customviews.PanelColorSeekbar
                 android:id="@+id/panelSeekbar_color"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="15dp"
                 app:titleText="@string/color" />
         </LinearLayout>
     </ScrollView>
