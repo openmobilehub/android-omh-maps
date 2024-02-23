@@ -32,7 +32,6 @@ import com.openmobilehub.android.maps.core.presentation.models.OmhPolylineOption
  */
 @SuppressWarnings("TooManyFunctions")
 interface OmhMap {
-
     /**
      * The name of the map provider.
      * This is a read-only property.
@@ -87,6 +86,13 @@ interface OmhMap {
     fun setZoomGesturesEnabled(enableZoomGestures: Boolean)
 
     /**
+     * Enables or disables the rotate gestures in the map.
+     *
+     * @param enableRotateGestures true enables rotate gestures, false disables rotate gestures.
+     */
+    fun setRotateGesturesEnabled(enableRotateGestures: Boolean)
+
+    /**
      * Enables or disables the my location layer.
      *
      * @param enable true enables the my location layer, false disables the my location layer.
@@ -131,6 +137,16 @@ interface OmhMap {
      * @param callback The callback invoked when the map has finished rendering. To unset the callback, use null.
      */
     fun setOnMapLoadedCallback(callback: OmhMapLoadedCallback?)
+
+    /**
+     * The callback to be executed when the marker is clicked.
+     */
+    fun setOnMarkerClickListener(listener: OmhOnMarkerClickListener)
+
+    /**
+     * The callbacks to be executed on proper marker drag events.
+     */
+    fun setOnMarkerDragListener(listener: OmhOnMarkerDragListener)
 
     /**
      * Sets a callback that's invoked when a polyline on the map is clicked.

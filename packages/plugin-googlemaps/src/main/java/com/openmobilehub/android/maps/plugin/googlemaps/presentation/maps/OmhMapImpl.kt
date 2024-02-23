@@ -31,6 +31,8 @@ import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMapLo
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMarker
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnCameraIdleListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnCameraMoveStartedListener
+import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMarkerClickListener
+import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMarkerDragListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMyLocationButtonClickListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnPolygonClickListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnPolylineClickListener
@@ -59,10 +61,19 @@ internal class OmhMapImpl(
     override val providerName: String
         get() = Constants.PROVIDER_NAME
 
+    private val markers = mutableMapOf<Marker, OmhMarker>()
+
     override fun addMarker(options: OmhMarkerOptions): OmhMarker? {
         val googleOptions = options.toMarkerOptions()
         val marker: Marker? = googleMap.addMarker(googleOptions)
-        return marker?.let { OmhMarkerImpl(it) }
+        val initiallyClickable = options.clickable
+
+        return marker?.let {
+            val omhMarker = OmhMarkerImpl(marker, initiallyClickable)
+            markers[marker] = omhMarker
+
+            return@let omhMarker
+        }
     }
 
     override fun addPolyline(options: OmhPolylineOptions): OmhPolyline {
@@ -86,6 +97,10 @@ internal class OmhMapImpl(
 
     override fun setZoomGesturesEnabled(enableZoomGestures: Boolean) {
         googleMap.uiSettings.isZoomGesturesEnabled = enableZoomGestures
+    }
+
+    override fun setRotateGesturesEnabled(enableRotateGestures: Boolean) {
+        googleMap.uiSettings.isRotateGesturesEnabled = enableRotateGestures
     }
 
     @RequiresPermission(anyOf = [ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION])
@@ -121,6 +136,40 @@ internal class OmhMapImpl(
         googleMap.setOnMapLoadedCallback {
             callback?.onMapLoaded()
         }
+    }
+
+    override fun setOnMarkerClickListener(listener: OmhOnMarkerClickListener) {
+        this.googleMap.setOnMarkerClickListener ClickHandler@{ marker ->
+            val omhMarker = markers[marker]
+
+            if (omhMarker != null && omhMarker.getClickable()) {
+                return@ClickHandler listener.onMarkerClick(omhMarker)
+            }
+
+            true
+        }
+    }
+
+    override fun setOnMarkerDragListener(listener: OmhOnMarkerDragListener) {
+        this.googleMap.setOnMarkerDragListener(object : GoogleMap.OnMarkerDragListener {
+            override fun onMarkerDrag(marker: Marker) {
+                markers[marker]?.let { omhMarker ->
+                    listener.onMarkerDrag(omhMarker)
+                }
+            }
+
+            override fun onMarkerDragEnd(marker: Marker) {
+                markers[marker]?.let { omhMarker ->
+                    listener.onMarkerDragEnd(omhMarker)
+                }
+            }
+
+            override fun onMarkerDragStart(marker: Marker) {
+                markers[marker]?.let { omhMarker ->
+                    listener.onMarkerDragStart(omhMarker)
+                }
+            }
+        })
     }
 
     override fun setOnPolylineClickListener(listener: OmhOnPolylineClickListener) {

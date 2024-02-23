@@ -62,23 +62,21 @@ tasks.register("installPreCommitHook", Copy::class) {
     fileMode = 0b000_111_111_111
 }
 
-tasks.register("publishAllToMavenLocal") {
+tasks.register("publishCoreToMavenLocal") {
     dependsOn(
         ":packages:core:assembleRelease",
         ":packages:core:publishToMavenLocal",
+    )
+}
+
+tasks.register("publishPluginsToMavenLocal") {
+    dependsOn(
         ":packages:plugin-googlemaps:assembleRelease",
         ":packages:plugin-googlemaps:publishToMavenLocal",
         ":packages:plugin-openstreetmap:assembleRelease",
         ":packages:plugin-openstreetmap:publishToMavenLocal",
         ":packages:plugin-mapbox:assembleRelease",
         ":packages:plugin-mapbox:publishToMavenLocal",
-    )
-}
-
-tasks.register("publishCoreToMavenLocal") {
-    dependsOn(
-        ":packages:core:assembleRelease",
-        ":packages:core:publishToMavenLocal",
     )
 }
 

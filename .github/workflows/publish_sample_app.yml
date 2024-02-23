@@ -38,11 +38,7 @@ jobs:
           key: ${{ inputs.input-cache-prefix }}-${{ github.run_id }}
       
       - name: Setup secrets
-        run: |
-          mkdir -p ~/.gradle
-          echo MAPBOX_DOWNLOADS_TOKEN=${{ secrets.MAPBOX_SECRET_TOKEN }} >> ${HOME}/.gradle/gradle.properties
-          echo MAPS_API_KEY=${{ secrets.GOOGLE_MAPS_API_KEY }} >> ./local.properties
-          echo MAPBOX_PUBLIC_TOKEN=${{ secrets.MAPBOX_PUBLIC_TOKEN }} >> ./local.properties
+        run: bash ./.github/scripts/setup_secrets.sh "${{ secrets.MAPBOX_SECRET_TOKEN }}" "${{ secrets.GOOGLE_MAPS_API_KEY }}" "${{ secrets.MAPBOX_PUBLIC_TOKEN }}"
 
       - name: Set useMavenLocal flag
         run: echo useMavenLocal=true >> local.properties

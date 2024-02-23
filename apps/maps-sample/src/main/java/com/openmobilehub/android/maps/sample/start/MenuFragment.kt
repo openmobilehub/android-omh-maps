@@ -50,7 +50,6 @@ class MenuFragment : Fragment() {
                 android.R.layout.simple_spinner_item,
                 mapProviders.map { it.name })
         mapProviderSpinner.adapter = adapterMapProvider
-        mapProviderSpinner.setSelection(2)
         mapProviderSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
                 parent: AdapterView<*>?,
@@ -81,7 +80,7 @@ class MenuFragment : Fragment() {
             MenuListItem(
                 "Marker Map",
                 "Map showcasing the markers",
-                R.id.action_menuFragment_to_mapFragment
+                R.id.action_menuFragment_to_mapMarkersFragment
             ),
             MenuListItem(
                 "Polyline Map",
@@ -97,6 +96,11 @@ class MenuFragment : Fragment() {
                 "Custom Styles Map",
                 "Map showcasing custom styles",
                 R.id.action_menuFragment_to_mapStylesFragment
+            ),
+            MenuListItem(
+                "Location Sharing Map",
+                "Map showcasing location sharing via deep links",
+                R.id.action_menuFragment_to_mapLocationPickerFragment
             ),
         )
 

@@ -29,6 +29,8 @@ import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMapLo
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMarker
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnCameraIdleListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnCameraMoveStartedListener
+import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMarkerClickListener
+import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMarkerDragListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMyLocationButtonClickListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnPolygonClickListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnPolylineClickListener
@@ -41,6 +43,7 @@ import com.openmobilehub.android.maps.core.presentation.models.OmhPolygonOptions
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolylineOptions
 import com.openmobilehub.android.maps.plugin.openstreetmap.R
 import com.openmobilehub.android.maps.plugin.openstreetmap.extensions.toGeoPoint
+import com.openmobilehub.android.maps.plugin.openstreetmap.extensions.toMarkerOptions
 import com.openmobilehub.android.maps.plugin.openstreetmap.extensions.toOmhCoordinate
 import com.openmobilehub.android.maps.plugin.openstreetmap.extensions.toPolygonOptions
 import com.openmobilehub.android.maps.plugin.openstreetmap.extensions.toPolylineOptions
@@ -54,6 +57,7 @@ import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.Polygon
 import org.osmdroid.views.overlay.Polyline
+import org.osmdroid.views.overlay.gestures.RotationGestureOverlay
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 
@@ -62,36 +66,83 @@ internal class OmhMapImpl(
     private val mapView: MapView,
     private val mapListenerController: MapListenerController
 ) : OmhMap {
+
     private var myLocationNewOverlay: MyLocationNewOverlay? = null
     private var myLocationIconOverlay: MyLocationIconOverlay? = null
     private val gestureOverlay = GestureOverlay()
     private var polylineClickListener: OmhOnPolylineClickListener? = null
     private var polygonClickListener: OmhOnPolygonClickListener? = null
+    private var markerClickListener: OmhOnMarkerClickListener? = null
+    private var markerDragListener: OmhOnMarkerDragListener? = null
+    private var enableZoomGestures: Boolean = false
+    private var enableRotateGestures: Boolean = false
 
     private val polylines = mutableMapOf<Polyline, OmhPolyline>()
     private val polygons = mutableMapOf<Polygon, OmhPolygon>()
+    private val markers = mutableMapOf<Marker, OmhMarker>()
 
     init {
         mapView.addMapListener(mapListenerController)
         mapView.setOnTouchListener(MapTouchListener(mapListenerController))
         mapView.overlayManager.add(gestureOverlay)
+
         setZoomGesturesEnabled(true)
+        setRotateGesturesEnabled(true)
     }
 
     override val providerName: String
         get() = Constants.PROVIDER_NAME
 
-    override fun addMarker(options: OmhMarkerOptions): OmhMarker? {
-        val marker: Marker = Marker(mapView).apply {
-            position = options.position.toGeoPoint()
-            title = options.title
+    private fun applyOnMarkerClickListener(marker: Marker, omhMarker: OmhMarker) {
+        marker.setOnMarkerClickListener { _, _ ->
+            if (omhMarker.getIsVisible() && omhMarker.getClickable()) {
+                marker.showInfoWindow()
+                return@setOnMarkerClickListener markerClickListener?.onMarkerClick(omhMarker)
+                    ?: false
+            }
+
+            false
         }
+    }
+
+    private fun applyOnMarkerDragListener(marker: Marker, omhMarker: OmhMarker) {
+        marker.setOnMarkerDragListener(object : Marker.OnMarkerDragListener {
+            override fun onMarkerDrag(marker: Marker) {
+                if (omhMarker.getIsVisible()) {
+                    markerDragListener?.onMarkerDrag(omhMarker)
+                }
+            }
+
+            override fun onMarkerDragEnd(marker: Marker) {
+                if (omhMarker.getIsVisible()) {
+                    markerDragListener?.onMarkerDragEnd(omhMarker)
+                }
+            }
+
+            override fun onMarkerDragStart(marker: Marker) {
+                if (omhMarker.getIsVisible()) {
+                    markerDragListener?.onMarkerDragStart(omhMarker)
+                }
+            }
+        })
+    }
+
+    override fun addMarker(options: OmhMarkerOptions): OmhMarker? {
+        val marker = options.toMarkerOptions(mapView)
+        val initiallyClickable = options.clickable
+
+        val omhMarker = OmhMarkerImpl(marker, mapView, initiallyClickable)
+        markers[marker] = omhMarker
+
+        applyOnMarkerClickListener(marker, omhMarker)
+        applyOnMarkerDragListener(marker, omhMarker)
+
         mapView.run {
             overlayManager.add(marker)
             postInvalidate()
         }
 
-        return OmhMarkerImpl(marker)
+        return omhMarker
     }
 
     override fun addPolyline(options: OmhPolylineOptions): OmhPolyline? {
@@ -152,12 +203,29 @@ internal class OmhMapImpl(
         mapView.postInvalidate()
     }
 
+    private fun updateMultiTouchControlsSetting() {
+        mapView.setMultiTouchControls(enableZoomGestures || enableRotateGestures)
+    }
+
     override fun setZoomGesturesEnabled(enableZoomGestures: Boolean) {
+        this.enableZoomGestures = enableZoomGestures
+
         gestureOverlay.setEnableZoomGestures(enableZoomGestures)
-        mapView.setMultiTouchControls(enableZoomGestures)
         if (!enableZoomGestures) {
             mapView.zoomController.setVisibility(CustomZoomButtonsController.Visibility.NEVER)
         }
+
+        updateMultiTouchControlsSetting()
+    }
+
+    override fun setRotateGesturesEnabled(enableRotateGestures: Boolean) {
+        this.enableRotateGestures = enableRotateGestures
+
+        val rotationGestureOverlay = RotationGestureOverlay(mapView)
+        rotationGestureOverlay.isEnabled = true
+        mapView.overlayManager.add(rotationGestureOverlay)
+
+        updateMultiTouchControlsSetting()
     }
 
     override fun snapshot(omhSnapshotReadyCallback: OmhSnapshotReadyCallback) {
@@ -231,6 +299,22 @@ internal class OmhMapImpl(
 
     override fun setOnMapLoadedCallback(callback: OmhMapLoadedCallback?) {
         callback?.onMapLoaded()
+    }
+
+    override fun setOnMarkerClickListener(listener: OmhOnMarkerClickListener) {
+        markerClickListener = listener
+
+        markers.forEach() { (marker, omhMarker) ->
+            applyOnMarkerClickListener(marker, omhMarker)
+        }
+    }
+
+    override fun setOnMarkerDragListener(listener: OmhOnMarkerDragListener) {
+        markerDragListener = listener
+
+        markers.forEach() { (marker, omhMarker) ->
+            applyOnMarkerDragListener(marker, omhMarker)
+        }
     }
 
     override fun setOnPolylineClickListener(listener: OmhOnPolylineClickListener) {

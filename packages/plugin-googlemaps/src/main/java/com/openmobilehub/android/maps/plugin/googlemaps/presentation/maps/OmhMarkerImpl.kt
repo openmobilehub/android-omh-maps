@@ -16,12 +16,21 @@
 
 package com.openmobilehub.android.maps.plugin.googlemaps.presentation.maps
 
+import android.graphics.drawable.Drawable
 import com.google.android.gms.maps.model.Marker
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMarker
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
+import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
 import com.openmobilehub.android.maps.plugin.googlemaps.utils.CoordinateConverter
+import com.openmobilehub.android.maps.plugin.googlemaps.utils.MarkerIconConverter
+import com.openmobilehub.android.maps.plugin.googlemaps.utils.markerLogger
 
-internal class OmhMarkerImpl(private val marker: Marker) : OmhMarker {
+@SuppressWarnings("TooManyFunctions")
+internal class OmhMarkerImpl(
+    private val marker: Marker,
+    private var clickable: Boolean = true,
+    private val logger: UnsupportedFeatureLogger = markerLogger
+) : OmhMarker {
 
     override fun getPosition(): OmhCoordinate {
         return CoordinateConverter.convertToOmhCoordinate(marker.position)
@@ -36,6 +45,111 @@ internal class OmhMarkerImpl(private val marker: Marker) : OmhMarker {
     }
 
     override fun setTitle(title: String?) {
+        val shouldInvalidateInfoWindow = marker.title != title
+
         marker.title = title
+
+        if (shouldInvalidateInfoWindow) {
+            invalidateInfoWindow()
+        }
+    }
+
+    override fun getClickable(): Boolean {
+        return clickable
+    }
+
+    override fun setClickable(clickable: Boolean) {
+        this.clickable = clickable
+    }
+
+    override fun getDraggable(): Boolean {
+        return marker.isDraggable
+    }
+
+    override fun setDraggable(draggable: Boolean) {
+        marker.isDraggable = draggable
+    }
+
+    override fun setAnchor(anchorU: Float, anchorV: Float) {
+        this.marker.setAnchor(anchorU, anchorV)
+    }
+
+    override fun getAlpha(): Float {
+        return marker.alpha
+    }
+
+    override fun setAlpha(alpha: Float) {
+        marker.alpha = alpha
+    }
+
+    override fun getSnippet(): String? {
+        return marker.snippet
+    }
+
+    override fun setSnippet(snippet: String?) {
+        val shouldInvalidateInfoWindow = marker.snippet != snippet
+
+        marker.snippet = snippet
+
+        if (shouldInvalidateInfoWindow) {
+            invalidateInfoWindow()
+        }
+    }
+
+    override fun setIcon(icon: Drawable?) {
+        if (icon == null) {
+            marker.setIcon(null)
+        } else {
+            marker.setIcon(
+                MarkerIconConverter.convertDrawableToBitmapDescriptor(icon)
+            )
+        }
+    }
+
+    override fun getIsVisible(): Boolean {
+        return marker.isVisible
+    }
+
+    override fun setIsVisible(visible: Boolean) {
+        marker.isVisible = visible
+    }
+
+    override fun getIsFlat(): Boolean {
+        return marker.isFlat
+    }
+
+    override fun setIsFlat(flat: Boolean) {
+        marker.isFlat = flat
+    }
+
+    override fun getRotation(): Float {
+        return marker.rotation
+    }
+
+    override fun setRotation(rotation: Float) {
+        marker.rotation = rotation
+    }
+
+    override fun getBackgroundColor(): Int? {
+        logger.logGetterNotSupported("backgroundColor")
+
+        return null
+    }
+
+    override fun setBackgroundColor(color: Int?) {
+        if (color != null) {
+            logger.logFeatureSetterPartiallySupported(
+                "backgroundColor",
+                "only hue (H) component of HSV color representation is controllable, alpha channel is unsupported"
+            )
+        }
+
+        marker.setIcon(MarkerIconConverter.convertColorToBitmapDescriptor(color))
+    }
+
+    private fun invalidateInfoWindow() {
+        if (marker.isInfoWindowShown) {
+            marker.showInfoWindow() // open or close & reopen to apply the new contents
+        }
     }
 }

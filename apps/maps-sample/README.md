@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Sample App showcases the capabilities of the Omh Maps plugins, featuring all available providers for the specific operating system.
+The Sample App showcases the capabilities of the OMH Maps plugins, featuring all available providers for the specific operating system.
 
 ## Getting Started
 
