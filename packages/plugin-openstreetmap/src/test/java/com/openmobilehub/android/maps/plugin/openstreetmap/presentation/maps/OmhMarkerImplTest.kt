@@ -215,7 +215,7 @@ class OmhMarkerImplTest {
     fun `getRotation gets rotation value`() {
         // Arrange
         val expected = 89.23f
-        every { marker.rotation } returns expected
+        every { marker.rotation } returns -expected // rotation is counter-clockwise in OSM
 
         // Act
         val actual = omhMarker.getRotation()
@@ -234,6 +234,8 @@ class OmhMarkerImplTest {
         omhMarker.setRotation(expected)
 
         // Assert
-        verify { marker.rotation = expected }
+        verify {
+            marker.rotation = -expected // rotation is counter-clockwise in OSM
+        }
     }
 }

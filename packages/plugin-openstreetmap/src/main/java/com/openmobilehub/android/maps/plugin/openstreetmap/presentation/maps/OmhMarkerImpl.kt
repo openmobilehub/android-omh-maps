@@ -134,11 +134,12 @@ internal class OmhMarkerImpl(
     }
 
     override fun getRotation(): Float {
-        return marker.rotation
+        return -marker.rotation // counter-clockwise -> clockwise to be consistent with GoogleMaps implementation
     }
 
     override fun setRotation(rotation: Float) {
-        marker.rotation = rotation
+        marker.rotation =
+            -rotation // counter-clockwise -> clockwise to be consistent with GoogleMaps implementation
         mapView.postInvalidate()
     }
 

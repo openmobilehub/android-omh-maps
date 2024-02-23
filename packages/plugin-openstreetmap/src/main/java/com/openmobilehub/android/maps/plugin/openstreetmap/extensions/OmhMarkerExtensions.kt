@@ -26,7 +26,8 @@ internal fun OmhMarkerOptions.toMarkerOptions(
 
     marker.snippet = snippet
     marker.isFlat = isFlat
-    marker.rotation = rotation
+    marker.rotation =
+        -rotation // counter-clockwise -> clockwise to be consistent with GoogleMaps implementation
 
     if (!isVisible && marker.isInfoWindowShown) {
         marker.closeInfoWindow()
