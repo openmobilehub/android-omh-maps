@@ -125,12 +125,12 @@ class OmhMapImplTest {
         val bitmap = mockk<Bitmap>()
         val slot = slot<MapView.OnSnapshotReady>()
 
-        every { map.snapshot(capture(slot)) } answers {
-            slot.captured.onSnapshotReady(bitmap)
-        }
+        every { map.snapshot(capture(slot)) } answers {}
 
         // Act
         omhMapImpl.snapshot(omhSnapshotReadyCallback)
+
+        slot.captured.onSnapshotReady(bitmap)
 
         // Assert
         verify { omhSnapshotReadyCallback.onSnapshotReady(bitmap) }
@@ -144,12 +144,13 @@ class OmhMapImplTest {
         val listener = mockk<OmhOnCameraMoveStartedListener>(relaxed = true)
 
         every { map.mapboxMap.subscribeCameraChanged(capture(slot)) } answers {
-            slot.captured.run(cameraChanged)
             mockk<Cancelable>()
         }
 
         // Act
         omhMapImpl.setOnCameraMoveStartedListener(listener)
+
+        slot.captured.run(cameraChanged)
 
         // Assert
         verify { listener.onCameraMoveStarted(null) }
@@ -163,17 +164,54 @@ class OmhMapImplTest {
         val listener = mockk<OmhOnCameraMoveStartedListener>(relaxed = true)
 
         every { map.mapboxMap.subscribeCameraChanged(capture(slot)) } answers {
-            slot.captured.run(cameraChanged)
-            slot.captured.run(cameraChanged)
-            slot.captured.run(cameraChanged)
             mockk<Cancelable>()
         }
 
         // Act
         omhMapImpl.setOnCameraMoveStartedListener(listener)
 
+        slot.captured.run(cameraChanged)
+        slot.captured.run(cameraChanged)
+        slot.captured.run(cameraChanged)
+
         // Assert
         verify(exactly = 1) { listener.onCameraMoveStarted(null) }
+    }
+
+    @Test
+    fun `setOnCameraMoveStartedListener triggers callback again after camera gets idle`() {
+        // Arrange
+        val cameraChangedCallbackSlot = slot<CameraChangedCallback>()
+        val cameraChanged = mockk<CameraChanged>(relaxed = true)
+        val moveStartedListener = mockk<OmhOnCameraMoveStartedListener>(relaxed = true)
+
+        val mapIdleCallbackSlot = slot<MapIdleCallback>()
+        val mapIdle = mockk<MapIdle>(relaxed = true)
+        val idleListener = mockk<OmhOnCameraIdleListener>(relaxed = true)
+
+        every { map.mapboxMap.subscribeCameraChanged(capture(cameraChangedCallbackSlot)) } answers {
+            mockk<Cancelable>()
+        }
+
+        every { map.mapboxMap.subscribeMapIdle(capture(mapIdleCallbackSlot)) } answers {
+            mockk<Cancelable>()
+        }
+
+        // Act
+        omhMapImpl.setOnCameraMoveStartedListener(moveStartedListener)
+        omhMapImpl.setOnCameraIdleListener(idleListener)
+
+        cameraChangedCallbackSlot.captured.run(cameraChanged)
+        // Assert
+        verify(exactly = 1) { moveStartedListener.onCameraMoveStarted(null) }
+
+        // Act
+        mapIdleCallbackSlot.captured.run(mapIdle)
+        cameraChangedCallbackSlot.captured.run(cameraChanged)
+
+        // Assert
+        verify(exactly = 1) { idleListener.onCameraIdle() }
+        verify(exactly = 2) { moveStartedListener.onCameraMoveStarted(null) }
     }
 
     @Test
@@ -184,12 +222,13 @@ class OmhMapImplTest {
         val listener = mockk<OmhOnCameraIdleListener>(relaxed = true)
 
         every { map.mapboxMap.subscribeMapIdle(capture(slot)) } answers {
-            slot.captured.run(mapIdle)
             mockk<Cancelable>()
         }
 
         // Act
         omhMapImpl.setOnCameraIdleListener(listener)
+
+        slot.captured.run(mapIdle)
 
         // Assert
         verify { listener.onCameraIdle() }
@@ -203,12 +242,13 @@ class OmhMapImplTest {
         val listener = mockk<OmhMapLoadedCallback>(relaxed = true)
 
         every { map.mapboxMap.subscribeMapLoaded(capture(slot)) } answers {
-            slot.captured.run(mapLoaded)
             mockk<Cancelable>()
         }
 
         // Act
         omhMapImpl.setOnMapLoadedCallback(listener)
+
+        slot.captured.run(mapLoaded)
 
         // Assert
         verify { listener.onMapLoaded() }
