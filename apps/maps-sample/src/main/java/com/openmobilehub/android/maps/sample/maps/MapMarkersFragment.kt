@@ -124,7 +124,7 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
             title = "Static icon marker (non-draggable)"
             position = OmhCoordinate().apply {
                 latitude = PRIME_MERIDIAN.latitude + 0.0016
-                longitude = PRIME_MERIDIAN.longitude + 0.0008
+                longitude = PRIME_MERIDIAN.longitude + 0.002
             }
             icon = ResourcesCompat.getDrawable(resources, R.drawable.ic_map_marker, null)
         })
@@ -132,8 +132,8 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
         omhMap.addMarker(OmhMarkerOptions().apply {
             title = "Static colored marker (draggable)"
             position = OmhCoordinate().apply {
-                latitude = PRIME_MERIDIAN.latitude
-                longitude = PRIME_MERIDIAN.longitude - 0.0008
+                latitude = PRIME_MERIDIAN.latitude + 0.0016
+                longitude = PRIME_MERIDIAN.longitude - 0.002
             }
             backgroundColor = 0x00FF12 // green-ish
             draggable = true
@@ -142,8 +142,8 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
         customizableMarker = omhMap.addMarker(OmhMarkerOptions().apply {
             title = "Configurable test marker"
             position = OmhCoordinate().apply {
-                latitude = PRIME_MERIDIAN.latitude
-                longitude = PRIME_MERIDIAN.longitude + 0.0008
+                latitude = PRIME_MERIDIAN.latitude - 0.001
+                longitude = PRIME_MERIDIAN.longitude
             }
             draggable = true
         })
