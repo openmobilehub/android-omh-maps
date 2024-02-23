@@ -1,5 +1,5 @@
 ---
-title: Core module overview
+title: Plugin Mapbox overview
 layout: default
 nav_order: 1
 has_children: false

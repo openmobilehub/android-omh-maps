@@ -1,5 +1,5 @@
 ---
-title: Core module overview
+title: Maps sample overview
 layout: default
 nav_order: 1
 has_children: false

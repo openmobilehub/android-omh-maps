@@ -1,5 +1,6 @@
 ---
 title: Plugins
+layout: default
 has_children: false
 ---
 

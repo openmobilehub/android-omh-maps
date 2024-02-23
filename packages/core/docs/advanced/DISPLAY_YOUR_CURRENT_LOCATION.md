@@ -1,5 +1,6 @@
 ---
 title: Display your current location
+layout: default
 has_children: false
 parent: Core module
 ---

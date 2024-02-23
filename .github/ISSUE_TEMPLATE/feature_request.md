@@ -1,10 +1,10 @@
 ---
 name: Feature Request
 about: Suggest an idea for this project
-title: ''
-labels: ''
-assignees: ''
-
+title: ""
+layout: default
+labels: ""
+assignees: ""
 ---
 
 **Checklist**

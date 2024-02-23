@@ -62,7 +62,7 @@ useLocalProjects=true
 
 Alternatively, enable `useMavenLocal` and then publish plugins to your local Maven repository.
 
-More information can be found on the [Contributing](/CONTRIBUTING.md) page.
+More information can be found on the [Contributing](https://github.com/openmobilehub/android-omh-maps/blob/main/CONTRIBUTING.md) page.
 
 ### Running the App
 
@@ -70,7 +70,7 @@ After setting up the development environment, credentials, and dependencies, you
 
 ## Contributing
 
-Please contribute! We will gladly review any pull requests. Make sure to read the [Contributing](/CONTRIBUTING.md) page first though.
+Please contribute! We will gladly review any pull requests. Make sure to read the [Contributing](https://github.com/openmobilehub/android-omh-maps/blob/main/CONTRIBUTING.md) page first though.
 
 ## License
 

@@ -165,9 +165,22 @@ val copyMarkdownDocsTask = tasks.register("copyMarkdownDocs") {
             }
 
             // copy the top-level README for that module to _README_ORIGINAL.md that can be Jekyll-included
-            val readmeFile = project.file("README.md")
-            if (readmeFile.exists() && project != rootProject) {
-                readmeFile.copyTo(File(projectDocsDestDir, "_README_ORIGINAL.md"), true)
+            val srcReadmeFile = project.file("README.md")
+            if (srcReadmeFile.exists() && project != rootProject) {
+                val destReadmeFile = File(projectDocsDestDir, "_README_ORIGINAL.md")
+                srcReadmeFile.copyTo(destReadmeFile, true)
+
+                // sanitize relative links to .md files after copying to new tree
+                destReadmeFile.writeText(
+                    destReadmeFile.readText()
+                        // replace all absolute references to packages with new tree relative paths
+                        .replace(Regex("/packages/(.*)/docs/(.*\\.md)\\)"), "../../$1/$2)")
+                        // replace all absolute occurrences of local docs with relative path
+                        .replace("./docs/", "../")
+                        // strip file extension off all non-external links ending with
+                        // (Jekyll creates directories with index.html files)
+                        .replace(Regex("\\((?!https?)(.*)\\.md\\)"), "($1)")
+                )
             }
 
             // copy custom markdown docs

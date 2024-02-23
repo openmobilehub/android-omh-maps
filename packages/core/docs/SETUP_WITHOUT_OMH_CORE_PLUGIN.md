@@ -1,5 +1,6 @@
 ---
 title: Setup without omh-core plugin
+layout: default
 has_children: false
 ---
 
