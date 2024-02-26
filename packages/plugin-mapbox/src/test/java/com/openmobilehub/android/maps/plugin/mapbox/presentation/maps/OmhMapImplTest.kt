@@ -1,5 +1,6 @@
 package com.openmobilehub.android.maps.plugin.mapbox.presentation.maps
 
+import android.content.Context
 import android.graphics.Bitmap
 import com.mapbox.common.Cancelable
 import com.mapbox.geojson.Point
@@ -11,7 +12,10 @@ import com.mapbox.maps.MapIdleCallback
 import com.mapbox.maps.MapLoaded
 import com.mapbox.maps.MapLoadedCallback
 import com.mapbox.maps.MapView
+import com.mapbox.maps.plugin.Plugin
+import com.mapbox.maps.plugin.compass.CompassPlugin
 import com.mapbox.maps.plugin.gestures.gestures
+import com.mapbox.maps.plugin.scalebar.ScaleBarPlugin
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMapLoadedCallback
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnCameraIdleListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnCameraMoveStartedListener
@@ -32,10 +36,16 @@ class OmhMapImplTest {
 
     private lateinit var omhMapImpl: OmhMapImpl
     private val map = mockk<MapView>()
+    private val scaleBarPlugin = mockk<ScaleBarPlugin>(relaxed = true)
+    private val compassPlugin = mockk<CompassPlugin>(relaxed = true)
+    private val context = mockk<Context>(relaxed = true)
 
     @Before
     fun setUp() {
-        omhMapImpl = OmhMapImpl(map)
+        every { map.getPlugin<ScaleBarPlugin>(Plugin.MAPBOX_SCALEBAR_PLUGIN_ID) } returns scaleBarPlugin
+        every { map.getPlugin<CompassPlugin>(Plugin.MAPBOX_COMPASS_PLUGIN_ID) } returns compassPlugin
+
+        omhMapImpl = OmhMapImpl(map, context)
     }
 
     @Test

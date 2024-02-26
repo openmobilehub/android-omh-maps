@@ -18,10 +18,19 @@ package com.openmobilehub.android.maps.plugin.mapbox.presentation.maps
 
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
+import android.content.Context
+import android.view.Gravity
 import androidx.annotation.RequiresPermission
 import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.MapView
+import com.mapbox.maps.plugin.compass.compass
 import com.mapbox.maps.plugin.gestures.gestures
+import com.mapbox.maps.plugin.locationcomponent.location
+import com.mapbox.maps.plugin.scalebar.scalebar
+import com.mapbox.maps.plugin.viewport.data.FollowPuckViewportStateBearing
+import com.mapbox.maps.plugin.viewport.data.FollowPuckViewportStateOptions
+import com.mapbox.maps.plugin.viewport.state.FollowPuckViewportState
+import com.mapbox.maps.plugin.viewport.viewport
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMap
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMapLoadedCallback
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMarker
@@ -41,17 +50,28 @@ import com.openmobilehub.android.maps.core.presentation.models.OmhPolygonOptions
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolylineOptions
 import com.openmobilehub.android.maps.plugin.mapbox.utils.Constants
 import com.openmobilehub.android.maps.plugin.mapbox.utils.CoordinateConverter
+import com.openmobilehub.android.maps.plugin.mapbox.utils.DimensionConverter
 
 @SuppressWarnings("TooManyFunctions")
 internal class OmhMapImpl(
     @SuppressWarnings("UnusedPrivateMember")
     private val mapView: MapView,
+    private val context: Context
 ) : OmhMap {
 
     /**
      * This flag is used to prevent the onCameraMoveStarted listener from being called multiple times
      */
     private var isCameraMoving = false
+    private var isMyLocationIconAdded = false
+
+    private var myLocationIcon: MyLocationIcon? = null
+
+    private var onMyLocationButtonClickListener: OmhOnMyLocationButtonClickListener? = null
+
+    init {
+        setupMapviewUIControls()
+    }
 
     override val providerName: String
         get() = Constants.PROVIDER_NAME
@@ -106,18 +126,30 @@ internal class OmhMapImpl(
 
     @RequiresPermission(anyOf = [ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION])
     override fun setMyLocationEnabled(enable: Boolean) {
-        // To be implemented
+        mapView.location.enabled = enable
+
+        if (enable) {
+            if (!isMyLocationIconAdded) {
+                isMyLocationIconAdded = true
+                myLocationIcon = MyLocationIcon(context)
+                updateMyLocationIconClickListener()
+                mapView.addView(myLocationIcon)
+            }
+        } else {
+            mapView.removeView(myLocationIcon)
+            isMyLocationIconAdded = false
+        }
     }
 
     override fun isMyLocationEnabled(): Boolean {
-        // To be implemented
-        return false
+        return mapView.location.enabled
     }
 
     override fun setMyLocationButtonClickListener(
         omhOnMyLocationButtonClickListener: OmhOnMyLocationButtonClickListener
     ) {
-        // To be implemented
+        onMyLocationButtonClickListener = omhOnMyLocationButtonClickListener
+        updateMyLocationIconClickListener()
     }
 
     override fun setOnCameraMoveStartedListener(listener: OmhOnCameraMoveStartedListener) {
@@ -161,5 +193,41 @@ internal class OmhMapImpl(
 
     override fun setMapStyle(json: Int?) {
         // To be implemented
+    }
+
+    private fun setupMapviewUIControls() {
+        // To have parity with Google Maps
+        val iconMargin =
+            DimensionConverter.pxFromDp(context, Constants.MAPBOX_ICON_MARGIN).toFloat()
+        mapView.compass.marginLeft = iconMargin
+        mapView.compass.marginTop = iconMargin
+        mapView.compass.position = Gravity.TOP or Gravity.START
+
+        mapView.scalebar.enabled = false
+    }
+
+    private fun updateMyLocationIconClickListener() {
+        myLocationIcon?.setOnClickListener {
+            onMyLocationButtonClickListener?.onMyLocationButtonClick()
+            centerMapOnMapLocation()
+        }
+    }
+
+    private fun centerMapOnMapLocation() {
+        val viewportPlugin = mapView.viewport
+
+        val cameraState = mapView.mapboxMap.cameraState
+
+        val followPuckViewportState: FollowPuckViewportState =
+            viewportPlugin.makeFollowPuckViewportState(
+                FollowPuckViewportStateOptions.Builder()
+                    .pitch(cameraState.pitch)
+                    .zoom(cameraState.zoom)
+                    .bearing(FollowPuckViewportStateBearing.Constant(cameraState.bearing))
+                    .padding(cameraState.padding)
+                    .build()
+            )
+
+        viewportPlugin.transitionTo(followPuckViewportState)
     }
 }
