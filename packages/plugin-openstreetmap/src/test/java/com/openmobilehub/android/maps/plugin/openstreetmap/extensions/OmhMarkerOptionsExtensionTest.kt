@@ -19,6 +19,7 @@ package com.openmobilehub.android.maps.plugin.openstreetmap.extensions
 import android.content.Context
 import android.content.res.Resources
 import android.graphics.drawable.Drawable
+import com.openmobilehub.android.maps.core.presentation.models.Constants
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
 import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
@@ -132,5 +133,26 @@ internal class OmhMarkerOptionsExtensionTest {
         }.toMarkerOptions(mapView, mockLogger)
 
         verify { mockLogger.logSetterNotSupported("backgroundColor") }
+    }
+
+    @Test
+    fun `toMarkerOptions has proper default constructor arguments`() {
+        val defaultOmhMarkerOptions = OmhMarkerOptions()
+
+        assertEquals(defaultOmhMarkerOptions.draggable, false)
+        assertEquals(
+            defaultOmhMarkerOptions.anchor, Pair(
+                Constants.DEFAULT_ANCHOR,
+                Constants.DEFAULT_ANCHOR
+            )
+        )
+        assertEquals(defaultOmhMarkerOptions.alpha, Constants.DEFAULT_ALPHA)
+        assertEquals(defaultOmhMarkerOptions.snippet, null)
+        assertEquals(defaultOmhMarkerOptions.isVisible, true)
+        assertEquals(defaultOmhMarkerOptions.isFlat, false)
+        assertEquals(defaultOmhMarkerOptions.rotation, Constants.DEFAULT_ROTATION)
+        assertEquals(defaultOmhMarkerOptions.backgroundColor, null)
+        assertEquals(defaultOmhMarkerOptions.icon, null)
+        assertEquals(defaultOmhMarkerOptions.clickable, true)
     }
 }

@@ -8,6 +8,26 @@ internal class CustomMarker(private val omhMapImpl: OmhMapImpl, mapView: MapView
     Marker(mapView) {
     private var draggingInProgress = false
 
+    internal fun updateOpenState() {
+        if (isInfoWindowShown) {
+            if (alpha != 0f) {
+                showInfoWindow() // re-open the info window to apply marker changes (e.g. the anchor)
+            } else {
+                closeInfoWindow() // close the open window
+            }
+        }
+    }
+
+    override fun setDefaultIcon() {
+        // to achieve feature parity, we need to back up the anchor before resetting the icon,
+        // since omsdroid implementation sets a custom anchor inside setDefaultIcon
+        val anchor = mAnchorU to mAnchorV // back up the anchor before resetting the icon
+
+        super.setDefaultIcon()
+
+        setAnchor(anchor.first, anchor.second) // restore the backed up anchor
+    }
+
     override fun onLongPress(event: MotionEvent?, mapView: MapView?): Boolean {
         // to achieve feature parity, we need to ensure that the info window
         // is not closed upon start of dragging of the marker, which is the default for OSM

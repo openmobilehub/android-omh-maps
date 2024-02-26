@@ -6,20 +6,18 @@ import com.openmobilehub.android.maps.plugin.openstreetmap.presentation.maps.Cus
 import com.openmobilehub.android.maps.plugin.openstreetmap.presentation.maps.OmhMapImpl
 import com.openmobilehub.android.maps.plugin.openstreetmap.utils.markerLogger
 import org.osmdroid.views.MapView
-import org.osmdroid.views.overlay.Marker
 
 internal fun OmhMarkerOptions.toMarkerOptions(
     omhMapImpl: OmhMapImpl,
     mapView: MapView,
     logger: UnsupportedFeatureLogger = markerLogger
-): Marker {
+): CustomMarker {
     val marker = CustomMarker(omhMapImpl, mapView)
 
     marker.position = position.toGeoPoint()
     marker.title = title
     marker.isDraggable = draggable
 
-    marker.setAnchor(anchor.first, anchor.second)
     marker.alpha = alpha
 
     // since setVisible controls the alpha in OSM implementation, it needs separate handling after alpha
@@ -32,10 +30,6 @@ internal fun OmhMarkerOptions.toMarkerOptions(
     marker.rotation =
         -rotation // counter-clockwise -> clockwise to be consistent with GoogleMaps implementation
 
-    if (!isVisible && marker.isInfoWindowShown) {
-        marker.closeInfoWindow()
-    }
-
     if (icon != null) {
         marker.icon = icon
     } else if (backgroundColor != null) {
@@ -43,6 +37,8 @@ internal fun OmhMarkerOptions.toMarkerOptions(
     } else {
         marker.setDefaultIcon()
     }
+
+    marker.setAnchor(anchor.first, anchor.second)
 
     return marker
 }
