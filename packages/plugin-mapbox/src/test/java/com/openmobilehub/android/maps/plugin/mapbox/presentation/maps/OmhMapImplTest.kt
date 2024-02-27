@@ -2,6 +2,7 @@ package com.openmobilehub.android.maps.plugin.mapbox.presentation.maps
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.view.View
 import com.mapbox.common.Cancelable
 import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraChanged
@@ -12,13 +13,18 @@ import com.mapbox.maps.MapIdleCallback
 import com.mapbox.maps.MapLoaded
 import com.mapbox.maps.MapLoadedCallback
 import com.mapbox.maps.MapView
+import com.mapbox.maps.MapboxMap
 import com.mapbox.maps.plugin.Plugin
 import com.mapbox.maps.plugin.compass.CompassPlugin
 import com.mapbox.maps.plugin.gestures.gestures
+import com.mapbox.maps.plugin.locationcomponent.location
 import com.mapbox.maps.plugin.scalebar.ScaleBarPlugin
+import com.mapbox.maps.plugin.viewport.ViewportPlugin
+import com.mapbox.maps.plugin.viewport.state.FollowPuckViewportState
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMapLoadedCallback
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnCameraIdleListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnCameraMoveStartedListener
+import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMyLocationButtonClickListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhSnapshotReadyCallback
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.plugin.mapbox.utils.Constants
@@ -38,14 +44,18 @@ class OmhMapImplTest {
     private val map = mockk<MapView>()
     private val scaleBarPlugin = mockk<ScaleBarPlugin>(relaxed = true)
     private val compassPlugin = mockk<CompassPlugin>(relaxed = true)
+    private val viewportPlugin = mockk<ViewportPlugin>(relaxed = true)
     private val context = mockk<Context>(relaxed = true)
+    private val myLocationIcon = mockk<MyLocationIcon>(relaxed = true)
 
     @Before
     fun setUp() {
         every { map.getPlugin<ScaleBarPlugin>(Plugin.MAPBOX_SCALEBAR_PLUGIN_ID) } returns scaleBarPlugin
         every { map.getPlugin<CompassPlugin>(Plugin.MAPBOX_COMPASS_PLUGIN_ID) } returns compassPlugin
+        every { map.getPlugin<ViewportPlugin>(Plugin.MAPBOX_VIEWPORT_PLUGIN_ID) } returns viewportPlugin
+        every { map.mapboxMap } returns mockk<MapboxMap>(relaxed = true)
 
-        omhMapImpl = OmhMapImpl(map, context)
+        omhMapImpl = OmhMapImpl(map, context, myLocationIcon)
     }
 
     @Test
@@ -262,5 +272,68 @@ class OmhMapImplTest {
 
         // Assert
         verify { listener.onMapLoaded() }
+    }
+
+    @Test
+    fun `isMyLocationEnabled returns correct value`() {
+        // Arrange
+        val isMyLocationEnabled = true
+        every { map.location.enabled } returns isMyLocationEnabled
+
+        // Act
+        val result = omhMapImpl.isMyLocationEnabled()
+
+        // Assert
+        Assert.assertEquals(isMyLocationEnabled, result)
+    }
+
+    @Test
+    fun `setMyLocationEnabled enables location and adds myLocationIcon view when true is passed`() {
+        // Arrange
+        val isMyLocationEnabled = true
+        every { map.location.enabled = any() } just runs
+        every { map.addView(any()) } just runs
+
+        // Act
+        omhMapImpl.setMyLocationEnabled(isMyLocationEnabled)
+
+        // Assert
+        verify { map.location.enabled = isMyLocationEnabled }
+        verify { map.addView(myLocationIcon) }
+    }
+
+    @Test
+    fun `setMyLocationEnabled disables location and removes myLocationIcon view when false is passed`() {
+        // Arrange
+        val isMyLocationEnabled = false
+        every { map.location.enabled = any() } just runs
+        every { map.removeView(any()) } just runs
+
+        // Act
+        omhMapImpl.setMyLocationEnabled(isMyLocationEnabled)
+
+        // Assert
+        verify { map.location.enabled = isMyLocationEnabled }
+        verify { map.removeView(myLocationIcon) }
+    }
+
+    @Test
+    fun `setMyLocationButtonClickListener triggers callback and recenter map when button is clicked`() {
+        // Arrange
+        val slot = slot<View.OnClickListener>()
+        val listener = mockk<OmhOnMyLocationButtonClickListener>(relaxed = true)
+
+        val followPuckViewportState = mockk<FollowPuckViewportState>()
+        every { viewportPlugin.makeFollowPuckViewportState(any()) } returns followPuckViewportState
+
+        every { myLocationIcon.setOnClickListener(capture(slot)) } answers {}
+
+        // Act
+        omhMapImpl.setMyLocationButtonClickListener(listener)
+        slot.captured.onClick(myLocationIcon)
+
+        // Assert
+        verify(exactly = 1) { listener.onMyLocationButtonClick() }
+        verify(exactly = 1) { viewportPlugin.transitionTo(followPuckViewportState) }
     }
 }

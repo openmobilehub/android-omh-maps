@@ -20,6 +20,7 @@ import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.content.Context
 import android.view.Gravity
+import android.widget.ImageView
 import androidx.annotation.RequiresPermission
 import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.MapView
@@ -56,16 +57,15 @@ import com.openmobilehub.android.maps.plugin.mapbox.utils.DimensionConverter
 internal class OmhMapImpl(
     @SuppressWarnings("UnusedPrivateMember")
     private val mapView: MapView,
-    private val context: Context
+    private val context: Context,
+    private val myLocationIcon: ImageView = MyLocationIcon(context)
 ) : OmhMap {
-
     /**
      * This flag is used to prevent the onCameraMoveStarted listener from being called multiple times
      */
     private var isCameraMoving = false
-    private var isMyLocationIconAdded = false
 
-    private var myLocationIcon: MyLocationIcon? = null
+    private var isMyLocationIconAdded = false
 
     private var onMyLocationButtonClickListener: OmhOnMyLocationButtonClickListener? = null
 
@@ -131,7 +131,6 @@ internal class OmhMapImpl(
         if (enable) {
             if (!isMyLocationIconAdded) {
                 isMyLocationIconAdded = true
-                myLocationIcon = MyLocationIcon(context)
                 updateMyLocationIconClickListener()
                 mapView.addView(myLocationIcon)
             }
@@ -207,7 +206,7 @@ internal class OmhMapImpl(
     }
 
     private fun updateMyLocationIconClickListener() {
-        myLocationIcon?.setOnClickListener {
+        myLocationIcon.setOnClickListener {
             onMyLocationButtonClickListener?.onMyLocationButtonClick()
             centerMapOnMapLocation()
         }
