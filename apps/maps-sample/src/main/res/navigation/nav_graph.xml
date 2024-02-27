@@ -87,12 +87,6 @@
         android:name="com.openmobilehub.android.maps.sample.maps.MapStylesFragment"
         android:label="@string/map_styles_fragment_text"
         tools:layout="@layout/fragment_map_styles" />
-    
-    <fragment
-        android:id="@+id/mapCameraFragment"
-        android:name="com.openmobilehub.android.maps.sample.maps.MapCameraFragment"
-        android:label="@string/map_camera_fragment_text"
-        tools:layout="@layout/fragment_map_camera" />
 
     <fragment
         android:id="@+id/mapSharedLocationFragment"
