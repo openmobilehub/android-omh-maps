@@ -105,12 +105,6 @@ internal class OmhLocationImpl(context: Context) : OmhLocation {
         }
     }
 
-    internal class Builder : OmhLocation.Builder {
-        override fun build(context: Context): OmhLocation {
-            return OmhLocationImpl(context)
-        }
-    }
-
     companion object {
         private val INVALID_PROVIDER_EXCEPTION = OmhMapException.ApiException(
             OmhMapStatusCodes.INVALID_PROVIDER,
@@ -128,5 +122,11 @@ internal class OmhLocationImpl(context: Context) : OmhLocation {
                 )
             )
         )
+    }
+
+    internal class Builder : OmhLocation.Builder {
+        override fun build(context: Context): OmhLocation {
+            return OmhLocationImpl(context)
+        }
     }
 }
