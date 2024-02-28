@@ -13,6 +13,7 @@ import androidx.navigation.fragment.findNavController
 import com.openmobilehub.android.maps.core.factories.OmhMapProvider
 import com.openmobilehub.android.maps.sample.R
 import com.openmobilehub.android.maps.sample.adapter.MenuListViewAdapter
+import com.openmobilehub.android.maps.sample.model.MapProvider
 import com.openmobilehub.android.maps.sample.model.MenuListItem
 import com.openmobilehub.android.maps.sample.utils.MapProvidersUtils
 

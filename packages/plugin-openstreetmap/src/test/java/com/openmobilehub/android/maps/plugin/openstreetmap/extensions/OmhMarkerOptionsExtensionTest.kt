@@ -96,7 +96,10 @@ internal class OmhMarkerOptionsExtensionTest {
 
         assertEquals(omhMarkerOptionsWithIcon.isFlat, markerOptions.isFlat)
 
-        assertEquals(omhMarkerOptionsWithIcon.rotation, markerOptions.rotation)
+        assertEquals(
+            omhMarkerOptionsWithIcon.rotation,
+            -markerOptions.rotation
+        ) // rotation is counter-clockwise in OSM
 
         assertEquals(omhMarkerOptionsWithIcon.icon, markerOptions.icon)
     }
