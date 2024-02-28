@@ -49,16 +49,16 @@ This plugin provides support for Mapbox by utilizing the [Mapbox Android SDK](ht
 | moveCamera                       |     ✅     |
 | setZoomGesturesEnabled           |     ✅     |
 | setRotateGesturesEnabled         |     ✅     |
-| setMyLocationEnabled             |     ?      |
-| isMyLocationEnabled              |     ?      |
-| setMyLocationButtonClickListener |     ?      |
+| setMyLocationEnabled             |     ✅     |
+| isMyLocationEnabled              |     ✅     |
+| setMyLocationButtonClickListener |     ✅     |
 | setOnCameraMoveStartedListener   |     🟨     |
 | setOnCameraIdleListener          |     ✅     |
 | setOnMapLoadedCallback           |     ✅     |
 | setOnPolylineClickListener       |     ?      |
 | setOnPolygonClickListener        |     ?      |
 | snapshot                         |     ✅     |
-| setMapStyle                      |     ?      |
+| setMapStyle                      |     ✅     |
 
 Comments for partially supported 🟨 properties:
 
