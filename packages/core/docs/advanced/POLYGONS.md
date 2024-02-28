@@ -1,10 +1,20 @@
+---
+title: Polygons
+layout: default
+has_children: false
+parent: Core module
+---
+
 # Polygons
+
 The maps API allows you to add a polygon on the map.
 
 ## Add a polygon
+
 A polygon is a shape with multiple edges on the map. You can customize the appearance of the polygon by changing its properties. To add a polygon call the function `fun addPolygon(OmhPolygonOptions): OmhPolygon?`.
 
 ## Polygon options
+
 Define polygon options for a `Polygon`.
 Many properties can be set. To get the full list of properties, see the [OmhPolygonOptions](TODO: Add missing link) class.
 Example of usage of `OmhPolygonOptions` and `addPolygon(OmhPolygonOptions)`:
@@ -25,6 +35,7 @@ val polygon = omhMap.addPolygon(omhPolygonOptions)
 ```
 
 ## Modifying an existing Polygon
+
 Once a Polygon is added to the map, you can modify its properties by calling the methods of the `OmhPolygon` class.
 To get the full list of methods, see the [OmhPolygon](TODO: Add missing link) class. Example of usage of `OmhPolygon` methods:
 
@@ -34,6 +45,7 @@ polygon.setWidth(20f)
 ```
 
 ## Polygon events
+
 You can listen to click events on a Polygon by setting a listener on the map and calling the `setOnPolygonClickListener` method.
 The `onPolygonClick` method will be called with the `OmhPolygon` as an argument.
 
@@ -51,4 +63,5 @@ omhMap.setOnPolygonClickListener(omhOnPolygonClickListener)
 ```
 
 ## Supported features
+
 Not all the features across all the map providers are supported. Make sure to check compatibility matrix for the features you are interested in. The compatibility matrixes are available in the individual map plugin documentation.

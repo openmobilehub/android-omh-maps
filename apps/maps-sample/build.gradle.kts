@@ -104,3 +104,7 @@ fun getValueFromEnvOrProperties(name: String, propertiesFilePath: Any): Any? {
     val localProperties = gradleLocalProperties(file(propertiesFilePath))
     return System.getenv(name) ?: localProperties[name]
 }
+
+tasks.dokkaHtmlPartial {
+    enabled = false
+}

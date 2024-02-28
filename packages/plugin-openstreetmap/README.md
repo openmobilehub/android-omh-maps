@@ -1,4 +1,4 @@
-# OpenStreetMap Plugin
+# Module plugin-openstreetmap
 
 ## Overview
 
@@ -215,7 +215,7 @@ Comments for partially supported 🟨 properties:
 
 ## Contributing
 
-Please contribute! We will gladly review any pull requests. Make sure to read the [Contributing](/CONTRIBUTING.md) page first though.
+Please contribute! We will gladly review any pull requests. Make sure to read the [Contributing](https://github.com/openmobilehub/android-omh-maps/blob/main/CONTRIBUTING.md) page first though.
 
 ## License
 

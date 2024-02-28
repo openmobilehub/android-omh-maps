@@ -4,10 +4,10 @@ on:
   workflow_call:
     inputs:
       input-cache-prefix:
-        description: 'Input cache prefix'
+        description: "Input cache prefix"
         type: string
         required: false
-        default: ''
+        default: ""
 
 jobs:
   build_and_publish:
@@ -30,13 +30,13 @@ jobs:
           distribution: adopt
           cache: gradle
 
-      - name: Restore Cache MavenLocal 
+      - name: Restore Cache MavenLocal
         if: ${{ inputs.input-cache-prefix != '' }}
         uses: actions/cache@v3
         with:
           path: ~/.m2/repository
           key: ${{ inputs.input-cache-prefix }}-${{ github.run_id }}
-      
+
       - name: Setup secrets
         run: bash ./.github/scripts/setup_secrets.sh "${{ secrets.MAPBOX_SECRET_TOKEN }}" "${{ secrets.GOOGLE_MAPS_API_KEY }}" "${{ secrets.MAPBOX_PUBLIC_TOKEN }}"
 
@@ -50,7 +50,7 @@ jobs:
           fileDir: ${{ env.SAMPLE_APP_PATH }}
           fileName: ${{ secrets.SAMPLE_APP_KEYSTORE_FILE_NAME }}
           encodedString: ${{ secrets.SAMPLE_APP_KEYSTORE_BASE_64 }}
-      
+
         # Builds the release version of the application
       - name: Assemble release app
         run: bash ./gradlew ${{ env.GRADLE_ASSEMBLE_TASK }}
@@ -59,7 +59,7 @@ jobs:
           SAMPLE_APP_KEYSTORE_STORE_PASSWORD: ${{ secrets.SAMPLE_APP_KEYSTORE_STORE_PASSWORD }}
           SAMPLE_APP_KEYSTORE_KEY_ALIAS: ${{ secrets.SAMPLE_APP_KEYSTORE_KEY_ALIAS }}
           SAMPLE_APP_KEYSTORE_KEY_PASSWORD: ${{ secrets.SAMPLE_APP_KEYSTORE_KEY_PASSWORD }}
-        
+
         # Publishes the app to App Center
       - name: Publish app to App Center
         uses: wzieba/AppCenter-Github-Action@v1

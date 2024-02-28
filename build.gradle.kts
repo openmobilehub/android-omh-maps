@@ -1,20 +1,26 @@
 import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+import org.gradle.internal.Cast.uncheckedCast
+import org.jetbrains.dokka.DokkaConfiguration
+import org.jetbrains.dokka.base.DokkaBase
+import org.jetbrains.dokka.base.DokkaBaseConfiguration
+import org.jetbrains.dokka.gradle.DokkaTaskPartial
+import java.net.URL
 import java.util.Properties
 
 val properties = Properties()
 val localPropertiesFile = project.file("local.properties")
-if(localPropertiesFile.exists()) {
+if (localPropertiesFile.exists()) {
     properties.load(localPropertiesFile.inputStream())
 }
 val useMavenLocal = getBooleanFromProperties("useMavenLocal")
 val useLocalProjects = getBooleanFromProperties("useLocalProjects")
 
-if(useLocalProjects) {
+if (useLocalProjects) {
     println("OMH Maps project running with useLocalProjects enabled ")
 }
 
-if(useMavenLocal) {
-    println("OMH Maps project running with useMavenLocal enabled${if(useLocalProjects) ", but only publishing will be altered since dependencies are overriden by useLocalProjects" else ""} ")
+if (useMavenLocal) {
+    println("OMH Maps project running with useMavenLocal enabled${if (useLocalProjects) ", but only publishing will be altered since dependencies are overriden by useLocalProjects" else ""} ")
 }
 
 project.extra.set("useLocalProjects", useLocalProjects)
@@ -24,6 +30,13 @@ plugins {
     id("io.github.gradle-nexus.publish-plugin") version "1.1.0"
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin") version "2.0.1" apply false
     id("com.github.hierynomus.license") version "0.16.1"
+    id("org.jetbrains.dokka") version Versions.dokka
+}
+
+buildscript {
+    dependencies {
+        classpath("org.jetbrains.dokka:dokka-base:${Versions.dokka}")
+    }
 }
 
 downloadLicenses {
@@ -31,9 +44,37 @@ downloadLicenses {
     dependencyConfiguration = "debugRuntimeClasspath"
 }
 
-
 subprojects {
-    if(useMavenLocal) {
+    apply(plugin = "org.jetbrains.dokka")
+
+    tasks.withType<DokkaTaskPartial>().configureEach {
+        suppressInheritedMembers.set(true)
+
+        dokkaSourceSets.configureEach {
+            documentedVisibilities.set(
+                setOf(
+                    DokkaConfiguration.Visibility.PUBLIC,
+                    DokkaConfiguration.Visibility.PROTECTED
+                )
+            )
+
+            sourceLink {
+                val exampleDir = "https://github.com/openmobilehub/android-omh-maps/tree/main"
+
+                localDirectory.set(rootProject.projectDir)
+                remoteUrl.set(URL(exampleDir))
+                remoteLineSuffix.set("#L")
+            }
+
+            // include the top-level README for that module
+            val readmeFile = project.file("README.md")
+            if (readmeFile.exists()) {
+                includes.from(readmeFile.path)
+            }
+        }
+    }
+
+    if (useMavenLocal) {
         repositories {
             mavenLocal()
             gradlePluginPortal()
@@ -48,6 +89,11 @@ subprojects {
             configureMapboxMaven()
         }
     }
+}
+
+downloadLicenses {
+    includeProjectDependencies = true
+    dependencyConfiguration = "debugRuntimeClasspath"
 }
 
 tasks.register("installPrePushHook", Copy::class) {
@@ -87,7 +133,7 @@ tasks {
     getByName("prepareKotlinBuildScriptModel").dependsOn(installPreCommitHook)
 }
 
-if(!useMavenLocal) {
+if (!useMavenLocal) {
     val ossrhUsername by extra(getValueFromEnvOrProperties("OSSRH_USERNAME"))
     val ossrhPassword by extra(getValueFromEnvOrProperties("OSSRH_PASSWORD"))
     val mStagingProfileId by extra(getValueFromEnvOrProperties("SONATYPE_STAGING_PROFILE_ID"))
@@ -126,5 +172,34 @@ fun RepositoryHandler.configureMapboxMaven() {
         credentials.username = "mapbox"
         credentials.password = providers.gradleProperty("MAPBOX_DOWNLOADS_TOKEN").get()
         authentication.create<BasicAuthentication>("basic")
+    }
+}
+
+apply("./plugin/docsTasks.gradle.kts") // applies all tasks related to docs
+val discoverImagesInProject =
+    uncheckedCast<(project: Project) -> (List<File>?)>(extra["discoverImagesInProject"])
+val dokkaDocsOutputDir = uncheckedCast<File>(extra["dokkaDocsOutputDir"])
+val copyMarkdownDocsTask = uncheckedCast<TaskProvider<Task>>(extra["copyMarkdownDocsTask"])
+
+tasks.register("cleanDokkaDocsOutputDirectory", Delete::class) {
+    group = "other"
+    description = "Deletes the Dokka HTML docs output directory in root project"
+    delete = setOf(dokkaDocsOutputDir)
+}
+
+tasks.dokkaHtmlMultiModule {
+    dependsOn("cleanDokkaDocsOutputDirectory")
+
+    moduleName.set("OMH Maps")
+    outputDirectory.set(dokkaDocsOutputDir)
+    includes.from("README.md")
+
+    // copy assets: images/**/* from the rootProject images directory & all subprojects' images directories
+    pluginConfiguration<DokkaBase, DokkaBaseConfiguration> {
+        footerMessage = "(c) 2023 Open Mobile Hub"
+        separateInheritedMembers = false
+        customAssets = (setOf(rootProject) union subprojects).mapNotNull { project ->
+            discoverImagesInProject!!(project)
+        }.flatten()
     }
 }

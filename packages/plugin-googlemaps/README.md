@@ -16,7 +16,7 @@ This plugin provides support for Google Maps by utilizing the [Google Maps Andro
 Complete the required Cloud Console setup following the next steps, for more information see:
 
 - [Official Documentation](https://developers.google.com/maps/documentation/android-sdk/cloud-setup)
-- [Google Cloud Console Guide](/packages//plugin-googlemaps/docs/advanced/CLOUD_CONSOLE_SETUP.md)
+- [Google Cloud Console Guide](/packages/plugin-googlemaps/docs/advanced/CLOUD_CONSOLE_SETUP.md)
 
 ### Set up the project
 
@@ -243,7 +243,7 @@ Comments for partially supported 🟨 properties:
 
 ## Contributing
 
-Please contribute! We will gladly review any pull requests. Make sure to read the [Contributing](/CONTRIBUTING.md) page first though.
+Please contribute! We will gladly review any pull requests. Make sure to read the [Contributing](https://github.com/openmobilehub/android-omh-maps/blob/main/CONTRIBUTING.md) page first though.
 
 ## License
 
