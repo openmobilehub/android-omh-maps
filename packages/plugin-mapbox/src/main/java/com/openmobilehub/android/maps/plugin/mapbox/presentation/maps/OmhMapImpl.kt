@@ -70,7 +70,7 @@ internal class OmhMapImpl(
     private var onMyLocationButtonClickListener: OmhOnMyLocationButtonClickListener? = null
 
     init {
-        setupMapviewUIControls()
+        setupMapViewUIControls()
     }
 
     override val providerName: String
@@ -194,7 +194,7 @@ internal class OmhMapImpl(
         // To be implemented
     }
 
-    private fun setupMapviewUIControls() {
+    private fun setupMapViewUIControls() {
         // To have parity with Google Maps
         val iconMargin =
             DimensionConverter.pxFromDp(context, Constants.MAPBOX_ICON_MARGIN).toFloat()
