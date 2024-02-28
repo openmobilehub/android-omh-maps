@@ -25,10 +25,6 @@ collections:
     permalink: "/:collection/:path/"
     output: true
 
-  maps-sample:
-    permalink: "/:collection/:path/"
-    output: true
-
 just_the_docs:
   collections:
     core:
@@ -50,8 +46,3 @@ just_the_docs:
       name: Plugin Mapbox
       nav_fold: false
       nav_order: 4
-
-    maps-sample:
-      name: Sample App
-      nav_fold: true
-      nav_order: 5
