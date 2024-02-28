@@ -168,9 +168,17 @@ fun getBooleanFromProperties(name: String): Boolean {
 
 fun RepositoryHandler.configureMapboxMaven() {
     maven {
+        val mapboxDownloadToken =
+            providers.gradleProperty("MAPBOX_DOWNLOADS_TOKEN").orNull ?: throw GradleException(
+                "MAPBOX_DOWNLOADS_TOKEN is missing in local.properties. ".plus(
+                    "Did you forget to set it?"
+                )
+            )
+
         url = uri("https://api.mapbox.com/downloads/v2/releases/maven")
         credentials.username = "mapbox"
         credentials.password = providers.gradleProperty("MAPBOX_DOWNLOADS_TOKEN").get()
+        credentials.password = mapboxDownloadToken
         authentication.create<BasicAuthentication>("basic")
     }
 }

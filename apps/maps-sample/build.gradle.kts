@@ -11,16 +11,22 @@ plugins {
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
 }
 
+// validation for Android secrets substitution to provide more detailed error messages
+getRequiredValueFromEnvOrProperties("MAPS_API_KEY", rootDir)
+
 android {
     namespace = "com.openmobilehub.android.maps.sample"
 
     defaultConfig {
+        val mapboxPublicToken =
+            getRequiredValueFromEnvOrProperties("MAPBOX_PUBLIC_TOKEN", rootDir) as String
+
         versionCode = 1
         versionName = "1.0"
         resValue(
             "string",
             "mapbox_access_token_value",
-            (getValueFromEnvOrProperties("MAPBOX_PUBLIC_TOKEN", rootDir) as String? ?: "")
+            mapboxPublicToken
         )
     }
 
@@ -103,6 +109,14 @@ dependencies {
 fun getValueFromEnvOrProperties(name: String, propertiesFilePath: Any): Any? {
     val localProperties = gradleLocalProperties(file(propertiesFilePath))
     return System.getenv(name) ?: localProperties[name]
+}
+
+fun getRequiredValueFromEnvOrProperties(name: String, propertiesFilePath: Any): Any {
+    return getValueFromEnvOrProperties(name, propertiesFilePath) ?: throw GradleException(
+        "$name was not found in environment variables, nor in local.properties. ".plus(
+            "Did you forget to set it?"
+        )
+    )
 }
 
 tasks.dokkaHtmlPartial {
