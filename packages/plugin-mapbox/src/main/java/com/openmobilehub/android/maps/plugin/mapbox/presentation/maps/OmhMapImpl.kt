@@ -24,6 +24,7 @@ import android.widget.ImageView
 import androidx.annotation.RequiresPermission
 import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.MapView
+import com.mapbox.maps.Style
 import com.mapbox.maps.plugin.compass.compass
 import com.mapbox.maps.plugin.gestures.gestures
 import com.mapbox.maps.plugin.locationcomponent.location
@@ -49,16 +50,20 @@ import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolygonOptions
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolylineOptions
+import com.openmobilehub.android.maps.core.utils.logging.Logger
 import com.openmobilehub.android.maps.plugin.mapbox.utils.Constants
 import com.openmobilehub.android.maps.plugin.mapbox.utils.CoordinateConverter
 import com.openmobilehub.android.maps.plugin.mapbox.utils.DimensionConverter
+import com.openmobilehub.android.maps.plugin.mapbox.utils.JSONUtil
+import com.openmobilehub.android.maps.plugin.mapbox.utils.commonLogger
 
 @SuppressWarnings("TooManyFunctions")
 internal class OmhMapImpl(
     @SuppressWarnings("UnusedPrivateMember")
     private val mapView: MapView,
     private val context: Context,
-    private val myLocationIcon: ImageView = MyLocationIcon(context)
+    private val myLocationIcon: ImageView = MyLocationIcon(context),
+    private val logger: Logger = commonLogger
 ) : OmhMap {
     /**
      * This flag is used to prevent the onCameraMoveStarted listener from being called multiple times
@@ -191,7 +196,22 @@ internal class OmhMapImpl(
     }
 
     override fun setMapStyle(json: Int?) {
-        // To be implemented
+        if (json == null) {
+            mapView.mapboxMap.loadStyle(Style.STANDARD)
+            return
+        }
+
+        val styleJSONString = JSONUtil.convertJSONToString(context, json, logger)
+
+        val onStyleLoadedCallback = { style: Style ->
+            if (!style.isValid()) {
+                logger.logWarning("Failed to apply custom map style. Check logs from Mapbox SDK.")
+            }
+        }
+
+        styleJSONString?.let { jsonString ->
+            mapView.mapboxMap.loadStyle(jsonString, onStyleLoadedCallback)
+        } ?: logger.logError("Failed to load style from resource with id: $json")
     }
 
     private fun setupMapViewUIControls() {

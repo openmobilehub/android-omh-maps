@@ -9,7 +9,7 @@ import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 
-class DimensionConverter {
+class DimensionConverterTest {
     private val context = mockk<Context>(relaxed = true)
     private val mockedDensity = 3f
 

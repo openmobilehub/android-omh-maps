@@ -14,6 +14,7 @@ import com.mapbox.maps.MapLoaded
 import com.mapbox.maps.MapLoadedCallback
 import com.mapbox.maps.MapView
 import com.mapbox.maps.MapboxMap
+import com.mapbox.maps.Style
 import com.mapbox.maps.plugin.Plugin
 import com.mapbox.maps.plugin.compass.CompassPlugin
 import com.mapbox.maps.plugin.gestures.gestures
@@ -27,10 +28,13 @@ import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnCam
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMyLocationButtonClickListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhSnapshotReadyCallback
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
+import com.openmobilehub.android.maps.core.utils.logging.Logger
 import com.openmobilehub.android.maps.plugin.mapbox.utils.Constants
+import com.openmobilehub.android.maps.plugin.mapbox.utils.JSONUtil
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
+import io.mockk.mockkObject
 import io.mockk.runs
 import io.mockk.slot
 import io.mockk.verify
@@ -47,6 +51,7 @@ class OmhMapImplTest {
     private val viewportPlugin = mockk<ViewportPlugin>(relaxed = true)
     private val context = mockk<Context>(relaxed = true)
     private val myLocationIcon = mockk<MyLocationIcon>(relaxed = true)
+    private val logger = mockk<Logger>(relaxed = true)
 
     @Before
     fun setUp() {
@@ -55,7 +60,9 @@ class OmhMapImplTest {
         every { map.getPlugin<ViewportPlugin>(Plugin.MAPBOX_VIEWPORT_PLUGIN_ID) } returns viewportPlugin
         every { map.mapboxMap } returns mockk<MapboxMap>(relaxed = true)
 
-        omhMapImpl = OmhMapImpl(map, context, myLocationIcon)
+        mockkObject(JSONUtil)
+
+        omhMapImpl = OmhMapImpl(map, context, myLocationIcon, logger)
     }
 
     @Test
@@ -335,5 +342,92 @@ class OmhMapImplTest {
         // Assert
         verify(exactly = 1) { listener.onMyLocationButtonClick() }
         verify(exactly = 1) { viewportPlugin.transitionTo(followPuckViewportState) }
+    }
+
+    @Test
+    fun `setMapStyle applies custom style when JSON resource ID provided with no errors`() {
+        // Arrange
+        val jsonStyleResId = 1
+        every {
+            JSONUtil.convertJSONToString(
+                any<Context>(),
+                any<Int>(),
+                any<Logger>()
+            )
+        } returns "{validJSON: 1}"
+
+        val style = mockk<Style>(relaxed = true)
+        every { style.isValid() } returns true
+
+        val slot = slot<Style.OnStyleLoaded>()
+        every { map.mapboxMap.loadStyle(any<String>(), capture(slot)) } answers {
+            slot.captured.onStyleLoaded(style)
+        }
+
+        // Act
+        omhMapImpl.setMapStyle(jsonStyleResId)
+
+        // Assert
+        verify(exactly = 0) { logger.logWarning(any()) }
+        verify(exactly = 0) { logger.logError(any()) }
+        verify { map.mapboxMap.loadStyle("{validJSON: 1}", any()) }
+    }
+
+    @Test
+    fun `setMapStyle logs warning message when JSON was not parsed`() {
+        // Arrange
+        val jsonStyleResId = 1
+        every {
+            JSONUtil.convertJSONToString(
+                any<Context>(),
+                any<Int>(),
+                any<Logger>()
+            )
+        } returns null
+
+        // Act
+        omhMapImpl.setMapStyle(jsonStyleResId)
+
+        // Assert
+        verify { logger.logError("Failed to load style from resource with id: $jsonStyleResId") }
+    }
+
+    @Test
+    fun `setMapStyle logs warning message when style was not applied correctly`() {
+        // Arrange
+        val jsonStyleResId = 1
+        every {
+            JSONUtil.convertJSONToString(
+                any<Context>(),
+                any<Int>(),
+                any<Logger>()
+            )
+        } returns "{validJSON: 0}"
+
+        val style = mockk<Style>(relaxed = true)
+        every { style.isValid() } returns false
+
+        val slot = slot<Style.OnStyleLoaded>()
+        every { map.mapboxMap.loadStyle(any<String>(), capture(slot)) } answers {
+            slot.captured.onStyleLoaded(style)
+        }
+
+        // Act
+        omhMapImpl.setMapStyle(jsonStyleResId)
+
+        // Assert
+        verify { logger.logWarning("Failed to apply custom map style. Check logs from Mapbox SDK.") }
+    }
+
+    @Test
+    fun `setMapStyle sets default style when null JSON resource ID provided`() {
+        // Arrange
+        every { map.mapboxMap.loadStyle(any<String>()) } just runs
+
+        // Act
+        omhMapImpl.setMapStyle(null)
+
+        // Assert
+        verify { map.mapboxMap.loadStyle(Style.STANDARD) }
     }
 }
