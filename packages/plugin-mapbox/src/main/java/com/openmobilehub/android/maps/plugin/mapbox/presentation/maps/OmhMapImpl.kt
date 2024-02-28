@@ -208,11 +208,11 @@ internal class OmhMapImpl(
     private fun updateMyLocationIconClickListener() {
         myLocationIcon.setOnClickListener {
             onMyLocationButtonClickListener?.onMyLocationButtonClick()
-            centerMapOnMapLocation()
+            centerMapOnUserLocation()
         }
     }
 
-    private fun centerMapOnMapLocation() {
+    private fun centerMapOnUserLocation() {
         val viewportPlugin = mapView.viewport
 
         val cameraState = mapView.mapboxMap.cameraState

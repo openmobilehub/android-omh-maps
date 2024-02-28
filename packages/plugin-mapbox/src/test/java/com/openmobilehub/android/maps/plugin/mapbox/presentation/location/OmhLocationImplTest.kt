@@ -35,16 +35,6 @@ class OmhLocationImplTest {
     private val onSuccessListener = mockk<OmhSuccessListener>(relaxed = true)
     private val onFailureListener = mockk<OmhFailureListener>(relaxed = true)
 
-    @Before
-    fun setup() {
-        mockkStatic(LocationServiceFactory::class)
-        every { LocationServiceFactory.getOrCreate() } returns locationService
-
-        every {
-            locationService.getDeviceLocationProvider(any<LocationProviderRequest>())
-        } returns deviceLocationProviderExpected
-    }
-
     private fun mockInvalidProvider() {
         every { deviceLocationProviderExpected.isValue } returns false
     }
@@ -68,6 +58,16 @@ class OmhLocationImplTest {
 
         every { deviceLocationProviderExpected.isValue } returns true
         every { deviceLocationProviderExpected.value } returns locationProvider
+    }
+
+    @Before
+    fun setup() {
+        mockkStatic(LocationServiceFactory::class)
+        every { LocationServiceFactory.getOrCreate() } returns locationService
+
+        every {
+            locationService.getDeviceLocationProvider(any<LocationProviderRequest>())
+        } returns deviceLocationProviderExpected
     }
 
     @Test
