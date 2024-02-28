@@ -23,6 +23,7 @@ import com.openmobilehub.android.maps.core.presentation.models.Constants
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
 import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
+import com.openmobilehub.android.maps.plugin.openstreetmap.presentation.maps.OmhMapImpl
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -55,6 +56,7 @@ internal class OmhMarkerOptionsExtensionTest {
     }
 
     private val mapView = mockk<MapView>()
+    private val omhMap = mockk<OmhMapImpl>()
     private val mockLogger: UnsupportedFeatureLogger =
         mockk<UnsupportedFeatureLogger>(relaxed = true)
     private val context = mockk<Context>()
@@ -74,7 +76,7 @@ internal class OmhMarkerOptionsExtensionTest {
 
     @Test
     fun `toMarkerOptions converts OmhMarkerOptions with icon to MarkerOptions`() {
-        val markerOptions = omhMarkerOptionsWithIcon.toMarkerOptions(mapView, mockLogger)
+        val markerOptions = omhMarkerOptionsWithIcon.toMarkerOptions(omhMap, mapView, mockLogger)
 
         assertEquals(
             omhMarkerOptionsWithIcon.position.latitude,
@@ -107,7 +109,7 @@ internal class OmhMarkerOptionsExtensionTest {
 
     @Test
     fun `toMarkerOptions converts OmhMarkerOptions with isVisible set to false to MarkerOptions`() {
-        val markerOptions = omhMarkerOptionsInvisible.toMarkerOptions(mapView, mockLogger)
+        val markerOptions = omhMarkerOptionsInvisible.toMarkerOptions(omhMap, mapView, mockLogger)
 
         assertEquals(
             omhMarkerOptionsInvisible.position.latitude,
@@ -130,7 +132,7 @@ internal class OmhMarkerOptionsExtensionTest {
     fun `toMarkerOptions should return log setter not supported for backgroundColor property`() {
         OmhMarkerOptions().apply {
             backgroundColor = 0xFFFFFF
-        }.toMarkerOptions(mapView, mockLogger)
+        }.toMarkerOptions(omhMap, mapView, mockLogger)
 
         verify { mockLogger.logSetterNotSupported("backgroundColor") }
     }
@@ -141,7 +143,8 @@ internal class OmhMarkerOptionsExtensionTest {
 
         assertEquals(defaultOmhMarkerOptions.draggable, false)
         assertEquals(
-            defaultOmhMarkerOptions.anchor, Pair(
+            defaultOmhMarkerOptions.anchor,
+            Pair(
                 Constants.DEFAULT_ANCHOR,
                 Constants.DEFAULT_ANCHOR
             )

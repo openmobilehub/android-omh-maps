@@ -209,8 +209,4 @@ interface OmhMarker {
      * @return a boolean indicating whether the info window is currently being shown.
      */
     fun getIsInfoWindowShown(): Boolean
-
-    /**
-     *
-     */
 }

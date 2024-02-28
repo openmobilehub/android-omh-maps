@@ -161,7 +161,7 @@ internal class OmhMapImpl(
         })
     }
 
-    override fun addMarker(options: OmhMarkerOptions): OmhMarker? {
+    override fun addMarker(options: OmhMarkerOptions): OmhMarker {
         val marker = options.toMarkerOptions(this, mapView)
         val initiallyClickable = options.clickable
 
@@ -179,7 +179,7 @@ internal class OmhMapImpl(
         return omhMarker
     }
 
-    override fun addPolyline(options: OmhPolylineOptions): OmhPolyline? {
+    override fun addPolyline(options: OmhPolylineOptions): OmhPolyline {
         val initiallyClickable = options.clickable ?: false
 
         val polyline = options.toPolylineOptions()
@@ -201,7 +201,7 @@ internal class OmhMapImpl(
         return omhPolyline
     }
 
-    override fun addPolygon(options: OmhPolygonOptions): OmhPolygon? {
+    override fun addPolygon(options: OmhPolygonOptions): OmhPolygon {
         val initiallyClickable = options.clickable ?: false
 
         val polygon = options.toPolygonOptions()
@@ -338,7 +338,7 @@ internal class OmhMapImpl(
     override fun setOnMarkerClickListener(listener: OmhOnMarkerClickListener) {
         markerClickListener = listener
 
-        markers.forEach() { (marker, omhMarker) ->
+        markers.forEach { (marker, omhMarker) ->
             applyOnMarkerClickListener(marker, omhMarker)
         }
     }
@@ -346,7 +346,7 @@ internal class OmhMapImpl(
     override fun setOnMarkerDragListener(listener: OmhOnMarkerDragListener) {
         markerDragListener = listener
 
-        markers.forEach() { (marker, omhMarker) ->
+        markers.forEach { (marker, omhMarker) ->
             applyOnMarkerDragListener(marker, omhMarker)
         }
     }
@@ -354,7 +354,7 @@ internal class OmhMapImpl(
     override fun setOnPolylineClickListener(listener: OmhOnPolylineClickListener) {
         polylineClickListener = listener
 
-        polylines.forEach() { (polyline, omhPolyline) ->
+        polylines.forEach { (polyline, omhPolyline) ->
             polyline.setOnClickListener { _, _, _ ->
                 if (omhPolyline.getClickable()) {
                     listener.onPolylineClick(omhPolyline)
@@ -367,7 +367,7 @@ internal class OmhMapImpl(
     override fun setOnPolygonClickListener(listener: OmhOnPolygonClickListener) {
         polygonClickListener = listener
 
-        polygons.forEach() { (polygon, omhPolygon) ->
+        polygons.forEach { (polygon, omhPolygon) ->
             polygon.setOnClickListener { _, _, _ ->
                 if (omhPolygon.getClickable()) {
                     listener.onPolygonClick(omhPolygon)
@@ -392,7 +392,7 @@ internal class OmhMapImpl(
     }
 
     fun reRenderInfoWindows() {
-        markers.forEach() { (marker, omhMarker) ->
+        markers.forEach { (marker, omhMarker) ->
             val wasMarkerShown = marker.isInfoWindowShown
 
             // if open, close the info window so as not to leave it mounted forever
