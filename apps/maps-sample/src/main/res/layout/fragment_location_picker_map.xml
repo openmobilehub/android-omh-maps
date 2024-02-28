@@ -26,8 +26,9 @@
         android:name="com.openmobilehub.android.maps.core.presentation.fragments.OmhMapFragment"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/scrollView"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="0.9"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:layout="@layout/fragment_omh_map" />
@@ -39,8 +40,8 @@
         android:layout_marginTop="8dp"
         android:indeterminate="true"
         android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/fragment_map_container"
+        app:layout_constraintStart_toStartOf="@+id/fragment_map_container"
         app:layout_constraintTop_toBottomOf="@+id/marker_image_view"
         tools:visibility="visible" />
 
@@ -64,10 +65,10 @@
         android:layout_height="wrap_content"
         android:importantForAccessibility="no"
         app:layout_constraintBottom_toBottomOf="@+id/fragment_map_container"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/fragment_map_container"
+        app:layout_constraintRight_toRightOf="@+id/fragment_map_container"
+        app:layout_constraintStart_toStartOf="@+id/fragment_map_container"
+        app:layout_constraintTop_toTopOf="@+id/fragment_map_container"
         app:srcCompat="@drawable/marker_shadow" />
 
     <ImageView
@@ -76,9 +77,9 @@
         android:layout_height="@dimen/map_marker_height"
         android:adjustViewBounds="true"
         android:contentDescription="@string/drop_pin"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/fragment_map_container"
+        app:layout_constraintEnd_toEndOf="@+id/fragment_map_container"
+        app:layout_constraintStart_toStartOf="@+id/fragment_map_container"
         app:layout_constraintTop_toTopOf="@id/marker_shadow_image_view"
         app:layout_constraintVertical_bias="0.0"
         app:srcCompat="@drawable/ic_map_marker" />
@@ -91,7 +92,34 @@
         android:layout_marginBottom="@dimen/normal_8"
         android:contentDescription="@string/button_to_share_location"
         android:src="@drawable/ic_confirm"
+        app:layout_constraintBottom_toBottomOf="@+id/fragment_map_container"
+        app:layout_constraintEnd_toEndOf="@+id/fragment_map_container" />
+
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="0.1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/fragment_map_container">
+
+        <LinearLayout
+            android:id="@+id/controlPanel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <CheckBox
+                android:id="@+id/checkBox_isMyLocationEnabled"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="@string/my_location_enabled" />
+
+        </LinearLayout>
+    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

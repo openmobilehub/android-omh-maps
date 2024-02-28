@@ -60,6 +60,7 @@ class MapLocationPickerFragment : Fragment(), OmhOnMapReadyCallback {
     private var handler: Handler? = null
     private var runnable: Runnable? = null
     private var handledCurrentLocation = false
+    private var myLocationEnabled = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -150,6 +151,23 @@ class MapLocationPickerFragment : Fragment(), OmhOnMapReadyCallback {
 
         omhMap.setOnCameraIdleListener(omhOnCameraIdleListener)
         getCurrentLocation(omhMap)
+
+        binding.checkBoxIsMyLocationEnabled.setOnCheckedChangeListener { _, isChecked ->
+            myLocationEnabled = isChecked
+            if (isChecked) {
+                enableMyLocation(omhMap)
+            } else {
+                disableMyLocation(omhMap)
+            }
+        }
+    }
+
+    private fun disableMyLocation(omhMap: OmhMap) {
+        if (PermissionsUtils.grantedRequiredPermissions(requireContext())) {
+            // Safe use of 'noinspection MissingPermission' since it is checking permissions in the if condition
+            // noinspection MissingPermission
+            omhMap.setMyLocationEnabled(false)
+        }
     }
 
     private fun enableMyLocation(omhMap: OmhMap) {

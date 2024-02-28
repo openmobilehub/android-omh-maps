@@ -82,4 +82,5 @@
     <string name="close">Close</string>
     <string name="map_snapshot">Map Snapshot</string>
     <string name="rotate_gestures">Rotate Gestures</string>
+    <string name="my_location_enabled">My Location Enabled</string>
 </resources>
