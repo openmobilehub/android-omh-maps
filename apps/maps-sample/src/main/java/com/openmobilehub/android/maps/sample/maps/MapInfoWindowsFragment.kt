@@ -85,7 +85,7 @@ open class MapInfoWindowsFragment : Fragment(), OmhOnMapReadyCallback {
     private var markerAnchor: Pair<Float, Float> =
         Pair(Constants.ANCHOR_CENTER, Constants.ANCHOR_CENTER)
     private var infoWindowAnchor: Pair<Float, Float> =
-        Pair(Constants.ANCHOR_CENTER, Constants.ANCHOR_CENTER)
+        Pair(Constants.ANCHOR_CENTER, Constants.ANCHOR_TOP)
 
     private val infoWindowAppearanceTypeNameResourceID = intArrayOf(
         R.string.info_window_appearance_type_default,
@@ -256,7 +256,7 @@ open class MapInfoWindowsFragment : Fragment(), OmhOnMapReadyCallback {
         anchorUSeekbar?.setProgress(50)
         anchorVSeekbar?.setProgress(50)
         anchorIWUSeekbar?.setProgress(50)
-        anchorIWVSeekbar?.setProgress(50)
+        anchorIWVSeekbar?.setProgress(0)
 
         if (mapProviderName == "OpenStreetMap") {
             disabledAppearancePositions =
@@ -354,6 +354,7 @@ open class MapInfoWindowsFragment : Fragment(), OmhOnMapReadyCallback {
         isVisibleCheckbox = view.findViewById(R.id.checkBox_isVisible)
         isVisibleCheckbox?.setOnCheckedChangeListener { _, isChecked ->
             demoMarker?.setIsVisible(isChecked)
+            applyStateToImperativeControls()
         }
 
         // isClickable

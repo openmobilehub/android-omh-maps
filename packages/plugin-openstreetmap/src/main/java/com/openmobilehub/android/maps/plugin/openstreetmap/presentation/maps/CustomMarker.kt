@@ -17,6 +17,7 @@
 package com.openmobilehub.android.maps.plugin.openstreetmap.presentation.maps
 
 import android.view.MotionEvent
+import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
 
@@ -26,7 +27,11 @@ internal class CustomMarker(private val omhMapImpl: OmhMapImpl, mapView: MapView
     internal fun updateInfoWindowState() {
         if (isInfoWindowOpen) {
             if (alpha != 0f) { // if the marker is visible
+                val omhMarker = omhMapImpl.markers[this]
+
+                omhMarker?.let { omhMapImpl.ignoreInfoWindowOpenCloseEvents[omhMarker] = true }
                 showInfoWindow() // re-open the info window to apply marker changes (e.g. the anchor)
+                omhMarker?.let { omhMapImpl.ignoreInfoWindowOpenCloseEvents[omhMarker] = false }
             } else {
                 closeInfoWindow() // close the open window
             }
@@ -51,6 +56,9 @@ internal class CustomMarker(private val omhMapImpl: OmhMapImpl, mapView: MapView
         // initially long-presses the marker for dragging
         val wasInfoWindowOpen = isInfoWindowOpen
 
+        val omhMarker = omhMapImpl.markers[this]!!
+        omhMapImpl.ignoreInfoWindowOpenCloseEvents[omhMarker] = true
+
         val retVal = super.onLongPress(event, mapView)
 
         if (wasInfoWindowOpen && !isInfoWindowOpen) {
@@ -58,18 +66,37 @@ internal class CustomMarker(private val omhMapImpl: OmhMapImpl, mapView: MapView
             showInfoWindow()
         }
 
+        omhMapImpl.ignoreInfoWindowOpenCloseEvents[omhMarker] = false
+
         return retVal
     }
 
     override fun showInfoWindow() {
         val wasInfoWindowShown = isInfoWindowOpen
 
+        val omhMarker = omhMapImpl.markers[this]
+        omhMarker?.let {
+            if (wasInfoWindowShown) omhMapImpl.ignoreInfoWindowOpenCloseEvents[omhMarker] = true
+        }
         super.showInfoWindow()
+        omhMarker?.let {
+            if (wasInfoWindowShown) omhMapImpl.ignoreInfoWindowOpenCloseEvents[omhMarker] = true
+        }
 
         // to achieve feature parity, we need to ensure that the info window
         // is re-rendered if it was already open before
         if (wasInfoWindowShown) {
             omhMapImpl.reRenderInfoWindows()
         }
+    }
+
+    override fun setPosition(position: GeoPoint?) {
+        // since osmdroid setPosition implementation first calls show and then hide on the info window,
+        // then ignore the false-positive open state change events
+
+        val omhMarker = omhMapImpl.markers[this]
+        omhMarker?.let { omhMapImpl.ignoreInfoWindowOpenCloseEvents[omhMarker] = true }
+        super.setPosition(position)
+        omhMarker?.let { omhMapImpl.ignoreInfoWindowOpenCloseEvents[omhMarker] = false }
     }
 }

@@ -17,7 +17,6 @@
 package com.openmobilehub.android.maps.plugin.openstreetmap.extensions
 
 import android.content.Context
-import android.content.res.Resources
 import android.graphics.drawable.Drawable
 import com.openmobilehub.android.maps.core.presentation.models.Constants
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
@@ -55,16 +54,15 @@ internal class OmhMarkerOptionsExtensionTest {
         isVisible = false
     }
 
-    private val mapView = mockk<MapView>()
-    private val omhMap = mockk<OmhMapImpl>()
+    private val mapView = mockk<MapView>(relaxed = true)
+    private val omhMap = mockk<OmhMapImpl>(relaxed = true)
     private val mockLogger: UnsupportedFeatureLogger =
         mockk<UnsupportedFeatureLogger>(relaxed = true)
-    private val context = mockk<Context>()
-    private val repository = mockk<MapViewRepository>()
-    private val defaultMarkerInfoWindow = mockk<MarkerInfoWindow>()
+    private val context = mockk<Context>(relaxed = true)
+    private val repository = mockk<MapViewRepository>(relaxed = true)
+    private val defaultMarkerInfoWindow = mockk<MarkerInfoWindow>(relaxed = true)
 
     init {
-        every { context.resources } returns mockk<Resources>()
         every { repository.defaultMarkerIcon } returns mockk<Drawable>()
         every { defaultMarkerInfoWindow.isOpen } returns false
         every { repository.defaultMarkerInfoWindow } returns defaultMarkerInfoWindow

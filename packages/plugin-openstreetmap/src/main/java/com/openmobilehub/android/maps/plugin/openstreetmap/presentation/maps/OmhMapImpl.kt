@@ -23,7 +23,6 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.Drawable
 import android.location.LocationManager.FUSED_PROVIDER
-import android.view.LayoutInflater
 import android.view.View
 import androidx.annotation.RequiresPermission
 import androidx.core.content.ContextCompat
@@ -68,6 +67,7 @@ import org.osmdroid.views.overlay.Polygon
 import org.osmdroid.views.overlay.Polyline
 import org.osmdroid.views.overlay.gestures.RotationGestureOverlay
 import org.osmdroid.views.overlay.infowindow.InfoWindow
+import org.osmdroid.views.overlay.infowindow.MarkerInfoWindow
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 
@@ -91,7 +91,9 @@ internal class OmhMapImpl(
 
     private val polylines = mutableMapOf<Polyline, OmhPolyline>()
     private val polygons = mutableMapOf<Polygon, OmhPolygon>()
-    private val markers = mutableMapOf<Marker, OmhMarker>()
+    internal val markers = mutableMapOf<Marker, OmhMarker>()
+    internal val ignoreInfoWindowOpenCloseEvents = mutableMapOf<OmhMarker, Boolean>()
+    private val lastInfoWindowOpenState = mutableMapOf<OmhMarker, Boolean>()
 
     private var customInfoWindowViewFactory: OmhInfoWindowViewFactory? = null
     private var onInfoWindowOpenStatusChangeListener: OmhOnInfoWindowOpenStatusChangeListener? =
@@ -398,21 +400,7 @@ internal class OmhMapImpl(
         reRenderInfoWindows()
     }
 
-    private fun generateMarkerWindow(
-        omhMarker: OmhMarker,
-        windowView: View
-    ): InfoWindow {
-        val window =
-            object : InfoWindow(windowView, mapView) {
-                override fun onOpen(item: Any?) {
-                    onInfoWindowOpenStatusChangeListener?.onInfoWindowOpen(omhMarker)
-                }
-
-                override fun onClose() {
-                    onInfoWindowOpenStatusChangeListener?.onInfoWindowClose(omhMarker)
-                }
-            }
-
+    private fun bindMarkerWindowListeners(window: InfoWindow, omhMarker: OmhMarker) {
         // to achieve feature parity with GoogleMaps, the default onTouch behaviour of the default
         // marker info window needs to be disabled, i.e., automatic programmatic closing the window on touch
         // has to be suppressed
@@ -431,8 +419,71 @@ internal class OmhMapImpl(
 
             false
         }
+    }
+
+    private fun generateCustomViewMarkerWindow(
+        omhMarker: OmhMarker,
+        windowView: View
+    ): InfoWindow {
+        val window =
+            object : InfoWindow(windowView, mapView) {
+                override fun onOpen(item: Any?) {
+                    handleOnInfoWindowOpen(omhMarker)
+                }
+
+                override fun onClose() {
+                    handleOnInfoWindowClose(omhMarker)
+                }
+            }
+
+        bindMarkerWindowListeners(window, omhMarker)
 
         return window
+    }
+
+    private fun generateDefaultMarkerWindow(
+        omhMarker: OmhMarker
+    ): InfoWindow {
+        val window =
+            object : MarkerInfoWindow(org.osmdroid.library.R.layout.bonuspack_bubble, mapView) {
+                override fun onOpen(item: Any?) {
+                    super.onOpen(item)
+                    handleOnInfoWindowOpen(omhMarker)
+                }
+
+                override fun onClose() {
+                    super.onClose()
+                    handleOnInfoWindowClose(omhMarker)
+                }
+            }
+
+        bindMarkerWindowListeners(window, omhMarker)
+
+        return window
+    }
+
+    private fun handleOnInfoWindowOpen(omhMarker: OmhMarker) {
+        if (ignoreInfoWindowOpenCloseEvents[omhMarker] == true) {
+            return
+        }
+
+        if (lastInfoWindowOpenState[omhMarker] != true) {
+            onInfoWindowOpenStatusChangeListener?.onInfoWindowOpen(omhMarker)
+        }
+
+        lastInfoWindowOpenState[omhMarker] = true
+    }
+
+    private fun handleOnInfoWindowClose(omhMarker: OmhMarker) {
+        if (ignoreInfoWindowOpenCloseEvents[omhMarker] == true) {
+            return
+        }
+
+        if (lastInfoWindowOpenState[omhMarker] != false) {
+            onInfoWindowOpenStatusChangeListener?.onInfoWindowClose(omhMarker)
+        }
+
+        lastInfoWindowOpenState[omhMarker] = false
     }
 
     @SuppressLint("InflateParams")
@@ -442,24 +493,24 @@ internal class OmhMapImpl(
 
             // if open, close the info window so as not to leave it mounted forever
             if (wasMarkerShown) {
+                ignoreInfoWindowOpenCloseEvents[omhMarker] =
+                    true // so as not to trigger false-positive listener events
                 marker.closeInfoWindow()
             }
 
             // render the info window
             marker.infoWindow = customInfoWindowViewFactory?.let {
-                generateMarkerWindow(omhMarker, it(omhMarker))
+                generateCustomViewMarkerWindow(omhMarker, it(omhMarker))
             }
-                ?: generateMarkerWindow(
-                    omhMarker,
-                    LayoutInflater.from(mapView.context)
-                        .inflate(org.osmdroid.library.R.layout.bonuspack_bubble, null)
-                )
+                ?: generateDefaultMarkerWindow(omhMarker)
             // setting the above to null disables the info window, which is not what we want
             // thus, we coalesce to the default info window
 
             // if the info window was open, re-open it to apply changes
             if (wasMarkerShown) {
                 marker.showInfoWindow()
+                ignoreInfoWindowOpenCloseEvents[omhMarker] =
+                    false // enable triggering listener events back
             }
         }
     }
