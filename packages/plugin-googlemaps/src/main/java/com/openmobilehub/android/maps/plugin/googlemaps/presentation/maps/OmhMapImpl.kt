@@ -48,6 +48,7 @@ import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolygonOptions
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolylineOptions
 import com.openmobilehub.android.maps.core.utils.logging.Logger
+import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
 import com.openmobilehub.android.maps.plugin.googlemaps.extensions.toMarkerOptions
 import com.openmobilehub.android.maps.plugin.googlemaps.extensions.toPolygonOptions
 import com.openmobilehub.android.maps.plugin.googlemaps.extensions.toPolylineOptions
@@ -60,7 +61,8 @@ import com.openmobilehub.android.maps.plugin.googlemaps.utils.markerLogger
 internal class OmhMapImpl(
     private var googleMap: GoogleMap,
     private val context: Context,
-    private val logger: Logger = commonLogger
+    private val logger: Logger = commonLogger,
+    private val markerUnsupportedFeatureLogger: UnsupportedFeatureLogger = markerLogger
 ) : OmhMap {
 
     override val providerName: String
@@ -204,7 +206,7 @@ internal class OmhMapImpl(
     }
 
     override fun setOnInfoWindowOpenStatusChangeListener(listener: OmhOnInfoWindowOpenStatusChangeListener) {
-        markerLogger.logFeatureSetterPartiallySupported(
+        markerUnsupportedFeatureLogger.logFeatureSetterPartiallySupported(
             "onInfoWindowOpenStatusChangeListener",
             "only the onInfoWindowClose event is supported"
         )
