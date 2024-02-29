@@ -93,6 +93,8 @@ Legend of support levels:
 | setOnMarkerClickListener                |      ✅       |
 | setOnMarkerDragListener                 |      ✅       |
 | setOnInfoWindowOpenStatusChangeListener |      🟨       |
+| setOnInfoWindowClickListener            |      ✅       |
+| setOnInfoWindowLongClickListener        |      ✅       |
 | setOnPolylineClickListener              |      ✅       |
 | setOnPolygonClickListener               |      ✅       |
 | snapshot                                |      ✅       |

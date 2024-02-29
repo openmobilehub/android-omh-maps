@@ -33,6 +33,8 @@ import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMapLo
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMarker
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnCameraIdleListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnCameraMoveStartedListener
+import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnInfoWindowClickListener
+import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnInfoWindowLongClickListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnInfoWindowOpenStatusChangeListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMarkerClickListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMarkerDragListener
@@ -344,6 +346,14 @@ internal class OmhMapImpl(
 
     override fun setOnInfoWindowOpenStatusChangeListener(listener: OmhOnInfoWindowOpenStatusChangeListener) {
         this.onInfoWindowOpenStatusChangeListener = listener
+    }
+
+    override fun setOnInfoWindowClickListener(listener: OmhOnInfoWindowClickListener) {
+        // To be implemented
+    }
+
+    override fun setOnInfoWindowLongClickListener(listener: OmhOnInfoWindowLongClickListener) {
+        // To be implemented
     }
 
     override fun setOnPolylineClickListener(listener: OmhOnPolylineClickListener) {

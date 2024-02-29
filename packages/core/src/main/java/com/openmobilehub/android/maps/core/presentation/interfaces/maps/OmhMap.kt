@@ -154,6 +154,16 @@ interface OmhMap {
     fun setOnInfoWindowOpenStatusChangeListener(listener: OmhOnInfoWindowOpenStatusChangeListener)
 
     /**
+     * The callback to be executed when the info window is clicked.
+     */
+    fun setOnInfoWindowClickListener(listener: OmhOnInfoWindowClickListener)
+
+    /**
+     * The callback to be executed when the info window is long-clicked.
+     */
+    fun setOnInfoWindowLongClickListener(listener: OmhOnInfoWindowLongClickListener)
+
+    /**
      * Sets a callback that's invoked when a polyline on the map is clicked.
      *
      * @param listener The callback that's invoked when a polyline is clicked.

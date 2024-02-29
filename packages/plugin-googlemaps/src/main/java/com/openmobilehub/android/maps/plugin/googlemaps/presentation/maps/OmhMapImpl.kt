@@ -34,6 +34,8 @@ import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMapLo
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMarker
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnCameraIdleListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnCameraMoveStartedListener
+import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnInfoWindowClickListener
+import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnInfoWindowLongClickListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnInfoWindowOpenStatusChangeListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMarkerClickListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMarkerDragListener
@@ -214,6 +216,22 @@ internal class OmhMapImpl(
         googleMap.setOnInfoWindowCloseListener {
             markers[it]?.let { omhMarker ->
                 listener.onInfoWindowClose(omhMarker)
+            }
+        }
+    }
+
+    override fun setOnInfoWindowClickListener(listener: OmhOnInfoWindowClickListener) {
+        googleMap.setOnInfoWindowClickListener {
+            markers[it]?.let { omhMarker ->
+                listener.onInfoWindowClick(omhMarker)
+            }
+        }
+    }
+
+    override fun setOnInfoWindowLongClickListener(listener: OmhOnInfoWindowLongClickListener) {
+        googleMap.setOnInfoWindowLongClickListener {
+            markers[it]?.let { omhMarker ->
+                listener.onInfoWindowLongClick(omhMarker)
             }
         }
     }

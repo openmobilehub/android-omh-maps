@@ -17,16 +17,11 @@
 package com.openmobilehub.android.maps.core.presentation.interfaces.maps
 
 /**
- * Abstraction to provide access to callback interface for when an info window has been opened or closed.
+ * Abstraction to provide access to callback interface for when an info window has been clicked.
  */
-interface OmhOnInfoWindowOpenStatusChangeListener {
+interface OmhOnInfoWindowClickListener {
     /**
-     * Listener called when an info window is opened.
+     * Listener called when an info window is clicked.
      */
-    fun onInfoWindowOpen(marker: OmhMarker)
-
-    /**
-     * Listener called when an info window is closed.
-     */
-    fun onInfoWindowClose(marker: OmhMarker)
+    fun onInfoWindowClick(marker: OmhMarker)
 }

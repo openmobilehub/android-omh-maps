@@ -11,6 +11,8 @@ import com.google.android.gms.maps.model.PolygonOptions
 import com.google.android.gms.maps.model.Polyline
 import com.google.android.gms.maps.model.PolylineOptions
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMarker
+import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnInfoWindowClickListener
+import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnInfoWindowLongClickListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnInfoWindowOpenStatusChangeListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMarkerClickListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMarkerDragListener
@@ -48,6 +50,9 @@ class OmhMapImplTest {
     private val capturedInfoWindowAdapter = slot<GoogleMap.InfoWindowAdapter>()
     private val omhOnInfoWindowOpenStatusChangeListener =
         mockk<OmhOnInfoWindowOpenStatusChangeListener>(relaxed = true)
+    private val omhOnInfoWindowClickListener = mockk<OmhOnInfoWindowClickListener>(relaxed = true)
+    private val omhOnInfoWindowLongClickListener =
+        mockk<OmhOnInfoWindowLongClickListener>(relaxed = true)
     private val omhOnPolylineClickListener = mockk<OmhOnPolylineClickListener>(relaxed = true)
     private val omhOnPolygonClickListener = mockk<OmhOnPolygonClickListener>(relaxed = true)
 
@@ -260,6 +265,40 @@ class OmhMapImplTest {
         }
         verify {
             omhOnInfoWindowOpenStatusChangeListener.onInfoWindowClose(any<OmhMarker>())
+        }
+    }
+
+    @Test
+    fun `setOnInfoWindowClickListener sets a listener invoked on InfoWindow click`() {
+        // Arrange
+        omhMapImpl.addMarker(OmhMarkerOptions())
+        val capturedListener = slot<GoogleMap.OnInfoWindowClickListener>()
+        every { googleMap.setOnInfoWindowClickListener(capture(capturedListener)) } answers {}
+
+        // Act
+        omhMapImpl.setOnInfoWindowClickListener(omhOnInfoWindowClickListener)
+        capturedListener.captured.onInfoWindowClick(mockedMarker)
+
+        // Assert
+        verify {
+            omhOnInfoWindowClickListener.onInfoWindowClick(any<OmhMarker>())
+        }
+    }
+
+    @Test
+    fun `setOnInfoWindowLongClickListener sets a listener invoked on InfoWindow click`() {
+        // Arrange
+        omhMapImpl.addMarker(OmhMarkerOptions())
+        val capturedListener = slot<GoogleMap.OnInfoWindowLongClickListener>()
+        every { googleMap.setOnInfoWindowLongClickListener(capture(capturedListener)) } answers {}
+
+        // Act
+        omhMapImpl.setOnInfoWindowLongClickListener(omhOnInfoWindowLongClickListener)
+        capturedListener.captured.onInfoWindowLongClick(mockedMarker)
+
+        // Assert
+        verify {
+            omhOnInfoWindowLongClickListener.onInfoWindowLongClick(any<OmhMarker>())
         }
     }
 

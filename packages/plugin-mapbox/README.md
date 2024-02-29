@@ -58,6 +58,8 @@ This plugin provides support for Mapbox by utilizing the [Mapbox Android SDK](ht
 | setOnMarkerClickListener                |     ?      |
 | setOnMarkerDragListener                 |     ?      |
 | setOnInfoWindowOpenStatusChangeListener |     ?      |
+| setOnInfoWindowClickListener            |     ?      |
+| setOnInfoWindowLongClickListener        |     ?      |
 | setOnPolylineClickListener              |     ?      |
 | setOnPolygonClickListener               |     ?      |
 | snapshot                                |     ✅     |
