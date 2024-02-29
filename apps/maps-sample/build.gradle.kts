@@ -18,8 +18,7 @@ android {
     namespace = "com.openmobilehub.android.maps.sample"
 
     defaultConfig {
-        val mapboxPublicToken =
-            getRequiredValueFromEnvOrProperties("MAPBOX_PUBLIC_TOKEN", rootDir) as String
+        val mapboxPublicToken = getRequiredValueFromEnvOrProperties("MAPBOX_PUBLIC_TOKEN", rootDir)
 
         versionCode = 1
         versionName = "1.0"
@@ -36,13 +35,13 @@ android {
         // The alternative would be to pass all the environment variables for signing apk to the packages workflows.
         create("release") {
             val storeFileName =
-                getValueFromEnvOrProperties("SAMPLE_APP_KEYSTORE_FILE_NAME", ".") as? String
+                getValueFromEnvOrProperties("SAMPLE_APP_KEYSTORE_FILE_NAME", ".")
             val storePassword =
-                getValueFromEnvOrProperties("SAMPLE_APP_KEYSTORE_STORE_PASSWORD", ".") as? String
+                getValueFromEnvOrProperties("SAMPLE_APP_KEYSTORE_STORE_PASSWORD", ".")
             val keyAlias =
-                getValueFromEnvOrProperties("SAMPLE_APP_KEYSTORE_KEY_ALIAS", ".") as? String
+                getValueFromEnvOrProperties("SAMPLE_APP_KEYSTORE_KEY_ALIAS", ".")
             val keyPassword =
-                getValueFromEnvOrProperties("SAMPLE_APP_KEYSTORE_KEY_PASSWORD", ".") as? String
+                getValueFromEnvOrProperties("SAMPLE_APP_KEYSTORE_KEY_PASSWORD", ".")
 
             if (storeFileName != null && storePassword != null && keyAlias != null && keyPassword != null) {
                 this.storeFile = file(storeFileName)
@@ -106,12 +105,12 @@ dependencies {
     }
 }
 
-fun getValueFromEnvOrProperties(name: String, propertiesFilePath: Any): Any? {
+fun getValueFromEnvOrProperties(name: String, propertiesFilePath: Any): String? {
     val localProperties = gradleLocalProperties(file(propertiesFilePath))
-    return System.getenv(name) ?: localProperties[name]
+    return System.getenv(name) ?: localProperties[name]?.toString()
 }
 
-fun getRequiredValueFromEnvOrProperties(name: String, propertiesFilePath: Any): Any {
+fun getRequiredValueFromEnvOrProperties(name: String, propertiesFilePath: Any): String {
     return getValueFromEnvOrProperties(name, propertiesFilePath) ?: throw GradleException(
         "$name was not found in environment variables, nor in local.properties. ".plus(
             "Did you forget to set it?"
