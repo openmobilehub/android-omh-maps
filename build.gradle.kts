@@ -145,9 +145,9 @@ if (!useMavenLocal) {
     nexusPublishing {
         repositories {
             sonatype {
-                stagingProfileId.set(mStagingProfileId.toString())
-                username.set(ossrhUsername.toString())
-                password.set(ossrhPassword.toString())
+                stagingProfileId.set(mStagingProfileId)
+                username.set(ossrhUsername)
+                password.set(ossrhPassword)
                 // Add these lines if using new Sonatype infra
                 nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
                 snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
@@ -156,9 +156,9 @@ if (!useMavenLocal) {
     }
 }
 
-fun getValueFromEnvOrProperties(name: String): Any? {
+fun getValueFromEnvOrProperties(name: String): String? {
     val localProperties = gradleLocalProperties(rootDir)
-    return System.getenv(name) ?: localProperties[name]
+    return System.getenv(name) ?: localProperties[name]?.toString()
 }
 
 fun getBooleanFromProperties(name: String): Boolean {
