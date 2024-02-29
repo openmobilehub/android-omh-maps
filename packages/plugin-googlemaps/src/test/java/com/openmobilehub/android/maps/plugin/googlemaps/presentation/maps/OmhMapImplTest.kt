@@ -10,6 +10,7 @@ import com.google.android.gms.maps.model.Polygon
 import com.google.android.gms.maps.model.PolygonOptions
 import com.google.android.gms.maps.model.Polyline
 import com.google.android.gms.maps.model.PolylineOptions
+import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhInfoWindowViewFactory
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMarker
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnInfoWindowClickListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnInfoWindowLongClickListener
@@ -234,8 +235,16 @@ class OmhMapImplTest {
         val mockedIWContentsView = mockk<View>()
 
         // Act
-        omhMapImpl.setCustomInfoWindowViewFactory { mockedIWView }
-        omhMapImpl.setCustomInfoWindowContentsViewFactory { mockedIWContentsView }
+        omhMapImpl.setCustomInfoWindowViewFactory(object : OmhInfoWindowViewFactory {
+            override fun createInfoWindowView(marker: OmhMarker): View {
+                return mockedIWView
+            }
+        })
+        omhMapImpl.setCustomInfoWindowContentsViewFactory(object : OmhInfoWindowViewFactory {
+            override fun createInfoWindowView(marker: OmhMarker): View {
+                return mockedIWContentsView
+            }
+        })
 
         val getInfoWindowRet = capturedInfoWindowAdapter.captured.getInfoWindow(mockedMarker)
         val getInfoContentsRet = capturedInfoWindowAdapter.captured.getInfoContents(mockedMarker)
