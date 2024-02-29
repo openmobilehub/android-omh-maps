@@ -1,0 +1,48 @@
+title: OMH Maps advanced docs
+email: contact@openmobilehub.com
+description: >- # this means to ignore newlines until "baseurl:"
+  Advanced usage documentation for the OMH Maps library.
+baseurl: "/advanced-docs" # the subpath of your site, e.g. /blog
+url: "https://bookish-eureka-1wmrl6z.pages.github.io" # the base hostname & protocol for your site, e.g. http://example.com
+github_username: openmobilehub
+
+theme: just-the-docs
+
+collections:
+  core:
+    permalink: "/:collection/:path/"
+    output: true
+
+  plugin-googlemaps:
+    permalink: "/:collection/:path/"
+    output: true
+
+  plugin-openstreetmap:
+    permalink: "/:collection/:path/"
+    output: true
+
+  plugin-mapbox:
+    permalink: "/:collection/:path/"
+    output: true
+
+just_the_docs:
+  collections:
+    core:
+      name: Core
+      nav_fold: false
+      nav_order: 1
+
+    plugin-googlemaps:
+      name: Plugin GoogleMaps
+      nav_fold: false
+      nav_order: 2
+
+    plugin-openstreetmap:
+      name: Plugin OSM
+      nav_fold: false
+      nav_order: 3
+
+    plugin-mapbox:
+      name: Plugin Mapbox
+      nav_fold: false
+      nav_order: 4

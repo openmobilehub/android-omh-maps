@@ -110,4 +110,5 @@
     <string name="label_info_window_properties">Info window properties</string>
     <string name="info_window_opened">Info window opened (listener)</string>
     <string name="info_window_closed">Info window closed (listener)</string>
+    <string name="my_location_enabled">My Location Enabled</string>
 </resources>

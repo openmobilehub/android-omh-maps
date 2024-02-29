@@ -48,6 +48,10 @@ internal fun OmhMarkerOptions.toMarkerOptions(
     marker.rotation =
         -rotation // counter-clockwise -> clockwise to be consistent with GoogleMaps implementation
 
+    if (!isVisible && marker.isInfoWindowShown) {
+        marker.closeInfoWindow()
+    }
+
     if (icon != null) {
         marker.icon = icon
     } else if (backgroundColor != null) {

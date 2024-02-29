@@ -1,4 +1,4 @@
-# Mapbox Plugin
+# Module plugin-mapbox
 
 ## Overview
 
@@ -49,9 +49,9 @@ This plugin provides support for Mapbox by utilizing the [Mapbox Android SDK](ht
 | moveCamera                              |     ✅     |
 | setZoomGesturesEnabled                  |     ✅     |
 | setRotateGesturesEnabled                |     ✅     |
-| setMyLocationEnabled                    |     ?      |
-| isMyLocationEnabled                     |     ?      |
-| setMyLocationButtonClickListener        |     ?      |
+| setMyLocationEnabled                    |     ✅     |
+| isMyLocationEnabled                     |     ✅     |
+| setMyLocationButtonClickListener        |     ✅     |
 | setOnCameraMoveStartedListener          |     🟨     |
 | setOnCameraIdleListener                 |     ✅     |
 | setOnMapLoadedCallback                  |     ✅     |
@@ -63,7 +63,7 @@ This plugin provides support for Mapbox by utilizing the [Mapbox Android SDK](ht
 | setOnPolylineClickListener              |     ?      |
 | setOnPolygonClickListener               |     ?      |
 | snapshot                                |     ✅     |
-| setMapStyle                             |     ?      |
+| setMapStyle                             |     ✅     |
 
 Comments for partially supported 🟨 properties:
 
@@ -214,7 +214,7 @@ Comments for partially supported 🟨 properties:
 
 ## Contributing
 
-Please contribute! We will gladly review any pull requests. Make sure to read the [Contributing](/CONTRIBUTING.md) page first though.
+Please contribute! We will gladly review any pull requests. Make sure to read the [Contributing](https://github.com/openmobilehub/android-omh-maps/blob/main/CONTRIBUTING.md) page first though.
 
 ## License
 

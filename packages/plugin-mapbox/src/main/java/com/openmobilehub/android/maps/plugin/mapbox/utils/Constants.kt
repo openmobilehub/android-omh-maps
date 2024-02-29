@@ -24,4 +24,8 @@ internal object Constants {
     const val INITIAL_REGION_LATITUDE = 0.0
     const val INITIAL_REGION_LONGITUDE = 0.0
     const val INITIAL_REGION_ZOOM = 0.0
+
+    // UI Controls
+    const val MAPBOX_ICON_SIZE = 48
+    const val MAPBOX_ICON_MARGIN = 8
 }

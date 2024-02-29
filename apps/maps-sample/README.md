@@ -1,4 +1,4 @@
-# Sample App
+# Module maps-sample
 
 ## Overview
 
@@ -18,30 +18,38 @@ The app integrates both Google Maps and Mapbox, requiring setup for each.
 #### Google Maps
 
 1. **API Key**: In the project's `local.properties` file, add your Google Maps API key as follows:
+
    ```
    MAPS_API_KEY=YOUR_API_KEY
    ```
+
    Replace `YOUR_API_KEY` with your actual Google Maps API key.
 
    Further Reading:
+
    - [Google Cloud Console Setup Guide](/packages/plugin-googlemaps/docs/advanced/CLOUD_CONSOLE_SETUP.md)
    - [Google Maps Documentation](https://developers.google.com/maps/documentation/android-sdk/cloud-setup)
 
 #### Mapbox
 
 1. **Secret Token**: Configure your Mapbox secret token in `<USER_HOME>/.gradle/gradle.properties` (create the file if it doesn't exist):
+
    ```
    MAPBOX_DOWNLOADS_TOKEN=YOUR_SECRET_MAPBOX_ACCESS_TOKEN
    ```
+
    Replace `YOUR_SECRET_MAPBOX_ACCESS_TOKEN` with your Mapbox secret token.
 
 2. **Public Token**: Add your Mapbox public API key to the project's `local.properties`:
+
    ```
    MAPBOX_PUBLIC_TOKEN=YOUR_PUBLIC_MAPBOX_ACCESS_TOKEN
    ```
+
    Replace `YOUR_PUBLIC_MAPBOX_ACCESS_TOKEN` with your Mapbox public token.
 
    Further Reading:
+
    - [Mapbox Installation Guide](https://docs.mapbox.com/android/maps/guides/install#configure-credentials)
 
 ### Dependencies Setup
@@ -54,7 +62,7 @@ useLocalProjects=true
 
 Alternatively, enable `useMavenLocal` and then publish plugins to your local Maven repository.
 
-More information can be found on the [Contributing](/CONTRIBUTING.md) page.
+More information can be found on the [Contributing](https://github.com/openmobilehub/android-omh-maps/blob/main/CONTRIBUTING.md) page.
 
 ### Running the App
 
@@ -62,7 +70,7 @@ After setting up the development environment, credentials, and dependencies, you
 
 ## Contributing
 
-Please contribute! We will gladly review any pull requests. Make sure to read the [Contributing](/CONTRIBUTING.md) page first though.
+Please contribute! We will gladly review any pull requests. Make sure to read the [Contributing](https://github.com/openmobilehub/android-omh-maps/blob/main/CONTRIBUTING.md) page first though.
 
 ## License
 

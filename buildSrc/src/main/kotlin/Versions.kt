@@ -3,7 +3,9 @@ object Versions {
     const val androidGradlePlugin = "7.4.1"
     const val kotlin = "1.7.20"
     const val detekt = "1.22.0"
-    const val jacoco = "0.8.6"
+    const val jacoco = "0.8.8"
+    const val dokka = "1.9.10"
+    const val omhCore = "2.0.1-beta"
 
     //KTX
     const val coreKtx = "1.9.0"
