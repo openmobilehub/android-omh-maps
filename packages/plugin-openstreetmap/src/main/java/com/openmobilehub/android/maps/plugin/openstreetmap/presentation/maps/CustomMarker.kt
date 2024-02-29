@@ -1,3 +1,19 @@
+/*
+ * Copyright 2023 Open Mobile Hub
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.openmobilehub.android.maps.plugin.openstreetmap.presentation.maps
 
 import android.view.MotionEvent
@@ -6,11 +22,10 @@ import org.osmdroid.views.overlay.Marker
 
 internal class CustomMarker(private val omhMapImpl: OmhMapImpl, mapView: MapView) :
     Marker(mapView) {
-    private var draggingInProgress = false
 
-    internal fun updateOpenState() {
-        if (isInfoWindowShown) {
-            if (alpha != 0f) {
+    internal fun updateInfoWindowState() {
+        if (isInfoWindowOpen) {
+            if (alpha != 0f) { // if the marker is visible
                 showInfoWindow() // re-open the info window to apply marker changes (e.g. the anchor)
             } else {
                 closeInfoWindow() // close the open window
@@ -34,22 +49,20 @@ internal class CustomMarker(private val omhMapImpl: OmhMapImpl, mapView: MapView
         // NOTE: most of this handling is done in onTouchEvent, yet this override prevents
         // the info window from flickering and closing for a brief moment when the user
         // initially long-presses the marker for dragging
-        val wasInfoWindowOpen = isInfoWindowShown
+        val wasInfoWindowOpen = isInfoWindowOpen
 
         val retVal = super.onLongPress(event, mapView)
 
-        if (wasInfoWindowOpen && !isInfoWindowShown) {
+        if (wasInfoWindowOpen && !isInfoWindowOpen) {
             // re-open the window after long press
             showInfoWindow()
-
-            draggingInProgress = true
         }
 
         return retVal
     }
 
     override fun showInfoWindow() {
-        val wasInfoWindowShown = isInfoWindowShown
+        val wasInfoWindowShown = isInfoWindowOpen
 
         super.showInfoWindow()
 

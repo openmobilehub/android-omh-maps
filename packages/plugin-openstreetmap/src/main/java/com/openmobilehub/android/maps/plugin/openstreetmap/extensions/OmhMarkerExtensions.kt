@@ -35,6 +35,7 @@ internal fun OmhMarkerOptions.toMarkerOptions(
     marker.isDraggable = draggable
 
     marker.setAnchor(anchor.first, anchor.second)
+    marker.setInfoWindowAnchor(infoWindowAnchor.first, infoWindowAnchor.second)
     marker.alpha = alpha
 
     // since setVisible controls the alpha in OSM implementation, it needs separate handling after alpha

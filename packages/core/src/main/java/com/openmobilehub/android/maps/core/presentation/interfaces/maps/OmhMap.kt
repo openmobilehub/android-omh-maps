@@ -149,6 +149,11 @@ interface OmhMap {
     fun setOnMarkerDragListener(listener: OmhOnMarkerDragListener)
 
     /**
+     * The callbacks to be executed when the info window changes its open state.
+     */
+    fun setOnInfoWindowOpenStatusChangeListener(listener: OmhOnInfoWindowOpenStatusChangeListener)
+
+    /**
      * Sets a callback that's invoked when a polyline on the map is clicked.
      *
      * @param listener The callback that's invoked when a polyline is clicked.

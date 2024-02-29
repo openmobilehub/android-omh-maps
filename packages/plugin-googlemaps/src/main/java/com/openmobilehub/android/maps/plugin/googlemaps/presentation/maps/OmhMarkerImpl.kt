@@ -74,6 +74,10 @@ internal class OmhMarkerImpl(
         this.marker.setAnchor(anchorU, anchorV)
     }
 
+    override fun setInfoWindowAnchor(iwAnchorU: Float, iwAnchorV: Float) {
+        this.marker.setInfoWindowAnchor(iwAnchorU, iwAnchorV)
+    }
+
     override fun getAlpha(): Float {
         return marker.alpha
     }

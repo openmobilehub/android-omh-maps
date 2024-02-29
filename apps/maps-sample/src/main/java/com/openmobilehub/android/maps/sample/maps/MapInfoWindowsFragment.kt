@@ -33,6 +33,7 @@ import androidx.fragment.app.Fragment
 import com.openmobilehub.android.maps.core.presentation.fragments.OmhMapFragment
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMap
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMarker
+import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnInfoWindowOpenStatusChangeListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMapReadyCallback
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMarkerClickListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMarkerDragListener
@@ -109,9 +110,11 @@ open class MapInfoWindowsFragment : Fragment(), OmhOnMapReadyCallback {
     }
 
     private fun maybeReRenderMarkerWindowIfShown(marker: OmhMarker) {
-        // if the marker has been dragged & it is showing the custom view,
+        // if the marker has been dragged & re-rendering is enabled,
         // re-open the info window to have the coordinates description refreshed
-        if ((demoShouldReRenderInfoWindowOnDraggingCheckbox?.isChecked != false) && marker.getIsInfoWindowShown() && infoWindowAppearanceTypeNameResourceID[currentAppearancePosition] != R.string.info_window_appearance_type_default
+        if (
+            (demoShouldReRenderInfoWindowOnDraggingCheckbox?.isChecked != false)
+            && marker.getIsInfoWindowShown()
         ) {
             marker.showInfoWindow()
         }
@@ -139,10 +142,10 @@ open class MapInfoWindowsFragment : Fragment(), OmhOnMapReadyCallback {
         })
 
         omhMap.setOnMarkerClickListener(OmhOnMarkerClickListener { marker ->
-            Log.d(
-                MapMarkersFragment.LOG_TAG,
-                "User clicked marker '${marker.getTitle()}' at ${marker.getPosition().toString()}"
-            )
+            // GoogleMaps don't support onInfoWindowOpen
+            if (mapProviderName == "GoogleMaps") {
+                applyStateToImperativeControls(true)
+            }
 
             false
         })
@@ -158,6 +161,39 @@ open class MapInfoWindowsFragment : Fragment(), OmhOnMapReadyCallback {
 
             override fun onMarkerDragStart(marker: OmhMarker) {
                 // not used
+            }
+        })
+
+        omhMap.setOnInfoWindowOpenStatusChangeListener(object :
+            OmhOnInfoWindowOpenStatusChangeListener {
+            override fun onInfoWindowOpen(marker: OmhMarker) {
+                Log.d(
+                    LOG_TAG,
+                    "User opened info window for marker '${marker.getTitle()}' at ${marker.getPosition()}"
+                )
+
+                Toast.makeText(
+                    requireContext(),
+                    R.string.info_window_opened,
+                    Toast.LENGTH_SHORT
+                ).show()
+
+                applyStateToImperativeControls(true) // getIsInfoWindowShown() will not yet be true
+            }
+
+            override fun onInfoWindowClose(marker: OmhMarker) {
+                Log.d(
+                    LOG_TAG,
+                    "User closed info window for marker '${marker.getTitle()}' at ${marker.getPosition()}"
+                )
+
+                Toast.makeText(
+                    requireContext(),
+                    R.string.info_window_closed,
+                    Toast.LENGTH_SHORT
+                ).show()
+
+                applyStateToImperativeControls(false) // getIsInfoWindowShown() will not yet be false
             }
         })
 
@@ -236,13 +272,13 @@ open class MapInfoWindowsFragment : Fragment(), OmhOnMapReadyCallback {
         }
     }
 
-    private fun applyStateToImperativeControls(overrideIsInfoWindowShown: Boolean? = null) {
+    private fun applyStateToImperativeControls(overrideIsInfoWindowOpen: Boolean? = null) {
         val infoWindowControllable = customizableMarker?.getIsVisible() ?: false
-        val isInfoWindowShown =
-            overrideIsInfoWindowShown ?: customizableMarker?.getIsInfoWindowShown() ?: false;
+        val isInfoWindowOpen =
+            overrideIsInfoWindowOpen ?: customizableMarker?.getIsInfoWindowShown() ?: false
 
-        buttonOpenInfoWindow?.isEnabled = infoWindowControllable && !isInfoWindowShown
-        buttonHideInfoWindow?.isEnabled = infoWindowControllable && isInfoWindowShown
+        buttonOpenInfoWindow?.isEnabled = infoWindowControllable && !isInfoWindowOpen
+        buttonHideInfoWindow?.isEnabled = infoWindowControllable && isInfoWindowOpen
     }
 
     private fun setupUI(view: View) {
@@ -254,14 +290,12 @@ open class MapInfoWindowsFragment : Fragment(), OmhOnMapReadyCallback {
         isVisibleCheckbox = view.findViewById(R.id.checkBox_isVisible)
         isVisibleCheckbox?.setOnCheckedChangeListener { _, isChecked ->
             customizableMarker?.setIsVisible(isChecked)
-            applyStateToImperativeControls()
         }
 
         // isClickable
         isClickableCheckbox = view.findViewById(R.id.checkBox_isClickable)
         isClickableCheckbox?.setOnCheckedChangeListener { _, isChecked ->
             customizableMarker?.setClickable(isChecked)
-            applyStateToImperativeControls()
         }
 
         // hasSnippet
@@ -284,21 +318,16 @@ open class MapInfoWindowsFragment : Fragment(), OmhOnMapReadyCallback {
         buttonOpenInfoWindow = view.findViewById(R.id.button_openInfoWindow)
         buttonOpenInfoWindow?.setOnClickListener {
             customizableMarker?.showInfoWindow()
-            applyStateToImperativeControls()
+            applyStateToImperativeControls(true)
         }
 
         // imperative usage: hideInfoWindow()
         buttonHideInfoWindow = view.findViewById(R.id.button_hideInfoWindow)
         buttonHideInfoWindow?.setOnClickListener {
             customizableMarker?.hideInfoWindow()
-            applyStateToImperativeControls()
         }
 
         applyStateToImperativeControls()
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
     }
 
     override fun onResume() {

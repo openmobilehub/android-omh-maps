@@ -34,6 +34,7 @@ import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMapLo
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMarker
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnCameraIdleListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnCameraMoveStartedListener
+import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnInfoWindowOpenStatusChangeListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMarkerClickListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMarkerDragListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMyLocationButtonClickListener
@@ -53,6 +54,7 @@ import com.openmobilehub.android.maps.plugin.googlemaps.extensions.toPolylineOpt
 import com.openmobilehub.android.maps.plugin.googlemaps.utils.Constants
 import com.openmobilehub.android.maps.plugin.googlemaps.utils.CoordinateConverter
 import com.openmobilehub.android.maps.plugin.googlemaps.utils.commonLogger
+import com.openmobilehub.android.maps.plugin.googlemaps.utils.markerLogger
 
 @SuppressWarnings("TooManyFunctions")
 internal class OmhMapImpl(
@@ -201,6 +203,19 @@ internal class OmhMapImpl(
         })
     }
 
+    override fun setOnInfoWindowOpenStatusChangeListener(listener: OmhOnInfoWindowOpenStatusChangeListener) {
+        markerLogger.logFeatureSetterPartiallySupported(
+            "onInfoWindowOpenStatusChangeListener",
+            "only the onInfoWindowClose event is supported"
+        )
+
+        googleMap.setOnInfoWindowCloseListener {
+            markers[it]?.let { omhMarker ->
+                listener.onInfoWindowClose(omhMarker)
+            }
+        }
+    }
+
     override fun setOnPolylineClickListener(listener: OmhOnPolylineClickListener) {
         googleMap.setOnPolylineClickListener {
             listener.onPolylineClick(OmhPolylineImpl(it))
@@ -232,7 +247,7 @@ internal class OmhMapImpl(
     }
 
     private fun reopenActiveInfoWindows() {
-        markers.forEach() { (marker, _) ->
+        markers.forEach { (marker, _) ->
             // if open, re-open the info window to apply changes
             if (marker.isInfoWindowShown) {
                 marker.showInfoWindow()

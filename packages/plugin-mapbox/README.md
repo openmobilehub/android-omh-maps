@@ -14,6 +14,7 @@ This plugin provides support for Mapbox by utilizing the [Mapbox Android SDK](ht
 ### Set up the project
 
 1. Add the plugin to the project by following one of the guides:
+
 - [Setup with omh-core plugin](/packages/core/docs/SETUP_WITH_OMH_CORE_PLUGIN.md)
 - [Setup without omh-core plugin](/packages/core/docs/SETUP_WITHOUT_OMH_CORE_PLUGIN.md)
 
@@ -39,25 +40,28 @@ This plugin provides support for Mapbox by utilizing the [Mapbox Android SDK](ht
 
 #### OmhMap
 
-| Method                            | Supported? |
-|-----------------------------------|:----------:|
-| addMarker                         |      ?     |
-| addPolyline                       |      ?     |
-| addPolygon                        |      ?     |
-| getCameraPositionCoordinate       |      ✅     |
-| moveCamera                        |      ✅     |
-| setZoomGesturesEnabled            |      ✅     |
-| setRotateGesturesEnabled          |      ✅     |
-| setMyLocationEnabled              |      ?     |
-| isMyLocationEnabled               |      ?     |
-| setMyLocationButtonClickListener  |      ?     |
-| setOnCameraMoveStartedListener    |      🟨     |
-| setOnCameraIdleListener           |      ✅     |
-| setOnMapLoadedCallback            |      ✅     |
-| setOnPolylineClickListener        |      ?     |
-| setOnPolygonClickListener         |      ?     |
-| snapshot                          |      ✅     |
-| setMapStyle                       |      ?     |
+| Method                                  | Supported? |
+| --------------------------------------- | :--------: |
+| addMarker                               |     ?      |
+| addPolyline                             |     ?      |
+| addPolygon                              |     ?      |
+| getCameraPositionCoordinate             |     ✅     |
+| moveCamera                              |     ✅     |
+| setZoomGesturesEnabled                  |     ✅     |
+| setRotateGesturesEnabled                |     ✅     |
+| setMyLocationEnabled                    |     ?      |
+| isMyLocationEnabled                     |     ?      |
+| setMyLocationButtonClickListener        |     ?      |
+| setOnCameraMoveStartedListener          |     🟨     |
+| setOnCameraIdleListener                 |     ✅     |
+| setOnMapLoadedCallback                  |     ✅     |
+| setOnMarkerClickListener                |     ?      |
+| setOnMarkerDragListener                 |     ?      |
+| setOnInfoWindowOpenStatusChangeListener |     ?      |
+| setOnPolylineClickListener              |     ?      |
+| setOnPolygonClickListener               |     ?      |
+| snapshot                                |     ✅     |
+| setMapStyle                             |     ?      |
 
 Comments for partially supported 🟨 properties:
 
@@ -69,110 +73,138 @@ Comments for partially supported 🟨 properties:
 
 #### OmhMarkerOptions
 
-| Property    | Supported? |
-|-------------|:----------:|
-| position    |      ?     |
-| title       |      ?     |
+| Property        | Support level |
+| --------------- | :-----------: |
+| position        |       ?       |
+| title           |       ?       |
+| draggable       |       ?       |
+| anchor          |       ?       |
+| alpha           |       ?       |
+| snippet         |       ?       |
+| isVisible       |       ?       |
+| isFlat          |       ?       |
+| rotation        |       ?       |
+| backgroundColor |       ?       |
+| clickable       |       ?       |
 
 #### OmhMarker
 
-| Method       | Supported? |
-|--------------|:----------:|
-| getPosition  |      ?     |
-| setPosition  |      ?     |
-| getTitle     |      ?     |
-| setTitle     |      ?     |
+| Method              | Support level |
+| ------------------- | :-----------: |
+| getPosition         |       ?       |
+| setPosition         |       ?       |
+| getTitle            |       ?       |
+| setTitle            |       ?       |
+| getClickable        |       ?       |
+| setClickable        |       ?       |
+| getDraggable        |       ?       |
+| setDraggable        |       ?       |
+| setAnchor           |       ?       |
+| setInfoWindowAnchor |       ?       |
+| getAlpha            |       ?       |
+| setAlpha            |       ?       |
+| getSnippet          |       ?       |
+| setSnippet          |       ?       |
+| setIcon             |       ?       |
+| getIsVisible        |       ?       |
+| setIsVisible        |       ?       |
+| getIsFlat           |       ?       |
+| setIsFlat           |       ?       |
+| getRotation         |       ?       |
+| setRotation         |       ?       |
+| getBackgroundColor  |       ?       |
+| setBackgroundColor  |       ?       |
 
 ### Polyline
 
 #### OmhPolylineOptions
 
 | Property  | Supported? |
-|-----------|:----------:|
-| points    |      ?     |
-| clickable |      ?     |
-| color     |      ?     |
-| width     |      ?     |
-| isVisible |      ?     |
-| zIndex    |      ?     |
-| jointType |      ?     |
-| pattern   |      ?     |
-| startCap  |      ?     |
-| endCap    |      ?     |
-| spans     |      ?     |
+| --------- | :--------: |
+| points    |     ?      |
+| clickable |     ?      |
+| color     |     ?      |
+| width     |     ?      |
+| isVisible |     ?      |
+| zIndex    |     ?      |
+| jointType |     ?      |
+| pattern   |     ?      |
+| startCap  |     ?      |
+| endCap    |     ?      |
+| spans     |     ?      |
 
 #### OmhPolyline
 
 | Method       | Supported? |
-|--------------|:----------:|
-| isClickable  |      ?     |
-| setClickable |      ?     |
-| getColor     |      ?     |
-| setColor     |      ?     |
-| getEndCap    |      ?     |
-| setEndCap    |      ?     |
-| getJoinType  |      ?     |
-| setJoinType  |      ?     |
-| getPattern   |      ?     |
-| setPattern   |      ?     |
-| getPoints    |      ?     |
-| setPoints    |      ?     |
-| getSpans     |      ?     |
-| setSpans     |      ?     |
-| getStartCap  |      ?     |
-| setStartCap  |      ?     |
-| getTag       |      ?     |
-| setTag       |      ?     |
-| getWidth     |      ?     |
-| setWidth     |      ?     |
-| getZIndex    |      ?     |
-| setZIndex    |      ?     |
-| isVisible    |      ?     |
-| setVisible   |      ?     |
+| ------------ | :--------: |
+| isClickable  |     ?      |
+| setClickable |     ?      |
+| getColor     |     ?      |
+| setColor     |     ?      |
+| getEndCap    |     ?      |
+| setEndCap    |     ?      |
+| getJoinType  |     ?      |
+| setJoinType  |     ?      |
+| getPattern   |     ?      |
+| setPattern   |     ?      |
+| getPoints    |     ?      |
+| setPoints    |     ?      |
+| getSpans     |     ?      |
+| setSpans     |     ?      |
+| getStartCap  |     ?      |
+| setStartCap  |     ?      |
+| getTag       |     ?      |
+| setTag       |     ?      |
+| getWidth     |     ?      |
+| setWidth     |     ?      |
+| getZIndex    |     ?      |
+| setZIndex    |     ?      |
+| isVisible    |     ?      |
+| setVisible   |     ?      |
 
 ### Polygon
 
 #### OmhPolygonOptions
 
 | Property        | Supported? |
-|-----------------|:----------:|
-| outline         |      ?     |
-| clickable       |      ?     |
-| fillColor       |      ?     |
-| holes           |      ?     |
-| isVisible       |      ?     |
-| strokeColor     |      ?     |
-| strokeJointType |      ?     |
-| strokePattern   |      ?     |
-| strokeWidth     |      ?     |
-| zIndex          |      ?     |
+| --------------- | :--------: |
+| outline         |     ?      |
+| clickable       |     ?      |
+| fillColor       |     ?      |
+| holes           |     ?      |
+| isVisible       |     ?      |
+| strokeColor     |     ?      |
+| strokeJointType |     ?      |
+| strokePattern   |     ?      |
+| strokeWidth     |     ?      |
+| zIndex          |     ?      |
 
 #### OmhPolygon
 
 | Method             | Supported? |
-|--------------------|:----------:|
-| getClickable       |      ?     |
-| setClickable       |      ?     |
-| getStrokeColor     |      ?     |
-| setStrokeColor     |      ?     |
-| getFillColor       |      ?     |
-| setFillColor       |      ?     |
-| getStrokeJointType |      ?     |
-| setStrokeJointType |      ?     |
-| getStrokePattern   |      ?     |
-| setStrokePattern   |      ?     |
-| getOutline         |      ?     |
-| setOutline         |      ?     |
-| getHoles           |      ?     |
-| setHoles           |      ?     |
-| getTag             |      ?     |
-| setTag             |      ?     |
-| getStrokeWidth     |      ?     |
-| setStrokeWidth     |      ?     |
-| getZIndex          |      ?     |
-| setZIndex          |      ?     |
-| isVisible          |      ?     |
-| setVisible         |      ?     |
+| ------------------ | :--------: |
+| getClickable       |     ?      |
+| setClickable       |     ?      |
+| getStrokeColor     |     ?      |
+| setStrokeColor     |     ?      |
+| getFillColor       |     ?      |
+| setFillColor       |     ?      |
+| getStrokeJointType |     ?      |
+| setStrokeJointType |     ?      |
+| getStrokePattern   |     ?      |
+| setStrokePattern   |     ?      |
+| getOutline         |     ?      |
+| setOutline         |     ?      |
+| getHoles           |     ?      |
+| setHoles           |     ?      |
+| getTag             |     ?      |
+| setTag             |     ?      |
+| getStrokeWidth     |     ?      |
+| setStrokeWidth     |     ?      |
+| getZIndex          |     ?      |
+| setZIndex          |     ?      |
+| isVisible          |     ?      |
+| setVisible         |     ?      |
 
 ## Documentation
 

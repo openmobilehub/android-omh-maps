@@ -145,8 +145,15 @@ internal class OmhMarkerOptionsExtensionTest {
         assertEquals(
             defaultOmhMarkerOptions.anchor,
             Pair(
-                Constants.DEFAULT_ANCHOR,
-                Constants.DEFAULT_ANCHOR
+                Constants.ANCHOR_CENTER,
+                Constants.ANCHOR_CENTER
+            )
+        )
+        assertEquals(
+            defaultOmhMarkerOptions.infoWindowAnchor,
+            Pair(
+                Constants.ANCHOR_CENTER,
+                Constants.ANCHOR_TOP
             )
         )
         assertEquals(defaultOmhMarkerOptions.alpha, Constants.DEFAULT_ALPHA)

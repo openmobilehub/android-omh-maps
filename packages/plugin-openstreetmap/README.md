@@ -46,24 +46,27 @@ Legend of support levels:
 
 #### OmhMap
 
-| Method                           | Supported? |
-| -------------------------------- | :--------: |
-| addMarker                        |     ✅     |
-| addPolyline                      |     ✅     |
-| addPolygon                       |     ✅     |
-| getCameraPositionCoordinate      |     ✅     |
-| moveCamera                       |     ✅     |
-| setZoomGesturesEnabled           |     ✅     |
-| setMyLocationEnabled             |     ✅     |
-| isMyLocationEnabled              |     ✅     |
-| setMyLocationButtonClickListener |     ✅     |
-| setOnCameraMoveStartedListener   |     🟨     |
-| setOnCameraIdleListener          |     ✅     |
-| setOnMapLoadedCallback           |     ✅     |
-| setOnPolylineClickListener       |     ✅     |
-| setOnPolygonClickListener        |     ✅     |
-| snapshot                         |     ✅     |
-| setMapStyle                      |     ❌     |
+| Method                                  | Supported? |
+| --------------------------------------- | :--------: |
+| addMarker                               |     ✅     |
+| addPolyline                             |     ✅     |
+| addPolygon                              |     ✅     |
+| getCameraPositionCoordinate             |     ✅     |
+| moveCamera                              |     ✅     |
+| setZoomGesturesEnabled                  |     ✅     |
+| setMyLocationEnabled                    |     ✅     |
+| isMyLocationEnabled                     |     ✅     |
+| setMyLocationButtonClickListener        |     ✅     |
+| setOnCameraMoveStartedListener          |     🟨     |
+| setOnCameraIdleListener                 |     ✅     |
+| setOnMapLoadedCallback                  |     ✅     |
+| setOnMarkerClickListener                |     ✅     |
+| setOnMarkerDragListener                 |     ✅     |
+| setOnInfoWindowOpenStatusChangeListener |     ✅     |
+| setOnPolylineClickListener              |     ✅     |
+| setOnPolygonClickListener               |     ✅     |
+| snapshot                                |     ✅     |
+| setMapStyle                             |     ❌     |
 
 Comments for partially supported 🟨 properties:
 
@@ -93,30 +96,31 @@ Comments for partially supported 🟨 properties:
 
 #### OmhMarker
 
-| Method             | Support level |
-| ------------------ | :-----------: |
-| getPosition        |      ✅       |
-| setPosition        |      ✅       |
-| getTitle           |      ✅       |
-| setTitle           |      ✅       |
-| getClickable       |      ✅       |
-| setClickable       |      ✅       |
-| getDraggable       |      ✅       |
-| setDraggable       |      ✅       |
-| setAnchor          |      ✅       |
-| getAlpha           |      ✅       |
-| setAlpha           |      ✅       |
-| getSnippet         |      ✅       |
-| setSnippet         |      ✅       |
-| setIcon            |      ✅       |
-| getIsVisible       |      ✅       |
-| setIsVisible       |      ✅       |
-| getIsFlat          |      ✅       |
-| setIsFlat          |      ✅       |
-| getRotation        |      ✅       |
-| setRotation        |      ✅       |
-| getBackgroundColor |      ❌       |
-| setBackgroundColor |      ❌       |
+| Method              | Support level |
+| ------------------- | :-----------: |
+| getPosition         |      ✅       |
+| setPosition         |      ✅       |
+| getTitle            |      ✅       |
+| setTitle            |      ✅       |
+| getClickable        |      ✅       |
+| setClickable        |      ✅       |
+| getDraggable        |      ✅       |
+| setDraggable        |      ✅       |
+| setAnchor           |      ✅       |
+| setInfoWindowAnchor |      ✅       |
+| getAlpha            |      ✅       |
+| setAlpha            |      ✅       |
+| getSnippet          |      ✅       |
+| setSnippet          |      ✅       |
+| setIcon             |      ✅       |
+| getIsVisible        |      ✅       |
+| setIsVisible        |      ✅       |
+| getIsFlat           |      ✅       |
+| setIsFlat           |      ✅       |
+| getRotation         |      ✅       |
+| setRotation         |      ✅       |
+| getBackgroundColor  |      ❌       |
+| setBackgroundColor  |      ❌       |
 
 ### Polyline
 

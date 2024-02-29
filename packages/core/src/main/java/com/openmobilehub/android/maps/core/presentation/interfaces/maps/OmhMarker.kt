@@ -94,6 +94,14 @@ interface OmhMarker {
     fun setAnchor(anchorU: Float, anchorV: Float)
 
     /**
+     * Sets the anchor point of marker info window.
+     *
+     * @param iwAnchorU the normalized (`0` - `1`) icon X coordinate specifier; default: `0.5`.
+     * @param iwAnchorV the normalized (`0` - `1`) icon Y coordinate specifier; default: `0.5`.
+     */
+    fun setInfoWindowAnchor(iwAnchorU: Float, iwAnchorV: Float)
+
+    /**
      * Gets the alpha (transparency) of the marker.
      *
      * @return the normalized (`0` - `1`) alpha value of the marker.

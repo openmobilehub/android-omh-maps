@@ -123,6 +123,19 @@ class OmhMarkerImplTest {
     }
 
     @Test
+    fun `setInfoWindowAnchor sets info window anchor`() {
+        // Arrange
+        val expectedValue = Pair(0.3f, 0.75f)
+        every { marker.setInfoWindowAnchor(any(), any()) } just runs
+
+        // Act
+        omhMarker.setInfoWindowAnchor(expectedValue.first, expectedValue.second)
+
+        // Assert
+        verify { marker.setInfoWindowAnchor(expectedValue.first, expectedValue.second) }
+    }
+
+    @Test
     fun `getAlpha returns alpha value`() {
         // Arrange
         val expected = 0.35f
