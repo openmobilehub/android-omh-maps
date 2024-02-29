@@ -2,7 +2,7 @@
 title: Plugins OMH Map
 layout: default
 has_children: false
-parent: Core module
+parent: Advanced features
 ---
 
 # Customize OMH Map

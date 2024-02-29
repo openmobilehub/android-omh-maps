@@ -2,7 +2,7 @@
 title: Info Windows
 layout: default
 has_children: false
-parent: Core module
+parent: Advanced features
 ---
 
 # Info Windows
@@ -61,7 +61,13 @@ omhMarker?.showInfoWindow()
 
 ## Custom views
 
-Info windows can be customized to show any arbitrary view. This is done by setting a custom view factory on the instance of `OmhMap`. There are two approaches supported by OMH Maps (only if the provider supports each of the ways - please refer to the parity matrix of individual provider modules):
+Info windows can be customized to show any arbitrary view. This is done by setting a custom view factory on the instance of `OmhMap`. There are two approaches supported by OMH Maps (only if the provider supports each of the ways - please refer to the parity matrix of individual provider modules), as follows below.
+
+You can find comprehensive code samples of this feature in the following files:
+
+- [MapInfoWindowsFragment.kt](https://github.com/openmobilehub/android-omh-maps/blob/main/apps/maps-sample/src/main/java/com/openmobilehub/android/maps/sample/maps/MapInfoWindowsFragment.kt)
+- [res/layout/info_window.xml](https://github.com/openmobilehub/android-omh-maps/blob/main/apps/maps-sample/src/main/res/layout/info_window.xml)
+- [res/layout/info_window_contents.xml](https://github.com/openmobilehub/android-omh-maps/blob/main/apps/maps-sample/src/main/res/layout/info_window_contents.xml)
 
 ### Using a custom window view factory
 
