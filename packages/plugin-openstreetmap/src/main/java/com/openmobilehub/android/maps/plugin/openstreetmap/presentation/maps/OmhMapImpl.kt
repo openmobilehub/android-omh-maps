@@ -96,6 +96,8 @@ internal class OmhMapImpl(
     private var customInfoWindowViewFactory: OmhInfoWindowViewFactory? = null
     private var onInfoWindowOpenStatusChangeListener: OmhOnInfoWindowOpenStatusChangeListener? =
         null
+    private var onInfoWindowClickListener: OmhOnInfoWindowClickListener? = null
+    private var onInfoWindowLongClickListener: OmhOnInfoWindowLongClickListener? = null
 
     init {
         mapView.addMapListener(mapListenerController)
@@ -349,11 +351,11 @@ internal class OmhMapImpl(
     }
 
     override fun setOnInfoWindowClickListener(listener: OmhOnInfoWindowClickListener) {
-        // To be implemented
+        this.onInfoWindowClickListener = listener
     }
 
     override fun setOnInfoWindowLongClickListener(listener: OmhOnInfoWindowLongClickListener) {
-        // To be implemented
+        this.onInfoWindowLongClickListener = listener
     }
 
     override fun setOnPolylineClickListener(listener: OmhOnPolylineClickListener) {
@@ -416,6 +418,16 @@ internal class OmhMapImpl(
         // has to be suppressed
         window.view.setOnTouchListener { v, _ ->
             v.performClick() // for accessibility handling
+
+            false
+        }
+
+        window.view.setOnClickListener {
+            this.onInfoWindowClickListener?.onInfoWindowClick(omhMarker)
+        }
+
+        window.view.setOnLongClickListener {
+            this.onInfoWindowLongClickListener?.onInfoWindowLongClick(omhMarker)
 
             false
         }

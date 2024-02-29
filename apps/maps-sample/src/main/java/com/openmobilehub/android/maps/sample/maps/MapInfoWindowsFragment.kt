@@ -33,14 +33,18 @@ import androidx.fragment.app.Fragment
 import com.openmobilehub.android.maps.core.presentation.fragments.OmhMapFragment
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMap
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMarker
+import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnInfoWindowClickListener
+import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnInfoWindowLongClickListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnInfoWindowOpenStatusChangeListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMapReadyCallback
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMarkerClickListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMarkerDragListener
+import com.openmobilehub.android.maps.core.presentation.models.Constants
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
 import com.openmobilehub.android.maps.core.utils.NetworkConnectivityChecker
 import com.openmobilehub.android.maps.sample.R
+import com.openmobilehub.android.maps.sample.customviews.PanelSeekbar
 import com.openmobilehub.android.maps.sample.customviews.PanelSpinner
 import com.openmobilehub.android.maps.sample.databinding.FragmentMapInfoWindowsBinding
 import com.openmobilehub.android.maps.sample.utils.Constants.DEFAULT_ZOOM_LEVEL
@@ -59,7 +63,7 @@ open class MapInfoWindowsFragment : Fragment(), OmhOnMapReadyCallback {
     private var runnable: Runnable? = null
 
     private var omhMap: OmhMap? = null
-    private var customizableMarker: OmhMarker? = null
+    private var demoMarker: OmhMarker? = null
 
     private var isClickableCheckbox: CheckBox? = null
     private var hasSnippetCheckbox: CheckBox? = null
@@ -71,6 +75,17 @@ open class MapInfoWindowsFragment : Fragment(), OmhOnMapReadyCallback {
     private var disabledAppearancePositions: HashSet<Int>? = null
     private var buttonOpenInfoWindow: Button? = null
     private var buttonHideInfoWindow: Button? = null
+
+    private var anchorUSeekbar: PanelSeekbar? = null
+    private var anchorVSeekbar: PanelSeekbar? = null
+    private var anchorIWUSeekbar: PanelSeekbar? = null
+    private var anchorIWVSeekbar: PanelSeekbar? = null
+
+    private var rotationSeekbar: PanelSeekbar? = null
+    private var markerAnchor: Pair<Float, Float> =
+        Pair(Constants.ANCHOR_CENTER, Constants.ANCHOR_CENTER)
+    private var infoWindowAnchor: Pair<Float, Float> =
+        Pair(Constants.ANCHOR_CENTER, Constants.ANCHOR_CENTER)
 
     private val infoWindowAppearanceTypeNameResourceID = intArrayOf(
         R.string.info_window_appearance_type_default,
@@ -132,7 +147,7 @@ open class MapInfoWindowsFragment : Fragment(), OmhOnMapReadyCallback {
 
         omhMap.moveCamera(PRIME_MERIDIAN, DEFAULT_ZOOM_LEVEL)
 
-        customizableMarker = omhMap.addMarker(OmhMarkerOptions().apply {
+        demoMarker = omhMap.addMarker(OmhMarkerOptions().apply {
             title = "Configurable test marker"
             position = OmhCoordinate().apply {
                 latitude = PRIME_MERIDIAN.latitude
@@ -152,17 +167,36 @@ open class MapInfoWindowsFragment : Fragment(), OmhOnMapReadyCallback {
 
         omhMap.setOnMarkerDragListener(object : OmhOnMarkerDragListener {
             override fun onMarkerDrag(marker: OmhMarker) {
+                Log.d(
+                    LOG_TAG,
+                    "User is dragging info window for marker '${marker.getTitle()}' at ${marker.getPosition()}"
+                )
+
                 maybeReRenderMarkerWindowIfShown(marker)
             }
 
             override fun onMarkerDragEnd(marker: OmhMarker) {
+                Log.d(
+                    LOG_TAG,
+                    "User ended dragging info window for marker '${marker.getTitle()}' at ${marker.getPosition()}"
+                )
+
                 maybeReRenderMarkerWindowIfShown(marker)
             }
 
             override fun onMarkerDragStart(marker: OmhMarker) {
-                // not used
+                Log.d(
+                    LOG_TAG,
+                    "User started dragging info window for marker '${marker.getTitle()}' at ${marker.getPosition()}"
+                )
             }
         })
+
+        val eventsToast = Toast.makeText(
+            requireContext(),
+            "",
+            Toast.LENGTH_SHORT
+        ) // single instance to quickly show new toasts while an old one may still be shown
 
         omhMap.setOnInfoWindowOpenStatusChangeListener(object :
             OmhOnInfoWindowOpenStatusChangeListener {
@@ -172,11 +206,8 @@ open class MapInfoWindowsFragment : Fragment(), OmhOnMapReadyCallback {
                     "User opened info window for marker '${marker.getTitle()}' at ${marker.getPosition()}"
                 )
 
-                Toast.makeText(
-                    requireContext(),
-                    R.string.info_window_opened,
-                    Toast.LENGTH_SHORT
-                ).show()
+                eventsToast.setText(R.string.info_window_opened)
+                eventsToast.show()
 
                 applyStateToImperativeControls(true) // getIsInfoWindowShown() will not yet be true
             }
@@ -187,20 +218,45 @@ open class MapInfoWindowsFragment : Fragment(), OmhOnMapReadyCallback {
                     "User closed info window for marker '${marker.getTitle()}' at ${marker.getPosition()}"
                 )
 
-                Toast.makeText(
-                    requireContext(),
-                    R.string.info_window_closed,
-                    Toast.LENGTH_SHORT
-                ).show()
+                eventsToast.setText(R.string.info_window_closed)
+                eventsToast.show()
 
                 applyStateToImperativeControls(false) // getIsInfoWindowShown() will not yet be false
             }
         })
 
+        omhMap.setOnInfoWindowClickListener(object : OmhOnInfoWindowClickListener {
+            override fun onInfoWindowClick(marker: OmhMarker) {
+                Log.d(
+                    LOG_TAG,
+                    "User clicked info window for marker '${marker.getTitle()}' at ${marker.getPosition()}"
+                )
+
+                eventsToast.setText(R.string.info_window_clicked)
+                eventsToast.show()
+            }
+        })
+
+        omhMap.setOnInfoWindowLongClickListener(object : OmhOnInfoWindowLongClickListener {
+            override fun onInfoWindowLongClick(marker: OmhMarker) {
+                Log.d(
+                    LOG_TAG,
+                    "User long-clicked info window for marker '${marker.getTitle()}' at ${marker.getPosition()}"
+                )
+
+                eventsToast.setText(R.string.info_window_long_clicked)
+                eventsToast.show()
+            }
+        })
+
         demoShouldReRenderInfoWindowOnDraggingCheckbox?.isChecked = true
-        isVisibleCheckbox?.isChecked = customizableMarker?.getIsVisible() ?: true
-        isClickableCheckbox?.isClickable = customizableMarker?.getClickable() ?: true
-        hasSnippetCheckbox?.isChecked = customizableMarker?.getSnippet() != null
+        isVisibleCheckbox?.isChecked = demoMarker?.getIsVisible() ?: true
+        isClickableCheckbox?.isClickable = demoMarker?.getClickable() ?: true
+        hasSnippetCheckbox?.isChecked = demoMarker?.getSnippet() != null
+        anchorUSeekbar?.setProgress(50)
+        anchorVSeekbar?.setProgress(50)
+        anchorIWUSeekbar?.setProgress(50)
+        anchorIWVSeekbar?.setProgress(50)
 
         if (mapProviderName == "OpenStreetMap") {
             disabledAppearancePositions =
@@ -249,6 +305,14 @@ open class MapInfoWindowsFragment : Fragment(), OmhOnMapReadyCallback {
         return view
     }
 
+    private fun applyMarkerAnchor() {
+        demoMarker?.setAnchor(markerAnchor.first, markerAnchor.second)
+    }
+
+    private fun applyInfoWindowAnchor() {
+        demoMarker?.setInfoWindowAnchor(infoWindowAnchor.first, infoWindowAnchor.second)
+    }
+
     private fun applyCustomInfoWindowAppearance() {
         when (infoWindowAppearanceTypeNameResourceID[currentAppearancePosition]) {
             R.string.info_window_appearance_type_default -> {
@@ -273,9 +337,9 @@ open class MapInfoWindowsFragment : Fragment(), OmhOnMapReadyCallback {
     }
 
     private fun applyStateToImperativeControls(overrideIsInfoWindowOpen: Boolean? = null) {
-        val infoWindowControllable = customizableMarker?.getIsVisible() ?: false
+        val infoWindowControllable = demoMarker?.getIsVisible() ?: false
         val isInfoWindowOpen =
-            overrideIsInfoWindowOpen ?: customizableMarker?.getIsInfoWindowShown() ?: false
+            overrideIsInfoWindowOpen ?: demoMarker?.getIsInfoWindowShown() ?: false
 
         buttonOpenInfoWindow?.isEnabled = infoWindowControllable && !isInfoWindowOpen
         buttonHideInfoWindow?.isEnabled = infoWindowControllable && isInfoWindowOpen
@@ -289,19 +353,53 @@ open class MapInfoWindowsFragment : Fragment(), OmhOnMapReadyCallback {
         // isVisible
         isVisibleCheckbox = view.findViewById(R.id.checkBox_isVisible)
         isVisibleCheckbox?.setOnCheckedChangeListener { _, isChecked ->
-            customizableMarker?.setIsVisible(isChecked)
+            demoMarker?.setIsVisible(isChecked)
         }
 
         // isClickable
         isClickableCheckbox = view.findViewById(R.id.checkBox_isClickable)
         isClickableCheckbox?.setOnCheckedChangeListener { _, isChecked ->
-            customizableMarker?.setClickable(isChecked)
+            demoMarker?.setClickable(isChecked)
         }
 
         // hasSnippet
         hasSnippetCheckbox = view.findViewById(R.id.checkBox_hasSnippet)
         hasSnippetCheckbox?.setOnCheckedChangeListener { _, isChecked ->
-            customizableMarker?.setSnippet(if (isChecked) "A sample snippet with long description" else null)
+            demoMarker?.setSnippet(if (isChecked) "A sample snippet with long description" else null)
+        }
+
+        // anchorU
+        anchorUSeekbar = view.findViewById(R.id.panelSeekbar_anchorU)
+        anchorUSeekbar?.setOnProgressChangedCallback { progress: Int ->
+            markerAnchor = Pair(progress.toFloat() / 100f, markerAnchor.second)
+            applyMarkerAnchor()
+        }
+
+        // anchorV
+        anchorVSeekbar = view.findViewById(R.id.panelSeekbar_anchorV)
+        anchorVSeekbar?.setOnProgressChangedCallback { progress: Int ->
+            markerAnchor = Pair(markerAnchor.first, progress.toFloat() / 100f)
+            applyMarkerAnchor()
+        }
+
+        // anchorIWU
+        anchorIWUSeekbar = view.findViewById(R.id.panelSeekbar_anchorIWU)
+        anchorIWUSeekbar?.setOnProgressChangedCallback { progress: Int ->
+            infoWindowAnchor = Pair(progress.toFloat() / 100f, infoWindowAnchor.second)
+            applyInfoWindowAnchor()
+        }
+
+        // anchorIWV
+        anchorIWVSeekbar = view.findViewById(R.id.panelSeekbar_anchorIWV)
+        anchorIWVSeekbar?.setOnProgressChangedCallback { progress: Int ->
+            infoWindowAnchor = Pair(infoWindowAnchor.first, progress.toFloat() / 100f)
+            applyInfoWindowAnchor()
+        }
+
+        // rotation
+        rotationSeekbar = view.findViewById(R.id.panelSeekbar_rotation)
+        rotationSeekbar?.setOnProgressChangedCallback { rotation: Int ->
+            demoMarker?.setRotation(rotation.toFloat())
         }
 
         // appearance
@@ -317,14 +415,14 @@ open class MapInfoWindowsFragment : Fragment(), OmhOnMapReadyCallback {
         // imperative usage: showInfoWindow()
         buttonOpenInfoWindow = view.findViewById(R.id.button_openInfoWindow)
         buttonOpenInfoWindow?.setOnClickListener {
-            customizableMarker?.showInfoWindow()
+            demoMarker?.showInfoWindow()
             applyStateToImperativeControls(true)
         }
 
         // imperative usage: hideInfoWindow()
         buttonHideInfoWindow = view.findViewById(R.id.button_hideInfoWindow)
         buttonHideInfoWindow?.setOnClickListener {
-            customizableMarker?.hideInfoWindow()
+            demoMarker?.hideInfoWindow()
         }
 
         applyStateToImperativeControls()

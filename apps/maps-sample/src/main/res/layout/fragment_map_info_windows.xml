@@ -80,6 +80,26 @@
                 android:checked="true"
                 android:text="@string/snippet" />
 
+            <com.openmobilehub.android.maps.sample.customviews.PanelSeekbar
+                android:id="@+id/panelSeekbar_anchorIWU"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="15dp"
+                app:maxValue="100"
+                app:minValue="0"
+                app:titleText="@string/anchorIWU" />
+
+            <com.openmobilehub.android.maps.sample.customviews.PanelSeekbar
+                android:id="@+id/panelSeekbar_anchorIWV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="15dp"
+                app:maxValue="100"
+                app:minValue="0"
+                app:titleText="@string/anchorIWV" />
+
             <com.openmobilehub.android.maps.sample.customviews.PanelSpinner
                 android:id="@+id/panelSpinner_infoWindowAppearance"
                 android:layout_width="match_parent"
@@ -132,6 +152,49 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/hide_info_window" />
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/divider" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="10dp"
+                android:gravity="center"
+                android:text="@string/label_marker_properties"
+                android:textSize="18dp" />
+
+            <com.openmobilehub.android.maps.sample.customviews.PanelSeekbar
+                android:id="@+id/panelSeekbar_rotation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="15dp"
+                app:maxValue="360"
+                app:minValue="0"
+                app:titleText="@string/rotation" />
+
+            <com.openmobilehub.android.maps.sample.customviews.PanelSeekbar
+                android:id="@+id/panelSeekbar_anchorU"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="15dp"
+                app:maxValue="100"
+                app:minValue="0"
+                app:titleText="@string/anchorU" />
+
+            <com.openmobilehub.android.maps.sample.customviews.PanelSeekbar
+                android:id="@+id/panelSeekbar_anchorV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="15dp"
+                app:maxValue="100"
+                app:minValue="0"
+                app:titleText="@string/anchorV" />
         </LinearLayout>
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

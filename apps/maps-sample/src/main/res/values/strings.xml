@@ -111,4 +111,9 @@
     <string name="info_window_opened">Info window opened (listener)</string>
     <string name="info_window_closed">Info window closed (listener)</string>
     <string name="my_location_enabled">My Location Enabled</string>
+    <string name="info_window_clicked">Info window clicked</string>
+    <string name="info_window_long_clicked">Info window long-clicked</string>
+    <string name="anchorIWU">Info window anchor U</string>
+    <string name="anchorIWV">Info window anchor V</string>
+    <string name="label_marker_properties">Marker properties</string>
 </resources>
