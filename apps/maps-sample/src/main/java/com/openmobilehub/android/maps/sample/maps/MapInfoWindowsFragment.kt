@@ -31,6 +31,7 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import com.openmobilehub.android.maps.core.presentation.fragments.OmhMapFragment
+import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhInfoWindowViewFactory
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMap
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMarker
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnInfoWindowClickListener
@@ -75,6 +76,7 @@ open class MapInfoWindowsFragment : Fragment(), OmhOnMapReadyCallback {
     private var disabledAppearancePositions: HashSet<Int>? = null
     private var buttonOpenInfoWindow: Button? = null
     private var buttonHideInfoWindow: Button? = null
+    private var wasLastInfoWindowStateOpen: Boolean = false
 
     private var anchorUSeekbar: PanelSeekbar? = null
     private var anchorVSeekbar: PanelSeekbar? = null
@@ -83,9 +85,9 @@ open class MapInfoWindowsFragment : Fragment(), OmhOnMapReadyCallback {
 
     private var rotationSeekbar: PanelSeekbar? = null
     private var markerAnchor: Pair<Float, Float> =
-        Pair(Constants.ANCHOR_CENTER, Constants.ANCHOR_CENTER)
+        Pair(Constants.ANCHOR_CENTER, Constants.ANCHOR_CENTER).copy()
     private var infoWindowAnchor: Pair<Float, Float> =
-        Pair(Constants.ANCHOR_CENTER, Constants.ANCHOR_TOP)
+        Pair(Constants.ANCHOR_CENTER, Constants.ANCHOR_TOP).copy()
 
     private val infoWindowAppearanceTypeNameResourceID = intArrayOf(
         R.string.info_window_appearance_type_default,
@@ -157,12 +159,36 @@ open class MapInfoWindowsFragment : Fragment(), OmhOnMapReadyCallback {
         })
 
         omhMap.setOnMarkerClickListener(OmhOnMarkerClickListener { marker ->
-            // GoogleMaps don't support onInfoWindowOpen
-            if (mapProviderName == "GoogleMaps") {
-                applyStateToImperativeControls(true)
+            val executeToggle = {
+                if (marker.getIsInfoWindowShown()) {
+                    marker.hideInfoWindow()
+                    wasLastInfoWindowStateOpen = false
+                } else {
+                    marker.showInfoWindow()
+                    wasLastInfoWindowStateOpen = true
+                }
             }
 
-            false
+            if (mapProviderName == "GoogleMaps") {
+                // as per https://issuetracker.google.com/issues/35823077, the marker is
+                // automatically closed regardless of click handler return value, thus we
+                // don't want to toggle the info window state if it was already closed
+                if (wasLastInfoWindowStateOpen) {
+                    wasLastInfoWindowStateOpen =
+                        false // the window is now closed as per GMaps behaviour
+                } else {
+                    executeToggle() // open the window manually
+                }
+
+                // GoogleMaps don't support onInfoWindowOpen
+                applyStateToImperativeControls(marker.getIsInfoWindowShown())
+            } else {
+                executeToggle()
+
+                applyStateToImperativeControls()
+            }
+
+            true // prevent centering the map
         })
 
         omhMap.setOnMarkerDragListener(object : OmhOnMarkerDragListener {
@@ -171,8 +197,6 @@ open class MapInfoWindowsFragment : Fragment(), OmhOnMapReadyCallback {
                     LOG_TAG,
                     "User is dragging info window for marker '${marker.getTitle()}' at ${marker.getPosition()}"
                 )
-
-                maybeReRenderMarkerWindowIfShown(marker)
             }
 
             override fun onMarkerDragEnd(marker: OmhMarker) {
@@ -323,19 +347,25 @@ open class MapInfoWindowsFragment : Fragment(), OmhOnMapReadyCallback {
             }
 
             R.string.info_window_appearance_type_custom_window_view -> {
-                omhMap?.setCustomInfoWindowViewFactory {
-                    inflateInfoWindowView(true, it)
-                }
+                omhMap?.setCustomInfoWindowViewFactory(object : OmhInfoWindowViewFactory {
+                    override fun createInfoWindowView(marker: OmhMarker): View {
+                        return inflateInfoWindowView(true, marker)
+                    }
+                })
                 omhMap?.setCustomInfoWindowContentsViewFactory(null)
             }
 
             R.string.info_window_appearance_type_custom_contents_view -> {
                 omhMap?.setCustomInfoWindowViewFactory(null)
-                omhMap?.setCustomInfoWindowContentsViewFactory {
-                    inflateInfoWindowView(false, it)
-                }
+                omhMap?.setCustomInfoWindowContentsViewFactory(object : OmhInfoWindowViewFactory {
+                    override fun createInfoWindowView(marker: OmhMarker): View {
+                        return inflateInfoWindowView(false, marker)
+                    }
+                })
             }
         }
+
+        demoMarker?.let { maybeReRenderMarkerWindowIfShown(it) }
     }
 
     private fun applyStateToImperativeControls(overrideIsInfoWindowOpen: Boolean? = null) {
@@ -419,6 +449,7 @@ open class MapInfoWindowsFragment : Fragment(), OmhOnMapReadyCallback {
         buttonOpenInfoWindow = view.findViewById(R.id.button_openInfoWindow)
         buttonOpenInfoWindow?.setOnClickListener {
             demoMarker?.showInfoWindow()
+            wasLastInfoWindowStateOpen = true
             applyStateToImperativeControls(true)
         }
 
@@ -426,6 +457,8 @@ open class MapInfoWindowsFragment : Fragment(), OmhOnMapReadyCallback {
         buttonHideInfoWindow = view.findViewById(R.id.button_hideInfoWindow)
         buttonHideInfoWindow?.setOnClickListener {
             demoMarker?.hideInfoWindow()
+            wasLastInfoWindowStateOpen = false
+            // applyStateToImperativeControls will be called from the listener
         }
 
         applyStateToImperativeControls()

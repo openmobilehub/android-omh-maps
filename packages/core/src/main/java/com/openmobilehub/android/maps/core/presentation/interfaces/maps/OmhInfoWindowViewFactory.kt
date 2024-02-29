@@ -5,4 +5,6 @@ import android.view.View
 /**
  * Abstraction to generate customizable [View] based on an [OmhMarker].
  */
-typealias OmhInfoWindowViewFactory = (marker: OmhMarker) -> View
+interface OmhInfoWindowViewFactory {
+    fun createInfoWindowView(marker: OmhMarker): View
+}

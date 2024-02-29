@@ -90,7 +90,7 @@ Legend of support levels:
 | setOnCameraMoveStartedListener          |      ✅       |
 | setOnCameraIdleListener                 |      ✅       |
 | setOnMapLoadedCallback                  |      ✅       |
-| setOnMarkerClickListener                |      ✅       |
+| setOnMarkerClickListener                |      🟨       |
 | setOnMarkerDragListener                 |      ✅       |
 | setOnInfoWindowOpenStatusChangeListener |      🟨       |
 | setOnInfoWindowClickListener            |      ✅       |
@@ -102,9 +102,10 @@ Legend of support levels:
 
 Comments for partially supported 🟨 properties:
 
-| Property                                | Comments                                      |
-| --------------------------------------- | --------------------------------------------- |
-| setOnInfoWindowOpenStatusChangeListener | only the onInfoWindowClose event is supported |
+| Property                                | Comments                                                                                                                                                                |
+| --------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| setOnInfoWindowOpenStatusChangeListener | only the onInfoWindowClose event is supported                                                                                                                           |
+| setOnMarkerClickListener                | calling `getIsInfoWindowShown()` from on click handler will always return false as per this [wontfix GoogleMaps issue](https://issuetracker.google.com/issues/35823077) |
 
 ### Marker
 

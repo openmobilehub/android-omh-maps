@@ -76,20 +76,24 @@ internal class OmhMapImpl(
 
     init {
         // enable control of the info window behaviour handling with a placeholder listener
-        setOnMarkerClickListener { false }
+        setOnMarkerClickListener {
+            true // always handle the click event for parity to prevent centering the map on click
+        }
 
         // hook up the custom info window adapter
         googleMap.setInfoWindowAdapter(object : InfoWindowAdapter {
             override fun getInfoContents(marker: Marker): View? {
                 val omhMarker = markers[marker] ?: return null
 
-                return this@OmhMapImpl.customInfoWindowContentsViewFactory?.let { it(omhMarker) }
+                return this@OmhMapImpl.customInfoWindowContentsViewFactory?.createInfoWindowView(
+                    omhMarker
+                )
             }
 
             override fun getInfoWindow(marker: Marker): View? {
                 val omhMarker = markers[marker] ?: return null
 
-                return this@OmhMapImpl.customInfoWindowViewFactory?.let { it(omhMarker) }
+                return this@OmhMapImpl.customInfoWindowViewFactory?.createInfoWindowView(omhMarker)
             }
         })
     }
@@ -181,7 +185,7 @@ internal class OmhMapImpl(
                 }
             }
 
-            return@ClickHandler false
+            return@ClickHandler true // always handle the click event for parity to prevent centering the map on click
         }
     }
 

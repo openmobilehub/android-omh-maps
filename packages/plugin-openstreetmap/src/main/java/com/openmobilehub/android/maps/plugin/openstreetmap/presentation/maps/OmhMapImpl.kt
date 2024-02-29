@@ -500,7 +500,7 @@ internal class OmhMapImpl(
 
             // render the info window
             marker.infoWindow = customInfoWindowViewFactory?.let {
-                generateCustomViewMarkerWindow(omhMarker, it(omhMarker))
+                generateCustomViewMarkerWindow(omhMarker, it.createInfoWindowView(omhMarker))
             }
                 ?: generateDefaultMarkerWindow(omhMarker)
             // setting the above to null disables the info window, which is not what we want
