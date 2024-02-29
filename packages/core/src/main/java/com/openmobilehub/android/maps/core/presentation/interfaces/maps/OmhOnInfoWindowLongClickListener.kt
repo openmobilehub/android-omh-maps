@@ -19,7 +19,7 @@ package com.openmobilehub.android.maps.core.presentation.interfaces.maps
 /**
  * Abstraction to provide access to callback interface for when an info window has been clicked.
  */
-interface OmhOnInfoWindowLongClickListener {
+fun interface OmhOnInfoWindowLongClickListener {
     /**
      * Listener called when an info window is clicked.
      */

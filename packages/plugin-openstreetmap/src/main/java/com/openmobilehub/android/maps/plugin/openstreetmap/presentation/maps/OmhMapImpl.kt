@@ -400,15 +400,12 @@ internal class OmhMapImpl(
         reRenderInfoWindows()
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun bindMarkerWindowListeners(window: InfoWindow, omhMarker: OmhMarker) {
         // to achieve feature parity with GoogleMaps, the default onTouch behaviour of the default
         // marker info window needs to be disabled, i.e., automatic programmatic closing the window on touch
         // has to be suppressed
-        window.view.setOnTouchListener { v, _ ->
-            v.performClick() // for accessibility handling
-
-            false
-        }
+        window.view.setOnTouchListener { _, _ -> false }
 
         window.view.setOnClickListener {
             this.onInfoWindowClickListener?.onInfoWindowClick(omhMarker)

@@ -75,11 +75,6 @@ internal class OmhMapImpl(
     private var customInfoWindowContentsViewFactory: OmhInfoWindowViewFactory? = null
 
     init {
-        // enable control of the info window behaviour handling with a placeholder listener
-        setOnMarkerClickListener {
-            true // always handle the click event for parity to prevent centering the map on click
-        }
-
         // hook up the custom info window adapter
         googleMap.setInfoWindowAdapter(object : InfoWindowAdapter {
             override fun getInfoContents(marker: Marker): View? {
@@ -180,8 +175,6 @@ internal class OmhMapImpl(
             if (omhMarker != null) {
                 if (omhMarker.getClickable()) {
                     return@ClickHandler listener.onMarkerClick(omhMarker)
-                } else {
-                    return@ClickHandler true
                 }
             }
 

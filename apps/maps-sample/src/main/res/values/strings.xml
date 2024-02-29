@@ -116,4 +116,6 @@
     <string name="anchorIWU">Info window anchor U</string>
     <string name="anchorIWV">Info window anchor V</string>
     <string name="label_marker_properties">Marker properties</string>
+    <string name="window_should_toggle_on_marker_click">Info win. toggles on marker click</string>
+    <string name="window_should_hide_on_click">Info win. hides on click</string>
 </resources>

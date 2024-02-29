@@ -128,6 +128,20 @@
                 android:checked="true"
                 android:text="@string/window_should_rerender_on_drag" />
 
+            <CheckBox
+                android:id="@+id/checkBox_demoShouldToggleWindowOnMarkerClick"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="@string/window_should_toggle_on_marker_click" />
+
+            <CheckBox
+                android:id="@+id/checkBox_demoShouldHideWindowOnClick"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="@string/window_should_hide_on_click" />
+
             <com.google.android.material.divider.MaterialDivider
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/divider" />

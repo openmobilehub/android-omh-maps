@@ -206,6 +206,10 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
             }
         })
 
+        omhMap.setOnInfoWindowClickListener {
+            it.hideInfoWindow()
+        }
+
         isVisibleCheckbox?.isChecked = customizableMarker?.getIsVisible() ?: true
         isFlatCheckbox?.isChecked = customizableMarker?.getIsFlat() ?: false
         isClickableCheckbox?.isClickable = customizableMarker?.getClickable() ?: true

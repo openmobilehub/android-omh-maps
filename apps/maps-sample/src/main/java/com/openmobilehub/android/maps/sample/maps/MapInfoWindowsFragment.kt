@@ -34,8 +34,6 @@ import com.openmobilehub.android.maps.core.presentation.fragments.OmhMapFragment
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhInfoWindowViewFactory
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMap
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMarker
-import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnInfoWindowClickListener
-import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnInfoWindowLongClickListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnInfoWindowOpenStatusChangeListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMapReadyCallback
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMarkerClickListener
@@ -70,6 +68,8 @@ open class MapInfoWindowsFragment : Fragment(), OmhOnMapReadyCallback {
     private var hasSnippetCheckbox: CheckBox? = null
     private var isVisibleCheckbox: CheckBox? = null
     private var demoShouldReRenderInfoWindowOnDraggingCheckbox: CheckBox? = null
+    private var demoShouldHideWindowOnClickCheckbox: CheckBox? = null
+    private var demoShouldToggleWindowOnMarkerClickCheckbox: CheckBox? = null
     private var appearanceSpinner: PanelSpinner? = null
     private var currentAppearancePosition: Int = 0
     private var mapProviderName: String? = null
@@ -159,6 +159,10 @@ open class MapInfoWindowsFragment : Fragment(), OmhOnMapReadyCallback {
         })
 
         omhMap.setOnMarkerClickListener(OmhOnMarkerClickListener { marker ->
+            if (demoShouldToggleWindowOnMarkerClickCheckbox?.isChecked != true) {
+                return@OmhOnMarkerClickListener false
+            }
+
             val executeToggle = {
                 if (marker.getIsInfoWindowShown()) {
                     marker.hideInfoWindow()
@@ -251,31 +255,33 @@ open class MapInfoWindowsFragment : Fragment(), OmhOnMapReadyCallback {
             }
         })
 
-        omhMap.setOnInfoWindowClickListener(object : OmhOnInfoWindowClickListener {
-            override fun onInfoWindowClick(marker: OmhMarker) {
-                Log.d(
-                    LOG_TAG,
-                    "User clicked info window for marker '${marker.getTitle()}' at ${marker.getPosition()}"
-                )
+        omhMap.setOnInfoWindowClickListener { marker ->
+            Log.d(
+                LOG_TAG,
+                "User clicked info window for marker '${marker.getTitle()}' at ${marker.getPosition()}"
+            )
 
-                eventsToast.setText(R.string.info_window_clicked)
-                eventsToast.show()
+            eventsToast.setText(R.string.info_window_clicked)
+            eventsToast.show()
+
+            if (demoShouldHideWindowOnClickCheckbox?.isChecked == true) {
+                marker.hideInfoWindow()
             }
-        })
+        }
 
-        omhMap.setOnInfoWindowLongClickListener(object : OmhOnInfoWindowLongClickListener {
-            override fun onInfoWindowLongClick(marker: OmhMarker) {
-                Log.d(
-                    LOG_TAG,
-                    "User long-clicked info window for marker '${marker.getTitle()}' at ${marker.getPosition()}"
-                )
+        omhMap.setOnInfoWindowLongClickListener { marker ->
+            Log.d(
+                LOG_TAG,
+                "User long-clicked info window for marker '${marker.getTitle()}' at ${marker.getPosition()}"
+            )
 
-                eventsToast.setText(R.string.info_window_long_clicked)
-                eventsToast.show()
-            }
-        })
+            eventsToast.setText(R.string.info_window_long_clicked)
+            eventsToast.show()
+        }
 
         demoShouldReRenderInfoWindowOnDraggingCheckbox?.isChecked = true
+        demoShouldHideWindowOnClickCheckbox?.isChecked = true
+        demoShouldToggleWindowOnMarkerClickCheckbox?.isChecked = true
         isVisibleCheckbox?.isChecked = demoMarker?.getIsVisible() ?: true
         isClickableCheckbox?.isClickable = demoMarker?.getClickable() ?: true
         hasSnippetCheckbox?.isChecked = demoMarker?.getSnippet() != null
@@ -381,6 +387,14 @@ open class MapInfoWindowsFragment : Fragment(), OmhOnMapReadyCallback {
         // demoShouldReRenderInfoWindowOnDraggingCheckbox
         demoShouldReRenderInfoWindowOnDraggingCheckbox =
             view.findViewById(R.id.checkBox_demoShouldReRenderInfoWindowOnDragging)
+
+        // demoShouldToggleWindowOnMarkerClickCheckbox
+        demoShouldToggleWindowOnMarkerClickCheckbox =
+            view.findViewById(R.id.checkBox_demoShouldToggleWindowOnMarkerClick)
+
+        // demoShouldHideWindowOnClickCheckbox
+        demoShouldHideWindowOnClickCheckbox =
+            view.findViewById(R.id.checkBox_demoShouldHideWindowOnClick)
 
         // isVisible
         isVisibleCheckbox = view.findViewById(R.id.checkBox_isVisible)
