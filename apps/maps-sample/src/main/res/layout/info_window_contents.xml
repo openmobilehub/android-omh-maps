@@ -10,6 +10,7 @@
         android:id="@+id/coordinatesTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="@color/black"
         app:drawableTopCompat="@drawable/ic_map_marker" />
 
     <LinearLayout
@@ -22,6 +23,7 @@
             android:id="@+id/titleTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@color/black"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -34,6 +36,7 @@
             android:id="@+id/descriptionTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@color/black"
             android:textSize="14sp" />
     </LinearLayout>
 </LinearLayout>

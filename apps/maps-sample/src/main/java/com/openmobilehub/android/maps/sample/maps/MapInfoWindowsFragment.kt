@@ -189,6 +189,8 @@ open class MapInfoWindowsFragment : Fragment(), OmhOnMapReadyCallback {
                     LOG_TAG,
                     "User started dragging info window for marker '${marker.getTitle()}' at ${marker.getPosition()}"
                 )
+
+                maybeReRenderMarkerWindowIfShown(marker)
             }
         })
 
