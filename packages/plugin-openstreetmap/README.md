@@ -80,21 +80,20 @@ Comments for partially supported 🟨 properties:
 
 #### OmhMarkerOptions
 
-#### OmhMarkerOptions
-
-| Property        | Support level |
-| --------------- | :-----------: |
-| position        |      ✅       |
-| title           |      ✅       |
-| draggable       |      ✅       |
-| anchor          |      ✅       |
-| alpha           |      ✅       |
-| snippet         |      ✅       |
-| isVisible       |      ✅       |
-| isFlat          |      ✅       |
-| rotation        |      ✅       |
-| backgroundColor |      ❌       |
-| clickable       |      ✅       |
+| Property         | Support level |
+| ---------------- | :-----------: |
+| position         |      ✅       |
+| title            |      ✅       |
+| draggable        |      ✅       |
+| anchor           |      ✅       |
+| infoWindowAnchor |      ✅       |
+| alpha            |      ✅       |
+| snippet          |      ✅       |
+| isVisible        |      ✅       |
+| isFlat           |      ✅       |
+| rotation         |      ✅       |
+| backgroundColor  |      ❌       |
+| clickable        |      ✅       |
 
 #### OmhMarker
 

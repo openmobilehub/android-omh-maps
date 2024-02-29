@@ -102,28 +102,29 @@ Legend of support levels:
 
 Comments for partially supported 🟨 properties:
 
-| Property                                | Comments                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| --------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| setOnInfoWindowOpenStatusChangeListener | only the onInfoWindowClose event is supported                                                                                                                                                                                                                                                                                                                                                                                                                                |
-| setOnMarkerClickListener                | calling `getIsInfoWindowShown()` from on click handler will always return false as per this [wontfix GoogleMaps issue](https://issuetracker.google.com/issues/35823077); moreover, the default behaviour of the on click listener (or when a custom handler returns `false`) is to center the map on the clicked marker; finally, there is a non-overrideable behaviour of the Google Maps plugin, which hides (closes) an open info window when the map is tapped elsewhere |
+| Property                                | Comments                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| setOnInfoWindowOpenStatusChangeListener | only the onInfoWindowClose event is supported                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| setOnMarkerClickListener                | (1) calling `getIsInfoWindowShown()` from on click handler will always return false as per this [wontfix GoogleMaps issue](https://issuetracker.google.com/issues/35823077) <br/> (2) the default behaviour of the on click listener (or when a custom handler returns `false`) is to center the map on the clicked marker <br/> (3) there is a non-overrideable behaviour of the Google Maps plugin, which hides (closes) an open info window when the map is tapped elsewhere <br/> |
 
 ### Marker
 
 #### OmhMarkerOptions
 
-| Property        | Support level |
-| --------------- | :-----------: |
-| position        |      ✅       |
-| title           |      ✅       |
-| draggable       |      ✅       |
-| anchor          |      ✅       |
-| alpha           |      ✅       |
-| snippet         |      ✅       |
-| isVisible       |      ✅       |
-| isFlat          |      ✅       |
-| rotation        |      ✅       |
-| backgroundColor |      🟨       |
-| clickable       |      ✅       |
+| Property         | Support level |
+| ---------------- | :-----------: |
+| position         |      ✅       |
+| title            |      ✅       |
+| draggable        |      ✅       |
+| anchor           |      ✅       |
+| infoWindowAnchor |      ✅       |
+| alpha            |      ✅       |
+| snippet          |      ✅       |
+| isVisible        |      ✅       |
+| isFlat           |      ✅       |
+| rotation         |      ✅       |
+| backgroundColor  |      🟨       |
+| clickable        |      ✅       |
 
 Comments for partially supported 🟨 properties:
 
@@ -158,6 +159,13 @@ Comments for partially supported 🟨 properties:
 | setRotation         |      ✅       |
 | getBackgroundColor  |      ❌       |
 | setBackgroundColor  |      🟨       |
+
+Comments for partially supported 🟨 properties:
+
+| Property            | Comments                                                                                                                                                                                 |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| setInfoWindowAnchor | as per [this issue](https://issuetracker.google.com/issues/298082161), sometimes the info window is anchored to the marker's lat/lng instead of the set anchor - the issue is still open |
+| setBackgroundColor  | only hue (H) component of HSV color representation is controllable, alpha channel is unsupported                                                                                         |
 
 ### Polyline
 
