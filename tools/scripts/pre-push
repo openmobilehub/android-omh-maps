@@ -18,7 +18,7 @@ echo "Running git pre-commit hook .."
 RESULT=$?
 
 if [[ $RESULT -ne 0 ]]; then
-  banner_echo "${RED} Pre push validation failed. If its code stytle issue please run ./gradlew detekt -PautoCorrect=true. ${NC}"
+  banner_echo "${RED} Pre push validation failed. If it is a code style issue please run ./gradlew detekt -PautoCorrect=true. ${NC}"
   exit 1
 else
   banner_echo "${GREEN} Everything is ok. Push has been done. ${NC}"

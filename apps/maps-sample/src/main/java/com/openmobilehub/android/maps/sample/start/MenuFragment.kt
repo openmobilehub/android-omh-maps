@@ -81,6 +81,11 @@ class MenuFragment : Fragment() {
                 R.id.action_menuFragment_to_mapMarkersFragment
             ),
             MenuListItem(
+                "Info Windows Map",
+                "Map showcasing info windows",
+                R.id.action_menuFragment_to_mapInfoWindowsFragment
+            ),
+            MenuListItem(
                 "Polyline Map",
                 "Map showcasing the polylines",
                 R.id.action_menuFragment_to_mapPolylinesFragment

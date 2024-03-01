@@ -33,6 +33,7 @@ import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMarke
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMapReadyCallback
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMarkerClickListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMarkerDragListener
+import com.openmobilehub.android.maps.core.presentation.models.Constants
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
 import com.openmobilehub.android.maps.core.utils.NetworkConnectivityChecker
@@ -66,7 +67,8 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
     private var appearanceSpinner: PanelSpinner? = null
     private var colorSeekbar: PanelColorSeekbar? = null
     private var rotationSeekbar: PanelSeekbar? = null
-    private var customizableMarkerAnchor: Pair<Float, Float> = Pair(0.5f, 0.5f)
+    private var customizableMarkerAnchor: Pair<Float, Float> =
+        Pair(Constants.ANCHOR_CENTER, Constants.ANCHOR_CENTER)
     private var customBackgroundColor: Int = 0
     private var currentAppearancePosition: Int = 0
     private var mapProviderName: String? = null
@@ -151,7 +153,7 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
         omhMap.setOnMarkerClickListener(OmhOnMarkerClickListener { marker ->
             Log.d(
                 LOG_TAG,
-                "User clicked marker '${marker.getTitle()}' at ${marker.getPosition().toString()}"
+                "User clicked marker '${marker.getTitle()}' at ${marker.getPosition()}"
             )
 
             Toast.makeText(
@@ -203,6 +205,10 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
                 ).show()
             }
         })
+
+        omhMap.setOnInfoWindowClickListener {
+            it.hideInfoWindow()
+        }
 
         isVisibleCheckbox?.isChecked = customizableMarker?.getIsVisible() ?: true
         isFlatCheckbox?.isChecked = customizableMarker?.getIsFlat() ?: false
@@ -321,10 +327,6 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
             currentAppearancePosition = position
             applyCustomizableMarkerAppearance()
         }
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
     }
 
     override fun onResume() {

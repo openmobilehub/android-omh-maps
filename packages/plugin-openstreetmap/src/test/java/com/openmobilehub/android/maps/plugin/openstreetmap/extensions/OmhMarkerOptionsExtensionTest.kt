@@ -17,11 +17,12 @@
 package com.openmobilehub.android.maps.plugin.openstreetmap.extensions
 
 import android.content.Context
-import android.content.res.Resources
 import android.graphics.drawable.Drawable
+import com.openmobilehub.android.maps.core.presentation.models.Constants
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
 import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
+import com.openmobilehub.android.maps.plugin.openstreetmap.presentation.maps.OmhMapImpl
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -53,15 +54,15 @@ internal class OmhMarkerOptionsExtensionTest {
         isVisible = false
     }
 
-    private val mapView = mockk<MapView>()
+    private val mapView = mockk<MapView>(relaxed = true)
+    private val omhMap = mockk<OmhMapImpl>(relaxed = true)
     private val mockLogger: UnsupportedFeatureLogger =
         mockk<UnsupportedFeatureLogger>(relaxed = true)
-    private val context = mockk<Context>()
-    private val repository = mockk<MapViewRepository>()
-    private val defaultMarkerInfoWindow = mockk<MarkerInfoWindow>()
+    private val context = mockk<Context>(relaxed = true)
+    private val repository = mockk<MapViewRepository>(relaxed = true)
+    private val defaultMarkerInfoWindow = mockk<MarkerInfoWindow>(relaxed = true)
 
     init {
-        every { context.resources } returns mockk<Resources>()
         every { repository.defaultMarkerIcon } returns mockk<Drawable>()
         every { defaultMarkerInfoWindow.isOpen } returns false
         every { repository.defaultMarkerInfoWindow } returns defaultMarkerInfoWindow
@@ -73,7 +74,7 @@ internal class OmhMarkerOptionsExtensionTest {
 
     @Test
     fun `toMarkerOptions converts OmhMarkerOptions with icon to MarkerOptions`() {
-        val markerOptions = omhMarkerOptionsWithIcon.toMarkerOptions(mapView, mockLogger)
+        val markerOptions = omhMarkerOptionsWithIcon.toMarkerOptions(omhMap, mapView, mockLogger)
 
         assertEquals(
             omhMarkerOptionsWithIcon.position.latitude,
@@ -106,7 +107,7 @@ internal class OmhMarkerOptionsExtensionTest {
 
     @Test
     fun `toMarkerOptions converts OmhMarkerOptions with isVisible set to false to MarkerOptions`() {
-        val markerOptions = omhMarkerOptionsInvisible.toMarkerOptions(mapView, mockLogger)
+        val markerOptions = omhMarkerOptionsInvisible.toMarkerOptions(omhMap, mapView, mockLogger)
 
         assertEquals(
             omhMarkerOptionsInvisible.position.latitude,
@@ -129,8 +130,37 @@ internal class OmhMarkerOptionsExtensionTest {
     fun `toMarkerOptions should return log setter not supported for backgroundColor property`() {
         OmhMarkerOptions().apply {
             backgroundColor = 0xFFFFFF
-        }.toMarkerOptions(mapView, mockLogger)
+        }.toMarkerOptions(omhMap, mapView, mockLogger)
 
         verify { mockLogger.logSetterNotSupported("backgroundColor") }
+    }
+
+    @Test
+    fun `toMarkerOptions has proper default constructor arguments`() {
+        val defaultOmhMarkerOptions = OmhMarkerOptions()
+
+        assertEquals(defaultOmhMarkerOptions.draggable, false)
+        assertEquals(
+            defaultOmhMarkerOptions.anchor,
+            Pair(
+                Constants.ANCHOR_CENTER,
+                Constants.ANCHOR_CENTER
+            )
+        )
+        assertEquals(
+            defaultOmhMarkerOptions.infoWindowAnchor,
+            Pair(
+                Constants.ANCHOR_CENTER,
+                Constants.ANCHOR_TOP
+            )
+        )
+        assertEquals(defaultOmhMarkerOptions.alpha, Constants.DEFAULT_ALPHA)
+        assertEquals(defaultOmhMarkerOptions.snippet, null)
+        assertEquals(defaultOmhMarkerOptions.isVisible, true)
+        assertEquals(defaultOmhMarkerOptions.isFlat, false)
+        assertEquals(defaultOmhMarkerOptions.rotation, Constants.DEFAULT_ROTATION)
+        assertEquals(defaultOmhMarkerOptions.backgroundColor, null)
+        assertEquals(defaultOmhMarkerOptions.icon, null)
+        assertEquals(defaultOmhMarkerOptions.clickable, true)
     }
 }
