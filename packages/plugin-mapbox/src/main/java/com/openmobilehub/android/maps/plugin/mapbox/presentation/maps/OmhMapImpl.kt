@@ -51,11 +51,13 @@ import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolygonOptions
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolylineOptions
 import com.openmobilehub.android.maps.core.utils.logging.Logger
+import com.openmobilehub.android.maps.plugin.mapbox.extensions.addOmhMarker
 import com.openmobilehub.android.maps.plugin.mapbox.utils.Constants
 import com.openmobilehub.android.maps.plugin.mapbox.utils.CoordinateConverter
 import com.openmobilehub.android.maps.plugin.mapbox.utils.DimensionConverter
 import com.openmobilehub.android.maps.plugin.mapbox.utils.JSONUtil
 import com.openmobilehub.android.maps.plugin.mapbox.utils.commonLogger
+import java.util.UUID
 
 @SuppressWarnings("TooManyFunctions")
 internal class OmhMapImpl(
@@ -74,6 +76,8 @@ internal class OmhMapImpl(
 
     private var onMyLocationButtonClickListener: OmhOnMyLocationButtonClickListener? = null
 
+    private val markers = mutableMapOf<UUID, OmhMarker>()
+
     init {
         setupMapViewUIControls()
     }
@@ -81,8 +85,12 @@ internal class OmhMapImpl(
     override val providerName: String
         get() = Constants.PROVIDER_NAME
 
-    override fun addMarker(options: OmhMarkerOptions): OmhMarker? {
-        return null
+    override fun addMarker(options: OmhMarkerOptions): OmhMarker {
+        val omhMarker = options.addOmhMarker(mapView)
+
+        markers[omhMarker.getMarkerUUID()] = omhMarker
+
+        return omhMarker
     }
 
     override fun addPolyline(options: OmhPolylineOptions): OmhPolyline? {
@@ -180,11 +188,33 @@ internal class OmhMapImpl(
     }
 
     override fun setOnMarkerClickListener(listener: OmhOnMarkerClickListener) {
-        // To be implemented
+//        markers.forEach { (_, omhMarker) ->
+//            val pointAnnotationManager = getPointAnnotationManager(omhMarker)
+//
+//            pointAnnotationManager.addClickListener { _ ->
+//                listener.onMarkerClick(omhMarker)
+//            }
+//        }
     }
 
     override fun setOnMarkerDragListener(listener: OmhOnMarkerDragListener) {
-        // To be implemented
+//        markers.forEach { (_, omhMarker) ->
+//            val pointAnnotationManager = getPointAnnotationManager(omhMarker)
+//
+//            pointAnnotationManager.addDragListener(object : OnPointAnnotationDragListener {
+//                override fun onAnnotationDrag(annotation: Annotation<*>) {
+//                    listener.onMarkerDrag(omhMarker)
+//                }
+//
+//                override fun onAnnotationDragFinished(annotation: Annotation<*>) {
+//                    listener.onMarkerDragEnd(omhMarker)
+//                }
+//
+//                override fun onAnnotationDragStarted(annotation: Annotation<*>) {
+//                    listener.onMarkerDragStart(omhMarker)
+//                }
+//            })
+//        }
     }
 
     override fun setOnPolylineClickListener(listener: OmhOnPolylineClickListener) {

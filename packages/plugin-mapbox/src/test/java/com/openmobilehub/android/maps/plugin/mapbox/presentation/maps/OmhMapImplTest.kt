@@ -16,6 +16,9 @@ import com.mapbox.maps.MapView
 import com.mapbox.maps.MapboxMap
 import com.mapbox.maps.Style
 import com.mapbox.maps.plugin.Plugin
+import com.mapbox.maps.plugin.annotation.AnnotationPlugin
+import com.mapbox.maps.plugin.annotation.AnnotationType
+import com.mapbox.maps.plugin.annotation.generated.PointAnnotationManager
 import com.mapbox.maps.plugin.compass.CompassPlugin
 import com.mapbox.maps.plugin.gestures.gestures
 import com.mapbox.maps.plugin.locationcomponent.location
@@ -49,6 +52,8 @@ class OmhMapImplTest {
     private val scaleBarPlugin = mockk<ScaleBarPlugin>(relaxed = true)
     private val compassPlugin = mockk<CompassPlugin>(relaxed = true)
     private val viewportPlugin = mockk<ViewportPlugin>(relaxed = true)
+    private val annotationPlugin = mockk<AnnotationPlugin>(relaxed = true)
+    private val pointAnnotationManager = mockk<PointAnnotationManager>(relaxed = true)
     private val context = mockk<Context>(relaxed = true)
     private val myLocationIcon = mockk<MyLocationIcon>(relaxed = true)
     private val logger = mockk<Logger>(relaxed = true)
@@ -58,6 +63,13 @@ class OmhMapImplTest {
         every { map.getPlugin<ScaleBarPlugin>(Plugin.MAPBOX_SCALEBAR_PLUGIN_ID) } returns scaleBarPlugin
         every { map.getPlugin<CompassPlugin>(Plugin.MAPBOX_COMPASS_PLUGIN_ID) } returns compassPlugin
         every { map.getPlugin<ViewportPlugin>(Plugin.MAPBOX_VIEWPORT_PLUGIN_ID) } returns viewportPlugin
+        every {
+            annotationPlugin.createAnnotationManager(
+                AnnotationType.PointAnnotation,
+                any()
+            )
+        } returns pointAnnotationManager
+        every { map.getPlugin<AnnotationPlugin>(Plugin.MAPBOX_ANNOTATION_PLUGIN_ID) } returns annotationPlugin
         every { map.mapboxMap } returns mockk<MapboxMap>(relaxed = true)
 
         mockkObject(JSONUtil)

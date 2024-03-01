@@ -16,6 +16,7 @@
 
 package com.openmobilehub.android.maps.sample.maps
 
+import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
@@ -67,7 +68,7 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
     private var colorSeekbar: PanelColorSeekbar? = null
     private var rotationSeekbar: PanelSeekbar? = null
     private var customizableMarkerAnchor: Pair<Float, Float> = Pair(0.5f, 0.5f)
-    private var customBackgroundColor: Int = 0
+    private var customBackgroundColor: Int = Color.parseColor("#FFEA393F")
     private var currentAppearancePosition: Int = 0
     private var mapProviderName: String? = null
     private var disabledAppearancePositions: HashSet<Int>? = null
@@ -135,9 +136,15 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
                 latitude = PRIME_MERIDIAN.latitude + 0.0016
                 longitude = PRIME_MERIDIAN.longitude - 0.002
             }
-            backgroundColor = 0x00FF12 // green-ish
+            backgroundColor = 0xFF005918.toInt() // green-ish
             draggable = true
         })
+
+        val eventsToast = Toast.makeText(
+            context,
+            "",
+            Toast.LENGTH_SHORT
+        )
 
         customizableMarker = omhMap.addMarker(OmhMarkerOptions().apply {
             title = "Configurable test marker"
@@ -151,14 +158,11 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
         omhMap.setOnMarkerClickListener(OmhOnMarkerClickListener { marker ->
             Log.d(
                 LOG_TAG,
-                "User clicked marker '${marker.getTitle()}' at ${marker.getPosition().toString()}"
+                "User clicked marker '${marker.getTitle()}' at ${marker.getPosition()}"
             )
 
-            Toast.makeText(
-                context,
-                "Marker '${marker.getTitle()}' has been clicked",
-                Toast.LENGTH_SHORT
-            ).show()
+            eventsToast.setText("Marker '${marker.getTitle()}' has been clicked")
+            eventsToast.show()
 
             false
         })
@@ -181,11 +185,8 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
                     }"
                 )
 
-                Toast.makeText(
-                    context,
-                    "Marker '${marker.getTitle()}' has just ended being dragged",
-                    Toast.LENGTH_SHORT
-                ).show()
+                eventsToast.setText("Marker '${marker.getTitle()}' has just ended being dragged")
+                eventsToast.show()
             }
 
             override fun onMarkerDragStart(marker: OmhMarker) {
@@ -196,11 +197,8 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
                     }"
                 )
 
-                Toast.makeText(
-                    context,
-                    "Marker '${marker.getTitle()}' is being dragged",
-                    Toast.LENGTH_SHORT
-                ).show()
+                eventsToast.setText("Marker '${marker.getTitle()}' is being dragged")
+                eventsToast.show()
             }
         })
 
@@ -321,10 +319,6 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
             currentAppearancePosition = position
             applyCustomizableMarkerAppearance()
         }
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
     }
 
     override fun onResume() {

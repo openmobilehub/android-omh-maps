@@ -18,6 +18,7 @@ package com.openmobilehub.android.maps.core.presentation.models
 
 import android.graphics.drawable.Drawable
 import android.os.Parcelable
+import androidx.annotation.ColorInt
 import androidx.annotation.Keep
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
@@ -36,6 +37,7 @@ object Constants {
  *
  * @property position The location for the marker.
  * @property title The title for the marker.
+ * @property clickable Whether the marker is clickable. Default value: `true`
  * @property draggable Whether the marker is draggable. Default value: `false`
  * @property anchor The anchor for the marker image. Default: `Pair(0.5f, 0.5f)`
  * @property alpha The alpha (transparency) of the marker. Default: `1.0f`
@@ -44,14 +46,19 @@ object Constants {
  * @property isFlat Boolean representing whether the marker is flat (stuck to the map)
  * or is a billboard (rotates and tilts with the camera).
  * @property rotation The rotation of the marker (degrees, clockwise) with respect to the map. Default: `0f`
- * @property backgroundColor The color of the marker or resets the color to the provider's default value if null.
+ * @property backgroundColor The ARGB color of the marker or resets the color to the provider's default value if null.
+ *
+ * **NOTE:** please remember to pass color integers with set bytes corresponding
+ * to alpha channel (e.g. of shape `0xAARRGGBB`).
+ * @property icon The icon [Drawable] for the marker. Overrides [backgroundColor] if not null.
  */
 @Keep
 @Parcelize
 @SuppressWarnings("LongParameterList")
-class OmhMarkerOptions(
+data class OmhMarkerOptions(
     var position: OmhCoordinate = OmhCoordinate(),
     var title: String? = null,
+    var clickable: Boolean = true,
     var draggable: Boolean = false,
     var anchor: Pair<Float, Float> = Pair(Constants.DEFAULT_ANCHOR, Constants.DEFAULT_ANCHOR),
     var alpha: Float = Constants.DEFAULT_ALPHA,
@@ -59,9 +66,6 @@ class OmhMarkerOptions(
     var isVisible: Boolean = true,
     var isFlat: Boolean = false,
     var rotation: Float = Constants.DEFAULT_ROTATION,
-    var backgroundColor: Int? = null,
-    var clickable: Boolean = true
-) : Parcelable {
-    @IgnoredOnParcel
-    var icon: Drawable? = null
-}
+    @ColorInt var backgroundColor: Int? = null,
+    @IgnoredOnParcel var icon: Drawable? = null
+) : Parcelable
