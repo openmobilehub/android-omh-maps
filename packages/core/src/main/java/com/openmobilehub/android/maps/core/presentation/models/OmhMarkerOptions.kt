@@ -40,7 +40,7 @@ object Constants {
  * @property title The title for the marker.
  * @property draggable Whether the marker is draggable. Default value: `false`
  * @property anchor The anchor for the marker image. Default: `Pair(0.5f, 0.5f)`
- * @property infoWindowAnchor The anchor for the marker image. Default: `Pair(0.5f, 0.0f)`
+ * @property infoWindowAnchor The anchor for the info window. Default: `Pair(0.5f, 0.0f)`
  * @property alpha The alpha (transparency) of the marker. Default: `1.0f`
  * @property snippet The text snippet to be shown below marker title.
  * @property isVisible Boolean indicating whether the marker is visible.

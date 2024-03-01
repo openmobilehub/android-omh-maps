@@ -66,11 +66,6 @@ class MenuFragment : Fragment() {
 
         val items = listOf(
             MenuListItem(
-                "Info Windows Map",
-                "Map showcasing info windows",
-                R.id.action_menuFragment_to_mapInfoWindowsFragment
-            ),
-            MenuListItem(
                 "Camera Map",
                 "Map showcasing the camera features",
                 R.id.action_menuFragment_to_mapCameraFragment
@@ -86,6 +81,11 @@ class MenuFragment : Fragment() {
                 R.id.action_menuFragment_to_mapMarkersFragment
             ),
             MenuListItem(
+                "Info Windows Map",
+                "Map showcasing info windows",
+                R.id.action_menuFragment_to_mapInfoWindowsFragment
+            ),
+            MenuListItem(
                 "Polyline Map",
                 "Map showcasing the polylines",
                 R.id.action_menuFragment_to_mapPolylinesFragment
@@ -99,11 +99,6 @@ class MenuFragment : Fragment() {
                 "Custom Styles Map",
                 "Map showcasing custom styles",
                 R.id.action_menuFragment_to_mapStylesFragment
-            ),
-            MenuListItem(
-                "Location Sharing Map",
-                "Map showcasing location sharing via deep links",
-                R.id.action_menuFragment_to_mapLocationPickerFragment
             ),
         )
 

@@ -56,7 +56,7 @@ omhMarker?.showInfoWindow()
 This method will hide the info window if it is currently open or do nothing otherwise.
 
 ```kotlin
-omhMarker?.showInfoWindow()
+omhMarker?.hideInfoWindow()
 ```
 
 ## Custom views

@@ -19,7 +19,6 @@ package com.openmobilehub.android.maps.sample.maps
 import android.annotation.SuppressLint
 import android.graphics.Typeface
 import android.os.Bundle
-import android.os.Handler
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -49,7 +48,6 @@ import com.openmobilehub.android.maps.sample.databinding.FragmentMapInfoWindowsB
 import com.openmobilehub.android.maps.sample.utils.Constants.DEFAULT_ZOOM_LEVEL
 import com.openmobilehub.android.maps.sample.utils.Constants.PERMISSIONS
 import com.openmobilehub.android.maps.sample.utils.Constants.PRIME_MERIDIAN
-import com.openmobilehub.android.maps.sample.utils.Constants.SHOW_MESSAGE_TIME
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -58,8 +56,6 @@ open class MapInfoWindowsFragment : Fragment(), OmhOnMapReadyCallback {
     private var _binding: FragmentMapInfoWindowsBinding? = null
     private val binding get() = _binding!!
     private var networkConnectivityChecker: NetworkConnectivityChecker? = null
-    private var handler: Handler? = null
-    private var runnable: Runnable? = null
 
     private var omhMap: OmhMap? = null
     private var demoMarker: OmhMarker? = null
@@ -476,18 +472,6 @@ open class MapInfoWindowsFragment : Fragment(), OmhOnMapReadyCallback {
         }
 
         applyStateToImperativeControls()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        runnable?.let { validRunnable ->
-            handler?.postDelayed(validRunnable, SHOW_MESSAGE_TIME)
-        }
-    }
-
-    override fun onPause() {
-        super.onPause()
-        handler?.removeCallbacksAndMessages(null)
     }
 
     override fun onDestroyView() {
