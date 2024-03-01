@@ -92,31 +92,34 @@ Comments for partially supported 🟨 properties:
 
 #### OmhMarker
 
-| Method              | Support level |
-| ------------------- | :-----------: |
-| getPosition         |       ?       |
-| setPosition         |       ?       |
-| getTitle            |       ?       |
-| setTitle            |       ?       |
-| getClickable        |       ?       |
-| setClickable        |       ?       |
-| getDraggable        |       ?       |
-| setDraggable        |       ?       |
-| setAnchor           |       ?       |
-| setInfoWindowAnchor |       ?       |
-| getAlpha            |       ?       |
-| setAlpha            |       ?       |
-| getSnippet          |       ?       |
-| setSnippet          |       ?       |
-| setIcon             |       ?       |
-| getIsVisible        |       ?       |
-| setIsVisible        |       ?       |
-| getIsFlat           |       ?       |
-| setIsFlat           |       ?       |
-| getRotation         |       ?       |
-| setRotation         |       ?       |
-| getBackgroundColor  |       ?       |
-| setBackgroundColor  |       ?       |
+| Method               | Support level |
+| -------------------- | :-----------: |
+| getPosition          |       ?       |
+| setPosition          |       ?       |
+| getTitle             |       ?       |
+| setTitle             |       ?       |
+| getClickable         |       ?       |
+| setClickable         |       ?       |
+| getDraggable         |       ?       |
+| setDraggable         |       ?       |
+| setAnchor            |       ?       |
+| setInfoWindowAnchor  |       ?       |
+| getAlpha             |       ?       |
+| setAlpha             |       ?       |
+| getSnippet           |       ?       |
+| setSnippet           |       ?       |
+| setIcon              |       ?       |
+| getIsVisible         |       ?       |
+| setIsVisible         |       ?       |
+| getIsFlat            |       ?       |
+| setIsFlat            |       ?       |
+| getRotation          |       ?       |
+| setRotation          |       ?       |
+| getBackgroundColor   |       ?       |
+| setBackgroundColor   |       ?       |
+| showInfoWindow       |       ?       |
+| hideInfoWindow       |       ?       |
+| getIsInfoWindowShown |       ?       |
 
 ### Polyline
 
