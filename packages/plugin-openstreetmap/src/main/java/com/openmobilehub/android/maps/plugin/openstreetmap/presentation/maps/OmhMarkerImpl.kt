@@ -76,13 +76,13 @@ internal class OmhMarkerImpl(
 
     override fun setAnchor(anchorU: Float, anchorV: Float) {
         marker.setAnchor(anchorU, anchorV)
-        marker.updateInfoWindowState() // apply the possible new anchor position to the window
+        marker.updateInfoWindowState() // apply the possibly new anchor position to the window
         mapView.postInvalidate()
     }
 
     override fun setInfoWindowAnchor(iwAnchorU: Float, iwAnchorV: Float) {
         marker.setInfoWindowAnchor(iwAnchorU, iwAnchorV)
-        marker.updateInfoWindowState() // apply the possible new info window anchor position to the window
+        marker.updateInfoWindowState() // apply the possibly new info window anchor position to the window
         mapView.postInvalidate()
     }
 
@@ -113,7 +113,7 @@ internal class OmhMarkerImpl(
 
     override fun setIcon(icon: Drawable?) {
         marker.icon = icon
-        marker.updateInfoWindowState() // apply the possible new info window anchor position
+        marker.updateInfoWindowState() // apply the possibly new marker icon
         mapView.postInvalidate()
     }
 
@@ -147,7 +147,7 @@ internal class OmhMarkerImpl(
     override fun setRotation(rotation: Float) {
         marker.rotation =
             -rotation // counter-clockwise -> clockwise to be consistent with GoogleMaps implementation
-        marker.updateInfoWindowState() // apply the possible new info window anchor position
+        marker.updateInfoWindowState() // apply the possibly new marker rotation
         mapView.postInvalidate()
     }
 

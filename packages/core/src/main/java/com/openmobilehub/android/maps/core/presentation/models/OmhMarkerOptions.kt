@@ -24,7 +24,7 @@ import kotlinx.parcelize.Parcelize
 
 object Constants {
     const val ANCHOR_CENTER = 0.5f
-    const val ANCHOR_BOTTOM = 0.0f
+    const val ANCHOR_BOTTOM = 1.0f
     const val ANCHOR_TOP = 0.0f
     const val DEFAULT_ALPHA = 1.0f
     const val DEFAULT_ROTATION = 0f
