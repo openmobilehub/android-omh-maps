@@ -414,7 +414,7 @@ internal class OmhMapImpl(
         window.view.setOnLongClickListener {
             this.onInfoWindowLongClickListener?.onInfoWindowLongClick(omhMarker)
 
-            false
+            true
         }
     }
 
