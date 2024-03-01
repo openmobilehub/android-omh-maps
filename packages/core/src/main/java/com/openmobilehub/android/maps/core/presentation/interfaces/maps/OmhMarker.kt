@@ -47,7 +47,7 @@ interface OmhMarker {
     fun getTitle(): String?
 
     /**
-     * Sets the title of the marker. Wit null, the info window associated with this marker is disabled.
+     * Sets the title of the marker. When null, the info window associated with this marker is disabled.
      *
      * @param title sets the title. If null, the title is cleared & info window is disabled.
      */

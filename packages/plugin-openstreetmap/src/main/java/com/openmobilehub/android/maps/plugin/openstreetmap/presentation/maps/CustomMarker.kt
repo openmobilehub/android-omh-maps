@@ -91,7 +91,7 @@ internal class CustomMarker(private val omhMapImpl: OmhMapImpl, mapView: MapView
     }
 
     override fun setPosition(position: GeoPoint?) {
-        // since osmdroid setPosition implementation first calls show and then hide on the info window,
+        // since osmdroid setPosition implementation first calls hide and then show on the info window,
         // then ignore the false-positive open state change events
 
         val omhMarker = omhMapImpl.markers[this]
