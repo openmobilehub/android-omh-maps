@@ -29,17 +29,16 @@ import org.osmdroid.views.overlay.Polygon
 internal class OmhPolygonImpl(
     private val polygon: Polygon,
     private val mapView: MapView,
-    initiallyClickable: Boolean,
+    private var clickable: Boolean,
     private val logger: UnsupportedFeatureLogger = polylineLogger
 ) : OmhPolygon {
-    private var isClickable = initiallyClickable
 
     override fun getClickable(): Boolean {
-        return isClickable
+        return clickable
     }
 
     override fun setClickable(clickable: Boolean) {
-        isClickable = clickable
+        this.clickable = clickable
     }
 
     override fun getStrokeColor(): Int {
