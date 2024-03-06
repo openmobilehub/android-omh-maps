@@ -62,4 +62,10 @@ class PanelSeekbar @JvmOverloads constructor(
             }
         })
     }
+
+    override fun setEnabled(enabled: Boolean) {
+        super.setEnabled(enabled)
+        customSeekBar.isEnabled = enabled
+        titleTextView.alpha = if (enabled) 1.0f else 0.5f
+    }
 }
