@@ -24,11 +24,10 @@ import com.openmobilehub.android.maps.plugin.openstreetmap.extensions.toGeoPoint
 import com.openmobilehub.android.maps.plugin.openstreetmap.extensions.toOmhCoordinate
 import com.openmobilehub.android.maps.plugin.openstreetmap.utils.markerLogger
 import org.osmdroid.views.MapView
-import org.osmdroid.views.overlay.Marker
 
 @SuppressWarnings("TooManyFunctions")
 internal class OmhMarkerImpl(
-    private val marker: Marker,
+    private val marker: CustomMarker,
     private val mapView: MapView,
     private var clickable: Boolean = true,
     private val logger: UnsupportedFeatureLogger = markerLogger
@@ -77,6 +76,13 @@ internal class OmhMarkerImpl(
 
     override fun setAnchor(anchorU: Float, anchorV: Float) {
         marker.setAnchor(anchorU, anchorV)
+        marker.updateInfoWindowState() // apply the possibly new anchor position to the window
+        mapView.postInvalidate()
+    }
+
+    override fun setInfoWindowAnchor(iwAnchorU: Float, iwAnchorV: Float) {
+        marker.setInfoWindowAnchor(iwAnchorU, iwAnchorV)
+        marker.updateInfoWindowState() // apply the possibly new info window anchor position to the window
         mapView.postInvalidate()
     }
 
@@ -107,6 +113,7 @@ internal class OmhMarkerImpl(
 
     override fun setIcon(icon: Drawable?) {
         marker.icon = icon
+        marker.updateInfoWindowState() // apply the possibly new marker icon
         mapView.postInvalidate()
     }
 
@@ -117,7 +124,7 @@ internal class OmhMarkerImpl(
     override fun setIsVisible(visible: Boolean) {
         marker.setVisible(visible)
 
-        if (!visible && marker.isInfoWindowShown) {
+        if (!visible && marker.isInfoWindowOpen) {
             marker.closeInfoWindow()
         }
 
@@ -134,11 +141,13 @@ internal class OmhMarkerImpl(
     }
 
     override fun getRotation(): Float {
-        return marker.rotation
+        return -marker.rotation // counter-clockwise -> clockwise to be consistent with GoogleMaps implementation
     }
 
     override fun setRotation(rotation: Float) {
-        marker.rotation = rotation
+        marker.rotation =
+            -rotation // counter-clockwise -> clockwise to be consistent with GoogleMaps implementation
+        marker.updateInfoWindowState() // apply the possibly new marker rotation
         mapView.postInvalidate()
     }
 
@@ -152,9 +161,21 @@ internal class OmhMarkerImpl(
         logger.logSetterNotSupported("backgroundColor")
     }
 
+    override fun showInfoWindow() {
+        marker.showInfoWindow()
+    }
+
+    override fun hideInfoWindow() {
+        marker.closeInfoWindow()
+    }
+
+    override fun getIsInfoWindowShown(): Boolean {
+        return marker.isInfoWindowOpen
+    }
+
     private fun invalidateInfoWindow() {
-        if (marker.isInfoWindowShown) {
-            marker.showInfoWindow() // open or close & reopen to apply the new contents
+        if (marker.isInfoWindowOpen) {
+            marker.showInfoWindow() // open or close-and-reopen to apply the new contents
         }
     }
 }

@@ -20,8 +20,8 @@ import com.openmobilehub.android.maps.core.Constants.ANOTHER_MARKER_TITLE
 import com.openmobilehub.android.maps.core.Constants.LATITUDE
 import com.openmobilehub.android.maps.core.Constants.LONGITUDE
 import com.openmobilehub.android.maps.core.Constants.MARKER_TITLE
+import com.openmobilehub.android.maps.core.presentation.models.Constants.ANCHOR_CENTER
 import com.openmobilehub.android.maps.core.presentation.models.Constants.DEFAULT_ALPHA
-import com.openmobilehub.android.maps.core.presentation.models.Constants.DEFAULT_ANCHOR
 import com.openmobilehub.android.maps.core.presentation.models.Constants.DEFAULT_ROTATION
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
@@ -101,7 +101,7 @@ internal class OmhMarkerOptionsTest {
     @Test
     fun `when initializing OmhMarkerOptions, all default constructor arguments are applied as expected`() {
         assertEquals(omhMarkerOptions.draggable, false)
-        assertEquals(omhMarkerOptions.anchor, Pair(DEFAULT_ANCHOR, DEFAULT_ANCHOR))
+        assertEquals(omhMarkerOptions.anchor, Pair(ANCHOR_CENTER, ANCHOR_CENTER))
         assertEquals(omhMarkerOptions.alpha, DEFAULT_ALPHA)
         assertEquals(omhMarkerOptions.snippet, null)
         assertEquals(omhMarkerOptions.isVisible, true)

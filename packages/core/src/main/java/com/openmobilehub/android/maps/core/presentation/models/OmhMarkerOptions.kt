@@ -23,7 +23,9 @@ import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 
 object Constants {
-    const val DEFAULT_ANCHOR = 0.5f
+    const val ANCHOR_CENTER = 0.5f
+    const val ANCHOR_BOTTOM = 1.0f
+    const val ANCHOR_TOP = 0.0f
     const val DEFAULT_ALPHA = 1.0f
     const val DEFAULT_ROTATION = 0f
 }
@@ -38,6 +40,7 @@ object Constants {
  * @property title The title for the marker.
  * @property draggable Whether the marker is draggable. Default value: `false`
  * @property anchor The anchor for the marker image. Default: `Pair(0.5f, 0.5f)`
+ * @property infoWindowAnchor The anchor for the info window. Default: `Pair(0.5f, 0.0f)`
  * @property alpha The alpha (transparency) of the marker. Default: `1.0f`
  * @property snippet The text snippet to be shown below marker title.
  * @property isVisible Boolean indicating whether the marker is visible.
@@ -53,7 +56,11 @@ class OmhMarkerOptions(
     var position: OmhCoordinate = OmhCoordinate(),
     var title: String? = null,
     var draggable: Boolean = false,
-    var anchor: Pair<Float, Float> = Pair(Constants.DEFAULT_ANCHOR, Constants.DEFAULT_ANCHOR),
+    var anchor: Pair<Float, Float> = Pair(Constants.ANCHOR_CENTER, Constants.ANCHOR_CENTER),
+    var infoWindowAnchor: Pair<Float, Float> = Pair(
+        Constants.ANCHOR_CENTER,
+        Constants.ANCHOR_TOP
+    ),
     var alpha: Float = Constants.DEFAULT_ALPHA,
     var snippet: String? = null,
     var isVisible: Boolean = true,

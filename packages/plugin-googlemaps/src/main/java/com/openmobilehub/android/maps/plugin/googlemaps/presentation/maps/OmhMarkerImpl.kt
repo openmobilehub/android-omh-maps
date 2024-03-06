@@ -19,6 +19,7 @@ package com.openmobilehub.android.maps.plugin.googlemaps.presentation.maps
 import android.graphics.drawable.Drawable
 import com.google.android.gms.maps.model.Marker
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMarker
+import com.openmobilehub.android.maps.core.presentation.models.Constants
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
 import com.openmobilehub.android.maps.plugin.googlemaps.utils.CoordinateConverter
@@ -31,6 +32,9 @@ internal class OmhMarkerImpl(
     private var clickable: Boolean = true,
     private val logger: UnsupportedFeatureLogger = markerLogger
 ) : OmhMarker {
+
+    private var lastInfoWindowAnchor: Pair<Float, Float> =
+        Pair(Constants.ANCHOR_CENTER, Constants.ANCHOR_TOP)
 
     override fun getPosition(): OmhCoordinate {
         return CoordinateConverter.convertToOmhCoordinate(marker.position)
@@ -72,6 +76,11 @@ internal class OmhMarkerImpl(
 
     override fun setAnchor(anchorU: Float, anchorV: Float) {
         this.marker.setAnchor(anchorU, anchorV)
+    }
+
+    override fun setInfoWindowAnchor(iwAnchorU: Float, iwAnchorV: Float) {
+        this.marker.setInfoWindowAnchor(iwAnchorU, iwAnchorV)
+        lastInfoWindowAnchor = Pair(iwAnchorU, iwAnchorV)
     }
 
     override fun getAlpha(): Float {
@@ -147,9 +156,21 @@ internal class OmhMarkerImpl(
         marker.setIcon(MarkerIconConverter.convertColorToBitmapDescriptor(color))
     }
 
+    override fun showInfoWindow() {
+        marker.showInfoWindow()
+    }
+
+    override fun hideInfoWindow() {
+        marker.hideInfoWindow()
+    }
+
+    override fun getIsInfoWindowShown(): Boolean {
+        return marker.isInfoWindowShown
+    }
+
     private fun invalidateInfoWindow() {
         if (marker.isInfoWindowShown) {
-            marker.showInfoWindow() // open or close & reopen to apply the new contents
+            marker.showInfoWindow() // open or close-and-reopen to apply the new contents
         }
     }
 }
