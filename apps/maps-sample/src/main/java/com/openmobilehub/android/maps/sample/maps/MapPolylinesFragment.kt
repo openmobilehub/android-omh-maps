@@ -143,9 +143,7 @@ class MapPolylinesFragment : Fragment(), OmhOnMapReadyCallback {
                 .show()
         }
 
-        omhMap.updateScaleFactor { _ ->
-            if (omhMap.providerName === MAPBOX) 3.0f else 1.0f
-        }
+        omhMap.setScaleFactor(if (omhMap.providerName === MAPBOX) 3.0f else 1.0f)
         omhMap.setZoomGesturesEnabled(true)
 
         val omhOnPolylineClickListener = OmhOnPolylineClickListener {

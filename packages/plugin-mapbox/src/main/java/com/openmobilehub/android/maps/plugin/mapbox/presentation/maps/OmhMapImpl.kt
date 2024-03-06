@@ -119,11 +119,6 @@ internal class OmhMapImpl(
         return null
     }
 
-    override fun updateScaleFactor(callback: (zoomLevel: Float) -> Float) {
-        val zoomLevel = mapView.mapboxMap.cameraState.zoom.toFloat()
-        this.scaleFactor = callback(zoomLevel)
-    }
-
     override fun addPolyline(options: OmhPolylineOptions): OmhPolyline {
         val polylineId = "polyline-${uuidGenerator.generate()}"
 
@@ -308,6 +303,10 @@ internal class OmhMapImpl(
         styleJSONString?.let { jsonString ->
             mapView.mapboxMap.loadStyle(jsonString, onStyleLoadedCallback)
         } ?: logger.logError("Failed to load style from resource with id: $json")
+    }
+
+    override fun setScaleFactor(scaleFactor: Float) {
+        this.scaleFactor = scaleFactor
     }
 
     override fun updatePolylinePoints(sourceId: String, points: List<OmhCoordinate>) {

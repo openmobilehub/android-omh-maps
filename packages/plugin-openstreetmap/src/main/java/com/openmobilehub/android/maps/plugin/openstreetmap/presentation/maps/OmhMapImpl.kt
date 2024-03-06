@@ -351,7 +351,7 @@ internal class OmhMapImpl(
         // To be implemented
     }
 
-    override fun updateScaleFactor(callback: (zoomLevel: Float) -> Float) {
+    override fun setScaleFactor(scaleFactor: Float) {
         // Not required for OpenStreetMap
     }
 }

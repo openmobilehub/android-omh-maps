@@ -192,8 +192,7 @@ interface OmhMap {
      * Might be useful when the app uses multiple map providers and the map elements should have the same
      * or similar size.
      *
-     * @param callback The callback that will be invoked with the current zoom level.
-     * The callback should return the new scale factor based on the current zoom level.
+     * @param scaleFactor The scale factor to be set.
      */
-    fun updateScaleFactor(callback: (zoomLevel: Float) -> Float)
+    fun setScaleFactor(scaleFactor: Float)
 }

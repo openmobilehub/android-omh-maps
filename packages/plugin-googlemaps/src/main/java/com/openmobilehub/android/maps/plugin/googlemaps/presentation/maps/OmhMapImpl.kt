@@ -207,7 +207,7 @@ internal class OmhMapImpl(
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoomLevel))
     }
 
-    override fun updateScaleFactor(callback: (zoomLevel: Float) -> Float) {
-        // Not required for Google Maps as Google Maps SDK is a reference implementation
+    override fun setScaleFactor(scaleFactor: Float) {
+        // Not required for Google Maps
     }
 }
