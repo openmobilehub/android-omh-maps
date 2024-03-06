@@ -350,4 +350,8 @@ internal class OmhMapImpl(
     override fun setMapStyle(json: Int?) {
         // To be implemented
     }
+
+    override fun updateScaleFactor(callback: (zoomLevel: Float) -> Float) {
+        // Not required for OpenStreetMap
+    }
 }
