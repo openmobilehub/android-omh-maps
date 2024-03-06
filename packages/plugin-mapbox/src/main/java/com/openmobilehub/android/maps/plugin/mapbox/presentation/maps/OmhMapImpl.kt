@@ -24,11 +24,11 @@ import android.widget.ImageView
 import androidx.annotation.RequiresPermission
 import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.MapView
+import com.mapbox.maps.RenderedQueryGeometry
+import com.mapbox.maps.RenderedQueryOptions
 import com.mapbox.maps.Style
-import com.mapbox.maps.extension.style.layers.Layer
 import com.mapbox.maps.extension.style.layers.addLayer
 import com.mapbox.maps.extension.style.sources.addSource
-import com.mapbox.maps.extension.style.sources.generated.GeoJsonSource
 import com.mapbox.maps.plugin.compass.compass
 import com.mapbox.maps.plugin.gestures.gestures
 import com.mapbox.maps.plugin.locationcomponent.location
@@ -61,7 +61,6 @@ import com.openmobilehub.android.maps.plugin.mapbox.utils.CoordinateConverter
 import com.openmobilehub.android.maps.plugin.mapbox.utils.DimensionConverter
 import com.openmobilehub.android.maps.plugin.mapbox.utils.JSONUtil
 import com.openmobilehub.android.maps.plugin.mapbox.utils.commonLogger
-import java.util.UUID
 
 @SuppressWarnings("TooManyFunctions")
 internal class OmhMapImpl(
@@ -79,26 +78,23 @@ internal class OmhMapImpl(
     private var isMyLocationIconAdded = false
 
     private var onMyLocationButtonClickListener: OmhOnMyLocationButtonClickListener? = null
+    private var markerClickListener: OmhOnMarkerClickListener? = null
+    private var markerDragListener: OmhOnMarkerDragListener? = null
 
-    private val elementsToAdd = mutableListOf<Pair<GeoJsonSource, Layer>>()
-    private val markers = mutableMapOf<UUID, OmhMarker>()
+    private val markers = mutableMapOf<String, OmhMarker>()
 
     private var style: Style? = null
 
     init {
         setupMapViewUIControls()
         addPendingMapElements()
+        setupClickListeners()
     }
 
     private fun addPendingMapElements() {
         mapView.mapboxMap.loadStyle(Style.STANDARD) { safeStyle ->
             synchronized(this) {
                 this.style = safeStyle
-
-                elementsToAdd.forEach { (source, layer) ->
-                    safeStyle.addSource(source)
-                    safeStyle.addLayer(layer)
-                }
 
                 markers.values.forEach { omhMarker ->
                     // re-apply the icons now, since they can be added to the map for real
@@ -124,7 +120,7 @@ internal class OmhMapImpl(
                 omhMarker.applyBufferedProperties(safeStyle)
             }
 
-            markers[omhMarker.getMarkerUUID()] = omhMarker
+            markers[layer.layerId] = omhMarker
 
             return omhMarker
         }
@@ -224,34 +220,41 @@ internal class OmhMapImpl(
         }
     }
 
+    private fun setupClickListeners() {
+        mapView.gestures.addOnMapClickListener { point ->
+            val screenCoordinate = mapView.mapboxMap.pixelForCoordinate(point)
+
+            mapView.mapboxMap.queryRenderedFeatures(
+                RenderedQueryGeometry(screenCoordinate),
+                RenderedQueryOptions(null, null)
+            ) {
+                val layerId = try {
+                    it.value?.get(0)?.layers?.get(0)
+                } catch (
+                    @SuppressWarnings(
+                        "SwallowedException",
+                        "TooGenericExceptionCaught"
+                    ) e: Exception
+                ) {
+                    null
+                }
+
+                val omhMarker = markers[layerId]
+
+                if (omhMarker !== null && omhMarker.getClickable()) {
+                    markerClickListener?.onMarkerClick(omhMarker)
+                }
+            }
+            true
+        }
+    }
+
     override fun setOnMarkerClickListener(listener: OmhOnMarkerClickListener) {
-//        markers.forEach { (_, omhMarker) ->
-//            val pointAnnotationManager = getPointAnnotationManager(omhMarker)
-//
-//            pointAnnotationManager.addClickListener { _ ->
-//                listener.onMarkerClick(omhMarker)
-//            }
-//        }
+        markerClickListener = listener
     }
 
     override fun setOnMarkerDragListener(listener: OmhOnMarkerDragListener) {
-//        markers.forEach { (_, omhMarker) ->
-//            val pointAnnotationManager = getPointAnnotationManager(omhMarker)
-//
-//            pointAnnotationManager.addDragListener(object : OnPointAnnotationDragListener {
-//                override fun onAnnotationDrag(annotation: Annotation<*>) {
-//                    listener.onMarkerDrag(omhMarker)
-//                }
-//
-//                override fun onAnnotationDragFinished(annotation: Annotation<*>) {
-//                    listener.onMarkerDragEnd(omhMarker)
-//                }
-//
-//                override fun onAnnotationDragStarted(annotation: Annotation<*>) {
-//                    listener.onMarkerDragStart(omhMarker)
-//                }
-//            })
-//        }
+        markerDragListener = listener
     }
 
     override fun setOnPolylineClickListener(listener: OmhOnPolylineClickListener) {

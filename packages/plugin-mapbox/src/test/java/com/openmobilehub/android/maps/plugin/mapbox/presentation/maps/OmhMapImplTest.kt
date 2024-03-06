@@ -20,6 +20,7 @@ import com.mapbox.maps.plugin.annotation.AnnotationPlugin
 import com.mapbox.maps.plugin.annotation.AnnotationType
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationManager
 import com.mapbox.maps.plugin.compass.CompassPlugin
+import com.mapbox.maps.plugin.gestures.GesturesPlugin
 import com.mapbox.maps.plugin.gestures.gestures
 import com.mapbox.maps.plugin.locationcomponent.location
 import com.mapbox.maps.plugin.scalebar.ScaleBarPlugin
@@ -49,6 +50,7 @@ class OmhMapImplTest {
 
     private lateinit var omhMapImpl: OmhMapImpl
     private val map = mockk<MapView>()
+    private val gesturesPlugin = mockk<GesturesPlugin>(relaxed = true)
     private val scaleBarPlugin = mockk<ScaleBarPlugin>(relaxed = true)
     private val compassPlugin = mockk<CompassPlugin>(relaxed = true)
     private val viewportPlugin = mockk<ViewportPlugin>(relaxed = true)
@@ -60,6 +62,7 @@ class OmhMapImplTest {
 
     @Before
     fun setUp() {
+        every { map.getPlugin<GesturesPlugin>(Plugin.MAPBOX_GESTURES_PLUGIN_ID) } returns gesturesPlugin
         every { map.getPlugin<ScaleBarPlugin>(Plugin.MAPBOX_SCALEBAR_PLUGIN_ID) } returns scaleBarPlugin
         every { map.getPlugin<CompassPlugin>(Plugin.MAPBOX_COMPASS_PLUGIN_ID) } returns compassPlugin
         every { map.getPlugin<ViewportPlugin>(Plugin.MAPBOX_VIEWPORT_PLUGIN_ID) } returns viewportPlugin
