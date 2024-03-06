@@ -53,6 +53,7 @@
     <string name="span_pattern">Span Pattern</string>
     <string name="width">Width</string>
     <string name="color">Color</string>
+    <string name="cap">Cap</string>
     <string name="start_cap">Start Cap</string>
     <string name="end_cap">End Cap</string>
     <string name="join_type">Join Type</string>
@@ -83,4 +84,5 @@
     <string name="map_snapshot">Map Snapshot</string>
     <string name="rotate_gestures">Rotate Gestures</string>
     <string name="my_location_enabled">My Location Enabled</string>
+    <string name="randomize_points">Randomize points</string>
 </resources>

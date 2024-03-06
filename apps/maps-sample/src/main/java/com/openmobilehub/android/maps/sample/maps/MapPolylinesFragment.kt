@@ -23,6 +23,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.CheckBox
 import android.widget.LinearLayout
 import android.widget.Toast
@@ -91,10 +92,12 @@ class MapPolylinesFragment : Fragment(), OmhOnMapReadyCallback {
     private var spanProperties: LinearLayout? = null
     private var spanGradientProperties: LinearLayout? = null
 
+    private var randomizePointsButton: Button? = null
     private var isVisibleCheckbox: CheckBox? = null
     private var isClickableCheckbox: CheckBox? = null
     private var strokeWidthSeekbar: PanelSeekbar? = null
     private var colorSeekbar: PanelColorSeekbar? = null
+    private var capSpinner: PanelSpinner? = null
     private var startCapSpinner: PanelSpinner? = null
     private var endCapSpinner: PanelSpinner? = null
     private var jointTypeSpinner: PanelSpinner? = null
@@ -143,6 +146,9 @@ class MapPolylinesFragment : Fragment(), OmhOnMapReadyCallback {
                 .show()
         }
 
+        omhMap.updateScaleFactor { _ ->
+            if (omhMap.providerName === "Mapbox") 3.0f else 1.0f
+        }
         omhMap.setZoomGesturesEnabled(true)
 
         val omhOnPolylineClickListener = OmhOnPolylineClickListener {
@@ -203,6 +209,12 @@ class MapPolylinesFragment : Fragment(), OmhOnMapReadyCallback {
         spanGradientProperties = view.findViewById(R.id.spanGradientProperties)
         updatePanelUI()
 
+        // randomizePoints
+        randomizePointsButton = view.findViewById(R.id.button_randomizePoints)
+        randomizePointsButton?.setOnClickListener {
+            customizablePolyline?.setPoints(DebugPolylineHelper.getRandomizedPoints())
+        }
+
         // isVisible
         isVisibleCheckbox = view.findViewById(R.id.checkBox_isVisible)
         isVisibleCheckbox?.setOnCheckedChangeListener { _, isChecked ->
@@ -225,17 +237,32 @@ class MapPolylinesFragment : Fragment(), OmhOnMapReadyCallback {
             customizablePolyline?.setColor(color)
             updateSpan()
         }
+        // cap
+        capSpinner = view.findViewById(R.id.panelSpinner_cap)
+        capSpinner?.setValues(requireContext(), capTypeNameResourceID)
+        capSpinner?.setOnItemSelectedCallback { position: Int ->
+            val cap = mapSpinnerPositionToOmhCap(position)
+            if (cap != null) {
+                customizablePolyline?.setCap(cap)
+            }
+        }
         // startCap
         startCapSpinner = view.findViewById(R.id.panelSpinner_startCap)
         startCapSpinner?.setValues(requireContext(), capTypeNameResourceID)
         startCapSpinner?.setOnItemSelectedCallback { position: Int ->
-            customizablePolyline?.setStartCap(mapSpinnerPositionToOmhCap(position))
+            val cap = mapSpinnerPositionToOmhCap(position)
+            if (cap != null) {
+                customizablePolyline?.setStartCap(cap)
+            }
         }
         // endCap
         endCapSpinner = view.findViewById(R.id.panelSpinner_endCap)
         endCapSpinner?.setValues(requireContext(), capTypeNameResourceID)
         endCapSpinner?.setOnItemSelectedCallback { position: Int ->
-            customizablePolyline?.setEndCap(mapSpinnerPositionToOmhCap(position))
+            val cap = mapSpinnerPositionToOmhCap(position)
+            if (cap != null) {
+                customizablePolyline?.setEndCap(cap)
+            }
         }
         // jointType
         jointTypeSpinner = view.findViewById(R.id.panelSpinner_joinType)
@@ -247,7 +274,10 @@ class MapPolylinesFragment : Fragment(), OmhOnMapReadyCallback {
         patternSpinner = view.findViewById(R.id.panelSpinner_pattern)
         patternSpinner?.setValues(requireContext(), patternTypeNameResourceID)
         patternSpinner?.setOnItemSelectedCallback { position: Int ->
-            customizablePolyline?.setPattern(mapSpinnerPositionToOmhPattern(position))
+            val pattern = mapSpinnerPositionToOmhPattern(position)
+            if (pattern != null) {
+                customizablePolyline?.setPattern(pattern)
+            }
         }
         // zIndex
         zIndexSeekbar = view.findViewById(R.id.panelSeekbar_zIndex)
