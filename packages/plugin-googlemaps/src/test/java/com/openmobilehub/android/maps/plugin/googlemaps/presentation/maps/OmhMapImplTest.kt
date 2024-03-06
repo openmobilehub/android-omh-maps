@@ -19,8 +19,6 @@ import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMar
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMarkerDragListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnPolygonClickListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnPolylineClickListener
-import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhPolygon
-import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhPolyline
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolygonOptions
@@ -43,7 +41,7 @@ class OmhMapImplTest {
 
     private lateinit var omhMapImpl: OmhMapImpl
     private val context = mockk<Context>()
-    private val googleMap = mockk<GoogleMap>()
+    private val googleMap = mockk<GoogleMap>(relaxed = true)
     private val mockedMarker = mockk<Marker>(relaxed = true)
 
     private val omhOnMarkerClickListener = mockk<OmhOnMarkerClickListener>(relaxed = true)
@@ -316,14 +314,17 @@ class OmhMapImplTest {
         // Arrange
         val capturedListener = slot<GoogleMap.OnPolylineClickListener>()
         every { googleMap.setOnPolylineClickListener(capture(capturedListener)) } answers {}
+
         val polyline = mockk<Polyline>(relaxed = true)
+        every { googleMap.addPolyline(any<PolylineOptions>()) } returns polyline
 
         // Act
         omhMapImpl.setOnPolylineClickListener(omhOnPolylineClickListener)
+        val omhPolyline = omhMapImpl.addPolyline(OmhPolylineOptions().apply { clickable = true })
         capturedListener.captured.onPolylineClick(polyline)
 
         // Assert
-        verify { omhOnPolylineClickListener.onPolylineClick(any<OmhPolyline>()) }
+        verify { omhOnPolylineClickListener.onPolylineClick(omhPolyline) }
     }
 
     @Test
@@ -331,13 +332,15 @@ class OmhMapImplTest {
         // Arrange
         val capturedListener = slot<GoogleMap.OnPolygonClickListener>()
         every { googleMap.setOnPolygonClickListener(capture(capturedListener)) } answers {}
-        val polygon = mockk<Polygon>(relaxed = true)
 
+        val polygon = mockk<Polygon>(relaxed = true)
+        every { googleMap.addPolygon(any<PolygonOptions>()) } returns polygon
         // Act
         omhMapImpl.setOnPolygonClickListener(omhOnPolygonClickListener)
+        val omhPolygon = omhMapImpl.addPolygon(OmhPolygonOptions().apply { clickable = true })
         capturedListener.captured.onPolygonClick(polygon)
 
         // Assert
-        verify { omhOnPolygonClickListener.onPolygonClick(any<OmhPolygon>()) }
+        verify { omhOnPolygonClickListener.onPolygonClick(omhPolygon) }
     }
 }
