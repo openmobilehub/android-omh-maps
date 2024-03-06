@@ -14,24 +14,10 @@
  * limitations under the License.
  */
 
-package com.openmobilehub.android.maps.plugin.mapbox.utils
+package com.openmobilehub.android.maps.plugin.mapbox.presentation.maps
 
-import android.graphics.Color
-import com.mapbox.maps.extension.style.layers.properties.generated.LineCap
+import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 
-internal object Constants {
-    // Common
-    const val PROVIDER_NAME = "Mapbox"
-
-    // To have parity with Google Maps
-    const val INITIAL_REGION_LATITUDE = 0.0
-    const val INITIAL_REGION_LONGITUDE = 0.0
-    const val INITIAL_REGION_ZOOM = 0.0
-
-    // UI Controls
-    const val MAPBOX_ICON_SIZE = 48
-    const val MAPBOX_ICON_MARGIN = 8
-
-    val DEFAULT_LINE_CAP = LineCap.BUTT
-    val DEFAULT_POLYLINE_COLOR = Color.BLACK
+interface PolylineDelegate {
+    fun updatePolylinePoints(sourceId: String, points: List<OmhCoordinate>)
 }
