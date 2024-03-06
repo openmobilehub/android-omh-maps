@@ -115,7 +115,7 @@ class CapConverterTest {
     }
 
     @Test
-    fun `convertToCap returns null for unknown OmhCap type`() {
+    fun `convertToCap returns default cap type for unknown OmhCap type`() {
         // Arrange
         val unknownCap = mockk<OmhCap>()
 
@@ -123,6 +123,6 @@ class CapConverterTest {
         val result = CapConverter.convertToCap(unknownCap)
 
         // Assert
-        Assert.assertNull(result)
+        Assert.assertTrue(result is ButtCap)
     }
 }
