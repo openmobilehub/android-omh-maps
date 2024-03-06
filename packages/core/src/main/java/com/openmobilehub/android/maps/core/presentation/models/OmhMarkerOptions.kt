@@ -27,6 +27,8 @@ object Constants {
     const val DEFAULT_ANCHOR = 0.5f
     const val DEFAULT_ALPHA = 1.0f
     const val DEFAULT_ROTATION = 0f
+    const val DEFAULT_IS_VISIBLE = true
+    const val DEFAULT_IS_FLAT = false
 }
 
 /**
@@ -63,8 +65,8 @@ data class OmhMarkerOptions(
     var anchor: Pair<Float, Float> = Pair(Constants.DEFAULT_ANCHOR, Constants.DEFAULT_ANCHOR),
     var alpha: Float = Constants.DEFAULT_ALPHA,
     var snippet: String? = null,
-    var isVisible: Boolean = true,
-    var isFlat: Boolean = false,
+    var isVisible: Boolean = Constants.DEFAULT_IS_VISIBLE,
+    var isFlat: Boolean = Constants.DEFAULT_IS_FLAT,
     var rotation: Float = Constants.DEFAULT_ROTATION,
     @ColorInt var backgroundColor: Int? = null,
     @IgnoredOnParcel var icon: Drawable? = null

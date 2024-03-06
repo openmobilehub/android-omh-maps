@@ -33,9 +33,4 @@ internal object Constants {
     // UI Controls
     const val MAPBOX_ICON_SIZE = 48
     const val MAPBOX_ICON_MARGIN = 8
-
-    object LAYERS {
-        const val FLAT_MARKER_LAYER_ID = "flat-marker-layer"
-        const val BILLBOARD_MARKER_LAYER_ID = "billboard-marker-layer"
-    }
 }

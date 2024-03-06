@@ -18,9 +18,9 @@ package com.openmobilehub.android.maps.plugin.mapbox.extensions
 
 import com.mapbox.geojson.Feature
 import com.mapbox.maps.MapView
-import com.mapbox.maps.extension.style.layers.addLayer
+import com.mapbox.maps.extension.style.layers.generated.SymbolLayer
 import com.mapbox.maps.extension.style.layers.generated.symbolLayer
-import com.mapbox.maps.extension.style.sources.addSource
+import com.mapbox.maps.extension.style.sources.generated.GeoJsonSource
 import com.mapbox.maps.extension.style.sources.generated.geoJsonSource
 import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.maps.OmhMarkerImpl
@@ -31,7 +31,7 @@ import java.util.UUID
 
 internal fun OmhMarkerOptions.addOmhMarker(
     mapView: MapView,
-): OmhMarkerImpl {
+): Triple<OmhMarkerImpl, GeoJsonSource, SymbolLayer> {
     val pointOnMap = CoordinateConverter.convertToPoint(position)
     val omhMarker = OmhMarkerImpl(
         markerUUID = UUID.randomUUID(),
@@ -49,15 +49,11 @@ internal fun OmhMarkerOptions.addOmhMarker(
     val geoJsonSource = geoJsonSource(geoJsonSourceID) {
         feature(Feature.fromGeometry(pointOnMap))
     }
-    mapView.mapboxMap.addSource(geoJsonSource)
     omhMarker.setGeoJsonSource(geoJsonSource)
-
-    // apply icon
-    val markerImageID = omhMarker.addOrUpdateMarkerIconImage(icon)
 
     val layer = symbolLayer(omhMarker.getSymbolLayerID(), geoJsonSourceID) {
         // icon
-        iconImage(markerImageID)
+        // iconImage(markerImageID) will be handled by setIcon
         iconIgnorePlacement(true)
         iconAllowOverlap(true)
 
@@ -80,13 +76,12 @@ internal fun OmhMarkerOptions.addOmhMarker(
         iconPitchAlignment(OmhMarkerImpl.getIconPitchAlignment(isFlat))
         iconRotationAlignment(OmhMarkerImpl.getIconRotationAlignment(isFlat))
     }
-    mapView.mapboxMap.addLayer(layer)
     omhMarker.setSymbolLayer(layer)
 
-    // TODO: handle title
-    // TODO: handle snippet
-    // TODO: handle draggable
-    // TODO: handle clickable
+    // TODO handle title
+    // TODO handle snippet
+    // TODO handle draggable
+    // TODO handle clickable
 
-    return omhMarker
+    return Triple(omhMarker, geoJsonSource, layer)
 }

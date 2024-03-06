@@ -20,10 +20,14 @@ import android.graphics.drawable.Drawable
 import androidx.core.content.res.ResourcesCompat
 import com.mapbox.geojson.Feature
 import com.mapbox.maps.MapView
+import com.mapbox.maps.MapboxStyleException
+import com.mapbox.maps.Style
+import com.mapbox.maps.extension.style.layers.addLayer
 import com.mapbox.maps.extension.style.layers.generated.SymbolLayer
 import com.mapbox.maps.extension.style.layers.properties.generated.IconPitchAlignment
 import com.mapbox.maps.extension.style.layers.properties.generated.IconRotationAlignment
 import com.mapbox.maps.extension.style.layers.properties.generated.Visibility
+import com.mapbox.maps.extension.style.sources.addSource
 import com.mapbox.maps.extension.style.sources.generated.GeoJsonSource
 import com.mapbox.maps.extension.style.sources.updateGeoJSONSourceFeatures
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMarker
@@ -34,6 +38,7 @@ import com.openmobilehub.android.maps.plugin.mapbox.utils.AnchorConverter
 import com.openmobilehub.android.maps.plugin.mapbox.utils.Constants
 import com.openmobilehub.android.maps.plugin.mapbox.utils.CoordinateConverter
 import java.util.UUID
+import com.openmobilehub.android.maps.core.presentation.models.Constants as OmhConstants
 
 @SuppressWarnings("TooManyFunctions", "LongParameterList")
 internal class OmhMarkerImpl(
@@ -50,10 +55,18 @@ internal class OmhMarkerImpl(
 
     private lateinit var geoJsonSource: GeoJsonSource
     private lateinit var symbolLayer: SymbolLayer
+    private lateinit var safeStyle: Style
     private var isCustomIconSet: Boolean = false
+
+    private var bufferedIcon: Drawable? = null
+    private var bufferedAlpha: Float = OmhConstants.DEFAULT_ALPHA
+    private var bufferedIsVisible: Boolean = OmhConstants.DEFAULT_IS_VISIBLE
+    private var bufferedIsFlat: Boolean = OmhConstants.DEFAULT_IS_FLAT
+    private var bufferedRotation: Float = OmhConstants.DEFAULT_ROTATION
 
     init {
         isCustomIconSet = initialIcon != null
+        setIcon(initialIcon) // will be buffered if the layer has not been not added to the map yet
     }
 
     fun setGeoJsonSource(geoJsonSource: GeoJsonSource) {
@@ -85,7 +98,7 @@ internal class OmhMarkerImpl(
 
     fun updatePositionVar(omhCoordinate: OmhCoordinate) {
         position = omhCoordinate
-        // TODO: make sure this is called from outside on drag!
+        // TODO make sure this is called from outside on drag!
     }
 
     override fun getTitle(): String? {
@@ -94,7 +107,7 @@ internal class OmhMarkerImpl(
 
     override fun setTitle(title: String?) {
         this.title = title
-        // TODO: implement info window functionality
+        // TODO implement info window functionality
     }
 
     override fun getClickable(): Boolean {
@@ -119,12 +132,39 @@ internal class OmhMarkerImpl(
         )
     }
 
+    fun applyBufferedProperties(safeStyle: Style) {
+        check(!this::safeStyle.isInitialized) { "Buffered properties have already been applied" }
+
+        this.safeStyle = safeStyle
+        safeStyle.addSource(geoJsonSource)
+
+        setIcon(bufferedIcon)
+        setAlpha(bufferedAlpha)
+        setIsVisible(bufferedIsVisible)
+        setIsFlat(bufferedIsFlat)
+        setRotation(bufferedRotation)
+
+        safeStyle.addLayer(symbolLayer)
+
+        // (possibly) clear some memory
+        bufferedIcon = null
+    }
+
     override fun getAlpha(): Float {
-        return symbolLayer.iconOpacity?.toFloat() ?: 1.0f
+        return try {
+            symbolLayer.iconOpacity?.toFloat() ?: OmhConstants.DEFAULT_ALPHA
+        } catch (_: MapboxStyleException) {
+            bufferedAlpha
+        }
     }
 
     override fun setAlpha(alpha: Float) {
-        symbolLayer.iconOpacity(alpha.toDouble())
+        if (this::safeStyle.isInitialized) {
+            symbolLayer.iconOpacity(alpha.toDouble())
+        } else {
+            // if the layer was not added to the map yet, buffer the alpha value to apply it later
+            bufferedAlpha = alpha
+        }
     }
 
     override fun getSnippet(): String? {
@@ -133,41 +173,73 @@ internal class OmhMarkerImpl(
 
     override fun setSnippet(snippet: String?) {
         this.snippet = snippet
-        // TODO: implement info window functionality
+        // TODO implement info window functionality
     }
 
     override fun setIcon(icon: Drawable?) {
         isCustomIconSet = icon != null
 
-        val addedIconID = addOrUpdateMarkerIconImage(icon)
-        // color the icon image using Mapbox's SDF implementation
-        symbolLayer.iconColor(Constants.DEFAULT_MARKER_COLOR)
-        symbolLayer.iconImage(addedIconID)
+        if (this::safeStyle.isInitialized) {
+            val addedIconID = addOrUpdateMarkerIconImage(icon)
+            // color the icon image using Mapbox's SDF implementation
+            symbolLayer.iconColor(Constants.DEFAULT_MARKER_COLOR)
+            symbolLayer.iconImage(addedIconID)
+        } else {
+            // if the layer was not added to the map yet, buffer the icon value to apply it later
+            bufferedIcon = icon
+        }
     }
 
     override fun getIsVisible(): Boolean {
-        return symbolLayer.visibility == Visibility.VISIBLE
+        return try {
+            symbolLayer.visibility == Visibility.VISIBLE
+        } catch (_: MapboxStyleException) {
+            bufferedIsVisible
+        }
     }
 
     override fun setIsVisible(visible: Boolean) {
-        symbolLayer.visibility(getIconVisibility(visible))
+        if (this::safeStyle.isInitialized) {
+            symbolLayer.visibility(getIconVisibility(visible))
+        } else {
+            // if the layer was not added to the map yet, buffer the icon value to apply it later
+            bufferedIsVisible = visible
+        }
     }
 
     override fun getIsFlat(): Boolean {
-        return symbolLayer.iconPitchAlignment == IconPitchAlignment.MAP
+        return try {
+            symbolLayer.iconPitchAlignment == IconPitchAlignment.MAP
+        } catch (_: MapboxStyleException) {
+            bufferedIsFlat
+        }
     }
 
     override fun setIsFlat(flat: Boolean) {
-        symbolLayer.iconPitchAlignment(getIconPitchAlignment(flat))
-        symbolLayer.iconRotationAlignment(getIconRotationAlignment(flat))
+        if (this::safeStyle.isInitialized) {
+            symbolLayer.iconPitchAlignment(getIconPitchAlignment(flat))
+            symbolLayer.iconRotationAlignment(getIconRotationAlignment(flat))
+        } else {
+            // if the layer was not added to the map yet, buffer the is flat value to apply it later
+            bufferedIsFlat = flat
+        }
     }
 
     override fun getRotation(): Float {
-        return symbolLayer.iconRotate?.toFloat() ?: 0.0f
+        return try {
+            symbolLayer.iconRotate?.toFloat() ?: OmhConstants.DEFAULT_ROTATION
+        } catch (_: MapboxStyleException) {
+            bufferedRotation
+        }
     }
 
     override fun setRotation(rotation: Float) {
-        symbolLayer.iconRotate(rotation.toDouble())
+        if (this::safeStyle.isInitialized) {
+            symbolLayer.iconRotate(rotation.toDouble())
+        } else {
+            // if the layer was not added to the map yet, buffer the is flat value to apply it later
+            bufferedRotation = rotation
+        }
     }
 
     override fun getBackgroundColor(): Int? {
@@ -222,9 +294,9 @@ internal class OmhMarkerImpl(
         val markerImageID = getIconID(icon != null)
 
         // ensure the other icon is removed for memory optimization
-        mapView.mapboxMap.removeStyleImage(getIconID(!isCustomIconSet))
+        safeStyle.removeStyleImage(getIconID(!isCustomIconSet))
 
-        val addImageResult = mapView.mapboxMap.addImage(
+        val addImageResult = safeStyle.addImage(
             markerImageID,
             DrawableConverter.convertDrawableToBitmap(
                 icon ?: getDefaultIcon()

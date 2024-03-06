@@ -25,6 +25,10 @@ import androidx.annotation.RequiresPermission
 import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.MapView
 import com.mapbox.maps.Style
+import com.mapbox.maps.extension.style.layers.Layer
+import com.mapbox.maps.extension.style.layers.addLayer
+import com.mapbox.maps.extension.style.sources.addSource
+import com.mapbox.maps.extension.style.sources.generated.GeoJsonSource
 import com.mapbox.maps.plugin.compass.compass
 import com.mapbox.maps.plugin.gestures.gestures
 import com.mapbox.maps.plugin.locationcomponent.location
@@ -76,21 +80,54 @@ internal class OmhMapImpl(
 
     private var onMyLocationButtonClickListener: OmhOnMyLocationButtonClickListener? = null
 
+    private val elementsToAdd = mutableListOf<Pair<GeoJsonSource, Layer>>()
     private val markers = mutableMapOf<UUID, OmhMarker>()
+
+    private var style: Style? = null
 
     init {
         setupMapViewUIControls()
+        addPendingMapElements()
+    }
+
+    private fun addPendingMapElements() {
+        mapView.mapboxMap.loadStyle(Style.STANDARD) { safeStyle ->
+            synchronized(this) {
+                this.style = safeStyle
+
+                elementsToAdd.forEach { (source, layer) ->
+                    safeStyle.addSource(source)
+                    safeStyle.addLayer(layer)
+                }
+
+                markers.values.forEach { omhMarker ->
+                    // re-apply the icons now, since they can be added to the map for real
+                    if (omhMarker is OmhMarkerImpl) {
+                        omhMarker.applyBufferedProperties(safeStyle)
+                    }
+                }
+            }
+        }
     }
 
     override val providerName: String
         get() = Constants.PROVIDER_NAME
 
     override fun addMarker(options: OmhMarkerOptions): OmhMarker {
-        val omhMarker = options.addOmhMarker(mapView)
+        synchronized(this) {
+            val (omhMarker, source, layer) = options.addOmhMarker(mapView)
 
-        markers[omhMarker.getMarkerUUID()] = omhMarker
+            style?.let { safeStyle ->
+                safeStyle.addSource(source)
+                safeStyle.addLayer(layer)
 
-        return omhMarker
+                omhMarker.applyBufferedProperties(safeStyle)
+            }
+
+            markers[omhMarker.getMarkerUUID()] = omhMarker
+
+            return omhMarker
+        }
     }
 
     override fun addPolyline(options: OmhPolylineOptions): OmhPolyline? {
