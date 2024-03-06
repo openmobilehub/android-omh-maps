@@ -185,4 +185,15 @@ interface OmhMap {
      * If null, the map style will be reset to the default style.
      */
     fun setMapStyle(json: Int?)
+
+    /**
+     * Updates the scale factor of the map.
+     * The scale factor is used to adjust the size of the map elements, e.g. polylines width.
+     * Might be useful when the app uses multiple map providers and the map elements should have the same
+     * or similar size.
+     *
+     * @param callback The callback that will be invoked with the current zoom level.
+     * The callback should return the new scale factor based on the current zoom level.
+     */
+    fun updateScaleFactor(callback: (zoomLevel: Float) -> Float)
 }
