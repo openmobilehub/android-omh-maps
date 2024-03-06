@@ -58,11 +58,11 @@ internal class OmhMarkerImpl(
     private lateinit var safeStyle: Style
     private var isCustomIconSet: Boolean = false
 
-    private var bufferedIcon: Drawable? = null
-    private var bufferedAlpha: Float = OmhConstants.DEFAULT_ALPHA
-    private var bufferedIsVisible: Boolean = OmhConstants.DEFAULT_IS_VISIBLE
-    private var bufferedIsFlat: Boolean = OmhConstants.DEFAULT_IS_FLAT
-    private var bufferedRotation: Float = OmhConstants.DEFAULT_ROTATION
+    internal var bufferedIcon: Drawable? = null
+    internal var bufferedAlpha: Float = OmhConstants.DEFAULT_ALPHA
+    internal var bufferedIsVisible: Boolean = OmhConstants.DEFAULT_IS_VISIBLE
+    internal var bufferedIsFlat: Boolean = OmhConstants.DEFAULT_IS_FLAT
+    internal var bufferedRotation: Float = OmhConstants.DEFAULT_ROTATION
 
     init {
         isCustomIconSet = initialIcon != null
@@ -136,7 +136,8 @@ internal class OmhMarkerImpl(
         check(!this::safeStyle.isInitialized) { "Buffered properties have already been applied" }
 
         this.safeStyle = safeStyle
-        safeStyle.addSource(geoJsonSource)
+
+        this.safeStyle.addSource(geoJsonSource)
 
         setIcon(bufferedIcon)
         setAlpha(bufferedAlpha)
@@ -144,7 +145,7 @@ internal class OmhMarkerImpl(
         setIsFlat(bufferedIsFlat)
         setRotation(bufferedRotation)
 
-        safeStyle.addLayer(symbolLayer)
+        this.safeStyle.addLayer(symbolLayer)
 
         // (possibly) clear some memory
         bufferedIcon = null
@@ -259,7 +260,7 @@ internal class OmhMarkerImpl(
         )
     }
 
-    private fun getIconID(bForCustomIcon: Boolean): String {
+    internal fun getIconID(bForCustomIcon: Boolean): String {
         return "$markerUUID-omh-marker-icon-${if (bForCustomIcon) "custom" else "default"}"
     }
 
@@ -296,17 +297,13 @@ internal class OmhMarkerImpl(
         // ensure the other icon is removed for memory optimization
         safeStyle.removeStyleImage(getIconID(!isCustomIconSet))
 
-        val addImageResult = safeStyle.addImage(
+        safeStyle.addImage(
             markerImageID,
             DrawableConverter.convertDrawableToBitmap(
                 icon ?: getDefaultIcon()
             ),
-            icon == null // apply backgroundColor to the default image, only if icon is null
+            icon === null // apply backgroundColor to the default image, only if icon is null
         )
-
-        addImageResult.error?.let { error ->
-            throw IllegalStateException("Failed to add image to map: $error")
-        }
 
         return markerImageID
     }

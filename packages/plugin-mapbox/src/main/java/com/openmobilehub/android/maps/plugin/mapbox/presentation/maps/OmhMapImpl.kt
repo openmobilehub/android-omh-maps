@@ -27,8 +27,6 @@ import com.mapbox.maps.MapView
 import com.mapbox.maps.RenderedQueryGeometry
 import com.mapbox.maps.RenderedQueryOptions
 import com.mapbox.maps.Style
-import com.mapbox.maps.extension.style.layers.addLayer
-import com.mapbox.maps.extension.style.sources.addSource
 import com.mapbox.maps.plugin.compass.compass
 import com.mapbox.maps.plugin.gestures.gestures
 import com.mapbox.maps.plugin.locationcomponent.location
@@ -111,12 +109,9 @@ internal class OmhMapImpl(
 
     override fun addMarker(options: OmhMarkerOptions): OmhMarker {
         synchronized(this) {
-            val (omhMarker, source, layer) = options.addOmhMarker(mapView)
+            val (omhMarker, _, layer) = options.addOmhMarker(mapView)
 
             style?.let { safeStyle ->
-                safeStyle.addSource(source)
-                safeStyle.addLayer(layer)
-
                 omhMarker.applyBufferedProperties(safeStyle)
             }
 
