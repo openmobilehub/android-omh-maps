@@ -2,6 +2,8 @@ package com.openmobilehub.android.maps.plugin.mapbox.presentation.maps
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.util.DisplayMetrics
+import android.view.MotionEvent
 import android.view.View
 import com.mapbox.common.Cancelable
 import com.mapbox.geojson.Point
@@ -14,6 +16,7 @@ import com.mapbox.maps.MapLoaded
 import com.mapbox.maps.MapLoadedCallback
 import com.mapbox.maps.MapView
 import com.mapbox.maps.MapboxMap
+import com.mapbox.maps.ScreenCoordinate
 import com.mapbox.maps.Style
 import com.mapbox.maps.plugin.Plugin
 import com.mapbox.maps.plugin.annotation.AnnotationPlugin
@@ -29,12 +32,17 @@ import com.mapbox.maps.plugin.viewport.state.FollowPuckViewportState
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMapLoadedCallback
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnCameraIdleListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnCameraMoveStartedListener
+import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMarkerClickListener
+import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMarkerDragListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMyLocationButtonClickListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhSnapshotReadyCallback
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
+import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
 import com.openmobilehub.android.maps.core.utils.logging.Logger
 import com.openmobilehub.android.maps.plugin.mapbox.utils.Constants
+import com.openmobilehub.android.maps.plugin.mapbox.utils.CoordinateConverter
 import com.openmobilehub.android.maps.plugin.mapbox.utils.JSONUtil
+import com.openmobilehub.android.maps.plugin.mapbox.utils.TimestampHelper
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
@@ -59,6 +67,37 @@ class OmhMapImplTest {
     private val context = mockk<Context>(relaxed = true)
     private val myLocationIcon = mockk<MyLocationIcon>(relaxed = true)
     private val logger = mockk<Logger>(relaxed = true)
+    private val onMapTouchListenerSlot = slot<View.OnTouchListener>()
+
+    private fun mockMotionEvent(
+        action: Int,
+        x: Float,
+        y: Float,
+    ): MotionEvent {
+        val event = mockk<MotionEvent>()
+        every { event.x } returns x
+        every { event.y } returns y
+        every { event.pointerCount } returns 1
+        every { event.actionMasked } returns action
+
+        return event
+    }
+
+    private fun mockPointAt(
+        screenX: Float,
+        screenY: Float,
+        pointX: Double,
+        pointY: Double
+    ): Point {
+        val mockedPoint = Point.fromLngLat(pointX, pointY)
+
+        val screenCoordinate = ScreenCoordinate(screenX.toDouble(), screenY.toDouble())
+
+        every { map.mapboxMap.coordinateForPixel(screenCoordinate) } returns mockedPoint
+        every { map.mapboxMap.pixelForCoordinate(mockedPoint) } returns screenCoordinate
+
+        return mockedPoint
+    }
 
     @Before
     fun setUp() {
@@ -74,6 +113,25 @@ class OmhMapImplTest {
         } returns pointAnnotationManager
         every { map.getPlugin<AnnotationPlugin>(Plugin.MAPBOX_ANNOTATION_PLUGIN_ID) } returns annotationPlugin
         every { map.mapboxMap } returns mockk<MapboxMap>(relaxed = true)
+        every { map.setOnTouchListener(capture(onMapTouchListenerSlot)) } just runs
+
+//        val context = mockk<Context>()
+//        val resources = mockk<Resources>()
+//        val displayMetrics = mockk<DisplayMetrics>()
+//        every { map.context } returns context
+//        every { context.resources } returns resources
+//        every { resources.displayMetrics } returns displayMetrics
+//        every { displayMetrics.widthPixels } returns 1080
+//        every { displayMetrics.heightPixels } returns 720
+//        val displayMetrics = mockk<DisplayMetrics>()
+//        every { displayMetrics.widthPixels } returns 1080
+//        every { displayMetrics.heightPixels } returns 720
+        every { map.context } returns context
+        every { context.resources.displayMetrics } returns DisplayMetrics().apply {
+            densityDpi = 400
+            widthPixels = 1080
+            heightPixels = 720
+        }
 
         mockkObject(JSONUtil)
 
@@ -444,5 +502,179 @@ class OmhMapImplTest {
 
         // Assert
         verify { map.mapboxMap.loadStyle(Style.STANDARD) }
+    }
+
+    @Test
+    fun `click listener gets triggered when marker is clicked`() {
+        // Arrange
+        val listener = mockk<OmhOnMarkerClickListener>(relaxed = true)
+
+        omhMapImpl.setOnMarkerClickListener(listener)
+        val point = mockPointAt(0f, 0f, 10.0, 15.0)
+        val omhMarker = omhMapImpl.addMarker(
+            OmhMarkerOptions().apply {
+                clickable = true
+                position = CoordinateConverter.convertToOmhCoordinate(point)
+            }
+        )
+        val someOtherPoint = mockPointAt(75f, 219f, 80.0, 175.0)
+
+        every {
+            map.mapboxMap.coordinateForPixel(
+                ScreenCoordinate(
+                    70.0,
+                    90.0
+                )
+            )
+        } returns someOtherPoint
+
+        // Act - click somewhere empty on the map
+        onMapTouchListenerSlot.captured.onTouch(
+            map,
+            // touch down
+            mockMotionEvent(MotionEvent.ACTION_DOWN, 70f, 90f)
+        )
+        onMapTouchListenerSlot.captured.onTouch(
+            map,
+            // touch up
+            mockMotionEvent(MotionEvent.ACTION_UP, 70f, 90f)
+        )
+
+        // Assert that the listener was not triggered
+        verify(exactly = 0) { listener.onMarkerClick(any()) }
+
+        // Act - click on the marker
+        onMapTouchListenerSlot.captured.onTouch(
+            map,
+            // touch down
+            mockMotionEvent(MotionEvent.ACTION_DOWN, 0f, 0f)
+        )
+        onMapTouchListenerSlot.captured.onTouch(
+            map,
+            // touch up
+            mockMotionEvent(MotionEvent.ACTION_UP, 0f, 0f)
+        )
+
+        // Assert that the listener was triggered
+        verify(exactly = 1) { listener.onMarkerClick(omhMarker) }
+    }
+
+    @Test
+    @SuppressWarnings("LongMethod")
+    fun `drag listeners are triggered when marker is dragged`() = mockkObject(TimestampHelper) {
+        // Arrange
+        val listener = mockk<OmhOnMarkerDragListener>(relaxed = true)
+
+        omhMapImpl.setOnMarkerDragListener(listener)
+        val point = mockPointAt(0f, 0f, 10.0, 15.0)
+        val omhMarker = omhMapImpl.addMarker(
+            OmhMarkerOptions().apply {
+                clickable = true
+                draggable = true
+                position = CoordinateConverter.convertToOmhCoordinate(point)
+            }
+        )
+        val someOtherPoint1 = mockPointAt(75f, 219f, 80.0, 175.0)
+        val someOtherPoint2 = mockPointAt(75f, 219f, 80.0, 175.0)
+
+        every {
+            map.mapboxMap.coordinateForPixel(
+                ScreenCoordinate(
+                    70.0,
+                    90.0
+                )
+            )
+        } returns someOtherPoint1
+        every {
+            map.mapboxMap.coordinateForPixel(
+                ScreenCoordinate(
+                    80.0,
+                    100.0
+                )
+            )
+        } returns someOtherPoint2
+
+        // Act - drag somewhere empty on the map: someOtherPoint1 -> someOtherPoint2
+        // Long press on someOtherPoint1
+        every { TimestampHelper.getNow() } returns 0L
+        onMapTouchListenerSlot.captured.onTouch(
+            map,
+            // touch down
+            mockMotionEvent(MotionEvent.ACTION_DOWN, 70f, 90f)
+        )
+        every { TimestampHelper.getNow() } returns 1000L
+        onMapTouchListenerSlot.captured.onTouch(
+            map,
+            // touch move
+            mockMotionEvent(MotionEvent.ACTION_MOVE, 70f, 90f)
+        )
+
+        // Assert that the start listener was not triggered
+        verify(exactly = 0) { listener.onMarkerDragStart(any()) }
+
+        every { TimestampHelper.getNow() } returns 2000L
+        onMapTouchListenerSlot.captured.onTouch(
+            map,
+            // touch move
+            mockMotionEvent(MotionEvent.ACTION_MOVE, 70f, 90f)
+        )
+        every { TimestampHelper.getNow() } returns 3000L
+
+        // Move to someOtherPoint2
+        onMapTouchListenerSlot.captured.onTouch(
+            map,
+            // touch move
+            mockMotionEvent(MotionEvent.ACTION_MOVE, 80f, 100f)
+        )
+
+        // Assert that the drag listener was not triggered
+        verify(exactly = 0) { listener.onMarkerDrag(any()) }
+
+        onMapTouchListenerSlot.captured.onTouch(
+            map,
+            // touch up
+            mockMotionEvent(MotionEvent.ACTION_UP, 80f, 100f)
+        )
+
+        // Assert that the drag end listener was not triggered
+        verify(exactly = 0) { listener.onMarkerDragEnd(any()) }
+
+        // Act - drag from point to someOtherPoint1
+        // Long press on someOtherPoint1
+        every { TimestampHelper.getNow() } returns 0L
+        onMapTouchListenerSlot.captured.onTouch(
+            map,
+            // touch down
+            mockMotionEvent(MotionEvent.ACTION_DOWN, 0f, 0f)
+        )
+        every { TimestampHelper.getNow() } returns 1000L
+        onMapTouchListenerSlot.captured.onTouch(
+            map,
+            // touch move
+            mockMotionEvent(MotionEvent.ACTION_MOVE, 0f, 0f)
+        )
+        every { TimestampHelper.getNow() } returns 2000L
+
+        // Assert that the start listener was not triggered
+        verify(exactly = 1) { listener.onMarkerDragStart(omhMarker) }
+
+        // Move to someOtherPoint1
+        onMapTouchListenerSlot.captured.onTouch(
+            map,
+            // touch move
+            mockMotionEvent(MotionEvent.ACTION_MOVE, 70f, 90f)
+        )
+
+        // Assert that the drag listener was not triggered
+        verify { listener.onMarkerDrag(omhMarker) }
+
+        onMapTouchListenerSlot.captured.onTouch(
+            map,
+            // touch up
+            mockMotionEvent(MotionEvent.ACTION_UP, 70f, 90f)
+        )
+
+        // Assert that the drag end listener was not triggered
+        verify(exactly = 1) { listener.onMarkerDragEnd(omhMarker) }
     }
 }

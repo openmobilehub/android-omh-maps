@@ -28,15 +28,17 @@ import com.mapbox.maps.extension.style.layers.properties.generated.IconRotationA
 import com.mapbox.maps.extension.style.layers.properties.generated.Visibility
 import com.mapbox.maps.extension.style.sources.addSource
 import com.mapbox.maps.extension.style.sources.generated.GeoJsonSource
-import com.mapbox.maps.extension.style.sources.updateGeoJSONSourceFeatures
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMarker
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.utils.DrawableConverter
 import com.openmobilehub.android.maps.plugin.mapbox.R
+import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IDraggable
 import com.openmobilehub.android.maps.plugin.mapbox.utils.AnchorConverter
 import com.openmobilehub.android.maps.plugin.mapbox.utils.Constants
 import com.openmobilehub.android.maps.plugin.mapbox.utils.CoordinateConverter
+import com.openmobilehub.android.maps.plugin.mapbox.utils.Offset2D
 import java.util.UUID
+import kotlin.math.roundToInt
 import com.openmobilehub.android.maps.core.presentation.models.Constants as OmhConstants
 
 @SuppressWarnings("TooManyFunctions", "LongParameterList")
@@ -49,19 +51,22 @@ internal class OmhMarkerImpl(
     private var draggable: Boolean,
     private var clickable: Boolean,
     private var backgroundColor: Int?,
+    private var bufferedAlpha: Float = OmhConstants.DEFAULT_ALPHA,
+    private var bufferedIsVisible: Boolean = OmhConstants.DEFAULT_IS_VISIBLE,
+    private var bufferedIsFlat: Boolean = OmhConstants.DEFAULT_IS_FLAT,
+    private var bufferedRotation: Float = OmhConstants.DEFAULT_ROTATION,
+    internal var bufferedAnchor: Pair<Float, Float> = OmhConstants.DEFAULT_ANCHOR to OmhConstants.DEFAULT_ANCHOR,
     initialIcon: Drawable?
-) : OmhMarker {
+) : OmhMarker, IDraggable {
 
     private lateinit var geoJsonSource: GeoJsonSource
     private lateinit var symbolLayer: SymbolLayer
     private lateinit var safeStyle: Style
     private var isCustomIconSet: Boolean = false
+    private var iconWidth: Int = 0
+    private var iconHeight: Int = 0
 
     internal var bufferedIcon: Drawable? = null
-    internal var bufferedAlpha: Float = OmhConstants.DEFAULT_ALPHA
-    internal var bufferedIsVisible: Boolean = OmhConstants.DEFAULT_IS_VISIBLE
-    internal var bufferedIsFlat: Boolean = OmhConstants.DEFAULT_IS_FLAT
-    internal var bufferedRotation: Float = OmhConstants.DEFAULT_ROTATION
 
     init {
         isCustomIconSet = initialIcon != null
@@ -85,19 +90,12 @@ internal class OmhMarkerImpl(
     }
 
     override fun setPosition(omhCoordinate: OmhCoordinate) {
-        updatePositionVar(omhCoordinate)
-        geoJsonSource.updateGeoJSONSourceFeatures(
-            listOf(
-                Feature.fromGeometry(
-                    CoordinateConverter.convertToPoint(omhCoordinate)
-                )
+        position = omhCoordinate
+        geoJsonSource.feature(
+            Feature.fromGeometry(
+                CoordinateConverter.convertToPoint(omhCoordinate)
             )
         )
-    }
-
-    fun updatePositionVar(omhCoordinate: OmhCoordinate) {
-        position = omhCoordinate
-        // TODO make sure this is called from outside on drag!
     }
 
     override fun getTitle(): String? {
@@ -121,13 +119,21 @@ internal class OmhMarkerImpl(
         return draggable
     }
 
+    override fun getHandleOffset(): Offset2D {
+        val offsetX = (bufferedAnchor.first - 1.0f).roundToInt()
+        val offsetY = (bufferedAnchor.second - 1.0f).roundToInt()
+
+        return Offset2D(offsetX * iconWidth, offsetY * iconHeight)
+    }
+
     override fun setDraggable(draggable: Boolean) {
         this.draggable = draggable
     }
 
     override fun setAnchor(anchorU: Float, anchorV: Float) {
+        bufferedAnchor = anchorU to anchorV
         symbolLayer.iconAnchor(
-            AnchorConverter.convertContinuousToDiscreteIconAnchor(anchorU to anchorV)
+            AnchorConverter.convertContinuousToDiscreteIconAnchor(bufferedAnchor)
         )
     }
 
@@ -144,6 +150,7 @@ internal class OmhMarkerImpl(
             setIsVisible(bufferedIsVisible)
             setIsFlat(bufferedIsFlat)
             setRotation(bufferedRotation)
+            setAnchor(bufferedAnchor.first, bufferedAnchor.second)
 
             this.safeStyle.addLayer(symbolLayer)
 
@@ -290,7 +297,7 @@ internal class OmhMarkerImpl(
      *
      * @return the ID of the added or updated marker icon image (static for a given marker, received from [getIconID]).
      */
-    internal fun addOrUpdateMarkerIconImage(
+    private fun addOrUpdateMarkerIconImage(
         icon: Drawable?,
     ): String {
         val markerImageID = getIconID(icon != null)
@@ -298,11 +305,14 @@ internal class OmhMarkerImpl(
         // ensure the other icon is removed for memory optimization
         safeStyle.removeStyleImage(getIconID(!isCustomIconSet))
 
+        val bitmap = DrawableConverter.convertDrawableToBitmap(icon ?: getDefaultIcon())
+
+        iconWidth = bitmap.width
+        iconHeight = bitmap.height
+
         val addImageResult = safeStyle.addImage(
             markerImageID,
-            DrawableConverter.convertDrawableToBitmap(
-                icon ?: getDefaultIcon()
-            ),
+            bitmap,
             icon === null // apply backgroundColor to the default image, only if icon is null
         )
 

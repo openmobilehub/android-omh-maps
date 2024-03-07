@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.openmobilehub.android.maps.plugin.mapbox.presentation.maps
+package com.openmobilehub.android.maps.plugin.mapbox.extensions
 
 import android.content.Context
 import android.content.res.Resources
@@ -34,7 +34,7 @@ import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
 import com.openmobilehub.android.maps.core.utils.DrawableConverter
 import com.openmobilehub.android.maps.plugin.mapbox.R
-import com.openmobilehub.android.maps.plugin.mapbox.extensions.addOmhMarker
+import com.openmobilehub.android.maps.plugin.mapbox.presentation.maps.OmhMarkerImpl
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkObject
@@ -49,7 +49,7 @@ import org.junit.runners.Parameterized
 import org.junit.runners.Parameterized.Parameters
 
 @RunWith(Parameterized::class)
-internal class OmhMarkerOptionsExtensionTest(
+internal class OmhMarkerExtensionsTest(
     private val data: OmhMarkerOptions
 ) {
     private val mapView = mockk<MapView>()
@@ -109,49 +109,14 @@ internal class OmhMarkerOptionsExtensionTest(
         val mockAddImageResult = mockk<Expected<String, None>>(relaxed = true)
         every { mockAddImageResult.error } returns null
         every { safeStyle.addImage(any(), any<Bitmap>(), any()) } returns mockAddImageResult
+        every { convertDrawableToBitmapMock.width } returns 80
+        every { convertDrawableToBitmapMock.height } returns 80
     }
 
     @Test
     @SuppressWarnings("LongMethod")
     fun `OmhMarkerOptions addOmhMarker creates an OmhMarker and all properties are properly handled`() {
         var (omhMarker, geoJsonSource, _) = data.addOmhMarker(mapView)
-
-        // we will check marker properties both before map style is loaded (to check marker property buffering validity)
-        // and then after the map style is loaded (to check if the buffered properties are applied correctly)
-        fun assertMarkerProperties() {
-            assertEquals(
-                data.position.latitude,
-                omhMarker.getPosition().latitude,
-                0.0
-            )
-            assertEquals(
-                data.position.longitude,
-                omhMarker.getPosition().longitude,
-                0.0
-            )
-            assertEquals(
-                omhMarker.getGeoJsonSourceID(),
-                geoJsonSource.sourceId
-            )
-
-            assertEquals(data.alpha, omhMarker.getAlpha())
-
-            assertEquals(data.title, omhMarker.getTitle())
-
-            assertEquals(data.snippet, omhMarker.getSnippet())
-
-            assertEquals(data.isFlat, omhMarker.getIsFlat())
-
-            assertEquals(
-                data.rotation,
-                omhMarker.getRotation()
-            )
-
-            assertEquals(data.isVisible, omhMarker.getIsVisible())
-            assertEquals(data.backgroundColor, omhMarker.getBackgroundColor())
-            assertEquals(data.clickable, omhMarker.getClickable())
-            assertEquals(data.draggable, omhMarker.getDraggable())
-        }
 
         fun verifyIconLoaderProcessing(icon: Drawable?, bMarkerBufferedMode: Boolean) {
             if (bMarkerBufferedMode) {
@@ -176,6 +141,31 @@ internal class OmhMarkerOptionsExtensionTest(
             }
         }
 
+        // assert property values
+        assertEquals(
+            data.position.latitude,
+            omhMarker.getPosition().latitude,
+            0.0
+        )
+        assertEquals(
+            data.position.longitude,
+            omhMarker.getPosition().longitude,
+            0.0
+        )
+        assertEquals(
+            omhMarker.getGeoJsonSourceID(),
+            geoJsonSource.sourceId
+        )
+        assertEquals(data.alpha, omhMarker.getAlpha())
+        assertEquals(data.title, omhMarker.getTitle())
+        assertEquals(data.snippet, omhMarker.getSnippet())
+        assertEquals(data.isFlat, omhMarker.getIsFlat())
+        assertEquals(data.rotation, omhMarker.getRotation())
+        assertEquals(data.isVisible, omhMarker.getIsVisible())
+        assertEquals(data.backgroundColor, omhMarker.getBackgroundColor())
+        assertEquals(data.clickable, omhMarker.getClickable())
+        assertEquals(data.draggable, omhMarker.getDraggable())
+
         // we will also check if we can apply setters when still in 'buffered' mode (before map style is loaded)
         val someOtherMockedDrawable = mockk<Drawable>(relaxed = true)
         val otherIconThanFromOptions =
@@ -189,7 +179,7 @@ internal class OmhMarkerOptionsExtensionTest(
         omhMarker.setDraggable(!data.draggable)
         omhMarker.setAnchor(0.9f, 0.9f)
 
-        // assert
+        // assert before the style is loaded
         verifyIconLoaderProcessing(otherIconThanFromOptions, true)
         assertEquals(5.5f, omhMarker.getAlpha())
         assertEquals(!data.isFlat, omhMarker.getIsFlat())
@@ -197,6 +187,7 @@ internal class OmhMarkerOptionsExtensionTest(
         assertEquals(58.5f, omhMarker.getRotation())
         assertEquals(!data.clickable, omhMarker.getClickable())
         assertEquals(!data.draggable, omhMarker.getDraggable())
+        assertEquals(0.9f to 0.9f, omhMarker.bufferedAnchor)
 
         // also, try to change the background color
         omhMarker.setBackgroundColor(0x12345678)
@@ -221,8 +212,9 @@ internal class OmhMarkerOptionsExtensionTest(
         // finally we mock that the map style has been loaded
         omhMarker.applyBufferedProperties(safeStyle)
 
-        // add a new marker, this time mocking the SymbolLayer to verify setters
         mockkStatic("com.mapbox.maps.extension.style.layers.generated.SymbolLayerKt")
+
+        // add a new marker, this time mocking the SymbolLayer to verify setters
         every {
             com.mapbox.maps.extension.style.layers.generated.symbolLayer(
                 any(),

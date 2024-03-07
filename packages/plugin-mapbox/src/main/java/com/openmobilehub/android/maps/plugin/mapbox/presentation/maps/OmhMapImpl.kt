@@ -18,14 +18,14 @@ package com.openmobilehub.android.maps.plugin.mapbox.presentation.maps
 
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
+import android.annotation.SuppressLint
 import android.content.Context
 import android.view.Gravity
 import android.widget.ImageView
 import androidx.annotation.RequiresPermission
 import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.MapView
-import com.mapbox.maps.RenderedQueryGeometry
-import com.mapbox.maps.RenderedQueryOptions
+import com.mapbox.maps.ScreenCoordinate
 import com.mapbox.maps.Style
 import com.mapbox.maps.plugin.compass.compass
 import com.mapbox.maps.plugin.gestures.gestures
@@ -54,11 +54,22 @@ import com.openmobilehub.android.maps.core.presentation.models.OmhPolygonOptions
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolylineOptions
 import com.openmobilehub.android.maps.core.utils.logging.Logger
 import com.openmobilehub.android.maps.plugin.mapbox.extensions.addOmhMarker
+import com.openmobilehub.android.maps.plugin.mapbox.extensions.plus
+import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IDraggable
 import com.openmobilehub.android.maps.plugin.mapbox.utils.Constants
 import com.openmobilehub.android.maps.plugin.mapbox.utils.CoordinateConverter
 import com.openmobilehub.android.maps.plugin.mapbox.utils.DimensionConverter
 import com.openmobilehub.android.maps.plugin.mapbox.utils.JSONUtil
+import com.openmobilehub.android.maps.plugin.mapbox.utils.TimestampHelper
 import com.openmobilehub.android.maps.plugin.mapbox.utils.commonLogger
+import kotlin.math.pow
+import kotlin.math.sqrt
+
+fun ScreenCoordinate.distanceTo(other: ScreenCoordinate): Double {
+    return sqrt(
+        (other.x - x).pow(2.0) + (other.y - y).pow(2.0)
+    )
+}
 
 @SuppressWarnings("TooManyFunctions")
 internal class OmhMapImpl(
@@ -80,13 +91,16 @@ internal class OmhMapImpl(
     private var markerDragListener: OmhOnMarkerDragListener? = null
 
     private val markers = mutableMapOf<String, OmhMarker>()
+    private var currentlyDraggedEntity: Any? = null
+    private var mapDragTouchStartTimestamp: Long? = null
+    private var mapTouchStartPoint: ScreenCoordinate? = null
 
     private var style: Style? = null
 
     init {
         setupMapViewUIControls()
         addPendingMapElements()
-        setupClickListeners()
+        setupTouchInteractionListeners()
     }
 
     private fun addPendingMapElements() {
@@ -214,32 +228,167 @@ internal class OmhMapImpl(
         }
     }
 
-    private fun setupClickListeners() {
-        mapView.gestures.addOnMapClickListener { point ->
-            val screenCoordinate = mapView.mapboxMap.pixelForCoordinate(point)
+    private fun handleDragStart(omhCoordinate: OmhCoordinate) {
+        when (currentlyDraggedEntity) {
+            is OmhMarkerImpl -> {
+                val omhMarker = currentlyDraggedEntity as OmhMarkerImpl
+                omhMarker.setPosition(omhCoordinate)
+                markerDragListener?.onMarkerDragStart(omhMarker)
+            }
 
-            mapView.mapboxMap.queryRenderedFeatures(
-                RenderedQueryGeometry(screenCoordinate),
-                RenderedQueryOptions(null, null)
-            ) {
-                val layerId = try {
-                    it.value?.get(0)?.layers?.get(0)
-                } catch (
-                    @SuppressWarnings(
-                        "SwallowedException",
-                        "TooGenericExceptionCaught"
-                    ) e: Exception
-                ) {
-                    null
+            else -> {
+                // Noop
+            }
+        }
+    }
+
+    private fun handleDragContinuation(omhCoordinate: OmhCoordinate) {
+        when (currentlyDraggedEntity) {
+            is OmhMarkerImpl -> {
+                val omhMarker = currentlyDraggedEntity as OmhMarkerImpl
+                omhMarker.setPosition(omhCoordinate)
+                markerDragListener?.onMarkerDrag(omhMarker)
+            }
+
+            else -> {
+                // Noop
+            }
+        }
+    }
+
+    private fun handleDragEnd(omhCoordinate: OmhCoordinate) {
+        when (currentlyDraggedEntity) {
+            is OmhMarkerImpl -> {
+                val omhMarker = currentlyDraggedEntity as OmhMarkerImpl
+                omhMarker.setPosition(omhCoordinate)
+                markerDragListener?.onMarkerDragEnd(omhMarker)
+            }
+
+            else -> {
+                // Noop
+            }
+        }
+    }
+
+    /** Returns the [IDraggable] entity nearby the given coordinates on screen.
+     *
+     * @param pointOnScreen The [com.mapbox.maps.ScreenCoordinate] nearby which to look for an [IDraggable].
+     *
+     * @return The [IDraggable] entity, if found.
+     * */
+    private fun findDraggableEntity(pointOnScreen: ScreenCoordinate): IDraggable? {
+        val minScreenDimension = mapView.context.resources.displayMetrics.widthPixels.coerceAtMost(
+            mapView.context.resources.displayMetrics.heightPixels
+        )
+        val hitRadius =
+            (minScreenDimension.toDouble() * Constants.MAP_TOUCH_HIT_RADIUS_PERCENT_OF_SCREEN_DIM)
+                .coerceIn(
+                    Constants.MAP_TOUCH_HIT_RADIUS_MIN_PX..Constants.MAP_TOUCH_HIT_RADIUS_MAX_PX
+                )
+        var hit: IDraggable? = null
+        var leastDistancePx = Double.MAX_VALUE
+        for (marker in markers.values) {
+            val markerPositionOnScreen = mapView.mapboxMap.pixelForCoordinate(
+                CoordinateConverter.convertToPoint(marker.getPosition())
+            ) + (marker as OmhMarkerImpl).getHandleOffset()
+            val distancePx = markerPositionOnScreen.distanceTo(pointOnScreen)
+
+            if (distancePx <= hitRadius && distancePx < leastDistancePx) {
+                hit = marker
+                leastDistancePx = distancePx
+            }
+        }
+
+        return hit
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    @SuppressWarnings("LongMethod")
+    private fun setupTouchInteractionListeners() {
+        mapView.setOnTouchListener { _, event ->
+            val screenCoordinates = ScreenCoordinate(event.x.toDouble(), event.y.toDouble())
+            val point = mapView.mapboxMap.coordinateForPixel(screenCoordinates)
+
+            val action = event.actionMasked
+            val omhCoordinate = CoordinateConverter.convertToOmhCoordinate(point)
+
+            if (action in Constants.ACTIVE_MOTION_EVENTS) {
+                if (currentlyDraggedEntity === null) {
+                    // drag is not occurring at the moment
+
+                    if (mapDragTouchStartTimestamp === null) {
+                        // start counting time to check whether this will actually be a drag
+                        // don't consume the event this time, as it may be a click
+
+                        mapDragTouchStartTimestamp = TimestampHelper.getNow()
+                        mapTouchStartPoint = screenCoordinates
+                    } else {
+                        // first, check if we are still at the same point - otherwise, reset the timer
+                        // allow a tiny tolerance
+                        val distancePx = mapTouchStartPoint!!.distanceTo(screenCoordinates)
+                        if (distancePx > Constants.MAP_TOUCH_SAME_COORDINATES_THRESHOLD_PX) {
+                            mapDragTouchStartTimestamp = TimestampHelper.getNow()
+                            mapTouchStartPoint = screenCoordinates
+                        } else {
+                            val deltaTime =
+                                TimestampHelper.getNow() - mapDragTouchStartTimestamp!!
+
+                            if (deltaTime > Constants.MAP_TOUCH_DRAG_TOUCHDOWN_THRESHOLD_MS) {
+                                // the touch interaction time allows for treating this as a drag, if applicable
+                                val draggableEntity = findDraggableEntity(screenCoordinates)
+                                if (draggableEntity !== null && draggableEntity.getDraggable()) {
+                                    // drag start
+                                    currentlyDraggedEntity = draggableEntity
+
+                                    handleDragStart(omhCoordinate)
+                                } else {
+                                    // drag end (draggable entity ceased to be draggable or to exist)
+                                    handleDragEnd(omhCoordinate)
+
+                                    currentlyDraggedEntity = null
+                                }
+
+                                return@setOnTouchListener true
+                            }
+                        }
+                    }
+                } else {
+                    // drag continuation
+                    handleDragContinuation(omhCoordinate)
+
+                    return@setOnTouchListener true
                 }
+            } else {
+                if (currentlyDraggedEntity !== null) {
+                    // drag end (user finished interaction)
+                    mapDragTouchStartTimestamp = null
 
-                val omhMarker = markers[layerId]
+                    handleDragEnd(omhCoordinate)
 
-                if (omhMarker !== null && omhMarker.getClickable()) {
-                    markerClickListener?.onMarkerClick(omhMarker)
+                    currentlyDraggedEntity = null
+
+                    return@setOnTouchListener true
+                } else if (mapTouchStartPoint !== null) {
+                    // first, check if we are still at the same point - otherwise, discard the click
+                    // allow a tiny tolerance
+                    if (
+                        mapTouchStartPoint!!.distanceTo(screenCoordinates)
+                        <= Constants.MAP_TOUCH_SAME_COORDINATES_THRESHOLD_PX
+                    ) {
+                        // click happened
+                        val entity = findDraggableEntity(screenCoordinates)
+                        if (entity is OmhMarkerImpl) {
+                            if (entity.getClickable()) {
+                                markerClickListener?.onMarkerClick(entity)
+                            }
+                        }
+
+                        return@setOnTouchListener true
+                    }
                 }
             }
-            true
+
+            false
         }
     }
 

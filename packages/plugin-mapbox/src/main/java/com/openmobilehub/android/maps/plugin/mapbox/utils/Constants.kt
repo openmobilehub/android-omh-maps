@@ -16,6 +16,7 @@
 
 package com.openmobilehub.android.maps.plugin.mapbox.utils
 
+import android.view.MotionEvent
 import androidx.annotation.ColorInt
 
 internal object Constants {
@@ -33,4 +34,23 @@ internal object Constants {
     // UI Controls
     const val MAPBOX_ICON_SIZE = 48
     const val MAPBOX_ICON_MARGIN = 8
+
+    /** The list of motion events that are considered "active" (i.e., issued when the user is dragging). */
+    val ACTIVE_MOTION_EVENTS =
+        listOf(MotionEvent.ACTION_POINTER_DOWN, MotionEvent.ACTION_DOWN, MotionEvent.ACTION_MOVE)
+
+    /** 5% of smaller screen dimension for hit radius (clipped from the bottom by MAP_TOUCH_HIT_RADIUS_MIN_PX) */
+    const val MAP_TOUCH_HIT_RADIUS_PERCENT_OF_SCREEN_DIM = 0.065
+
+    /** Absolute minimum value for hit radius */
+    const val MAP_TOUCH_HIT_RADIUS_MIN_PX = 35.0
+
+    /** Absolute maximum value for hit radius */
+    const val MAP_TOUCH_HIT_RADIUS_MAX_PX = 85.0
+
+    /** time threshold for continuous pointer event in [ACTIVE_MOTION_EVENTS] down to be considered a drag */
+    const val MAP_TOUCH_DRAG_TOUCHDOWN_THRESHOLD_MS =
+        400L
+
+    const val MAP_TOUCH_SAME_COORDINATES_THRESHOLD_PX = 4.0
 }

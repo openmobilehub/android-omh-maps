@@ -42,7 +42,12 @@ internal fun OmhMarkerOptions.addOmhMarker(
         draggable = draggable,
         clickable = clickable,
         backgroundColor = backgroundColor,
-        initialIcon = icon
+        initialIcon = icon,
+        bufferedAlpha = alpha,
+        bufferedIsVisible = isVisible,
+        bufferedAnchor = anchor,
+        bufferedIsFlat = isFlat,
+        bufferedRotation = rotation
     )
 
     val geoJsonSourceID = omhMarker.getGeoJsonSourceID()
