@@ -114,7 +114,7 @@ internal class OmhMarkerOptionsExtensionTest(
     @Test
     @SuppressWarnings("LongMethod")
     fun `OmhMarkerOptions addOmhMarker creates an OmhMarker and all properties are properly handled`() {
-        var (omhMarker, geoJsonSource, symbolLayer) = data.addOmhMarker(mapView)
+        var (omhMarker, geoJsonSource, _) = data.addOmhMarker(mapView)
 
         // we will check marker properties both before map style is loaded (to check marker property buffering validity)
         // and then after the map style is loaded (to check if the buffered properties are applied correctly)
@@ -134,11 +134,9 @@ internal class OmhMarkerOptionsExtensionTest(
                 geoJsonSource.sourceId
             )
 
-            assertEquals(data.title, omhMarker.getTitle())
-
-            assertEquals(data.draggable, omhMarker.getDraggable())
-
             assertEquals(data.alpha, omhMarker.getAlpha())
+
+            assertEquals(data.title, omhMarker.getTitle())
 
             assertEquals(data.snippet, omhMarker.getSnippet())
 
@@ -148,6 +146,11 @@ internal class OmhMarkerOptionsExtensionTest(
                 data.rotation,
                 omhMarker.getRotation()
             )
+
+            assertEquals(data.isVisible, omhMarker.getIsVisible())
+            assertEquals(data.backgroundColor, omhMarker.getBackgroundColor())
+            assertEquals(data.clickable, omhMarker.getClickable())
+            assertEquals(data.draggable, omhMarker.getDraggable())
         }
 
         fun verifyIconLoaderProcessing(icon: Drawable?, bMarkerBufferedMode: Boolean) {
@@ -182,6 +185,9 @@ internal class OmhMarkerOptionsExtensionTest(
         omhMarker.setIsFlat(!data.isFlat)
         omhMarker.setIsVisible(!data.isVisible)
         omhMarker.setRotation(58.5f)
+        omhMarker.setClickable(!data.clickable)
+        omhMarker.setDraggable(!data.draggable)
+        omhMarker.setAnchor(0.9f, 0.9f)
 
         // assert
         verifyIconLoaderProcessing(otherIconThanFromOptions, true)
@@ -189,13 +195,28 @@ internal class OmhMarkerOptionsExtensionTest(
         assertEquals(!data.isFlat, omhMarker.getIsFlat())
         assertEquals(!data.isVisible, omhMarker.getIsVisible())
         assertEquals(58.5f, omhMarker.getRotation())
+        assertEquals(!data.clickable, omhMarker.getClickable())
+        assertEquals(!data.draggable, omhMarker.getDraggable())
+
+        // also, try to change the background color
+        omhMarker.setBackgroundColor(0x12345678)
+        assertEquals(0x12345678, omhMarker.getBackgroundColor())
+        // if a custom icon is set, then it shall be set to null, otherwise it will remain unchanged
+        if (data.icon !== null) {
+            verifyIconLoaderProcessing(null, true)
+        }
 
         // revert our temporary changes for the tests to come to pass by comparing to the original options
+        omhMarker.setBackgroundColor(data.backgroundColor)
         omhMarker.setIcon(data.icon)
         omhMarker.setAlpha(data.alpha)
         omhMarker.setIsFlat(data.isFlat)
         omhMarker.setIsVisible(data.isVisible)
         omhMarker.setRotation(data.rotation)
+        omhMarker.setBackgroundColor(data.backgroundColor)
+        omhMarker.setClickable(data.clickable)
+        omhMarker.setDraggable(data.draggable)
+        omhMarker.setAnchor(data.anchor.first, data.anchor.second)
 
         // finally we mock that the map style has been loaded
         omhMarker.applyBufferedProperties(safeStyle)
@@ -216,7 +237,7 @@ internal class OmhMarkerOptionsExtensionTest(
         val newMarkerPack = data.addOmhMarker(mapView)
         omhMarker = newMarkerPack.first
         geoJsonSource = newMarkerPack.second
-        symbolLayer = newMarkerPack.third
+        val symbolLayer = newMarkerPack.third
         // mock (on the new OmhMarker instance) that the map style had been loaded
         omhMarker.applyBufferedProperties(safeStyle)
 
