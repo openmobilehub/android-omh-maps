@@ -246,10 +246,7 @@ internal class OmhMapImpl(
 
     override fun setOnPolylineClickListener(listener: OmhOnPolylineClickListener) {
         googleMap.setOnPolylineClickListener {
-            println("XXXXX-1")
             val omhPolyline = polylines[it]
-            println(polylines)
-            println(omhPolyline)
             if (omhPolyline != null) {
                 listener.onPolylineClick(omhPolyline)
             }

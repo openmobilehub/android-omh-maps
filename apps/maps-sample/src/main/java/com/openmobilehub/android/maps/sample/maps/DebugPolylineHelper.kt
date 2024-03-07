@@ -20,8 +20,7 @@ object DebugPolylineHelper {
                 OmhCoordinate(-10.0, 40.0),
                 OmhCoordinate(15.0, 60.0),
             )
-            width = 30f
-            color = Color.BLUE
+            width = 10f
         }
 
         val basicPolyline = omhMap.addPolyline(basicPolylineOptions)

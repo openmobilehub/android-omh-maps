@@ -97,7 +97,7 @@ class OmhMapImplTest {
         every { uuidGenerator.generate() } returns UUID.fromString(DEFAULT_UUID)
 
         mockkObject(JSONUtil)
-        // Required form style.getSource
+        // Required for style.getSource
         mockkStatic("com.mapbox.maps.extension.style.sources.SourceUtils")
 
         omhMapImpl = OmhMapImpl(map, context, myLocationIcon, logger, uuidGenerator)

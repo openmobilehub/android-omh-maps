@@ -90,15 +90,16 @@ internal class OmhMapImpl(
 
     private var isMyLocationIconAdded = false
 
-    private var onMyLocationButtonClickListener: OmhOnMyLocationButtonClickListener? = null
-
-    private val pendingMapElements = mutableListOf<Pair<GeoJsonSource, Layer>>()
-    private val polylines = mutableMapOf<String, OmhPolyline>()
+    private var scaleFactor = 1.0f
 
     private var style: Style? = null
+
+    private var onMyLocationButtonClickListener: OmhOnMyLocationButtonClickListener? = null
     private var polylineClickListener: OmhOnPolylineClickListener? = null
 
-    private var scaleFactor = 1.0f
+    private val pendingMapElements = mutableListOf<Pair<GeoJsonSource, Layer>>()
+
+    private val polylines = mutableMapOf<String, OmhPolyline>()
 
     init {
         setupMapViewUIControls()
