@@ -21,8 +21,11 @@ import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import androidx.core.content.res.ResourcesCompat
+import com.mapbox.bindgen.Expected
+import com.mapbox.bindgen.None
 import com.mapbox.maps.MapView
 import com.mapbox.maps.Style
+import com.mapbox.maps.extension.style.layers.Layer
 import com.mapbox.maps.extension.style.layers.addLayer
 import com.mapbox.maps.extension.style.layers.generated.SymbolLayer
 import com.mapbox.maps.extension.style.sources.addSource
@@ -36,6 +39,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkObject
 import io.mockk.mockkStatic
+import io.mockk.slot
 import io.mockk.verify
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -101,11 +105,16 @@ internal class OmhMarkerOptionsExtensionTest(
         mockkStatic(Style::addLayer)
         every { safeStyle.addSource(any<GeoJsonSource>()) } returns Unit
         every { safeStyle.addLayer(any<SymbolLayer>()) } returns Unit
+        // mock for safeStyle.addImage return type to indicate a success
+        val mockAddImageResult = mockk<Expected<String, None>>(relaxed = true)
+        every { mockAddImageResult.error } returns null
+        every { safeStyle.addImage(any(), any<Bitmap>(), any()) } returns mockAddImageResult
     }
 
     @Test
+    @SuppressWarnings("LongMethod")
     fun `OmhMarkerOptions addOmhMarker creates an OmhMarker and all properties are properly handled`() {
-        val (omhMarker, geoJsonSource, symbolLayer) = data.addOmhMarker(mapView)
+        var (omhMarker, geoJsonSource, symbolLayer) = data.addOmhMarker(mapView)
 
         // we will check marker properties both before map style is loaded (to check marker property buffering validity)
         // and then after the map style is loaded (to check if the buffered properties are applied correctly)
@@ -191,17 +200,54 @@ internal class OmhMarkerOptionsExtensionTest(
         // finally we mock that the map style has been loaded
         omhMarker.applyBufferedProperties(safeStyle)
 
-        // here we check if marker properties are valid after map style is loaded
-        assertMarkerProperties()
+        // add a new marker, this time mocking the SymbolLayer to verify setters
+        mockkStatic("com.mapbox.maps.extension.style.layers.generated.SymbolLayerKt")
+        every {
+            com.mapbox.maps.extension.style.layers.generated.symbolLayer(
+                any(),
+                any(),
+                any()
+            )
+        } answers {
+            val mock = mockk<SymbolLayer>(relaxed = true)
+            thirdArg<(Layer) -> Unit>().invoke(mock)
+            mock
+        }
+        val newMarkerPack = data.addOmhMarker(mapView)
+        omhMarker = newMarkerPack.first
+        geoJsonSource = newMarkerPack.second
+        symbolLayer = newMarkerPack.third
+        // mock (on the new OmhMarker instance) that the map style had been loaded
+        omhMarker.applyBufferedProperties(safeStyle)
+
+        // here we check if marker properties are valid & set properly on the layer after map style is loaded
+        verify {
+            symbolLayer.iconIgnorePlacement(true) // defaults from OmhMarkerExtensions
+            symbolLayer.iconAllowOverlap(true) // defaults from OmhMarkerExtensions
+            symbolLayer.iconImage(omhMarker.getIconID(data.icon !== null))
+            symbolLayer.iconOpacity(data.alpha.toDouble())
+            symbolLayer.iconPitchAlignment(
+                OmhMarkerImpl.getIconPitchAlignment(data.isFlat)
+            )
+            symbolLayer.iconRotationAlignment(
+                OmhMarkerImpl.getIconRotationAlignment(data.isFlat)
+            )
+            symbolLayer.visibility(
+                OmhMarkerImpl.getIconVisibility(data.isVisible)
+            )
+            symbolLayer.iconRotate(data.rotation.toDouble())
+        }
 
         // ensure proper assets have been loaded
         verifyIconLoaderProcessing(data.icon, false)
 
-        verify {
-            // ensure both source & symbol layers were added to map
-            safeStyle.addSource(geoJsonSource)
-            safeStyle.addLayer(symbolLayer)
+        // ensure both source & symbol layers were added to map via the style
+        val capturedSource = slot<GeoJsonSource>()
+        val capturedLayer = slot<SymbolLayer>()
+        every { safeStyle.addSource(capture(capturedSource)) } answers {}
+        every { safeStyle.addLayer(capture(capturedLayer)) } answers {}
 
+        verify {
             // ensure that the previous icon (from the in-between scenario) has been
             // deleted from the layer to free allocated memory
             safeStyle.removeStyleImage(omhMarker.getIconID(data.icon === null))

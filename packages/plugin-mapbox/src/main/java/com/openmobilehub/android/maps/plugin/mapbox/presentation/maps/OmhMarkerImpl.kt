@@ -20,7 +20,6 @@ import android.graphics.drawable.Drawable
 import androidx.core.content.res.ResourcesCompat
 import com.mapbox.geojson.Feature
 import com.mapbox.maps.MapView
-import com.mapbox.maps.MapboxStyleException
 import com.mapbox.maps.Style
 import com.mapbox.maps.extension.style.layers.addLayer
 import com.mapbox.maps.extension.style.layers.generated.SymbolLayer
@@ -135,26 +134,28 @@ internal class OmhMarkerImpl(
     fun applyBufferedProperties(safeStyle: Style) {
         check(!this::safeStyle.isInitialized) { "Buffered properties have already been applied" }
 
-        this.safeStyle = safeStyle
+        synchronized(this) {
+            this.safeStyle = safeStyle
 
-        this.safeStyle.addSource(geoJsonSource)
+            this.safeStyle.addSource(geoJsonSource)
 
-        setIcon(bufferedIcon)
-        setAlpha(bufferedAlpha)
-        setIsVisible(bufferedIsVisible)
-        setIsFlat(bufferedIsFlat)
-        setRotation(bufferedRotation)
+            setIcon(bufferedIcon)
+            setAlpha(bufferedAlpha)
+            setIsVisible(bufferedIsVisible)
+            setIsFlat(bufferedIsFlat)
+            setRotation(bufferedRotation)
 
-        this.safeStyle.addLayer(symbolLayer)
+            this.safeStyle.addLayer(symbolLayer)
 
-        // (possibly) clear some memory
-        bufferedIcon = null
+            // (possibly) clear some memory
+            bufferedIcon = null
+        }
     }
 
     override fun getAlpha(): Float {
-        return try {
+        return if (this::safeStyle.isInitialized) {
             symbolLayer.iconOpacity?.toFloat() ?: OmhConstants.DEFAULT_ALPHA
-        } catch (_: MapboxStyleException) {
+        } else {
             bufferedAlpha
         }
     }
@@ -192,9 +193,9 @@ internal class OmhMarkerImpl(
     }
 
     override fun getIsVisible(): Boolean {
-        return try {
+        return if (this::safeStyle.isInitialized) {
             symbolLayer.visibility == Visibility.VISIBLE
-        } catch (_: MapboxStyleException) {
+        } else {
             bufferedIsVisible
         }
     }
@@ -209,9 +210,9 @@ internal class OmhMarkerImpl(
     }
 
     override fun getIsFlat(): Boolean {
-        return try {
+        return if (this::safeStyle.isInitialized) {
             symbolLayer.iconPitchAlignment == IconPitchAlignment.MAP
-        } catch (_: MapboxStyleException) {
+        } else {
             bufferedIsFlat
         }
     }
@@ -227,9 +228,9 @@ internal class OmhMarkerImpl(
     }
 
     override fun getRotation(): Float {
-        return try {
+        return if (this::safeStyle.isInitialized) {
             symbolLayer.iconRotate?.toFloat() ?: OmhConstants.DEFAULT_ROTATION
-        } catch (_: MapboxStyleException) {
+        } else {
             bufferedRotation
         }
     }
@@ -297,13 +298,17 @@ internal class OmhMarkerImpl(
         // ensure the other icon is removed for memory optimization
         safeStyle.removeStyleImage(getIconID(!isCustomIconSet))
 
-        safeStyle.addImage(
+        val addImageResult = safeStyle.addImage(
             markerImageID,
             DrawableConverter.convertDrawableToBitmap(
                 icon ?: getDefaultIcon()
             ),
             icon === null // apply backgroundColor to the default image, only if icon is null
         )
+
+        addImageResult.error?.let { error ->
+            throw IllegalStateException("Failed to add image to map: $error")
+        }
 
         return markerImageID
     }

@@ -93,7 +93,6 @@ internal class OmhMapImpl(
         mapView.mapboxMap.loadStyle(Style.STANDARD) { safeStyle ->
             synchronized(this) {
                 this.style = safeStyle
-
                 markers.values.forEach { omhMarker ->
                     // re-apply the icons now, since they can be added to the map for real
                     if (omhMarker is OmhMarkerImpl) {
