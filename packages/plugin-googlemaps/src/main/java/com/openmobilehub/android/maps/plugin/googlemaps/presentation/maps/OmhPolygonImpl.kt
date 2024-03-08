@@ -66,8 +66,8 @@ internal class OmhPolygonImpl(
         }
     }
 
-    override fun setStrokePattern(pattern: List<OmhPatternItem>?) {
-        polygon.strokePattern = pattern?.map { patternItem ->
+    override fun setStrokePattern(pattern: List<OmhPatternItem>) {
+        polygon.strokePattern = pattern.map { patternItem ->
             PatternConverter.convertToPatternItem(patternItem)
         }
     }
@@ -96,7 +96,7 @@ internal class OmhPolygonImpl(
         return polygon.tag
     }
 
-    override fun setTag(tag: Any?) {
+    override fun setTag(tag: Any) {
         polygon.tag = tag
     }
 

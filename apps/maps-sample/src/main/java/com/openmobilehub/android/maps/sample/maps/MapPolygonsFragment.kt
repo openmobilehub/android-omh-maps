@@ -21,6 +21,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.CheckBox
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -63,6 +64,7 @@ class MapPolygonsFragment : Fragment(), OmhOnMapReadyCallback {
         R.string.pattern_type_custom
     )
 
+    private var randomizeOutlineButton: Button? = null
     private var isVisibleCheckbox: CheckBox? = null
     private var isClickableCheckbox: CheckBox? = null
     private var withHolesCheckbox: CheckBox? = null
@@ -148,11 +150,17 @@ class MapPolygonsFragment : Fragment(), OmhOnMapReadyCallback {
                 OmhDot(),
                 OmhGap(20f)
             )
+
             else -> null
         }
     }
 
     private fun setupUI(view: View) {
+        // randomizeOutline
+        randomizeOutlineButton = view.findViewById(R.id.button_randomizeOutline)
+        randomizeOutlineButton?.setOnClickListener {
+            customizablePolygon?.setOutline(DebugPolygonHelper.getRandomizedOutlinePoints())
+        }
         // isVisible
         isVisibleCheckbox = view.findViewById(R.id.checkBox_isVisible)
         isVisibleCheckbox?.setOnCheckedChangeListener { _, isChecked ->
@@ -208,7 +216,8 @@ class MapPolygonsFragment : Fragment(), OmhOnMapReadyCallback {
         strokePatternSpinner = view.findViewById(R.id.panelSpinner_pattern)
         strokePatternSpinner?.setValues(requireContext(), patternTypeNameResourceID)
         strokePatternSpinner?.setOnItemSelectedCallback { position: Int ->
-            customizablePolygon?.setStrokePattern(mapSpinnerPositionToOmhPattern(position))
+            val pattern = mapSpinnerPositionToOmhPattern(position)
+            customizablePolygon?.setStrokePattern(pattern ?: emptyList())
         }
         // zIndex
         zIndexSeekbar = view.findViewById(R.id.panelSeekbar_zIndex)

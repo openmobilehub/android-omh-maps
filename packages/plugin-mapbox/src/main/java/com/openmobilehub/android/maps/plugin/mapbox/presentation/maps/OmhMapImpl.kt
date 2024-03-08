@@ -24,6 +24,7 @@ import android.widget.ImageView
 import androidx.annotation.RequiresPermission
 import com.mapbox.geojson.Feature
 import com.mapbox.geojson.LineString
+import com.mapbox.geojson.Polygon
 import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.MapView
 import com.mapbox.maps.RenderedQueryGeometry
@@ -31,6 +32,7 @@ import com.mapbox.maps.RenderedQueryOptions
 import com.mapbox.maps.Style
 import com.mapbox.maps.extension.style.layers.Layer
 import com.mapbox.maps.extension.style.layers.addLayer
+import com.mapbox.maps.extension.style.layers.generated.fillLayer
 import com.mapbox.maps.extension.style.layers.generated.lineLayer
 import com.mapbox.maps.extension.style.sources.addSource
 import com.mapbox.maps.extension.style.sources.generated.GeoJsonSource
@@ -82,7 +84,7 @@ internal class OmhMapImpl(
     private val myLocationIcon: ImageView = MyLocationIcon(context),
     private val logger: Logger = commonLogger,
     private val uuidGenerator: UUIDGenerator = DefaultUUIDGenerator()
-) : OmhMap, PolylineDelegate {
+) : OmhMap, PolylineDelegate, PolygonDelegate {
     /**
      * This flag is used to prevent the onCameraMoveStarted listener from being called multiple times
      */
@@ -96,10 +98,12 @@ internal class OmhMapImpl(
 
     private var onMyLocationButtonClickListener: OmhOnMyLocationButtonClickListener? = null
     private var polylineClickListener: OmhOnPolylineClickListener? = null
+    private var polygonClickListener: OmhOnPolygonClickListener? = null
 
-    private val pendingMapElements = mutableListOf<Pair<GeoJsonSource, Layer>>()
+    private val pendingMapElements = mutableListOf<Pair<GeoJsonSource, List<Layer>>>()
 
     private val polylines = mutableMapOf<String, OmhPolyline>()
+    private val polygons = mutableMapOf<String, OmhPolygon>()
 
     init {
         setupMapViewUIControls()
@@ -110,9 +114,9 @@ internal class OmhMapImpl(
         mapView.mapboxMap.loadStyle(Style.STANDARD) { safeStyle ->
             this.style = safeStyle
 
-            pendingMapElements.forEach { (source, layer) ->
+            pendingMapElements.forEach { (source, layers) ->
                 safeStyle.addSource(source)
-                safeStyle.addLayer(layer)
+                layers.forEach { layer -> safeStyle.addLayer(layer) }
             }
         }
     }
@@ -154,14 +158,75 @@ internal class OmhMapImpl(
         style?.let { safeStyle ->
             safeStyle.addSource(source)
             safeStyle.addLayer(layer)
-        } ?: pendingMapElements.add(Pair(source, layer))
+        } ?: pendingMapElements.add(Pair(source, listOf(layer)))
 
         return omhPolyline
     }
 
+    private fun generatePolygonId(): String {
+        return "polygon-${uuidGenerator.generate()}"
+    }
+
+    private fun generatePolygonOutlineId(polygonId: String): String {
+        return "outline-$polygonId"
+    }
+
+    private fun getPolygonId(layerId: String): String {
+        return layerId.replace("outline-", "")
+    }
+
     override fun addPolygon(options: OmhPolygonOptions): OmhPolygon? {
-        // To be implemented
-        return null
+        val polygonId = generatePolygonId()
+        val polygonOutlineId = generatePolygonOutlineId(polygonId)
+
+        val closedOutline = options.outline.toMutableList()
+        closedOutline.add(options.outline.first())
+
+        val outlineLineString = LineString.fromLngLats(
+            closedOutline.map { CoordinateConverter.convertToPoint(it) }
+        )
+
+        val holeLineStringList = options.holes?.map { hole ->
+            val closedHole = hole.toMutableList()
+            closedHole.add(hole.first())
+
+            LineString.fromLngLats(
+                closedHole.map { CoordinateConverter.convertToPoint(it) }
+            )
+        }
+
+        val source = geoJsonSource(polygonId) {
+            feature(
+                Feature.fromGeometry(
+                    Polygon.fromOuterInner(
+                        outlineLineString,
+                        holeLineStringList ?: emptyList()
+                    )
+                ),
+                polygonId
+            )
+        }
+
+        val fillLayer = fillLayer(polygonId, polygonId) {}
+        val outlineLayer = lineLayer(polygonOutlineId, polygonId) { }
+
+        val omhPolygon = OmhPolygonImpl(
+            fillLayer,
+            outlineLayer,
+            options,
+            this.scaleFactor,
+            this
+        )
+
+        polygons[polygonId] = omhPolygon
+
+        style?.let { safeStyle ->
+            safeStyle.addSource(source)
+            safeStyle.addLayer(fillLayer)
+            safeStyle.addLayer(outlineLayer)
+        } ?: pendingMapElements.add(Pair(source, listOf(fillLayer, outlineLayer)))
+
+        return omhPolygon
     }
 
     override fun getCameraPositionCoordinate(): OmhCoordinate {
@@ -282,17 +347,27 @@ internal class OmhMapImpl(
                 RenderedQueryGeometry(screenCoordinate),
                 RenderedQueryOptions(null, null)
             ) {
-                val layerId = try {
-                    it.value?.get(0)?.layers?.get(0)
-                } catch (e: Exception) {
-                    logger.logInfo("No layer found at the clicked point. Exception: $e")
-                    null
+                val result = it.value?.getOrNull(0)
+
+                val layerId = result?.layers?.getOrNull(0)
+                val type = result?.queriedFeature?.feature?.geometry()?.type()
+                if (layerId === null) {
+                    return@queryRenderedFeatures
                 }
 
-                val omhPolyline = polylines[layerId]
+                if (type === "Polygon") {
+                    val omhPolygon = polygons[getPolygonId(layerId)]
+                    if (omhPolygon !== null && omhPolygon.getClickable()) {
+                        polygonClickListener?.onPolygonClick(omhPolygon)
+                    }
+                }
 
-                if (omhPolyline !== null && omhPolyline.getClickable()) {
-                    polylineClickListener?.onPolylineClick(omhPolyline)
+                if (type === "LineString") {
+                    val omhPolyline = polylines[layerId]
+
+                    if (omhPolyline !== null && omhPolyline.getClickable()) {
+                        polylineClickListener?.onPolylineClick(omhPolyline)
+                    }
                 }
             }
             true
@@ -300,7 +375,8 @@ internal class OmhMapImpl(
     }
 
     override fun setOnPolygonClickListener(listener: OmhOnPolygonClickListener) {
-        // To be implemented
+        polygonClickListener = listener
+        setupClickListeners()
     }
 
     override fun setMapStyle(json: Int?) {
@@ -335,6 +411,51 @@ internal class OmhMapImpl(
         mapView.mapboxMap.style?.let { style ->
             (style.getSource(sourceId) as GeoJsonSource).feature(feature)
         }
+    }
+
+    private fun updatePolygonSource(
+        sourceId: String,
+        outline: List<OmhCoordinate>,
+        holes: List<List<OmhCoordinate>>
+    ) {
+        val closedOutline = outline.toMutableList()
+        closedOutline.add(outline.first())
+
+        val outlineLineString = LineString.fromLngLats(
+            closedOutline.map { CoordinateConverter.convertToPoint(it) }
+        )
+
+        val holeLineStringList: List<LineString> = holes.map { hole ->
+            val closedHole = hole.toMutableList()
+            closedHole.add(hole.first())
+
+            LineString.fromLngLats(
+                closedHole.map { CoordinateConverter.convertToPoint(it) }
+            )
+        }
+
+        mapView.mapboxMap.style?.let { style ->
+            val feature =
+                Feature.fromGeometry(Polygon.fromOuterInner(outlineLineString, holeLineStringList))
+            val source = (style.getSource(sourceId) as GeoJsonSource)
+            source.feature(feature)
+        }
+    }
+
+    override fun updatePolygonHoles(
+        sourceId: String,
+        outline: List<OmhCoordinate>,
+        holes: List<List<OmhCoordinate>>
+    ) {
+        updatePolygonSource(sourceId, outline, holes)
+    }
+
+    override fun updatePolygonOutline(
+        sourceId: String,
+        outline: List<OmhCoordinate>,
+        holes: List<List<OmhCoordinate>>?
+    ) {
+        updatePolygonSource(sourceId, outline, holes ?: emptyList())
     }
 
     private fun setupMapViewUIControls() {

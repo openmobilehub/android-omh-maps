@@ -67,9 +67,14 @@ class OmhMapImplTest {
     private val logger = mockk<Logger>(relaxed = true)
     private val uuidGenerator = mockk<UUIDGenerator>()
 
-    private fun mockQueryRenderedFeatures(layerID: String) {
+    private fun mockQueryRenderedFeatures(layerID: String, type: String) {
         val mockValue = mockk<Expected<String, List<QueriedRenderedFeature>>>(relaxed = true)
-        every { mockValue.value?.get(0)?.layers?.get(0) } returns layerID
+
+        val mockQueriedRenderedFeature = mockk<QueriedRenderedFeature>(relaxed = true)
+        every { mockQueriedRenderedFeature.queriedFeature.feature.geometry()?.type() } returns type
+        every { mockQueriedRenderedFeature.layers } returns listOf(layerID)
+
+        every { mockValue.value } returns listOf(mockQueriedRenderedFeature)
 
         val queryRenderedFeaturesCallbackSlot = slot<QueryRenderedFeaturesCallback>()
         every {
@@ -494,7 +499,7 @@ class OmhMapImplTest {
         val onMapClickListenerSlot = slot<OnMapClickListener>()
         every { map.gestures.addOnMapClickListener(capture(onMapClickListenerSlot)) } just runs
 
-        mockQueryRenderedFeatures("polyline-$DEFAULT_UUID")
+        mockQueryRenderedFeatures("polyline-$DEFAULT_UUID", "LineString")
         mockPixelForCoordinate()
 
         // Act
@@ -515,7 +520,7 @@ class OmhMapImplTest {
         val onMapClickListenerSlot = slot<OnMapClickListener>()
         every { map.gestures.addOnMapClickListener(capture(onMapClickListenerSlot)) } just runs
 
-        mockQueryRenderedFeatures("polyline-$DEFAULT_UUID")
+        mockQueryRenderedFeatures("polyline-$DEFAULT_UUID", "LineString")
         mockPixelForCoordinate()
 
         // Act
