@@ -14,52 +14,53 @@
  * limitations under the License.
  */
 
-package com.openmobilehub.android.maps.plugin.googlemaps.presentation.maps
+package com.openmobilehub.android.maps.plugin.mapbox.presentation.maps
 
-import com.google.android.gms.maps.model.Polyline
+import com.mapbox.maps.extension.style.layers.generated.LineLayer
+import com.mapbox.maps.extension.style.layers.properties.generated.Visibility
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhCap
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhPatternItem
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhPolyline
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhStyleSpan
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
-import com.openmobilehub.android.maps.plugin.googlemaps.utils.CapConverter
-import com.openmobilehub.android.maps.plugin.googlemaps.utils.CoordinateConverter
-import com.openmobilehub.android.maps.plugin.googlemaps.utils.PatternConverter
-import com.openmobilehub.android.maps.plugin.googlemaps.utils.SpanConverter
-import com.openmobilehub.android.maps.plugin.googlemaps.utils.polylineLogger
+import com.openmobilehub.android.maps.plugin.mapbox.utils.CapConverter
+import com.openmobilehub.android.maps.plugin.mapbox.utils.Constants
+import com.openmobilehub.android.maps.plugin.mapbox.utils.JoinTypeConverter
+import com.openmobilehub.android.maps.plugin.mapbox.utils.polylineLogger
 
 @SuppressWarnings("TooManyFunctions")
 internal class OmhPolylineImpl(
-    private val polyline: Polyline,
-    private val logger: UnsupportedFeatureLogger = polylineLogger
+    private val lineLayer: LineLayer,
+    private var clickable: Boolean,
+    private var scaleFactor: Float,
+    private var polylineDelegate: PolylineDelegate,
+    private var logger: UnsupportedFeatureLogger = polylineLogger
 ) : OmhPolyline {
+    private var tag: Any? = null
 
     override fun getCap(): OmhCap? {
-        logger.logGetterNotSupported("cap")
-        return null
+        return lineLayer.lineCap?.let { CapConverter.convertToOmhCap(it) }
     }
 
     override fun setCap(cap: OmhCap) {
-        val updatedCap = CapConverter.convertToCap(cap)
-        polyline.startCap = updatedCap
-        polyline.endCap = updatedCap
+        lineLayer.lineCap(CapConverter.convertToLineCap(cap))
     }
 
     override fun getClickable(): Boolean {
-        return polyline.isClickable
+        return clickable
     }
 
     override fun setClickable(clickable: Boolean) {
-        polyline.isClickable = clickable
+        this.clickable = clickable
     }
 
     override fun getColor(): Int {
-        return polyline.color
+        return lineLayer.lineColorAsColorInt ?: Constants.DEFAULT_POLYLINE_COLOR
     }
 
     override fun setColor(color: Int) {
-        polyline.color = color
+        lineLayer.lineColor(color)
     }
 
     override fun getEndCap(): OmhCap? {
@@ -68,35 +69,33 @@ internal class OmhPolylineImpl(
     }
 
     override fun setEndCap(endCap: OmhCap) {
-        polyline.endCap = CapConverter.convertToCap(endCap)
+        logger.logSetterNotSupported("endCap")
     }
 
     override fun getJointType(): Int {
-        return polyline.jointType
+        return JoinTypeConverter.convertToOmhJointType(lineLayer.lineJoin)
     }
 
     override fun setJointType(jointType: Int) {
-        polyline.jointType = jointType
+        lineLayer.lineJoin(JoinTypeConverter.convertToLineJoin(jointType))
     }
 
     override fun getPattern(): List<OmhPatternItem>? {
-        return polyline.pattern?.mapNotNull { patternItem ->
-            PatternConverter.convertToOmhPatternItem(patternItem)
-        }
+        logger.logGetterNotSupported("pattern")
+        return null
     }
 
     override fun setPattern(pattern: List<OmhPatternItem>) {
-        polyline.pattern = pattern.map { patternItem ->
-            PatternConverter.convertToPatternItem(patternItem)
-        }
+        logger.logSetterNotSupported("pattern")
     }
 
-    override fun getPoints(): List<OmhCoordinate> {
-        return polyline.points.map { CoordinateConverter.convertToOmhCoordinate(it) }
+    override fun getPoints(): List<OmhCoordinate>? {
+        logger.logGetterNotSupported("points")
+        return null
     }
 
     override fun setPoints(omhCoordinates: List<OmhCoordinate>) {
-        polyline.points = omhCoordinates.map { CoordinateConverter.convertToLatLng(it) }
+        polylineDelegate.updatePolylinePoints(lineLayer.sourceId, omhCoordinates)
     }
 
     override fun getSpans(): List<OmhStyleSpan>? {
@@ -105,7 +104,7 @@ internal class OmhPolylineImpl(
     }
 
     override fun setSpans(spans: List<OmhStyleSpan>) {
-        polyline.spans = spans.map { span -> SpanConverter.convertToStyleSpan(span) }
+        logger.logSetterNotSupported("spans")
     }
 
     override fun getStartCap(): OmhCap? {
@@ -114,38 +113,39 @@ internal class OmhPolylineImpl(
     }
 
     override fun setStartCap(startCap: OmhCap) {
-        polyline.startCap = CapConverter.convertToCap(startCap)
+        logger.logSetterNotSupported("startCap")
     }
 
     override fun getTag(): Any? {
-        return polyline.tag
+        return tag
     }
 
     override fun setTag(tag: Any) {
-        polyline.tag = tag
+        this.tag = tag
     }
 
-    override fun getWidth(): Float {
-        return polyline.width
+    override fun getWidth(): Float? {
+        return lineLayer.lineWidth?.toFloat()?.times(scaleFactor)
     }
 
     override fun setWidth(width: Float) {
-        polyline.width = width
+        lineLayer.lineWidth((width / scaleFactor).toDouble())
     }
 
     override fun isVisible(): Boolean {
-        return polyline.isVisible
+        return lineLayer.visibility === Visibility.VISIBLE
     }
 
     override fun setVisible(visible: Boolean) {
-        polyline.isVisible = visible
+        lineLayer.visibility(if (visible) Visibility.VISIBLE else Visibility.NONE)
     }
 
-    override fun getZIndex(): Float {
-        return polyline.zIndex
+    override fun getZIndex(): Float? {
+        logger.logGetterNotSupported("zIndex")
+        return null
     }
 
     override fun setZIndex(zIndex: Float) {
-        polyline.zIndex = zIndex
+        logger.logSetterNotSupported("zIndex")
     }
 }

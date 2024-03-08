@@ -98,6 +98,12 @@ class PanelSpinner @JvmOverloads constructor(
         }
     }
 
+    override fun setEnabled(enabled: Boolean) {
+        super.setEnabled(enabled)
+        spinner.isEnabled = enabled
+        titleTextView.alpha = if (enabled) 1.0f else 0.5f
+    }
+    
     fun setDisabledPositions(disabledPositions: HashSet<Int>?) {
         this.disabledPositions = disabledPositions
     }

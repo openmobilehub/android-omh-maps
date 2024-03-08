@@ -58,4 +58,9 @@ object Constants {
         "com.openmobilehub.android.maps.plugin.openstreetmap.presentation.OmhMapFactoryImpl"
     const val MAPBOX_PATH = "com.openmobilehub.android.maps.plugin.mapbox.presentation.OmhMapFactoryImpl"
 
+    // Map providers
+    const val GOOGLE_PROVIDER = "GoogleMaps"
+    const val OSM_PROVIDER = "OpenStreetMap"
+    const val MAPBOX_PROVIDER = "Mapbox"
+    val ALL_PROVIDERS = listOf(GOOGLE_PROVIDER, OSM_PROVIDER, MAPBOX_PROVIDER)
 }

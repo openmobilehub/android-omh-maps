@@ -140,6 +140,7 @@ Comments for partially supported 🟨 properties:
 | zIndex    |     ❌     |
 | jointType |     ❌     |
 | pattern   |     ❌     |
+| cap       |     ✅     |
 | startCap  |     ❌     |
 | endCap    |     ❌     |
 | spans     |     ❌     |
@@ -148,6 +149,8 @@ Comments for partially supported 🟨 properties:
 
 | Method       | Supported? |
 | ------------ | :--------: |
+| getCap       |     ✅     |
+| setCap       |     ✅     |
 | isClickable  |     ✅     |
 | setClickable |     ✅     |
 | getColor     |     ✅     |

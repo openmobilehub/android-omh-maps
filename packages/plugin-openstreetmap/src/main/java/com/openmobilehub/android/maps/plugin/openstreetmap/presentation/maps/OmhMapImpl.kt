@@ -394,6 +394,10 @@ internal class OmhMapImpl(
         // To be implemented
     }
 
+    override fun setScaleFactor(scaleFactor: Float) {
+        // Not required for OpenStreetMap
+    }
+
     override fun setCustomInfoWindowViewFactory(factory: OmhInfoWindowViewFactory?) {
         customInfoWindowViewFactory = factory
 
@@ -422,16 +426,15 @@ internal class OmhMapImpl(
         omhMarker: OmhMarker,
         windowView: View
     ): InfoWindow {
-        val window =
-            object : InfoWindow(windowView, mapView) {
-                override fun onOpen(item: Any?) {
-                    handleOnInfoWindowOpen(omhMarker)
-                }
-
-                override fun onClose() {
-                    handleOnInfoWindowClose(omhMarker)
-                }
+        val window = object : InfoWindow(windowView, mapView) {
+            override fun onOpen(item: Any?) {
+                handleOnInfoWindowOpen(omhMarker)
             }
+
+            override fun onClose() {
+                handleOnInfoWindowClose(omhMarker)
+            }
+        }
 
         bindMarkerWindowListeners(window, omhMarker)
 
@@ -498,8 +501,7 @@ internal class OmhMapImpl(
             // render the info window
             marker.infoWindow = customInfoWindowViewFactory?.let {
                 generateCustomViewMarkerWindow(omhMarker, it.createInfoWindowView(omhMarker))
-            }
-                ?: generateDefaultMarkerWindow(omhMarker)
+            } ?: generateDefaultMarkerWindow(omhMarker)
             // setting the above to null disables the info window, which is not what we want
             // thus, we coalesce to the default info window
 

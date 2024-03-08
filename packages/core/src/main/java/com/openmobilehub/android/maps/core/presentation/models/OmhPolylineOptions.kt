@@ -50,6 +50,7 @@ class OmhPolylineOptions(
     var zIndex: Float? = null,
     var jointType: Int? = null,
     var pattern: List<OmhPatternItem>? = null,
+    var cap: OmhCap? = null,
     var startCap: OmhCap? = null,
     var endCap: OmhCap? = null,
     var spans: List<OmhStyleSpan>? = null,

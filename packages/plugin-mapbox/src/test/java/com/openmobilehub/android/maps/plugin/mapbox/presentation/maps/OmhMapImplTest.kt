@@ -3,7 +3,9 @@ package com.openmobilehub.android.maps.plugin.mapbox.presentation.maps
 import android.content.Context
 import android.graphics.Bitmap
 import android.view.View
+import com.mapbox.bindgen.Expected
 import com.mapbox.common.Cancelable
+import com.mapbox.geojson.Feature
 import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraChanged
 import com.mapbox.maps.CameraChangedCallback
@@ -14,9 +16,16 @@ import com.mapbox.maps.MapLoaded
 import com.mapbox.maps.MapLoadedCallback
 import com.mapbox.maps.MapView
 import com.mapbox.maps.MapboxMap
+import com.mapbox.maps.MapboxStyleManager
+import com.mapbox.maps.QueriedRenderedFeature
+import com.mapbox.maps.QueryRenderedFeaturesCallback
+import com.mapbox.maps.ScreenCoordinate
 import com.mapbox.maps.Style
+import com.mapbox.maps.extension.style.sources.generated.GeoJsonSource
+import com.mapbox.maps.extension.style.sources.getSource
 import com.mapbox.maps.plugin.Plugin
 import com.mapbox.maps.plugin.compass.CompassPlugin
+import com.mapbox.maps.plugin.gestures.OnMapClickListener
 import com.mapbox.maps.plugin.gestures.gestures
 import com.mapbox.maps.plugin.locationcomponent.location
 import com.mapbox.maps.plugin.scalebar.ScaleBarPlugin
@@ -26,24 +35,28 @@ import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMapLo
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnCameraIdleListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnCameraMoveStartedListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMyLocationButtonClickListener
+import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnPolylineClickListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhSnapshotReadyCallback
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
+import com.openmobilehub.android.maps.core.presentation.models.OmhPolylineOptions
 import com.openmobilehub.android.maps.core.utils.logging.Logger
 import com.openmobilehub.android.maps.plugin.mapbox.utils.Constants
 import com.openmobilehub.android.maps.plugin.mapbox.utils.JSONUtil
+import com.openmobilehub.android.maps.plugin.mapbox.utils.uuid.UUIDGenerator
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.mockkObject
+import io.mockk.mockkStatic
 import io.mockk.runs
 import io.mockk.slot
 import io.mockk.verify
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
+import java.util.UUID
 
 class OmhMapImplTest {
-
     private lateinit var omhMapImpl: OmhMapImpl
     private val map = mockk<MapView>()
     private val scaleBarPlugin = mockk<ScaleBarPlugin>(relaxed = true)
@@ -52,6 +65,28 @@ class OmhMapImplTest {
     private val context = mockk<Context>(relaxed = true)
     private val myLocationIcon = mockk<MyLocationIcon>(relaxed = true)
     private val logger = mockk<Logger>(relaxed = true)
+    private val uuidGenerator = mockk<UUIDGenerator>()
+
+    private fun mockQueryRenderedFeatures(layerID: String) {
+        val mockValue = mockk<Expected<String, List<QueriedRenderedFeature>>>(relaxed = true)
+        every { mockValue.value?.get(0)?.layers?.get(0) } returns layerID
+
+        val queryRenderedFeaturesCallbackSlot = slot<QueryRenderedFeaturesCallback>()
+        every {
+            map.mapboxMap.queryRenderedFeatures(
+                any(),
+                any(),
+                capture(queryRenderedFeaturesCallbackSlot)
+            )
+        } answers {
+            queryRenderedFeaturesCallbackSlot.captured.run(mockValue)
+            mockk<Cancelable>()
+        }
+    }
+
+    private fun mockPixelForCoordinate() {
+        every { map.mapboxMap.pixelForCoordinate(any()) } returns mockk<ScreenCoordinate>()
+    }
 
     @Before
     fun setUp() {
@@ -59,10 +94,13 @@ class OmhMapImplTest {
         every { map.getPlugin<CompassPlugin>(Plugin.MAPBOX_COMPASS_PLUGIN_ID) } returns compassPlugin
         every { map.getPlugin<ViewportPlugin>(Plugin.MAPBOX_VIEWPORT_PLUGIN_ID) } returns viewportPlugin
         every { map.mapboxMap } returns mockk<MapboxMap>(relaxed = true)
+        every { uuidGenerator.generate() } returns UUID.fromString(DEFAULT_UUID)
 
         mockkObject(JSONUtil)
+        // Required for style.getSource
+        mockkStatic("com.mapbox.maps.extension.style.sources.SourceUtils")
 
-        omhMapImpl = OmhMapImpl(map, context, myLocationIcon, logger)
+        omhMapImpl = OmhMapImpl(map, context, myLocationIcon, logger, uuidGenerator)
     }
 
     @Test
@@ -429,5 +467,83 @@ class OmhMapImplTest {
 
         // Assert
         verify { map.mapboxMap.loadStyle(Style.STANDARD) }
+    }
+
+    @Test
+    fun `addPolyline adds polyline to map and returns OmhPolyline`() {
+        // Arrange
+        val omhPolylineOptions = OmhPolylineOptions()
+        omhPolylineOptions.points = listOf(
+            OmhCoordinate(0.0, 0.0),
+            OmhCoordinate(1.0, 1.0)
+        )
+
+        // Act
+        val result = omhMapImpl.addPolyline(omhPolylineOptions)
+
+        // Assert
+        Assert.assertNotNull(result)
+    }
+
+    @Test
+    fun `click listener gets triggered when polyline is clicked`() {
+        // Arrange
+        val point = Point.fromLngLat(0.0, 0.0)
+        val listener = mockk<OmhOnPolylineClickListener>(relaxed = true)
+
+        val onMapClickListenerSlot = slot<OnMapClickListener>()
+        every { map.gestures.addOnMapClickListener(capture(onMapClickListenerSlot)) } just runs
+
+        mockQueryRenderedFeatures("polyline-$DEFAULT_UUID")
+        mockPixelForCoordinate()
+
+        // Act
+        omhMapImpl.setOnPolylineClickListener(listener)
+        val addedPolyline = omhMapImpl.addPolyline(OmhPolylineOptions().apply { clickable = true })
+        onMapClickListenerSlot.captured.onMapClick(point)
+
+        // Assert
+        verify { listener.onPolylineClick(addedPolyline) }
+    }
+
+    @Test
+    fun `click listener does not get triggered when polyline is not clickable`() {
+        // Arrange
+        val point = Point.fromLngLat(0.0, 0.0)
+        val listener = mockk<OmhOnPolylineClickListener>(relaxed = true)
+
+        val onMapClickListenerSlot = slot<OnMapClickListener>()
+        every { map.gestures.addOnMapClickListener(capture(onMapClickListenerSlot)) } just runs
+
+        mockQueryRenderedFeatures("polyline-$DEFAULT_UUID")
+        mockPixelForCoordinate()
+
+        // Act
+        omhMapImpl.setOnPolylineClickListener(listener)
+        val addedPolyline = omhMapImpl.addPolyline(OmhPolylineOptions().apply { clickable = false })
+        onMapClickListenerSlot.captured.onMapClick(point)
+
+        // Assert
+        verify(exactly = 0) { listener.onPolylineClick(addedPolyline) }
+    }
+
+    @Test
+    fun `updatePolylinePoints updates the polyline points on the map`() {
+        // Given
+        val sourceId = "sourceId"
+        val points = listOf(OmhCoordinate(0.0, 0.0), OmhCoordinate(1.0, 1.0))
+        val geoJsonSource = mockk<GeoJsonSource>(relaxed = true)
+
+        every { any<MapboxStyleManager>().getSource(any()) } returns geoJsonSource
+
+        // When
+        omhMapImpl.updatePolylinePoints(sourceId, points)
+
+        // Then
+        verify { geoJsonSource.feature(any<Feature>()) }
+    }
+
+    companion object {
+        private const val DEFAULT_UUID = "00000000-0000-0000-0000-000000000000"
     }
 }

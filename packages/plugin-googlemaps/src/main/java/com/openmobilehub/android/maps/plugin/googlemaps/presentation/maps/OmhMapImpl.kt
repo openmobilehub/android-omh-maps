@@ -28,6 +28,8 @@ import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.Marker
+import com.google.android.gms.maps.model.Polygon
+import com.google.android.gms.maps.model.Polyline
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhInfoWindowViewFactory
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMap
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMapLoadedCallback
@@ -71,6 +73,9 @@ internal class OmhMapImpl(
         get() = Constants.PROVIDER_NAME
 
     private val markers = mutableMapOf<Marker, OmhMarker>()
+    private val polylines = mutableMapOf<Polyline, OmhPolyline>()
+    private val polygons = mutableMapOf<Polygon, OmhPolygon>()
+
     private var customInfoWindowViewFactory: OmhInfoWindowViewFactory? = null
     private var customInfoWindowContentsViewFactory: OmhInfoWindowViewFactory? = null
 
@@ -109,15 +114,21 @@ internal class OmhMapImpl(
     override fun addPolyline(options: OmhPolylineOptions): OmhPolyline {
         val googleOptions = options.toPolylineOptions()
         val polyline = googleMap.addPolyline(googleOptions)
+        val omhPolyline = OmhPolylineImpl(polyline)
 
-        return OmhPolylineImpl(polyline)
+        polylines[polyline] = omhPolyline
+
+        return omhPolyline
     }
 
     override fun addPolygon(options: OmhPolygonOptions): OmhPolygon {
         val googleOptions = options.toPolygonOptions()
         val polygon = googleMap.addPolygon(googleOptions)
+        val omhPolygon = OmhPolygonImpl(polygon)
 
-        return OmhPolygonImpl(polygon)
+        polygons[polygon] = omhPolygon
+
+        return omhPolygon
     }
 
     override fun getCameraPositionCoordinate(): OmhCoordinate {
@@ -235,13 +246,19 @@ internal class OmhMapImpl(
 
     override fun setOnPolylineClickListener(listener: OmhOnPolylineClickListener) {
         googleMap.setOnPolylineClickListener {
-            listener.onPolylineClick(OmhPolylineImpl(it))
+            val omhPolyline = polylines[it]
+            if (omhPolyline != null) {
+                listener.onPolylineClick(omhPolyline)
+            }
         }
     }
 
     override fun setOnPolygonClickListener(listener: OmhOnPolygonClickListener) {
         googleMap.setOnPolygonClickListener {
-            listener.onPolygonClick(OmhPolygonImpl(it))
+            val omhPolygon = polygons[it]
+            if (omhPolygon != null) {
+                listener.onPolygonClick(omhPolygon)
+            }
         }
     }
 
@@ -285,5 +302,9 @@ internal class OmhMapImpl(
     override fun moveCamera(coordinate: OmhCoordinate, zoomLevel: Float) {
         val latLng: LatLng = CoordinateConverter.convertToLatLng(coordinate)
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoomLevel))
+    }
+
+    override fun setScaleFactor(scaleFactor: Float) {
+        // Not required for Google Maps
     }
 }

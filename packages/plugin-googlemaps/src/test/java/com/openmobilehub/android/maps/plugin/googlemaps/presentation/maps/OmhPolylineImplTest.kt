@@ -28,6 +28,7 @@ import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhPatte
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhStyleSpan
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhJointType
+import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
 import com.openmobilehub.android.maps.plugin.googlemaps.utils.CapConverter
 import com.openmobilehub.android.maps.plugin.googlemaps.utils.CoordinateConverter
 import com.openmobilehub.android.maps.plugin.googlemaps.utils.PatternConverter
@@ -47,11 +48,12 @@ class OmhPolylineImplTest {
 
     private lateinit var polyline: Polyline
     private lateinit var omhPolyline: OmhPolylineImpl
+    private val polylineLogger = mockk<UnsupportedFeatureLogger>(relaxed = true)
 
     @Before
     fun setUp() {
         polyline = mockk(relaxed = true)
-        omhPolyline = OmhPolylineImpl(polyline)
+        omhPolyline = OmhPolylineImpl(polyline, polylineLogger)
         mockkObject(CapConverter)
         mockkObject(PatternConverter)
         mockkObject(CoordinateConverter)
@@ -110,7 +112,7 @@ class OmhPolylineImplTest {
     }
 
     @Test
-    fun `getEndCap returns null`() {
+    fun `getEndCap logs getter not supported returns null`() {
         // Arrange
         every { polyline.endCap = any() } just runs
 
@@ -118,6 +120,7 @@ class OmhPolylineImplTest {
         val endCap = omhPolyline.getEndCap()
 
         // Assert
+        verify { polylineLogger.logGetterNotSupported("endCap") }
         assertNull(endCap)
     }
 
@@ -189,15 +192,6 @@ class OmhPolylineImplTest {
     }
 
     @Test
-    fun `setEndCap does nothing if omhCap is null`() {
-        // Act
-        omhPolyline.setEndCap(null)
-
-        // Assert
-        verify(exactly = 0) { polyline.endCap = any() }
-    }
-
-    @Test
     fun `getPoints returns converted polyline points`() {
         // Arrange
         val latLng = mockk<LatLng>()
@@ -250,11 +244,12 @@ class OmhPolylineImplTest {
     }
 
     @Test
-    fun `getStartCap returns null`() {
+    fun `getStartCap logs getter not supported and returns null`() {
         // Act
         val result = omhPolyline.getStartCap()
 
         // Assert
+        verify { polylineLogger.logGetterNotSupported("startCap") }
         assertNull(result)
     }
 
@@ -345,5 +340,55 @@ class OmhPolylineImplTest {
 
         // Assert
         verify { polyline.zIndex = zIndex }
+    }
+
+    @Test
+    fun `getCap logs getter not supported and returns null`() {
+        // Act
+        val result = omhPolyline.getCap()
+
+        // Assert
+        verify { polylineLogger.logGetterNotSupported("cap") }
+        assertNull(result)
+    }
+
+    @Test
+    fun `setCap sets polyline startCap and endCap`() {
+        // Arrange
+        val omhCap = mockk<OmhCap>()
+        val cap = mockk<Cap>()
+        every { CapConverter.convertToCap(omhCap) } returns cap
+
+        // Act
+        omhPolyline.setCap(omhCap)
+
+        // Assert
+        verify { polyline.startCap = cap }
+        verify { polyline.endCap = cap }
+    }
+
+    @Test
+    fun `getTag returns polyline tag`() {
+        // Arrange
+        val expectedTag = "tag"
+        every { polyline.tag } returns expectedTag
+
+        // Act
+        val tag = omhPolyline.getTag()
+
+        // Assert
+        assertEquals(expectedTag, tag)
+    }
+
+    @Test
+    fun `setTag sets polyline tag`() {
+        // Arrange
+        val tag = "tag"
+
+        // Act
+        omhPolyline.setTag(tag)
+
+        // Assert
+        verify { polyline.tag = tag }
     }
 }

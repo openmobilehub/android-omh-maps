@@ -23,19 +23,17 @@ import com.google.android.gms.maps.model.CustomCap
 import com.google.android.gms.maps.model.RoundCap
 import com.google.android.gms.maps.model.SquareCap
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhCap
-import com.openmobilehub.android.maps.core.presentation.models.OmhButtCap
 import com.openmobilehub.android.maps.core.presentation.models.OmhCustomCap
 import com.openmobilehub.android.maps.core.presentation.models.OmhRoundCap
 import com.openmobilehub.android.maps.core.presentation.models.OmhSquareCap
 
 object CapConverter {
-    fun convertToCap(omhCap: OmhCap): Cap? {
+    fun convertToCap(omhCap: OmhCap): Cap {
         return when (omhCap) {
             is OmhRoundCap -> RoundCap()
             is OmhSquareCap -> SquareCap()
-            is OmhButtCap -> ButtCap()
             is OmhCustomCap -> createCustomCap(omhCap)
-            else -> null
+            else -> ButtCap()
         }
     }
 

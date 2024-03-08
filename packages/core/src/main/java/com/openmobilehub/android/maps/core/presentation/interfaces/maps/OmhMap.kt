@@ -202,6 +202,16 @@ interface OmhMap {
     fun setMapStyle(json: Int?)
 
     /**
+     * Updates the scale factor of the map.
+     * The scale factor is used to adjust the size of the map elements, e.g. polylines width.
+     * Might be useful when the app uses multiple map providers and the map elements should have the same
+     * or similar size.
+     *
+     * @param scaleFactor The scale factor to be set.
+     */
+    fun setScaleFactor(scaleFactor: Float)
+
+    /**
      * Customizes the design of the info window. The passed-in factory is called with instances of [OmhMarker]
      * and should return a [android.view.View] to be used as the info window.
      * If the factory is set to null, the default info window appearance will be used.

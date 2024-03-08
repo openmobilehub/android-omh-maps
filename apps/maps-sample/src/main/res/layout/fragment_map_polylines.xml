@@ -35,6 +35,12 @@
             android:orientation="vertical"
             android:padding="16dp">
 
+            <Button
+                android:id="@+id/button_randomizePoints"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/randomize_points" />
+
             <CheckBox
                 android:id="@+id/checkBox_isVisible"
                 android:layout_width="match_parent"
@@ -66,6 +72,12 @@
                 android:layout_marginTop="15dp"
                 android:layout_marginBottom="15dp"
                 app:titleText="@string/color" />
+
+            <com.openmobilehub.android.maps.sample.customviews.PanelSpinner
+                android:id="@+id/panelSpinner_cap"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:titleText="@string/cap" />
 
             <com.openmobilehub.android.maps.sample.customviews.PanelSpinner
                 android:id="@+id/panelSpinner_startCap"

@@ -68,6 +68,7 @@
     <string name="span_pattern">Span Pattern</string>
     <string name="width">Width</string>
     <string name="color">Color</string>
+    <string name="cap">Cap</string>
     <string name="start_cap">Start Cap</string>
     <string name="end_cap">End Cap</string>
     <string name="join_type">Join Type</string>
@@ -111,6 +112,7 @@
     <string name="info_window_opened">Info window opened (listener)</string>
     <string name="info_window_closed">Info window closed (listener)</string>
     <string name="my_location_enabled">My Location Enabled</string>
+    <string name="randomize_points">Randomize points</string>
     <string name="info_window_clicked">Info window clicked</string>
     <string name="info_window_long_clicked">Info window long-clicked</string>
     <string name="anchorIWU">Info window anchor U</string>

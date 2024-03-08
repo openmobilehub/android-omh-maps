@@ -44,7 +44,7 @@ This plugin provides support for Mapbox by utilizing the [Mapbox Android SDK](ht
 | --------------------------------------- | :--------: |
 | addMarker                               |     ?      |
 | addPolyline                             |     ?      |
-| addPolygon                              |     ?      |
+| addPolygon                              |     ✅     |
 | getCameraPositionCoordinate             |     ✅     |
 | moveCamera                              |     ✅     |
 | setZoomGesturesEnabled                  |     ✅     |
@@ -60,7 +60,7 @@ This plugin provides support for Mapbox by utilizing the [Mapbox Android SDK](ht
 | setOnInfoWindowOpenStatusChangeListener |     ?      |
 | setOnInfoWindowClickListener            |     ?      |
 | setOnInfoWindowLongClickListener        |     ?      |
-| setOnPolylineClickListener              |     ?      |
+| setOnPolylineClickListener              |     ✅     |
 | setOnPolygonClickListener               |     ?      |
 | snapshot                                |     ✅     |
 | setMapStyle                             |     ✅     |
@@ -127,46 +127,49 @@ Comments for partially supported 🟨 properties:
 
 | Property  | Supported? |
 | --------- | :--------: |
-| points    |     ?      |
-| clickable |     ?      |
-| color     |     ?      |
-| width     |     ?      |
-| isVisible |     ?      |
-| zIndex    |     ?      |
-| jointType |     ?      |
-| pattern   |     ?      |
-| startCap  |     ?      |
-| endCap    |     ?      |
-| spans     |     ?      |
+| points    |     ✅     |
+| clickable |     ✅     |
+| color     |     ✅     |
+| width     |     ✅     |
+| isVisible |     ✅     |
+| zIndex    |     ❌     |
+| jointType |     ✅     |
+| pattern   |     ❌     |
+| cap       |     ✅     |
+| startCap  |     ❌     |
+| endCap    |     ❌     |
+| spans     |     ❌     |
 
 #### OmhPolyline
 
 | Method       | Supported? |
 | ------------ | :--------: |
-| isClickable  |     ?      |
-| setClickable |     ?      |
-| getColor     |     ?      |
-| setColor     |     ?      |
-| getEndCap    |     ?      |
-| setEndCap    |     ?      |
-| getJoinType  |     ?      |
-| setJoinType  |     ?      |
-| getPattern   |     ?      |
-| setPattern   |     ?      |
-| getPoints    |     ?      |
-| setPoints    |     ?      |
-| getSpans     |     ?      |
-| setSpans     |     ?      |
-| getStartCap  |     ?      |
-| setStartCap  |     ?      |
-| getTag       |     ?      |
-| setTag       |     ?      |
-| getWidth     |     ?      |
-| setWidth     |     ?      |
-| getZIndex    |     ?      |
-| setZIndex    |     ?      |
-| isVisible    |     ?      |
-| setVisible   |     ?      |
+| getCap       |     ✅     |
+| setCap       |     ✅     |
+| isClickable  |     ✅     |
+| setClickable |     ✅     |
+| getColor     |     ✅     |
+| setColor     |     ✅     |
+| getEndCap    |     ❌     |
+| setEndCap    |     ❌     |
+| getJoinType  |     ✅     |
+| setJoinType  |     ✅     |
+| getPattern   |     ❌     |
+| setPattern   |     ❌     |
+| getPoints    |     ❌     |
+| setPoints    |     ✅     |
+| getSpans     |     ❌     |
+| setSpans     |     ❌     |
+| getStartCap  |     ❌     |
+| setStartCap  |     ❌     |
+| getTag       |     ✅     |
+| setTag       |     ✅     |
+| getWidth     |     ✅     |
+| setWidth     |     ✅     |
+| getZIndex    |     ❌     |
+| setZIndex    |     ❌     |
+| isVisible    |     ✅     |
+| setVisible   |     ✅     |
 
 ### Polygon
 

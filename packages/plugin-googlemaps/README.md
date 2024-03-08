@@ -185,6 +185,7 @@ Comments for partially supported 🟨 properties:
 | zIndex    |      ✅       |
 | jointType |      ✅       |
 | pattern   |      ✅       |
+| cap       |      ✅       |
 | startCap  |      ✅       |
 | endCap    |      ✅       |
 | spans     |      ✅       |
@@ -193,11 +194,13 @@ Comments for partially supported 🟨 properties:
 
 | Method       | Support level |
 | ------------ | :-----------: |
+| getCap       |      ❌       |
+| setCap       |      ✅       |
 | isClickable  |      ✅       |
 | setClickable |      ✅       |
 | getColor     |      ✅       |
 | setColor     |      ✅       |
-| getEndCap    |      ✅       |
+| getEndCap    |      ❌       |
 | setEndCap    |      ✅       |
 | getJoinType  |      ✅       |
 | setJoinType  |      ✅       |
@@ -205,9 +208,9 @@ Comments for partially supported 🟨 properties:
 | setPattern   |      ✅       |
 | getPoints    |      ✅       |
 | setPoints    |      ✅       |
-| getSpans     |      ✅       |
+| getSpans     |      ❌       |
 | setSpans     |      ✅       |
-| getStartCap  |      ✅       |
+| getStartCap  |      ❌       |
 | setStartCap  |      ✅       |
 | getTag       |      ✅       |
 | setTag       |      ✅       |
