@@ -51,6 +51,7 @@ import com.openmobilehub.android.maps.sample.customviews.PanelColorSeekbar
 import com.openmobilehub.android.maps.sample.customviews.PanelSeekbar
 import com.openmobilehub.android.maps.sample.customviews.PanelSpinner
 import com.openmobilehub.android.maps.sample.databinding.FragmentMapPolylinesBinding
+import com.openmobilehub.android.maps.sample.utils.Constants
 
 class MapPolylinesFragment : Fragment(), OmhOnMapReadyCallback {
 
@@ -143,7 +144,7 @@ class MapPolylinesFragment : Fragment(), OmhOnMapReadyCallback {
                 .show()
         }
 
-        omhMap.setScaleFactor(if (omhMap.providerName === MAPBOX) 3.0f else 1.0f)
+        omhMap.setScaleFactor(if (omhMap.providerName === Constants.MAPBOX_PROVIDER) 3.0f else 1.0f)
         omhMap.setZoomGesturesEnabled(true)
 
         val omhOnPolylineClickListener = OmhOnPolylineClickListener {
@@ -212,31 +213,31 @@ class MapPolylinesFragment : Fragment(), OmhOnMapReadyCallback {
 
         // randomizePoints
         randomizePointsButton = view.findViewById(R.id.button_randomizePoints)
-        randomizePointsButton?.isEnabled = getSupportedStatus(listOf(GOOGLE, OPENSTREETMAP, MAPBOX))
+        randomizePointsButton?.isEnabled = getSupportedStatus(Constants.ALL_PROVIDERS)
         randomizePointsButton?.setOnClickListener {
             customizablePolyline?.setPoints(DebugPolylineHelper.getRandomizedPoints())
         }
         // isVisible
         isVisibleCheckbox = view.findViewById(R.id.checkBox_isVisible)
-        isVisibleCheckbox?.isEnabled = getSupportedStatus(listOf(GOOGLE, OPENSTREETMAP, MAPBOX))
+        isVisibleCheckbox?.isEnabled = getSupportedStatus(Constants.ALL_PROVIDERS)
         isVisibleCheckbox?.setOnCheckedChangeListener { _, isChecked ->
             customizablePolyline?.setVisible(isChecked)
         }
         // isClickable
         isClickableCheckbox = view.findViewById(R.id.checkBox_isClickable)
-        isClickableCheckbox?.isEnabled = getSupportedStatus(listOf(GOOGLE, OPENSTREETMAP, MAPBOX))
+        isClickableCheckbox?.isEnabled = getSupportedStatus(Constants.ALL_PROVIDERS)
         isClickableCheckbox?.setOnCheckedChangeListener { _, isChecked ->
             customizablePolyline?.setClickable(isChecked)
         }
         // strokeWidth
         strokeWidthSeekbar = view.findViewById(R.id.panelSeekbar_width)
-        strokeWidthSeekbar?.isEnabled = getSupportedStatus(listOf(GOOGLE, OPENSTREETMAP, MAPBOX))
+        strokeWidthSeekbar?.isEnabled = getSupportedStatus(Constants.ALL_PROVIDERS)
         strokeWidthSeekbar?.setOnProgressChangedCallback { progress: Int ->
             customizablePolyline?.setWidth(progress.toFloat())
         }
         // color
         colorSeekbar = view.findViewById(R.id.panelColorSeekbar_color)
-        colorSeekbar?.isEnabled = getSupportedStatus(listOf(GOOGLE, OPENSTREETMAP, MAPBOX))
+        colorSeekbar?.isEnabled = getSupportedStatus(Constants.ALL_PROVIDERS)
         colorSeekbar?.setOnColorChangedCallback { color: Int ->
             polylineColor = color
             customizablePolyline?.setColor(color)
@@ -244,7 +245,7 @@ class MapPolylinesFragment : Fragment(), OmhOnMapReadyCallback {
         }
         // cap
         capSpinner = view.findViewById(R.id.panelSpinner_cap)
-        capSpinner?.isEnabled = getSupportedStatus(listOf(GOOGLE, OPENSTREETMAP, MAPBOX))
+        capSpinner?.isEnabled = getSupportedStatus(Constants.ALL_PROVIDERS)
         capSpinner?.setValues(requireContext(), capTypeNameResourceID)
         capSpinner?.setOnItemSelectedCallback { position: Int ->
             val cap = mapSpinnerPositionToOmhCap(position)
@@ -254,7 +255,7 @@ class MapPolylinesFragment : Fragment(), OmhOnMapReadyCallback {
         }
         // startCap
         startCapSpinner = view.findViewById(R.id.panelSpinner_startCap)
-        startCapSpinner?.isEnabled = getSupportedStatus(listOf(GOOGLE))
+        startCapSpinner?.isEnabled = getSupportedStatus(listOf(Constants.GOOGLE_PROVIDER))
         startCapSpinner?.setValues(requireContext(), capTypeNameResourceID)
         startCapSpinner?.setOnItemSelectedCallback { position: Int ->
             val cap = mapSpinnerPositionToOmhCap(position)
@@ -264,7 +265,7 @@ class MapPolylinesFragment : Fragment(), OmhOnMapReadyCallback {
         }
         // endCap
         endCapSpinner = view.findViewById(R.id.panelSpinner_endCap)
-        endCapSpinner?.isEnabled = getSupportedStatus(listOf(GOOGLE))
+        endCapSpinner?.isEnabled = getSupportedStatus(listOf(Constants.GOOGLE_PROVIDER))
         endCapSpinner?.setValues(requireContext(), capTypeNameResourceID)
         endCapSpinner?.setOnItemSelectedCallback { position: Int ->
             val cap = mapSpinnerPositionToOmhCap(position)
@@ -274,14 +275,14 @@ class MapPolylinesFragment : Fragment(), OmhOnMapReadyCallback {
         }
         // jointType
         jointTypeSpinner = view.findViewById(R.id.panelSpinner_joinType)
-        jointTypeSpinner?.isEnabled = getSupportedStatus(listOf(GOOGLE, OPENSTREETMAP, MAPBOX))
+        jointTypeSpinner?.isEnabled = getSupportedStatus(Constants.ALL_PROVIDERS)
         jointTypeSpinner?.setValues(requireContext(), jointTypeNameResourceID)
         jointTypeSpinner?.setOnItemSelectedCallback { position: Int ->
             customizablePolyline?.setJointType(position)
         }
         // pattern
         patternSpinner = view.findViewById(R.id.panelSpinner_pattern)
-        patternSpinner?.isEnabled = getSupportedStatus(listOf(GOOGLE))
+        patternSpinner?.isEnabled = getSupportedStatus(listOf(Constants.GOOGLE_PROVIDER))
         patternSpinner?.setValues(requireContext(), patternTypeNameResourceID)
         patternSpinner?.setOnItemSelectedCallback { position: Int ->
             val pattern = mapSpinnerPositionToOmhPattern(position)
@@ -291,13 +292,13 @@ class MapPolylinesFragment : Fragment(), OmhOnMapReadyCallback {
         }
         // zIndex
         zIndexSeekbar = view.findViewById(R.id.panelSeekbar_zIndex)
-        zIndexSeekbar?.isEnabled = getSupportedStatus(listOf(GOOGLE))
+        zIndexSeekbar?.isEnabled = getSupportedStatus(listOf(Constants.GOOGLE_PROVIDER))
         zIndexSeekbar?.setOnProgressChangedCallback { progress: Int ->
             customizablePolyline?.setZIndex(progress.toFloat())
         }
         // withSpan
         withSpanCheckbox = view.findViewById(R.id.checkBox_withSpan)
-        withSpanCheckbox?.isEnabled = getSupportedStatus(listOf(GOOGLE))
+        withSpanCheckbox?.isEnabled = getSupportedStatus(listOf(Constants.GOOGLE_PROVIDER))
         withSpanCheckbox?.setOnCheckedChangeListener { _, isChecked ->
             withSpan = isChecked
             updatePanelUI()
