@@ -139,7 +139,7 @@ class OmhMapImplTest {
                     omhMapImpl.findDraggableEntity(renderedQueryGeometry.screenCoordinate)
 
                 if (draggableEntity is OmhMarkerImpl) {
-                    return@mock listOf<String?>(draggableEntity.getSymbolLayerID())
+                    return@mock listOf<String?>(draggableEntity.getMarkerLayerID())
                 }
 
                 return@mock listOf<String?>()

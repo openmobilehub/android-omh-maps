@@ -18,8 +18,10 @@ package com.openmobilehub.android.maps.plugin.mapbox.extensions
 
 import android.content.Context
 import com.mapbox.geojson.Feature
+import com.mapbox.maps.extension.style.expressions.generated.Expression
 import com.mapbox.maps.extension.style.layers.generated.SymbolLayer
 import com.mapbox.maps.extension.style.layers.generated.symbolLayer
+import com.mapbox.maps.extension.style.layers.properties.generated.IconAnchor
 import com.mapbox.maps.extension.style.sources.generated.GeoJsonSource
 import com.mapbox.maps.extension.style.sources.generated.geoJsonSource
 import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
@@ -56,7 +58,7 @@ internal fun OmhMarkerOptions.addOmhMarker(
     }
     omhMarker.setGeoJsonSource(geoJsonSource)
 
-    val layer = symbolLayer(omhMarker.getSymbolLayerID(), geoJsonSourceID) {
+    val markerLayer = symbolLayer(omhMarker.getMarkerLayerID(), geoJsonSourceID) {
         // icon
         // iconImage(markerImageID) will be handled by setIcon
         iconIgnorePlacement(true)
@@ -72,21 +74,27 @@ internal fun OmhMarkerOptions.addOmhMarker(
         iconOpacity(alpha.toDouble())
 
         // isVisible
-        visibility(OmhMarkerImpl.getIconVisibility(isVisible))
+        visibility(OmhMarkerImpl.getIconsVisibility(isVisible))
 
         // rotation
         iconRotate(rotation.toDouble())
 
         // isFlat
-        iconPitchAlignment(OmhMarkerImpl.getIconPitchAlignment(isFlat))
-        iconRotationAlignment(OmhMarkerImpl.getIconRotationAlignment(isFlat))
+        iconPitchAlignment(OmhMarkerImpl.getIconsPitchAlignment(isFlat))
+        iconRotationAlignment(OmhMarkerImpl.getIconsRotationAlignment(isFlat))
     }
-    omhMarker.setSymbolLayer(layer)
+    omhMarker.setMarkerLayer(markerLayer)
 
-    // TODO handle title
-    // TODO handle snippet
-    // TODO handle draggable
-    // TODO handle clickable
+    val infoWindowLayer = symbolLayer(omhMarker.getInfoWindowLayerID(), geoJsonSourceID) {
+        iconImage(omhMarker.getMarkerIconID())
+        iconAnchor(IconAnchor.TOP)
+        iconAllowOverlap(true)
+        // iconOffset(arrayOf<Float>(-2f, -28f))
+    }.filter(
+        // filter to only show the info window when active
+        Expression.literal(true)
+    )
+    omhMarker.setInfoWindowLayer(infoWindowLayer)
 
-    return Triple(omhMarker, geoJsonSource, layer)
+    return Triple(omhMarker, geoJsonSource, markerLayer)
 }

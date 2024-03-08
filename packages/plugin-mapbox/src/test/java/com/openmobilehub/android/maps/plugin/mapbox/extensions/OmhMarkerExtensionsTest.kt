@@ -237,16 +237,16 @@ internal class OmhMarkerExtensionsTest(
         verify {
             symbolLayer.iconIgnorePlacement(true) // defaults from OmhMarkerExtensions
             symbolLayer.iconAllowOverlap(true) // defaults from OmhMarkerExtensions
-            symbolLayer.iconImage(omhMarker.getIconID(data.icon !== null))
+            symbolLayer.iconImage(omhMarker.getMarkerIconID(data.icon !== null))
             symbolLayer.iconOpacity(data.alpha.toDouble())
             symbolLayer.iconPitchAlignment(
-                OmhMarkerImpl.getIconPitchAlignment(data.isFlat)
+                OmhMarkerImpl.getIconsPitchAlignment(data.isFlat)
             )
             symbolLayer.iconRotationAlignment(
-                OmhMarkerImpl.getIconRotationAlignment(data.isFlat)
+                OmhMarkerImpl.getIconsRotationAlignment(data.isFlat)
             )
             symbolLayer.visibility(
-                OmhMarkerImpl.getIconVisibility(data.isVisible)
+                OmhMarkerImpl.getIconsVisibility(data.isVisible)
             )
             symbolLayer.iconRotate(data.rotation.toDouble())
         }
@@ -263,10 +263,10 @@ internal class OmhMarkerExtensionsTest(
         verify {
             // ensure that the previous icon (from the in-between scenario) has been
             // deleted from the layer to free allocated memory
-            safeStyle.removeStyleImage(omhMarker.getIconID(data.icon === null))
+            safeStyle.removeStyleImage(omhMarker.getMarkerIconID(data.icon === null))
             // ensure that the new icon has been added to the layer
             safeStyle.addImage(
-                omhMarker.getIconID(data.icon !== null),
+                omhMarker.getMarkerIconID(data.icon !== null),
                 convertDrawableToBitmapMock,
                 data.icon === null // ensure SDF coloring is only enabled for the default icon
             )

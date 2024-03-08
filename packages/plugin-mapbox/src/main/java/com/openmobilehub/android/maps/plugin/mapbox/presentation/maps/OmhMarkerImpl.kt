@@ -60,7 +60,8 @@ internal class OmhMarkerImpl(
 ) : OmhMarker, IDraggable {
 
     private lateinit var geoJsonSource: GeoJsonSource
-    private lateinit var symbolLayer: SymbolLayer
+    private lateinit var markerSymbolLayer: SymbolLayer
+    private lateinit var infoWindowLayer: SymbolLayer
     private lateinit var safeStyle: Style
     private var isCustomIconSet: Boolean = false
     private var iconWidth: Int = 0
@@ -77,8 +78,12 @@ internal class OmhMarkerImpl(
         this.geoJsonSource = geoJsonSource
     }
 
-    fun setSymbolLayer(symbolLayer: SymbolLayer) {
-        this.symbolLayer = symbolLayer
+    fun setMarkerLayer(markerLayer: SymbolLayer) {
+        this.markerSymbolLayer = markerLayer
+    }
+
+    fun setInfoWindowLayer(infoWindowLayer: SymbolLayer) {
+        this.infoWindowLayer = infoWindowLayer
     }
 
     fun getMarkerUUID(): UUID {
@@ -104,7 +109,7 @@ internal class OmhMarkerImpl(
 
     override fun setTitle(title: String?) {
         this.title = title
-        // TODO implement info window functionality
+        this.invalidateInfoWindow()
     }
 
     override fun getClickable(): Boolean {
@@ -132,7 +137,7 @@ internal class OmhMarkerImpl(
 
     override fun setAnchor(anchorU: Float, anchorV: Float) {
         bufferedAnchor = anchorU to anchorV
-        symbolLayer.iconAnchor(
+        markerSymbolLayer.iconAnchor(
             AnchorConverter.convertContinuousToDiscreteIconAnchor(bufferedAnchor)
         )
     }
@@ -152,7 +157,8 @@ internal class OmhMarkerImpl(
             setRotation(bufferedRotation)
             setAnchor(bufferedAnchor.first, bufferedAnchor.second)
 
-            this.safeStyle.addLayer(symbolLayer)
+            this.safeStyle.addLayer(markerSymbolLayer)
+            this.safeStyle.addLayer(infoWindowLayer)
 
             // (possibly) clear some memory
             bufferedIcon = null
@@ -161,7 +167,7 @@ internal class OmhMarkerImpl(
 
     override fun getAlpha(): Float {
         return if (this::safeStyle.isInitialized) {
-            symbolLayer.iconOpacity?.toFloat() ?: OmhConstants.DEFAULT_ALPHA
+            markerSymbolLayer.iconOpacity?.toFloat() ?: OmhConstants.DEFAULT_ALPHA
         } else {
             bufferedAlpha
         }
@@ -169,7 +175,7 @@ internal class OmhMarkerImpl(
 
     override fun setAlpha(alpha: Float) {
         if (this::safeStyle.isInitialized) {
-            symbolLayer.iconOpacity(alpha.toDouble())
+            markerSymbolLayer.iconOpacity(alpha.toDouble())
         } else {
             // if the layer was not added to the map yet, buffer the alpha value to apply it later
             bufferedAlpha = alpha
@@ -182,7 +188,7 @@ internal class OmhMarkerImpl(
 
     override fun setSnippet(snippet: String?) {
         this.snippet = snippet
-        // TODO implement info window functionality
+        this.invalidateInfoWindow()
     }
 
     override fun setIcon(icon: Drawable?) {
@@ -191,8 +197,8 @@ internal class OmhMarkerImpl(
         if (this::safeStyle.isInitialized) {
             val addedIconID = addOrUpdateMarkerIconImage(icon)
             // color the icon image using Mapbox's SDF implementation
-            symbolLayer.iconColor(Constants.DEFAULT_MARKER_COLOR)
-            symbolLayer.iconImage(addedIconID)
+            markerSymbolLayer.iconColor(Constants.DEFAULT_MARKER_COLOR)
+            markerSymbolLayer.iconImage(addedIconID)
         } else {
             // if the layer was not added to the map yet, buffer the icon value to apply it later
             bufferedIcon = icon
@@ -201,7 +207,7 @@ internal class OmhMarkerImpl(
 
     override fun getIsVisible(): Boolean {
         return if (this::safeStyle.isInitialized) {
-            symbolLayer.visibility == Visibility.VISIBLE
+            markerSymbolLayer.visibility == Visibility.VISIBLE
         } else {
             bufferedIsVisible
         }
@@ -209,7 +215,7 @@ internal class OmhMarkerImpl(
 
     override fun setIsVisible(visible: Boolean) {
         if (this::safeStyle.isInitialized) {
-            symbolLayer.visibility(getIconVisibility(visible))
+            markerSymbolLayer.visibility(getIconsVisibility(visible))
         } else {
             // if the layer was not added to the map yet, buffer the icon value to apply it later
             bufferedIsVisible = visible
@@ -218,7 +224,7 @@ internal class OmhMarkerImpl(
 
     override fun getIsFlat(): Boolean {
         return if (this::safeStyle.isInitialized) {
-            symbolLayer.iconPitchAlignment == IconPitchAlignment.MAP
+            markerSymbolLayer.iconPitchAlignment == IconPitchAlignment.MAP
         } else {
             bufferedIsFlat
         }
@@ -226,8 +232,8 @@ internal class OmhMarkerImpl(
 
     override fun setIsFlat(flat: Boolean) {
         if (this::safeStyle.isInitialized) {
-            symbolLayer.iconPitchAlignment(getIconPitchAlignment(flat))
-            symbolLayer.iconRotationAlignment(getIconRotationAlignment(flat))
+            markerSymbolLayer.iconPitchAlignment(getIconsPitchAlignment(flat))
+            markerSymbolLayer.iconRotationAlignment(getIconsRotationAlignment(flat))
         } else {
             // if the layer was not added to the map yet, buffer the is flat value to apply it later
             bufferedIsFlat = flat
@@ -236,7 +242,7 @@ internal class OmhMarkerImpl(
 
     override fun getRotation(): Float {
         return if (this::safeStyle.isInitialized) {
-            symbolLayer.iconRotate?.toFloat() ?: OmhConstants.DEFAULT_ROTATION
+            markerSymbolLayer.iconRotate?.toFloat() ?: OmhConstants.DEFAULT_ROTATION
         } else {
             bufferedRotation
         }
@@ -244,7 +250,7 @@ internal class OmhMarkerImpl(
 
     override fun setRotation(rotation: Float) {
         if (this::safeStyle.isInitialized) {
-            symbolLayer.iconRotate(rotation.toDouble())
+            markerSymbolLayer.iconRotate(rotation.toDouble())
         } else {
             // if the layer was not added to the map yet, buffer the is flat value to apply it later
             bufferedRotation = rotation
@@ -263,12 +269,17 @@ internal class OmhMarkerImpl(
         setIcon(null)
 
         // color the icon image using Mapbox's SDF implementation
-        symbolLayer.iconColor(
+        markerSymbolLayer.iconColor(
             color ?: Constants.DEFAULT_MARKER_COLOR
         )
     }
 
-    internal fun getIconID(bForCustomIcon: Boolean): String {
+
+    private fun invalidateInfoWindow() {
+        // TODO implement this
+    }
+
+    internal fun getMarkerIconID(bForCustomIcon: Boolean): String {
         return "$markerUUID-omh-marker-icon-${if (bForCustomIcon) "custom" else "default"}"
     }
 
@@ -276,8 +287,12 @@ internal class OmhMarkerImpl(
         return "$markerUUID-omh-marker-geojson-source"
     }
 
-    internal fun getSymbolLayerID(): String {
-        return "$markerUUID-omh-marker-symbol-layer"
+    internal fun getMarkerLayerID(): String {
+        return "$markerUUID-omh-marker-layer"
+    }
+
+    internal fun getInfoWindowLayerID(): String {
+        return "$markerUUID-omh-info-window-layer"
     }
 
     private fun getDefaultIcon(): Drawable {
@@ -295,15 +310,15 @@ internal class OmhMarkerImpl(
      *
      * @param icon the icon [Drawable] for the marker.
      *
-     * @return the ID of the added or updated marker icon image (static for a given marker, received from [getIconID]).
+     * @return the ID of the added or updated marker icon image (static for a given marker, received from [getMarkerIconID]).
      */
     private fun addOrUpdateMarkerIconImage(
         icon: Drawable?,
     ): String {
-        val markerImageID = getIconID(icon != null)
+        val markerImageID = getMarkerIconID(icon != null)
 
         // ensure the other icon is removed for memory optimization
-        safeStyle.removeStyleImage(getIconID(!isCustomIconSet))
+        safeStyle.removeStyleImage(getMarkerIconID(!isCustomIconSet))
 
         val bitmap = DrawableConverter.convertDrawableToBitmap(icon ?: getDefaultIcon())
 
@@ -324,7 +339,7 @@ internal class OmhMarkerImpl(
     }
 
     internal companion object {
-        internal fun getIconPitchAlignment(isFlat: Boolean): IconPitchAlignment {
+        internal fun getIconsPitchAlignment(isFlat: Boolean): IconPitchAlignment {
             return if (isFlat) {
                 IconPitchAlignment.MAP // flat
             } else {
@@ -332,7 +347,7 @@ internal class OmhMarkerImpl(
             }
         }
 
-        internal fun getIconRotationAlignment(isFlat: Boolean): IconRotationAlignment {
+        internal fun getIconsRotationAlignment(isFlat: Boolean): IconRotationAlignment {
             return if (isFlat) {
                 IconRotationAlignment.MAP // flat
             } else {
@@ -340,7 +355,7 @@ internal class OmhMarkerImpl(
             }
         }
 
-        internal fun getIconVisibility(isVisible: Boolean): Visibility {
+        internal fun getIconsVisibility(isVisible: Boolean): Visibility {
             return if (isVisible) {
                 Visibility.VISIBLE
             } else {
