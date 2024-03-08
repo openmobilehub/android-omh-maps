@@ -55,7 +55,7 @@ internal class OmhMarkerImpl(
     private var bufferedIsVisible: Boolean = OmhConstants.DEFAULT_IS_VISIBLE,
     private var bufferedIsFlat: Boolean = OmhConstants.DEFAULT_IS_FLAT,
     private var bufferedRotation: Float = OmhConstants.DEFAULT_ROTATION,
-    internal var bufferedAnchor: Pair<Float, Float> = OmhConstants.DEFAULT_ANCHOR to OmhConstants.DEFAULT_ANCHOR,
+    internal var bufferedAnchor: Pair<Float, Float> = OmhConstants.ANCHOR_CENTER to OmhConstants.ANCHOR_CENTER,
     initialIcon: Drawable?
 ) : OmhMarker, IDraggable {
 
@@ -140,6 +140,10 @@ internal class OmhMarkerImpl(
         markerSymbolLayer.iconAnchor(
             AnchorConverter.convertContinuousToDiscreteIconAnchor(bufferedAnchor)
         )
+    }
+
+    override fun setInfoWindowAnchor(iwAnchorU: Float, iwAnchorV: Float) {
+        TODO("Not yet implemented")
     }
 
     fun applyBufferedProperties(safeStyle: Style) {
@@ -274,6 +278,17 @@ internal class OmhMarkerImpl(
         )
     }
 
+    override fun showInfoWindow() {
+        TODO("Not yet implemented")
+    }
+
+    override fun hideInfoWindow() {
+        TODO("Not yet implemented")
+    }
+
+    override fun getIsInfoWindowShown(): Boolean {
+        TODO("Not yet implemented")
+    }
 
     private fun invalidateInfoWindow() {
         // TODO implement this
@@ -310,7 +325,8 @@ internal class OmhMarkerImpl(
      *
      * @param icon the icon [Drawable] for the marker.
      *
-     * @return the ID of the added or updated marker icon image (static for a given marker, received from [getMarkerIconID]).
+     * @return the ID of the added or updated marker icon image
+     * (static for a given marker, received from [getMarkerIconID]).
      */
     private fun addOrUpdateMarkerIconImage(
         icon: Drawable?,

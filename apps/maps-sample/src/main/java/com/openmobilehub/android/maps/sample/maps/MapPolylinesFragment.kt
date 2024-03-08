@@ -23,6 +23,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.CheckBox
 import android.widget.LinearLayout
 import android.widget.Toast
@@ -50,7 +51,7 @@ import com.openmobilehub.android.maps.sample.customviews.PanelColorSeekbar
 import com.openmobilehub.android.maps.sample.customviews.PanelSeekbar
 import com.openmobilehub.android.maps.sample.customviews.PanelSpinner
 import com.openmobilehub.android.maps.sample.databinding.FragmentMapPolylinesBinding
-
+import com.openmobilehub.android.maps.sample.utils.Constants
 
 class MapPolylinesFragment : Fragment(), OmhOnMapReadyCallback {
 
@@ -91,10 +92,12 @@ class MapPolylinesFragment : Fragment(), OmhOnMapReadyCallback {
     private var spanProperties: LinearLayout? = null
     private var spanGradientProperties: LinearLayout? = null
 
+    private var randomizePointsButton: Button? = null
     private var isVisibleCheckbox: CheckBox? = null
     private var isClickableCheckbox: CheckBox? = null
     private var strokeWidthSeekbar: PanelSeekbar? = null
     private var colorSeekbar: PanelColorSeekbar? = null
+    private var capSpinner: PanelSpinner? = null
     private var startCapSpinner: PanelSpinner? = null
     private var endCapSpinner: PanelSpinner? = null
     private var jointTypeSpinner: PanelSpinner? = null
@@ -132,8 +135,6 @@ class MapPolylinesFragment : Fragment(), OmhOnMapReadyCallback {
         val omhMapFragment =
             childFragmentManager.findFragmentById(R.id.fragment_map_container) as? OmhMapFragment
         omhMapFragment?.getMapAsync(this)
-
-        setupUI(view)
     }
 
     override fun onMapReady(omhMap: OmhMap) {
@@ -143,6 +144,7 @@ class MapPolylinesFragment : Fragment(), OmhOnMapReadyCallback {
                 .show()
         }
 
+        omhMap.setScaleFactor(if (omhMap.providerName === Constants.MAPBOX_PROVIDER) 3.0f else 1.0f)
         omhMap.setZoomGesturesEnabled(true)
 
         val omhOnPolylineClickListener = OmhOnPolylineClickListener {
@@ -157,6 +159,8 @@ class MapPolylinesFragment : Fragment(), OmhOnMapReadyCallback {
 
         customizablePolyline = DebugPolylineHelper.addSinglePolyline(omhMap)
         DebugPolylineHelper.addReferencePolyline(omhMap)
+
+        view?.let { setupUI(it) }
     }
 
     private fun mapSpinnerPositionToOmhCap(position: Int): OmhCap? {
@@ -198,64 +202,103 @@ class MapPolylinesFragment : Fragment(), OmhOnMapReadyCallback {
         }
     }
 
+    private fun getSupportedStatus(supportedProviders: List<String>): Boolean {
+        return supportedProviders.contains(omhMap?.providerName)
+    }
+
     private fun setupUI(view: View) {
         spanProperties = view.findViewById(R.id.spanProperties)
         spanGradientProperties = view.findViewById(R.id.spanGradientProperties)
         updatePanelUI()
 
+        // randomizePoints
+        randomizePointsButton = view.findViewById(R.id.button_randomizePoints)
+        randomizePointsButton?.isEnabled = getSupportedStatus(Constants.ALL_PROVIDERS)
+        randomizePointsButton?.setOnClickListener {
+            customizablePolyline?.setPoints(DebugPolylineHelper.getRandomizedPoints())
+        }
         // isVisible
         isVisibleCheckbox = view.findViewById(R.id.checkBox_isVisible)
+        isVisibleCheckbox?.isEnabled = getSupportedStatus(Constants.ALL_PROVIDERS)
         isVisibleCheckbox?.setOnCheckedChangeListener { _, isChecked ->
             customizablePolyline?.setVisible(isChecked)
         }
         // isClickable
         isClickableCheckbox = view.findViewById(R.id.checkBox_isClickable)
+        isClickableCheckbox?.isEnabled = getSupportedStatus(Constants.ALL_PROVIDERS)
         isClickableCheckbox?.setOnCheckedChangeListener { _, isChecked ->
             customizablePolyline?.setClickable(isChecked)
         }
         // strokeWidth
         strokeWidthSeekbar = view.findViewById(R.id.panelSeekbar_width)
+        strokeWidthSeekbar?.isEnabled = getSupportedStatus(Constants.ALL_PROVIDERS)
         strokeWidthSeekbar?.setOnProgressChangedCallback { progress: Int ->
             customizablePolyline?.setWidth(progress.toFloat())
         }
         // color
         colorSeekbar = view.findViewById(R.id.panelColorSeekbar_color)
+        colorSeekbar?.isEnabled = getSupportedStatus(Constants.ALL_PROVIDERS)
         colorSeekbar?.setOnColorChangedCallback { color: Int ->
             polylineColor = color
             customizablePolyline?.setColor(color)
             updateSpan()
         }
+        // cap
+        capSpinner = view.findViewById(R.id.panelSpinner_cap)
+        capSpinner?.isEnabled = getSupportedStatus(Constants.ALL_PROVIDERS)
+        capSpinner?.setValues(requireContext(), capTypeNameResourceID)
+        capSpinner?.setOnItemSelectedCallback { position: Int ->
+            val cap = mapSpinnerPositionToOmhCap(position)
+            if (cap != null) {
+                customizablePolyline?.setCap(cap)
+            }
+        }
         // startCap
         startCapSpinner = view.findViewById(R.id.panelSpinner_startCap)
+        startCapSpinner?.isEnabled = getSupportedStatus(listOf(Constants.GOOGLE_PROVIDER))
         startCapSpinner?.setValues(requireContext(), capTypeNameResourceID)
         startCapSpinner?.setOnItemSelectedCallback { position: Int ->
-            customizablePolyline?.setStartCap(mapSpinnerPositionToOmhCap(position))
+            val cap = mapSpinnerPositionToOmhCap(position)
+            if (cap != null) {
+                customizablePolyline?.setStartCap(cap)
+            }
         }
         // endCap
         endCapSpinner = view.findViewById(R.id.panelSpinner_endCap)
+        endCapSpinner?.isEnabled = getSupportedStatus(listOf(Constants.GOOGLE_PROVIDER))
         endCapSpinner?.setValues(requireContext(), capTypeNameResourceID)
         endCapSpinner?.setOnItemSelectedCallback { position: Int ->
-            customizablePolyline?.setEndCap(mapSpinnerPositionToOmhCap(position))
+            val cap = mapSpinnerPositionToOmhCap(position)
+            if (cap != null) {
+                customizablePolyline?.setEndCap(cap)
+            }
         }
         // jointType
         jointTypeSpinner = view.findViewById(R.id.panelSpinner_joinType)
+        jointTypeSpinner?.isEnabled = getSupportedStatus(Constants.ALL_PROVIDERS)
         jointTypeSpinner?.setValues(requireContext(), jointTypeNameResourceID)
         jointTypeSpinner?.setOnItemSelectedCallback { position: Int ->
             customizablePolyline?.setJointType(position)
         }
         // pattern
         patternSpinner = view.findViewById(R.id.panelSpinner_pattern)
+        patternSpinner?.isEnabled = getSupportedStatus(listOf(Constants.GOOGLE_PROVIDER))
         patternSpinner?.setValues(requireContext(), patternTypeNameResourceID)
         patternSpinner?.setOnItemSelectedCallback { position: Int ->
-            customizablePolyline?.setPattern(mapSpinnerPositionToOmhPattern(position))
+            val pattern = mapSpinnerPositionToOmhPattern(position)
+            if (pattern != null) {
+                customizablePolyline?.setPattern(pattern)
+            }
         }
         // zIndex
         zIndexSeekbar = view.findViewById(R.id.panelSeekbar_zIndex)
+        zIndexSeekbar?.isEnabled = getSupportedStatus(listOf(Constants.GOOGLE_PROVIDER))
         zIndexSeekbar?.setOnProgressChangedCallback { progress: Int ->
             customizablePolyline?.setZIndex(progress.toFloat())
         }
         // withSpan
         withSpanCheckbox = view.findViewById(R.id.checkBox_withSpan)
+        withSpanCheckbox?.isEnabled = getSupportedStatus(listOf(Constants.GOOGLE_PROVIDER))
         withSpanCheckbox?.setOnCheckedChangeListener { _, isChecked ->
             withSpan = isChecked
             updatePanelUI()

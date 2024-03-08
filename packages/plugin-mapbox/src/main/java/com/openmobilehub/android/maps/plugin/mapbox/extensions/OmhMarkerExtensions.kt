@@ -86,7 +86,7 @@ internal fun OmhMarkerOptions.addOmhMarker(
     omhMarker.setMarkerLayer(markerLayer)
 
     val infoWindowLayer = symbolLayer(omhMarker.getInfoWindowLayerID(), geoJsonSourceID) {
-        iconImage(omhMarker.getMarkerIconID())
+//        iconImage(omhMarker.getMarkerIconID())
         iconAnchor(IconAnchor.TOP)
         iconAllowOverlap(true)
         // iconOffset(arrayOf<Float>(-2f, -28f))

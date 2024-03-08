@@ -46,24 +46,29 @@ Legend of support levels:
 
 #### OmhMap
 
-| Method                           | Supported? |
-| -------------------------------- | :--------: |
-| addMarker                        |     ✅     |
-| addPolyline                      |     ✅     |
-| addPolygon                       |     ✅     |
-| getCameraPositionCoordinate      |     ✅     |
-| moveCamera                       |     ✅     |
-| setZoomGesturesEnabled           |     ✅     |
-| setMyLocationEnabled             |     ✅     |
-| isMyLocationEnabled              |     ✅     |
-| setMyLocationButtonClickListener |     ✅     |
-| setOnCameraMoveStartedListener   |     🟨     |
-| setOnCameraIdleListener          |     ✅     |
-| setOnMapLoadedCallback           |     ✅     |
-| setOnPolylineClickListener       |     ✅     |
-| setOnPolygonClickListener        |     ✅     |
-| snapshot                         |     ✅     |
-| setMapStyle                      |     ❌     |
+| Method                                  | Supported? |
+| --------------------------------------- | :--------: |
+| addMarker                               |     ✅     |
+| addPolyline                             |     ✅     |
+| addPolygon                              |     ✅     |
+| getCameraPositionCoordinate             |     ✅     |
+| moveCamera                              |     ✅     |
+| setZoomGesturesEnabled                  |     ✅     |
+| setMyLocationEnabled                    |     ✅     |
+| isMyLocationEnabled                     |     ✅     |
+| setMyLocationButtonClickListener        |     ✅     |
+| setOnCameraMoveStartedListener          |     🟨     |
+| setOnCameraIdleListener                 |     ✅     |
+| setOnMapLoadedCallback                  |     ✅     |
+| setOnMarkerClickListener                |     ✅     |
+| setOnMarkerDragListener                 |     ✅     |
+| setOnInfoWindowOpenStatusChangeListener |     ✅     |
+| setOnInfoWindowClickListener            |     ✅     |
+| setOnInfoWindowLongClickListener        |     ✅     |
+| setOnPolylineClickListener              |     ✅     |
+| setOnPolygonClickListener               |     ✅     |
+| snapshot                                |     ✅     |
+| setMapStyle                             |     ❌     |
 
 Comments for partially supported 🟨 properties:
 
@@ -75,48 +80,51 @@ Comments for partially supported 🟨 properties:
 
 #### OmhMarkerOptions
 
-#### OmhMarkerOptions
-
-| Property        | Support level |
-| --------------- | :-----------: |
-| position        |      ✅       |
-| title           |      ✅       |
-| draggable       |      ✅       |
-| anchor          |      ✅       |
-| alpha           |      ✅       |
-| snippet         |      ✅       |
-| isVisible       |      ✅       |
-| isFlat          |      ✅       |
-| rotation        |      ✅       |
-| backgroundColor |      ❌       |
-| clickable       |      ✅       |
+| Property         | Support level |
+| ---------------- | :-----------: |
+| position         |      ✅       |
+| title            |      ✅       |
+| draggable        |      ✅       |
+| anchor           |      ✅       |
+| infoWindowAnchor |      ✅       |
+| alpha            |      ✅       |
+| snippet          |      ✅       |
+| isVisible        |      ✅       |
+| isFlat           |      ✅       |
+| rotation         |      ✅       |
+| backgroundColor  |      ❌       |
+| clickable        |      ✅       |
 
 #### OmhMarker
 
-| Method             | Support level |
-| ------------------ | :-----------: |
-| getPosition        |      ✅       |
-| setPosition        |      ✅       |
-| getTitle           |      ✅       |
-| setTitle           |      ✅       |
-| getClickable       |      ✅       |
-| setClickable       |      ✅       |
-| getDraggable       |      ✅       |
-| setDraggable       |      ✅       |
-| setAnchor          |      ✅       |
-| getAlpha           |      ✅       |
-| setAlpha           |      ✅       |
-| getSnippet         |      ✅       |
-| setSnippet         |      ✅       |
-| setIcon            |      ✅       |
-| getIsVisible       |      ✅       |
-| setIsVisible       |      ✅       |
-| getIsFlat          |      ✅       |
-| setIsFlat          |      ✅       |
-| getRotation        |      ✅       |
-| setRotation        |      ✅       |
-| getBackgroundColor |      ❌       |
-| setBackgroundColor |      ❌       |
+| Method               | Support level |
+| -------------------- | :-----------: |
+| getPosition          |      ✅       |
+| setPosition          |      ✅       |
+| getTitle             |      ✅       |
+| setTitle             |      ✅       |
+| getClickable         |      ✅       |
+| setClickable         |      ✅       |
+| getDraggable         |      ✅       |
+| setDraggable         |      ✅       |
+| setAnchor            |      ✅       |
+| setInfoWindowAnchor  |      ✅       |
+| getAlpha             |      ✅       |
+| setAlpha             |      ✅       |
+| getSnippet           |      ✅       |
+| setSnippet           |      ✅       |
+| setIcon              |      ✅       |
+| getIsVisible         |      ✅       |
+| setIsVisible         |      ✅       |
+| getIsFlat            |      ✅       |
+| setIsFlat            |      ✅       |
+| getRotation          |      ✅       |
+| setRotation          |      ✅       |
+| getBackgroundColor   |      ❌       |
+| setBackgroundColor   |      ❌       |
+| showInfoWindow       |      ✅       |
+| hideInfoWindow       |      ✅       |
+| getIsInfoWindowShown |      ✅       |
 
 ### Polyline
 
@@ -132,6 +140,7 @@ Comments for partially supported 🟨 properties:
 | zIndex    |     ❌     |
 | jointType |     ❌     |
 | pattern   |     ❌     |
+| cap       |     ✅     |
 | startCap  |     ❌     |
 | endCap    |     ❌     |
 | spans     |     ❌     |
@@ -140,6 +149,8 @@ Comments for partially supported 🟨 properties:
 
 | Method       | Supported? |
 | ------------ | :--------: |
+| getCap       |     ✅     |
+| setCap       |     ✅     |
 | isClickable  |     ✅     |
 | setClickable |     ✅     |
 | getColor     |     ✅     |

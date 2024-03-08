@@ -40,25 +40,30 @@ This plugin provides support for Mapbox by utilizing the [Mapbox Android SDK](ht
 
 #### OmhMap
 
-| Method                           | Supported? |
-| -------------------------------- | :--------: |
-| addMarker                        |     ?      |
-| addPolyline                      |     ?      |
-| addPolygon                       |     ?      |
-| getCameraPositionCoordinate      |     ✅     |
-| moveCamera                       |     ✅     |
-| setZoomGesturesEnabled           |     ✅     |
-| setRotateGesturesEnabled         |     ✅     |
-| setMyLocationEnabled             |     ✅     |
-| isMyLocationEnabled              |     ✅     |
-| setMyLocationButtonClickListener |     ✅     |
-| setOnCameraMoveStartedListener   |     🟨     |
-| setOnCameraIdleListener          |     ✅     |
-| setOnMapLoadedCallback           |     ✅     |
-| setOnPolylineClickListener       |     ?      |
-| setOnPolygonClickListener        |     ?      |
-| snapshot                         |     ✅     |
-| setMapStyle                      |     ✅     |
+| Method                                  | Supported? |
+| --------------------------------------- | :--------: |
+| addMarker                               |     ?      |
+| addPolyline                             |     ?      |
+| addPolygon                              |     ✅     |
+| getCameraPositionCoordinate             |     ✅     |
+| moveCamera                              |     ✅     |
+| setZoomGesturesEnabled                  |     ✅     |
+| setRotateGesturesEnabled                |     ✅     |
+| setMyLocationEnabled                    |     ✅     |
+| isMyLocationEnabled                     |     ✅     |
+| setMyLocationButtonClickListener        |     ✅     |
+| setOnCameraMoveStartedListener          |     🟨     |
+| setOnCameraIdleListener                 |     ✅     |
+| setOnMapLoadedCallback                  |     ✅     |
+| setOnMarkerClickListener                |     ?      |
+| setOnMarkerDragListener                 |     ?      |
+| setOnInfoWindowOpenStatusChangeListener |     ?      |
+| setOnInfoWindowClickListener            |     ?      |
+| setOnInfoWindowLongClickListener        |     ?      |
+| setOnPolylineClickListener              |     ✅     |
+| setOnPolygonClickListener               |     ?      |
+| snapshot                                |     ✅     |
+| setMapStyle                             |     ✅     |
 
 Comments for partially supported 🟨 properties:
 
@@ -122,11 +127,17 @@ Comments for partially supported 🟨 properties:
 | hideInfoWindow       |       ?       |
 | getIsInfoWindowShown |       ?       |
 
+<<<<<<< HEAD
+
 Comments for partially supported 🟨 properties:
 
 | Property | Comments |
 | -------- | -------- |
 |          |          |
+
+=======
+
+> > > > > > > main
 
 ### Polyline
 
@@ -134,46 +145,49 @@ Comments for partially supported 🟨 properties:
 
 | Property  | Supported? |
 | --------- | :--------: |
-| points    |     ?      |
-| clickable |     ?      |
-| color     |     ?      |
-| width     |     ?      |
-| isVisible |     ?      |
-| zIndex    |     ?      |
-| jointType |     ?      |
-| pattern   |     ?      |
-| startCap  |     ?      |
-| endCap    |     ?      |
-| spans     |     ?      |
+| points    |     ✅     |
+| clickable |     ✅     |
+| color     |     ✅     |
+| width     |     ✅     |
+| isVisible |     ✅     |
+| zIndex    |     ❌     |
+| jointType |     ✅     |
+| pattern   |     ❌     |
+| cap       |     ✅     |
+| startCap  |     ❌     |
+| endCap    |     ❌     |
+| spans     |     ❌     |
 
 #### OmhPolyline
 
 | Method       | Supported? |
 | ------------ | :--------: |
-| isClickable  |     ?      |
-| setClickable |     ?      |
-| getColor     |     ?      |
-| setColor     |     ?      |
-| getEndCap    |     ?      |
-| setEndCap    |     ?      |
-| getJoinType  |     ?      |
-| setJoinType  |     ?      |
-| getPattern   |     ?      |
-| setPattern   |     ?      |
-| getPoints    |     ?      |
-| setPoints    |     ?      |
-| getSpans     |     ?      |
-| setSpans     |     ?      |
-| getStartCap  |     ?      |
-| setStartCap  |     ?      |
-| getTag       |     ?      |
-| setTag       |     ?      |
-| getWidth     |     ?      |
-| setWidth     |     ?      |
-| getZIndex    |     ?      |
-| setZIndex    |     ?      |
-| isVisible    |     ?      |
-| setVisible   |     ?      |
+| getCap       |     ✅     |
+| setCap       |     ✅     |
+| isClickable  |     ✅     |
+| setClickable |     ✅     |
+| getColor     |     ✅     |
+| setColor     |     ✅     |
+| getEndCap    |     ❌     |
+| setEndCap    |     ❌     |
+| getJoinType  |     ✅     |
+| setJoinType  |     ✅     |
+| getPattern   |     ❌     |
+| setPattern   |     ❌     |
+| getPoints    |     ❌     |
+| setPoints    |     ✅     |
+| getSpans     |     ❌     |
+| setSpans     |     ❌     |
+| getStartCap  |     ❌     |
+| setStartCap  |     ❌     |
+| getTag       |     ✅     |
+| setTag       |     ✅     |
+| getWidth     |     ✅     |
+| setWidth     |     ✅     |
+| getZIndex    |     ❌     |
+| setZIndex    |     ❌     |
+| isVisible    |     ✅     |
+| setVisible   |     ✅     |
 
 ### Polygon
 

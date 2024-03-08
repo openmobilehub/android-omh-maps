@@ -48,14 +48,16 @@ interface OmhMarker {
     fun getTitle(): String?
 
     /**
-     * Sets the title of the marker.
+     * Sets the title of the marker. When null, the info window associated with this marker is disabled.
      *
-     * @param title sets the title. If null, the title is cleared.
+     * @param title sets the title. If null, the title is cleared & info window is disabled.
      */
     fun setTitle(title: String?)
 
     /**
      * Checks whether the marker is clickable.
+     * If the marker is not clickable, the info window associated with this marker
+     * will be disabled and no click events will be propagated.
      * Default: `true`.
      *
      * @return a boolean indicating whether the marker is clickable.
@@ -91,6 +93,14 @@ interface OmhMarker {
      * @param anchorV the normalized (`0` - `1`) icon Y coordinate specifier; default: `0.5`.
      */
     fun setAnchor(anchorU: Float, anchorV: Float)
+
+    /**
+     * Sets the anchor point of marker info window.
+     *
+     * @param iwAnchorU the normalized (`0` - `1`) icon X coordinate specifier; default: `0.5`.
+     * @param iwAnchorV the normalized (`0` - `1`) icon Y coordinate specifier; default: `0.5`.
+     */
+    fun setInfoWindowAnchor(iwAnchorU: Float, iwAnchorV: Float)
 
     /**
      * Gets the alpha (transparency) of the marker.
@@ -138,6 +148,8 @@ interface OmhMarker {
 
     /**
      * Sets whether the marker is visible.
+     * If the marker is not visible, the info window associated with this marker
+     * will be disabled and no interaction events will be propagated.
      *
      * @param visible sets whether the marker is visible.
      */
@@ -190,4 +202,24 @@ interface OmhMarker {
      * to alpha channel (e.g. of shape `0xAARRGGBB`).
      */
     fun setBackgroundColor(@ColorInt color: Int?)
+
+    /**
+     * Imperatively shows the info window associated with this marker.
+     * If custom info window is set and the window is already shown, it will be re-rendered.
+     * Note: this overrides the info-window-disabling behaviour based on the value of [setIsVisible] and [setClickable].
+     */
+    fun showInfoWindow()
+
+    /**
+     * Imperatively hides the info window associated with this marker.
+     * Note: this overrides the info-window-disabling behaviour based on the value of [setIsVisible] and [setClickable].
+     */
+    fun hideInfoWindow()
+
+    /**
+     * Gets whether the info window associated with this marker is currently being shown.
+     *
+     * @return a boolean indicating whether the info window is currently being shown.
+     */
+    fun getIsInfoWindowShown(): Boolean
 }

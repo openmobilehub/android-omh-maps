@@ -23,12 +23,21 @@ import android.content.Context
 import android.view.Gravity
 import android.widget.ImageView
 import androidx.annotation.RequiresPermission
+import com.mapbox.geojson.Feature
+import com.mapbox.geojson.LineString
 import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.MapView
 import com.mapbox.maps.RenderedQueryGeometry
 import com.mapbox.maps.RenderedQueryOptions
 import com.mapbox.maps.ScreenCoordinate
 import com.mapbox.maps.Style
+import com.mapbox.maps.extension.style.layers.Layer
+import com.mapbox.maps.extension.style.layers.addLayer
+import com.mapbox.maps.extension.style.layers.generated.lineLayer
+import com.mapbox.maps.extension.style.sources.addSource
+import com.mapbox.maps.extension.style.sources.generated.GeoJsonSource
+import com.mapbox.maps.extension.style.sources.generated.geoJsonSource
+import com.mapbox.maps.extension.style.sources.getSource
 import com.mapbox.maps.plugin.compass.compass
 import com.mapbox.maps.plugin.gestures.gestures
 import com.mapbox.maps.plugin.locationcomponent.location
@@ -37,11 +46,15 @@ import com.mapbox.maps.plugin.viewport.data.FollowPuckViewportStateBearing
 import com.mapbox.maps.plugin.viewport.data.FollowPuckViewportStateOptions
 import com.mapbox.maps.plugin.viewport.state.FollowPuckViewportState
 import com.mapbox.maps.plugin.viewport.viewport
+import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhInfoWindowViewFactory
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMap
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMapLoadedCallback
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMarker
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnCameraIdleListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnCameraMoveStartedListener
+import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnInfoWindowClickListener
+import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnInfoWindowLongClickListener
+import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnInfoWindowOpenStatusChangeListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMarkerClickListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMarkerDragListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMyLocationButtonClickListener
@@ -67,6 +80,8 @@ import com.openmobilehub.android.maps.plugin.mapbox.utils.CoordinateConverter
 import com.openmobilehub.android.maps.plugin.mapbox.utils.DimensionConverter
 import com.openmobilehub.android.maps.plugin.mapbox.utils.JSONUtil
 import com.openmobilehub.android.maps.plugin.mapbox.utils.commonLogger
+import com.openmobilehub.android.maps.plugin.mapbox.utils.uuid.DefaultUUIDGenerator
+import com.openmobilehub.android.maps.plugin.mapbox.utils.uuid.UUIDGenerator
 
 @SuppressWarnings("TooManyFunctions")
 internal class OmhMapImpl(
@@ -74,8 +89,9 @@ internal class OmhMapImpl(
     override val mapView: MapView,
     private val context: Context,
     private val myLocationIcon: ImageView = MyLocationIcon(context),
-    private val logger: Logger = commonLogger
-) : OmhMap, IMapDragManagerDelegate, IMapMarkerManagerDelegate {
+    private val logger: Logger = commonLogger,
+    private val uuidGenerator: UUIDGenerator = DefaultUUIDGenerator()
+) : OmhMap, IMapDragManagerDelegate, IMapMarkerManagerDelegate, PolylineDelegate {
     /**
      * This flag is used to prevent the onCameraMoveStarted listener from being called multiple times
      */
@@ -83,13 +99,20 @@ internal class OmhMapImpl(
 
     private var isMyLocationIconAdded = false
 
+    private var scaleFactor = 1.0f
+
+    private var style: Style? = null
+
     private var onMyLocationButtonClickListener: OmhOnMyLocationButtonClickListener? = null
+    private var polylineClickListener: OmhOnPolylineClickListener? = null
+
+    private val pendingMapElements = mutableListOf<Pair<GeoJsonSource, Layer>>()
+
+    private val polylines = mutableMapOf<String, OmhPolyline>()
 
     private var mapDragManager = MapDragManager(this)
 
     private var markerManager = MapMarkerManager(this)
-
-    private var style: Style? = null
 
     init {
         setupMapViewUIControls()
@@ -102,6 +125,11 @@ internal class OmhMapImpl(
             synchronized(this) {
                 this.style = safeStyle
                 markerManager.addQueuedElementsToStyle(safeStyle)
+
+                pendingMapElements.forEach { (source, layer) ->
+                    safeStyle.addSource(source)
+                    safeStyle.addLayer(layer)
+                }
             }
         }
     }
@@ -113,9 +141,39 @@ internal class OmhMapImpl(
         return markerManager.addMarker(options, style)
     }
 
-    override fun addPolyline(options: OmhPolylineOptions): OmhPolyline? {
-        // To be implemented
-        return null
+    override fun addPolyline(options: OmhPolylineOptions): OmhPolyline {
+        val polylineId = "polyline-${uuidGenerator.generate()}"
+
+        val source = geoJsonSource(polylineId) {
+            feature(
+                Feature.fromGeometry(
+                    LineString.fromLngLats(
+                        options.points.map { CoordinateConverter.convertToPoint(it) }
+                    )
+                ),
+                polylineId
+            )
+        }
+
+        val layer = lineLayer(polylineId, polylineId) {}
+        InitialOptions.applyPolylineOptions(layer, options, this.scaleFactor)
+
+        val initiallyClickable = options.clickable ?: false
+        val omhPolyline = OmhPolylineImpl(
+            layer,
+            initiallyClickable,
+            this.scaleFactor,
+            this
+        )
+
+        polylines[polylineId] = omhPolyline
+
+        style?.let { safeStyle ->
+            safeStyle.addSource(source)
+            safeStyle.addLayer(layer)
+        } ?: pendingMapElements.add(Pair(source, layer))
+
+        return omhPolyline
     }
 
     override fun addPolygon(options: OmhPolygonOptions): OmhPolygon? {
@@ -296,8 +354,47 @@ internal class OmhMapImpl(
         markerManager.setMarkerDragListener(listener)
     }
 
-    override fun setOnPolylineClickListener(listener: OmhOnPolylineClickListener) {
+    override fun setOnInfoWindowOpenStatusChangeListener(listener: OmhOnInfoWindowOpenStatusChangeListener) {
         // To be implemented
+    }
+
+    override fun setOnInfoWindowClickListener(listener: OmhOnInfoWindowClickListener) {
+        // To be implemented
+    }
+
+    override fun setOnInfoWindowLongClickListener(listener: OmhOnInfoWindowLongClickListener) {
+        // To be implemented
+    }
+
+    override fun setOnPolylineClickListener(listener: OmhOnPolylineClickListener) {
+        polylineClickListener = listener
+        setupClickListeners()
+    }
+
+    @SuppressWarnings("TooGenericExceptionCaught")
+    private fun setupClickListeners() {
+        mapView.gestures.addOnMapClickListener { point ->
+            val screenCoordinate = mapView.mapboxMap.pixelForCoordinate(point)
+
+            mapView.mapboxMap.queryRenderedFeatures(
+                RenderedQueryGeometry(screenCoordinate),
+                RenderedQueryOptions(null, null)
+            ) {
+                val layerId = try {
+                    it.value?.get(0)?.layers?.get(0)
+                } catch (e: Exception) {
+                    logger.logInfo("No layer found at the clicked point. Exception: $e")
+                    null
+                }
+
+                val omhPolyline = polylines[layerId]
+
+                if (omhPolyline !== null && omhPolyline.getClickable()) {
+                    polylineClickListener?.onPolylineClick(omhPolyline)
+                }
+            }
+            true
+        }
     }
 
     override fun setOnPolygonClickListener(listener: OmhOnPolygonClickListener) {
@@ -321,6 +418,21 @@ internal class OmhMapImpl(
         styleJSONString?.let { jsonString ->
             mapView.mapboxMap.loadStyle(jsonString, onStyleLoadedCallback)
         } ?: logger.logError("Failed to load style from resource with id: $json")
+    }
+
+    override fun setScaleFactor(scaleFactor: Float) {
+        this.scaleFactor = scaleFactor
+    }
+
+    override fun updatePolylinePoints(sourceId: String, points: List<OmhCoordinate>) {
+        val feature = Feature.fromGeometry(
+            LineString.fromLngLats(
+                points.map { CoordinateConverter.convertToPoint(it) }
+            )
+        )
+        mapView.mapboxMap.style?.let { style ->
+            (style.getSource(sourceId) as GeoJsonSource).feature(feature)
+        }
     }
 
     private fun setupMapViewUIControls() {
@@ -357,5 +469,13 @@ internal class OmhMapImpl(
             )
 
         viewportPlugin.transitionTo(followPuckViewportState)
+    }
+
+    override fun setCustomInfoWindowViewFactory(factory: OmhInfoWindowViewFactory?) {
+        // To be implemented
+    }
+
+    override fun setCustomInfoWindowContentsViewFactory(factory: OmhInfoWindowViewFactory?) {
+        // To be implemented
     }
 }

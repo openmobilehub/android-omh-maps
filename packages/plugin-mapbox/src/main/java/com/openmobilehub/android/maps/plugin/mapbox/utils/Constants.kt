@@ -16,6 +16,7 @@
 
 package com.openmobilehub.android.maps.plugin.mapbox.utils
 
+import android.graphics.Color
 import android.view.MotionEvent
 import androidx.annotation.ColorInt
 
@@ -56,4 +57,5 @@ internal object Constants {
      * to be considered still in the same place.
      */
     const val MAP_TOUCH_SAME_COORDINATES_THRESHOLD_PX = 4.0
+    const val DEFAULT_POLYLINE_COLOR = Color.BLACK
 }

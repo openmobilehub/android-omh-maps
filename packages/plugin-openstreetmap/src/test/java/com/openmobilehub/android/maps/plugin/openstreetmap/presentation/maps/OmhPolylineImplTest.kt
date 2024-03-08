@@ -17,12 +17,14 @@
 package com.openmobilehub.android.maps.plugin.openstreetmap.presentation.maps
 
 import android.graphics.Color
+import android.graphics.Paint
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhCap
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhPatternItem
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhStyleSpan
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhJointType
 import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
+import com.openmobilehub.android.maps.plugin.openstreetmap.utils.CapConverter
 import com.openmobilehub.android.maps.plugin.openstreetmap.utils.ConverterUtils
 import io.mockk.every
 import io.mockk.just
@@ -48,6 +50,8 @@ class OmhPolylineImplTest {
 
     @Before
     fun setUp() {
+        mockkObject(CapConverter)
+
         polyline = mockk(relaxed = true)
         omhPolyline = OmhPolylineImpl(polyline, mockMapView, initiallyClickable, mockLogger)
         mockkObject(ConverterUtils)
@@ -121,14 +125,12 @@ class OmhPolylineImplTest {
     }
 
     @Test
-    fun `getJointType should return default joint type value`() {
-        // Arrange
-        val defaultJointType = 0
+    fun `getJointType should log getter not supported and return null`() {
         // Act
         val jointType = omhPolyline.getJointType()
 
         // Assert
-        Assert.assertEquals(defaultJointType, jointType)
+        Assert.assertNull(jointType)
         verify { mockLogger.logGetterNotSupported("jointType") }
     }
 
@@ -287,15 +289,12 @@ class OmhPolylineImplTest {
     }
 
     @Test
-    fun `getZIndex should return default polyline zIndex and log getter not supported`() {
-        // Arrange
-        val defaultZIndex = 0.0f
-
+    fun `getZIndex should log getter not supported and return null`() {
         // Act
         val zIndex = omhPolyline.getZIndex()
 
         // Assert
-        Assert.assertEquals(defaultZIndex, zIndex)
+        Assert.assertNull(zIndex)
         verify { mockLogger.logGetterNotSupported("zIndex") }
     }
 
@@ -309,5 +308,59 @@ class OmhPolylineImplTest {
 
         // Assert
         verify { mockLogger.logSetterNotSupported("zIndex") }
+    }
+
+    @Test
+    fun `getCap returns correct cap`() {
+        // Arrange
+        val paintCap = mockk<Paint.Cap>()
+        val omhCap = mockk<OmhCap>()
+        every { CapConverter.convertToOmhCap(paintCap) } returns omhCap
+        every { polyline.outlinePaint.strokeCap } returns paintCap
+
+        // Act
+        val result = omhPolyline.getCap()
+
+        // Assert
+        Assert.assertEquals(omhCap, result)
+    }
+
+    @Test
+    fun `setCap sets cap value`() {
+        // Arrange
+        val paintCap = mockk<Paint.Cap>()
+        val omhCap = mockk<OmhCap>()
+        every { CapConverter.convertToPaintCap(omhCap) } returns paintCap
+
+        // Act
+        omhPolyline.setCap(omhCap)
+
+        // Assert
+        verify { polyline.outlinePaint.strokeCap = paintCap }
+    }
+
+    @Test
+    fun `getTag returns correct tag`() {
+        // Arrange
+        val tag = "tag"
+        every { polyline.relatedObject } returns tag
+
+        // Act
+        val result = omhPolyline.getTag()
+
+        // Assert
+        Assert.assertEquals(tag, result)
+    }
+
+    @Test
+    fun `setCap sets tag`() {
+        // Arrange
+        val tag = "tag"
+
+        // Act
+        omhPolyline.setTag(tag)
+
+        // Assert
+        verify { polyline.relatedObject = tag }
     }
 }
