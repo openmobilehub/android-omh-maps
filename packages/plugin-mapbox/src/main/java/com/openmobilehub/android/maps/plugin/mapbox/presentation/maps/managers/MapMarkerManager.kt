@@ -72,9 +72,7 @@ internal class MapMarkerManager(
     fun addQueuedElementsToStyle(style: Style) {
         markers.values.forEach { omhMarker ->
             // re-apply the icons now, since they can be added to the map for real
-            if (omhMarker is OmhMarkerImpl) {
-                omhMarker.applyBufferedProperties(style)
-            }
+            omhMarker.applyBufferedProperties(style)
         }
     }
 
@@ -143,21 +141,25 @@ internal class MapMarkerManager(
                         eventConsumed
                     } ?: false
                 )
-                return@queryRenderedLayerIdAt // prevent further processing
+                return@queryRenderedLayerIdAt true // prevent further processing
             }
 
             // try if an info window was hit
             val omhInfoWindow = infoWindows[layerId]
 
-            if (omhInfoWindow !== null && omhInfoWindow.omhMarker.getClickable()) {
+            if (omhInfoWindow !== null && omhInfoWindow.getClickable()) {
                 eventConsumedCallback(
                     infoWindowClickListener?.let {
                         it.onInfoWindowClick(omhInfoWindow.omhMarker)
                         true
                     } ?: false
                 )
-                return@queryRenderedLayerIdAt // prevent further processing
+                return@queryRenderedLayerIdAt true // prevent further processing
             }
+
+            // reaching here means no hit, in which case we want the source to fire the callback
+            // with all remaining layer IDs (if any), unless there is a hit
+            return@queryRenderedLayerIdAt false
         }
 
         return true

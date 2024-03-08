@@ -18,6 +18,7 @@ package com.openmobilehub.android.maps.plugin.mapbox.presentation.maps
 
 import android.content.Context
 import android.graphics.drawable.Drawable
+import android.util.Log
 import androidx.core.content.res.ResourcesCompat
 import com.mapbox.geojson.Feature
 import com.mapbox.maps.Style
@@ -39,8 +40,11 @@ import com.openmobilehub.android.maps.plugin.mapbox.utils.AnchorConverter
 import com.openmobilehub.android.maps.plugin.mapbox.utils.Constants
 import com.openmobilehub.android.maps.plugin.mapbox.utils.CoordinateConverter
 import com.openmobilehub.android.maps.plugin.mapbox.utils.cartesian.Offset2D
+import com.openmobilehub.android.maps.plugin.mapbox.utils.cartesian.plus
 import java.util.UUID
+import kotlin.math.cos
 import kotlin.math.roundToInt
+import kotlin.math.sin
 import com.openmobilehub.android.maps.core.presentation.models.Constants as OmhConstants
 
 @SuppressWarnings("TooManyFunctions", "LongParameterList")
@@ -84,7 +88,6 @@ internal class OmhMarkerImpl(
             iwAnchor = initialInfoWindowAnchor,
             infoWindowManagerDelegate = infoWindowManagerDelegate,
             omhMarker = this,
-            geoJsonSourceID = getGeoJsonSourceID(),
             mapViewDelegate = infoWindowMapViewDelegate
         )
     }
@@ -108,6 +111,7 @@ internal class OmhMarkerImpl(
                 CoordinateConverter.convertToPoint(omhCoordinate)
             )
         )
+        omhInfoWindow.updatePosition()
     }
 
     override fun getTitle(): String? {
@@ -130,14 +134,47 @@ internal class OmhMarkerImpl(
         return draggable
     }
 
-    override fun getHandleOffset(): Offset2D<Double> {
-        // convert discrete anchor to continuous anchor
-        val offsetX =
-            -(bufferedAnchor.first - 1.0f).roundToInt() // invert the x-axis to match MapBox coordinate system
-        val offsetY =
+    @SuppressWarnings("MagicNumber")
+    internal fun getHandleTranslation(): Offset2D<Double> {
+        val offsetCoeffX =
+            -(bufferedAnchor.first - 0.5f).roundToInt() // invert the x-axis to match MapBox coordinate system
+        val offsetCoeffY =
             -(bufferedAnchor.second - 1.0f).roundToInt() // invert the y-axis to match MapBox coordinate system
 
-        return Offset2D((offsetX * iconWidth).toDouble(), (offsetY * iconHeight).toDouble())
+        val offsetX = offsetCoeffX * iconWidth
+        val offsetY = offsetCoeffY * iconHeight
+
+        return Offset2D(offsetX.toDouble(), offsetY.toDouble())
+    }
+
+    private fun rotateOffset(translation: Offset2D<Double>): Offset2D<Double> {
+        // rotation angle
+        val theta = Math.toRadians(getRotation().toDouble())
+        Log.d("OmhMarkerImpl", "rotateOffset: theta = $theta")
+        return Offset2D(
+            -(cos(theta) * translation.x - sin(theta) * translation.y),
+            -(sin(theta) * translation.x + cos(theta) * translation.y)
+        )
+    }
+
+    override fun getHandleCenterOffset(): Offset2D<Double> {
+        val translation = getHandleTranslation()
+
+        return rotateOffset(translation)
+    }
+
+    /**
+     * Returns the screen offset for position of the handle of the entity that takes into account the transforms.
+     *
+     * @return The offset in pixels from entity position converted to screen pixel coordinates
+     * using `pixelForCoordinate(...)` to the center horizontally & **top edge vertically**.
+     */
+    fun getHandleTopOffset(): Offset2D<Double> {
+        val translation = getHandleTranslation()
+
+        // since we are already at the center of the marker, we want to move just by 1/4 of the IW's height
+        // to get to just-above-the-top-edge of the marker
+        return rotateOffset(translation + Offset2D(0.0, iconHeight / 2.0))
     }
 
     override fun getLongClickable(): Boolean {
@@ -153,6 +190,7 @@ internal class OmhMarkerImpl(
         markerSymbolLayer.iconAnchor(
             AnchorConverter.convertContinuousToDiscreteIconAnchor(bufferedAnchor)
         )
+        omhInfoWindow.updatePosition()
     }
 
     override fun setInfoWindowAnchor(iwAnchorU: Float, iwAnchorV: Float) {
@@ -166,7 +204,6 @@ internal class OmhMarkerImpl(
             this.safeStyle = safeStyle
 
             this.safeStyle.addSource(geoJsonSource)
-
             this.safeStyle.addLayer(markerSymbolLayer)
 
             omhInfoWindow.applyBufferedProperties(this.safeStyle)
@@ -177,8 +214,11 @@ internal class OmhMarkerImpl(
             setIsFlat(bufferedIsFlat)
             setRotation(bufferedRotation)
             setAnchor(bufferedAnchor.first, bufferedAnchor.second)
+            setBackgroundColor(backgroundColor)
 
-            omhInfoWindow.reapplyInfoWindowIconOffset()
+            // one call to updatePosition will happen in omhInfoWindow.applyBufferedProperties(),
+            // yet after buffered properties were applied, a re-invalidation is needed
+            omhInfoWindow.updatePosition()
 
             // (possibly) clear some memory
             bufferedIcon = null
@@ -275,6 +315,8 @@ internal class OmhMarkerImpl(
     override fun setRotation(rotation: Float) {
         if (this::safeStyle.isInitialized) {
             markerSymbolLayer.iconRotate(rotation.toDouble())
+
+            omhInfoWindow.updatePosition()
         } else {
             // if the layer was not added to the map yet, buffer the is flat value to apply it later
             bufferedRotation = rotation
@@ -318,12 +360,8 @@ internal class OmhMarkerImpl(
         return "$markerUUID-omh-marker-geojson-source"
     }
 
-    internal fun getMarkerLayerID(): String {
+    internal fun getSymbolLayerID(): String {
         return "$markerUUID-omh-marker-layer"
-    }
-
-    internal fun getInfoWindowLayerID(): String {
-        return "$markerUUID-omh-info-window-layer"
     }
 
     private fun getDefaultIcon(): Drawable {
@@ -357,7 +395,7 @@ internal class OmhMarkerImpl(
         iconWidth = bitmap.width
         iconHeight = bitmap.height
 
-        omhInfoWindow.reapplyInfoWindowIconOffset()
+        omhInfoWindow.updatePosition() // iconWidth & iconHeight have an impact on the IW's position
 
         val addImageResult = safeStyle.addImage(
             markerImageID,

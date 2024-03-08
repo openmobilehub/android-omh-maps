@@ -74,26 +74,31 @@ internal class MapTouchInteractionManager(
                         if (deltaTime > Constants.MAP_TOUCH_DRAG_TOUCHDOWN_THRESHOLD_MS) {
                             // the touch interaction time allows for treating this
                             // as a drag or long click, if applicable
-                            val draggableEntity =
-                                mapDragManagerDelegate.findDraggableEntity(screenCoordinate)
-                            if (draggableEntity !== null) {
-                                if (draggableEntity.getDraggable()) {
+                            val interactableEntities =
+                                mapDragManagerDelegate.findInteractableEntities(screenCoordinate)
+
+                            for (interactableEntity in interactableEntities) {
+                                if (interactableEntity.getDraggable()) {
                                     // drag or long click start
-                                    interactingEntity = draggableEntity
+                                    interactingEntity = interactableEntity
 
                                     mapDragManagerDelegate.handleDragStart(
                                         omhCoordinate,
                                         interactingEntity!!
                                     )
-                                } else if (draggableEntity.getLongClickable()) {
+
+                                    return true
+                                } else if (interactableEntity.getLongClickable()) {
                                     // just long click
-                                    interactingEntity = draggableEntity
+                                    interactingEntity = interactableEntity
 
                                     mapLongClickManagerDelegate.handleLongClick(interactingEntity!!)
 
                                     interactingEntity = null
                                     interactionTouchStartTimestamp = null
                                     didDragMoveOccur = false
+
+                                    return true
                                 } else if (interactingEntity !== null) {
                                     // drag end (draggable entity ceased to be draggable)
                                     mapDragManagerDelegate.handleDragEnd(
@@ -102,10 +107,12 @@ internal class MapTouchInteractionManager(
                                     )
 
                                     resetDragState()
+
+                                    return true
                                 }
                             }
 
-                            return true
+                            return false
                         }
                     }
                 }

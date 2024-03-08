@@ -50,6 +50,7 @@ import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolylineOptions
 import com.openmobilehub.android.maps.core.utils.logging.Logger
+import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.ITouchInteractable
 import com.openmobilehub.android.maps.plugin.mapbox.utils.Constants
 import com.openmobilehub.android.maps.plugin.mapbox.utils.CoordinateConverter
 import com.openmobilehub.android.maps.plugin.mapbox.utils.JSONUtil
@@ -117,7 +118,7 @@ class OmhMapImplTest {
 
     private val uuidGenerator = mockk<UUIDGenerator>()
 
-    private fun mockQueryRenderedFeatures(layerID: String) {
+    private fun simpleMockQueryRenderedFeatures(layerID: String) {
         val mockValue = mockk<Expected<String, List<QueriedRenderedFeature>>>(relaxed = true)
         every { mockValue.value?.get(0)?.layers?.get(0) } returns layerID
 
@@ -131,6 +132,70 @@ class OmhMapImplTest {
         } answers {
             queryRenderedFeaturesCallbackSlot.captured.run(mockValue)
             mockk<Cancelable>()
+        }
+    }
+
+    /**
+     * Mocks `map.mapboxMap.queryRenderedFeatures` to return the layer ID of the entity that is
+     * under the real screen coordinates where requested, depending on the specified filter.
+     *
+     * @param filterDraggable Whether to filter only [ITouchInteractable] entities that return
+     * `true` from `getDraggable()`.
+     * @param filterClickable Whether to filter only [ITouchInteractable] entities that return
+     * `true` from `getClickable()`.
+     * @param filterLongClickable Whether to filter only [ITouchInteractable] entities that return
+     * `true` from `getLongClickable()`.
+     *
+     * @return A [Cancelable] mock that is returned from the `queryRenderedFeatures` call.
+     */
+    private fun advancedMockQueryRenderedFeatures(
+        filterDraggable: Boolean,
+        filterClickable: Boolean,
+        filterLongClickable: Boolean
+    ) {
+        every {
+            map.mapboxMap.queryRenderedFeatures(any(), any(), any())
+        } answers {
+            val renderedQueryGeometry = it.invocation.args[0] as RenderedQueryGeometry
+            val callback = it.invocation.args[2] as QueryRenderedFeaturesCallback
+
+            val mockedExpectedArg = mockk<Expected<String, List<QueriedRenderedFeature>>>()
+            val mockedRenderedFeature = mockk<QueriedRenderedFeature>()
+
+            every { mockedRenderedFeature.layers } answers {
+                val interactableEntity =
+                    omhMapImpl.findInteractableEntities(
+                        renderedQueryGeometry.screenCoordinate
+                    ) { predicate ->
+                        var ok = true
+
+                        if (filterClickable) {
+                            ok = ok && predicate.getClickable()
+                        }
+
+                        if (filterDraggable) {
+                            ok = ok && predicate.getDraggable()
+                        }
+
+                        if (filterLongClickable) {
+                            ok = ok && predicate.getLongClickable()
+                        }
+
+                        ok
+                    }.getOrNull(0)
+
+                when (interactableEntity) {
+                    is OmhMarkerImpl -> listOf<String?>(interactableEntity.getSymbolLayerID())
+                    is OmhInfoWindow -> listOf<String?>(interactableEntity.getSymbolLayerID())
+                    else -> listOf<String?>()
+                }
+            }
+            every { mockedExpectedArg.isValue } returns true
+            every { mockedExpectedArg.value } returns listOf(mockedRenderedFeature)
+
+            callback.run(mockedExpectedArg)
+
+            mockk<Cancelable>(relaxed = true)
         }
     }
 
@@ -155,32 +220,6 @@ class OmhMapImplTest {
             }
 
             return@mock false
-        }
-        every {
-            map.mapboxMap.queryRenderedFeatures(any(), any(), any())
-        } answers {
-            val renderedQueryGeometry = it.invocation.args[0] as RenderedQueryGeometry
-            val callback = it.invocation.args[2] as QueryRenderedFeaturesCallback
-
-            val mockedExpectedArg = mockk<Expected<String, List<QueriedRenderedFeature>>>()
-            val mockedRenderedFeature = mockk<QueriedRenderedFeature>()
-
-            every { mockedRenderedFeature.layers } answers mock@{
-                val draggableEntity =
-                    omhMapImpl.findDraggableEntity(renderedQueryGeometry.screenCoordinate)
-
-                if (draggableEntity is OmhMarkerImpl) {
-                    return@mock listOf<String?>(draggableEntity.getMarkerLayerID())
-                }
-
-                return@mock listOf<String?>()
-            }
-            every { mockedExpectedArg.isValue } returns true
-            every { mockedExpectedArg.value } returns listOf(mockedRenderedFeature)
-
-            callback.run(mockedExpectedArg)
-
-            mockk<Cancelable>(relaxed = true)
         }
 
         // all other map mocks
@@ -603,6 +642,11 @@ class OmhMapImplTest {
                 )
             )
         } returns someOtherPoint
+        advancedMockQueryRenderedFeatures(
+            filterDraggable = false,
+            filterClickable = true,
+            filterLongClickable = false
+        )
 
         // Act - click somewhere empty on the map
         onMapTouchListenerSlot.captured.onTouch(
@@ -656,25 +700,14 @@ class OmhMapImplTest {
                 position = CoordinateConverter.convertToOmhCoordinate(point)
             }
         )
-        val someOtherPoint1 = mockPointAt(75f, 219f, 80.0, 175.0)
-        val someOtherPoint2 = mockPointAt(75f, 219f, 80.0, 175.0)
+        mockPointAt(70f, 90f, 80.0, 175.0) // someOtherPoint1
+        mockPointAt(800f, 1000f, 80.0, 175.0) // someOtherPoint2
 
-        every {
-            map.mapboxMap.coordinateForPixel(
-                ScreenCoordinate(
-                    70.0,
-                    90.0
-                )
-            )
-        } returns someOtherPoint1
-        every {
-            map.mapboxMap.coordinateForPixel(
-                ScreenCoordinate(
-                    80.0,
-                    100.0
-                )
-            )
-        } returns someOtherPoint2
+        advancedMockQueryRenderedFeatures(
+            filterDraggable = true,
+            filterClickable = false,
+            filterLongClickable = false
+        )
 
         // Act - drag somewhere empty on the map: someOtherPoint1 -> someOtherPoint2
         // Long press on someOtherPoint1
@@ -706,7 +739,7 @@ class OmhMapImplTest {
         onMapTouchListenerSlot.captured.onTouch(
             map,
             // touch move
-            mockMotionEvent(MotionEvent.ACTION_MOVE, 80f, 100f)
+            mockMotionEvent(MotionEvent.ACTION_MOVE, 800f, 1000f)
         )
 
         // Assert that the drag listener was not triggered
@@ -715,7 +748,7 @@ class OmhMapImplTest {
         onMapTouchListenerSlot.captured.onTouch(
             map,
             // touch up
-            mockMotionEvent(MotionEvent.ACTION_UP, 80f, 100f)
+            mockMotionEvent(MotionEvent.ACTION_UP, 800f, 1000f)
         )
 
         // Assert that the drag end listener was not triggered
@@ -737,7 +770,7 @@ class OmhMapImplTest {
         )
         every { TimestampHelper.getNow() } returns 2000L
 
-        // Assert that the start listener was not triggered
+        // Assert that the start listener was triggered
         verify(exactly = 1) { listener.onMarkerDragStart(omhMarker) }
 
         // Move to someOtherPoint1
@@ -784,7 +817,7 @@ class OmhMapImplTest {
         val onMapClickListenerSlot = slot<OnMapClickListener>()
         every { map.gestures.addOnMapClickListener(capture(onMapClickListenerSlot)) } just runs
 
-        mockQueryRenderedFeatures("polyline-$DEFAULT_UUID")
+        simpleMockQueryRenderedFeatures("polyline-$DEFAULT_UUID")
         mockPixelForCoordinate()
 
         // Act
@@ -805,7 +838,7 @@ class OmhMapImplTest {
         val onMapClickListenerSlot = slot<OnMapClickListener>()
         every { map.gestures.addOnMapClickListener(capture(onMapClickListenerSlot)) } just runs
 
-        mockQueryRenderedFeatures("polyline-$DEFAULT_UUID")
+        simpleMockQueryRenderedFeatures("polyline-$DEFAULT_UUID")
         mockPixelForCoordinate()
 
         // Act

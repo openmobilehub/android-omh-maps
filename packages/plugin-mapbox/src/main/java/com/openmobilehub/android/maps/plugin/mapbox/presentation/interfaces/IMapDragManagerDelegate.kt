@@ -28,8 +28,13 @@ internal interface IMapDragManagerDelegate {
      * Returns an entity (if present and in draggable state) that can possibly be dragged.
      *
      * @param screenCoordinate Coordinate on the screen for which to find the entity to possibly be dragged.
+     * @param validator Predicate to validate the entity to be dragged. Returns `true` if an entity
+     * can be a hit, or `false` otherwise (in which case it is ignored).
      */
-    fun findDraggableEntity(screenCoordinate: ScreenCoordinate): ITouchInteractable?
+    fun findInteractableEntities(
+        screenCoordinate: ScreenCoordinate,
+        validator: ((predicate: ITouchInteractable) -> Boolean)? = null
+    ): List<ITouchInteractable>
 
     /**
      * Callback invoked when drag event is started.

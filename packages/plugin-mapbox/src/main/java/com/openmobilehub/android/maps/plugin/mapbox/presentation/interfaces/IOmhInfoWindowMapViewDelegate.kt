@@ -16,7 +16,39 @@
 
 package com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces
 
+import com.mapbox.geojson.Point
+import com.mapbox.maps.ScreenCoordinate
+import com.openmobilehub.android.maps.plugin.mapbox.presentation.maps.OmhInfoWindow
+
+/**
+ * Delegate interface having capabilities to provide interfaces for the [OmhInfoWindow] to access the map.
+ */
 internal interface IOmhInfoWindowMapViewDelegate {
+    /**
+     * Returns the width of the map in pixels.
+     */
     fun getMapWidth(): Int
+
+    /**
+     * Returns the height of the map in pixels.
+     */
     fun getMapHeight(): Int
+
+    /**
+     * Converts the screen coordinate to the map position.
+     *
+     * @param screenCoordinate The screen coordinate to convert (in pixels).
+     *
+     * @return The map position corresponding to the screen coordinate.
+     */
+    fun coordinateForPixel(screenCoordinate: ScreenCoordinate): Point
+
+    /**
+     * Converts the map position to the screen coordinate.
+     *
+     * @param point The map position to convert.
+     *
+     * @return The screen coordinate corresponding to the map position (in pixels).
+     */
+    fun pixelForCoordinate(point: Point): ScreenCoordinate
 }

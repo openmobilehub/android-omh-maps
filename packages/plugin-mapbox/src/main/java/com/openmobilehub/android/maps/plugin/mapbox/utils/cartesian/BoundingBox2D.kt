@@ -18,12 +18,33 @@ package com.openmobilehub.android.maps.plugin.mapbox.utils.cartesian
 
 import com.mapbox.maps.ScreenCoordinate
 
+/**
+ * A 2D bounding box.
+ *
+ * @constructor Creates a new bounding box with the given center point, width, height and hit border.
+ * The `hitBorder` will be divided by 2 and each half will be applied on each of the sides of this BB.
+ */
 class BoundingBox2D(
-    private val left: Double,
-    private val right: Double,
-    private val top: Double,
-    private val bottom: Double
+    centerPoint: ScreenCoordinate,
+    width: Double,
+    height: Double,
+    hitBorder: Double
 ) {
+    internal val left: Double
+    internal val right: Double
+    internal val top: Double
+    internal val bottom: Double
+
+    init {
+        val halfWidthAndHitRadius = (width + hitBorder) / 2.0
+        val halfHeightAndHitRadius = (height + hitBorder) / 2.0
+
+        left = centerPoint.x - halfWidthAndHitRadius
+        right = centerPoint.x + halfWidthAndHitRadius
+        top = centerPoint.y + halfHeightAndHitRadius
+        bottom = centerPoint.y - halfHeightAndHitRadius
+    }
+
     fun contains(screenCoordinate: ScreenCoordinate): Boolean {
         return (left..right).contains(screenCoordinate.x) && (bottom..top).contains(screenCoordinate.y)
     }

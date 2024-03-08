@@ -30,11 +30,12 @@ internal interface ITouchInteractable {
     fun getDraggable(): Boolean
 
     /**
-     * Returns the offset of the handle from the position of the entity on map.
+     * Returns the screen offset for position of the handle of the entity that takes into account the transforms.
      *
-     * @return The offset in pixels.
+     * @return The offset in pixels from entity position converted to screen pixel coordinates
+     * using `pixelForCoordinate(...)` to the center (both vertically and horizontally).
      */
-    fun getHandleOffset(): Offset2D<Double>
+    fun getHandleCenterOffset(): Offset2D<Double>
 
     /**
      * Returns whether the entity is long-clickable.
@@ -42,4 +43,6 @@ internal interface ITouchInteractable {
      * @return `true` if the entity is long-clickable, `false` otherwise.
      */
     fun getLongClickable(): Boolean
+
+    fun getClickable(): Boolean
 }

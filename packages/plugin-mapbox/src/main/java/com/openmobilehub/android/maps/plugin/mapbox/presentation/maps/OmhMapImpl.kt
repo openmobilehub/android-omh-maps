@@ -25,6 +25,7 @@ import android.widget.ImageView
 import androidx.annotation.RequiresPermission
 import com.mapbox.geojson.Feature
 import com.mapbox.geojson.LineString
+import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.MapView
 import com.mapbox.maps.RenderedQueryGeometry
@@ -68,7 +69,6 @@ import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolygonOptions
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolylineOptions
 import com.openmobilehub.android.maps.core.utils.logging.Logger
-import com.openmobilehub.android.maps.plugin.mapbox.extensions.distanceTo
 import com.openmobilehub.android.maps.plugin.mapbox.extensions.plus
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IMapDragManagerDelegate
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IMapMarkerManagerDelegate
@@ -117,7 +117,7 @@ internal class OmhMapImpl(
 
     private val polylines = mutableMapOf<String, OmhPolyline>()
 
-    private val mapMarkerManager = MapMarkerManager(this, this)
+    internal val mapMarkerManager = MapMarkerManager(this, this)
     private val mapTouchInteractionManager = MapTouchInteractionManager(this, mapMarkerManager)
 
     init {
@@ -292,7 +292,11 @@ internal class OmhMapImpl(
         }
     }
 
-    override fun findDraggableEntity(screenCoordinate: ScreenCoordinate): ITouchInteractable? {
+    @SuppressWarnings("LongMethod")
+    override fun findInteractableEntities(
+        screenCoordinate: ScreenCoordinate,
+        validator: ((predicate: ITouchInteractable) -> Boolean)?
+    ): List<ITouchInteractable> {
         val minScreenDimension = mapView.context.resources.displayMetrics.widthPixels.coerceAtMost(
             mapView.context.resources.displayMetrics.heightPixels
         )
@@ -301,50 +305,56 @@ internal class OmhMapImpl(
                 .coerceIn(
                     Constants.MAP_TOUCH_HIT_RADIUS_MIN_PX..Constants.MAP_TOUCH_HIT_RADIUS_MAX_PX
                 )
-        var hit: ITouchInteractable? = null
+        val hits = mutableListOf<ITouchInteractable>()
 
         // try if an info window was hit
-        infoWindowsFor@ for (infoWindow in mapMarkerManager.infoWindows.values) {
-            val centerPositionOnScreen = mapView.mapboxMap.pixelForCoordinate(
+        for (infoWindow in mapMarkerManager.infoWindows.values.reversed()) {
+            if (validator?.invoke(infoWindow) == false) continue
+
+            val markerPositionOnScreen = mapView.mapboxMap.pixelForCoordinate(
                 CoordinateConverter.convertToPoint(infoWindow.omhMarker.getPosition())
-            ) + infoWindow.getHandleOffset()
+            ) + infoWindow.omhMarker.getHandleTopOffset()
+            val centerPositionOnScreen =
+                markerPositionOnScreen + infoWindow.getHandleCenterOffset()
 
             val iwBoundingBox = BoundingBox2D(
-                left = centerPositionOnScreen.x - (infoWindow.iwBitmapWidth / 2.0 + hitRadius),
-                right = centerPositionOnScreen.x + (infoWindow.iwBitmapWidth / 2.0 + hitRadius),
-                top = centerPositionOnScreen.y + (infoWindow.iwBitmapHeight.toDouble() + hitRadius),
-                bottom = centerPositionOnScreen.y - (infoWindow.iwBitmapHeight.toDouble() + hitRadius)
+                centerPoint = centerPositionOnScreen,
+                width = infoWindow.iwBitmapWidth.toDouble(),
+                height = infoWindow.iwBitmapHeight.toDouble(),
+                hitBorder = hitRadius
             )
 
             if (iwBoundingBox.contains(screenCoordinate)) {
-                hit = infoWindow
-                break@infoWindowsFor
+                hits.add(infoWindow)
             }
         }
 
-        if (hit === null) {
-            var leastDistancePx = Double.MAX_VALUE
+        // try if a marker was hit
+        for (marker in mapMarkerManager.markers.values.reversed()) {
+            if (validator?.invoke(marker) == false) continue
 
-            // try if a marker was hit
-            for (marker in mapMarkerManager.markers.values) {
-                val markerPositionOnScreen = mapView.mapboxMap.pixelForCoordinate(
-                    CoordinateConverter.convertToPoint(marker.getPosition())
-                ) + marker.getHandleOffset()
-                val distancePx = markerPositionOnScreen.distanceTo(screenCoordinate)
+            val markerCenterPositionOnScreen = mapView.mapboxMap.pixelForCoordinate(
+                CoordinateConverter.convertToPoint(marker.getPosition())
+            ) + marker.getHandleCenterOffset()
 
-                if (distancePx <= hitRadius && distancePx < leastDistancePx) {
-                    hit = marker
-                    leastDistancePx = distancePx
-                }
+            val markerBoundingBox = BoundingBox2D(
+                centerPoint = markerCenterPositionOnScreen,
+                width = marker.iconWidth.toDouble(),
+                height = marker.iconHeight.toDouble(),
+                hitBorder = hitRadius
+            )
+
+            if (markerBoundingBox.contains(screenCoordinate)) {
+                hits.add(marker)
             }
         }
 
-        return hit
+        return hits
     }
 
     override fun queryRenderedLayerIdAt(
         screenCoordinate: ScreenCoordinate,
-        callback: (layerId: String?) -> Unit
+        callback: (layerId: String?) -> Boolean
     ) {
         mapView.mapboxMap.queryRenderedFeatures(
             RenderedQueryGeometry(screenCoordinate),
@@ -353,9 +363,15 @@ internal class OmhMapImpl(
                 null
             )
         ) {
-            val layerId = it.value?.getOrNull(0)?.layers?.getOrNull(0)
+            val layerIds = it.value?.getOrNull(0)?.layers
 
-            callback(layerId)
+            if (layerIds === null) {
+                callback(null)
+            } else {
+                for (layerId in layerIds) {
+                    if (callback(layerId)) break
+                }
+            }
         }
     }
 
@@ -518,5 +534,13 @@ internal class OmhMapImpl(
 
     override fun getMapHeight(): Int {
         return mapView.height
+    }
+
+    override fun coordinateForPixel(screenCoordinate: ScreenCoordinate): Point {
+        return mapView.mapboxMap.coordinateForPixel(screenCoordinate)
+    }
+
+    override fun pixelForCoordinate(point: Point): ScreenCoordinate {
+        return mapView.mapboxMap.pixelForCoordinate(point)
     }
 }

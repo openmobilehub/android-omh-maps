@@ -37,7 +37,7 @@ internal fun OmhMarkerOptions.addOmhMarker(
     infoWindowManagerDelegate: IMapInfoWindowManagerDelegate,
     infoWindowMapViewDelegate: IOmhInfoWindowMapViewDelegate,
     uuidGenerator: UUIDGenerator = DefaultUUIDGenerator()
-): Triple<OmhMarkerImpl, GeoJsonSource, Pair<SymbolLayer, SymbolLayer>> {
+): Triple<OmhMarkerImpl, Pair<GeoJsonSource, GeoJsonSource>, Pair<SymbolLayer, SymbolLayer>> {
     val pointOnMap = CoordinateConverter.convertToPoint(position)
     val omhMarker = OmhMarkerImpl(
         markerUUID = uuidGenerator.generate(),
@@ -59,13 +59,19 @@ internal fun OmhMarkerOptions.addOmhMarker(
         infoWindowMapViewDelegate = infoWindowMapViewDelegate
     )
 
-    val geoJsonSourceID = omhMarker.getGeoJsonSourceID()
-    val geoJsonSource = geoJsonSource(geoJsonSourceID) {
+    val markerGeoJsonSourceID = omhMarker.getGeoJsonSourceID()
+    val markerGeoJsonSource = geoJsonSource(markerGeoJsonSourceID) {
         feature(Feature.fromGeometry(pointOnMap))
     }
-    omhMarker.setGeoJsonSource(geoJsonSource)
+    omhMarker.setGeoJsonSource(markerGeoJsonSource)
 
-    val markerLayer = symbolLayer(omhMarker.getMarkerLayerID(), geoJsonSourceID) {
+    val infoWindowGeoJsonSourceID = omhMarker.omhInfoWindow.getGeoJsonSourceID()
+    val infoWindowGeoJsonSource = geoJsonSource(infoWindowGeoJsonSourceID) {
+        feature(Feature.fromGeometry(pointOnMap))
+    }
+    omhMarker.omhInfoWindow.setGeoJsonSource(infoWindowGeoJsonSource)
+
+    val markerLayer = symbolLayer(omhMarker.getSymbolLayerID(), markerGeoJsonSourceID) {
         // icon
         // iconImage(markerImageID) will be handled by setIcon
         iconSize(1.0) // icon scale
@@ -95,7 +101,7 @@ internal fun OmhMarkerOptions.addOmhMarker(
 
     return Triple(
         omhMarker,
-        geoJsonSource,
+        markerGeoJsonSource to infoWindowGeoJsonSource,
         markerLayer to omhMarker.omhInfoWindow.infoWindowSymbolLayer
     )
 }

@@ -32,10 +32,14 @@ internal interface IMapMarkerManagerDelegate {
      * coordinate [screenCoordinate] and returns the result through [callback].
      *
      * @param screenCoordinate The screen coordinate to query the layer ID at.
-     * @param callback The callback to return the layer ID through.
+     * @param callback The callback to return the layer ID through. Returns `true` if there was
+     * a hit (that does not necessarily have to end with the consummation of any event)
+     * or `false` otherwise. A `false` means that the hit was not used and
+     * the callback shall be called sequentially with other layer IDs found at the coordinates,
+     * unless a `true` is returned or there are no more layers.
      */
     fun queryRenderedLayerIdAt(
         screenCoordinate: ScreenCoordinate,
-        callback: (layerId: String?) -> Unit
+        callback: (layerId: String?) -> Boolean
     )
 }

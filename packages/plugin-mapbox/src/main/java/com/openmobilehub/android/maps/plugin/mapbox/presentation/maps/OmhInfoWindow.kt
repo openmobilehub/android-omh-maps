@@ -19,30 +19,34 @@ package com.openmobilehub.android.maps.plugin.mapbox.presentation.maps
 import android.graphics.Bitmap
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.view.drawToBitmap
 import androidx.core.view.setPadding
+import com.mapbox.geojson.Feature
 import com.mapbox.maps.Style
 import com.mapbox.maps.extension.style.layers.addLayer
 import com.mapbox.maps.extension.style.layers.generated.SymbolLayer
 import com.mapbox.maps.extension.style.layers.generated.symbolLayer
 import com.mapbox.maps.extension.style.layers.properties.generated.IconAnchor
 import com.mapbox.maps.extension.style.layers.properties.generated.Visibility
+import com.mapbox.maps.extension.style.sources.addSource
+import com.mapbox.maps.extension.style.sources.generated.GeoJsonSource
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhInfoWindowViewFactory
 import com.openmobilehub.android.maps.core.utils.ScreenUnitConverter
 import com.openmobilehub.android.maps.plugin.mapbox.R
+import com.openmobilehub.android.maps.plugin.mapbox.extensions.plus
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IMapInfoWindowManagerDelegate
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IOmhInfoWindowMapViewDelegate
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.ITouchInteractable
+import com.openmobilehub.android.maps.plugin.mapbox.utils.CoordinateConverter
 import com.openmobilehub.android.maps.plugin.mapbox.utils.cartesian.Offset2D
-import com.openmobilehub.android.maps.plugin.mapbox.utils.cartesian.plus
 import com.openmobilehub.android.maps.plugin.mapbox.utils.uuid.DefaultUUIDGenerator
 import com.openmobilehub.android.maps.plugin.mapbox.utils.uuid.UUIDGenerator
 import java.util.concurrent.Executors
-import kotlin.math.roundToInt
 
 @SuppressWarnings("TooManyFunctions", "LongParameterList")
 internal class OmhInfoWindow(
@@ -52,19 +56,19 @@ internal class OmhInfoWindow(
     private val infoWindowManagerDelegate: IMapInfoWindowManagerDelegate,
     internal val omhMarker: OmhMarkerImpl,
     private val uuidGenerator: UUIDGenerator = DefaultUUIDGenerator(),
-    geoJsonSourceID: String,
     private val mapViewDelegate: IOmhInfoWindowMapViewDelegate
 ) : ITouchInteractable {
-    private lateinit var safeStyle: Style
+    internal lateinit var safeStyle: Style
+    private lateinit var geoJsonSource: GeoJsonSource
     internal var infoWindowSymbolLayer: SymbolLayer
 
     private var bufferedInfoWindowIsVisible: Boolean = false
-    private var bufferedInfoWindowAnchor: Pair<Float, Float>
+    internal var bufferedInfoWindowAnchor: Pair<Float, Float>
 
-    private var customInfoWindowViewFactory: OmhInfoWindowViewFactory? = null
-    private var infoWindowContentsViewFactory: OmhInfoWindowViewFactory? = null
+    internal var customInfoWindowViewFactory: OmhInfoWindowViewFactory? = null
+    internal var infoWindowContentsViewFactory: OmhInfoWindowViewFactory? = null
 
-    private var lastInfoWindowIconID: String? = null
+    internal var lastInfoWindowIconID: String? = null
     internal var iwBitmapWidth: Int = 0
     internal var iwBitmapHeight: Int = 0
 
@@ -77,17 +81,22 @@ internal class OmhInfoWindow(
     init {
         bufferedInfoWindowAnchor = iwAnchor
 
-        infoWindowSymbolLayer = symbolLayer(omhMarker.getInfoWindowLayerID(), geoJsonSourceID) {
-            iconSize(1.0) // icon scale
-            iconImage(generateInfoWindowIconID())
-            // the IW anchor is in the center of the marker's icon vertically
-            // and centered horizontally w.r.t. the marker's icon,
-            // or - in other words - the bottom edge of the IW touches the marker icon's center
-            iconAnchor(IconAnchor.BOTTOM)
-            iconAllowOverlap(true)
-            iconIgnorePlacement(true)
-            visibility(Visibility.NONE)
-        }
+        infoWindowSymbolLayer =
+            symbolLayer(getSymbolLayerID(), getGeoJsonSourceID()) {
+                iconSize(1.0) // icon scale
+                iconImage(generateInfoWindowIconID())
+                // the IW anchor is in the center of the marker's icon vertically
+                // and centered horizontally w.r.t. the marker's icon,
+                // or - in other words - the bottom edge of the IW touches the marker icon's center
+                iconAnchor(IconAnchor.TOP)
+                iconAllowOverlap(true)
+                iconIgnorePlacement(true)
+                visibility(Visibility.NONE)
+            }
+    }
+
+    fun setGeoJsonSource(geoJsonSource: GeoJsonSource) {
+        this.geoJsonSource = geoJsonSource
     }
 
     fun applyBufferedProperties(safeStyle: Style) {
@@ -96,6 +105,7 @@ internal class OmhInfoWindow(
         synchronized(this) {
             this.safeStyle = safeStyle
             this.safeStyle.addLayer(infoWindowSymbolLayer)
+            this.safeStyle.addSource(geoJsonSource)
 
             setInfoWindowAnchor(
                 bufferedInfoWindowAnchor.first,
@@ -117,6 +127,12 @@ internal class OmhInfoWindow(
             // visibility changed
             infoWindowManagerDelegate.onInfoWindowOpenStatusChange(omhMarker, visible)
             invalidateInfoWindow()
+
+            if (!visible) {
+                // if now invisible, spare the memory from the view's image - after the IW
+                // is shown again, it will immediately invalidate itself & re-render
+                removeCurrentStyleImage()
+            }
         } else if (visible) {
             // visibility did not change, the info window was and is visible
             // for parity with other providers: re-render the window in such case
@@ -149,7 +165,6 @@ internal class OmhInfoWindow(
     fun setInfoWindowAnchor(iwAnchorU: Float, iwAnchorV: Float) {
         bufferedInfoWindowAnchor = iwAnchorU to iwAnchorV
 
-        reapplyInfoWindowIconOffset()
         invalidateInfoWindow()
     }
 
@@ -177,30 +192,31 @@ internal class OmhInfoWindow(
         )
     }
 
-    /**
-     * Reapplies the icon offset for the info window symbol layer by offset
-     * obtained from [getInfoWindowIconOffset] (converted to DP).
-     *
-     * @see getInfoWindowIconOffset
-     */
-    @SuppressWarnings("MagicNumber")
-    fun reapplyInfoWindowIconOffset() {
-        val offset = getInfoWindowIconOffset()
+    internal fun updatePosition() {
+        if (!::geoJsonSource.isInitialized) return
 
-        infoWindowSymbolLayer.iconOffset(
-            listOf(
-                // the horizontal default point is center (IW anchor = 0.5); positive values move the IW right
-                ScreenUnitConverter.pxToDp(
-                    (offset.x + (bufferedInfoWindowAnchor.first - 0.5) * omhMarker.iconWidth / 2.0).toFloat(),
-                    omhMarker.context
-                ).toDouble(),
-                // the vertical default point is top (IW anchor = 0.0); positive values move the IW down
-                ScreenUnitConverter.pxToDp(
-                    (offset.y + (bufferedInfoWindowAnchor.second) * omhMarker.iconHeight).toFloat(),
-                    omhMarker.context
-                ).toDouble()
+        val markerPoint = CoordinateConverter.convertToPoint(omhMarker.getPosition())
+        val screenCoordinate =
+            mapViewDelegate.pixelForCoordinate(markerPoint) + omhMarker.getHandleTopOffset() + getHandleCenterOffset()
+        Log.d(
+            "OmhInfoWindow",
+            "updatePosition: screenCoordinate: $screenCoordinate; rot: ${omhMarker.getRotation()}"
+        )
+        geoJsonSource.feature(
+            Feature.fromGeometry(
+                mapViewDelegate.coordinateForPixel(
+                    screenCoordinate
+                )
             )
         )
+    }
+
+    internal fun getGeoJsonSourceID(): String {
+        return "${omhMarker.markerUUID}-omh-marker-info-window-geojson-source"
+    }
+
+    internal fun getSymbolLayerID(): String {
+        return "${omhMarker.markerUUID}-omh-marker-info-window-layer"
     }
 
     @SuppressWarnings("MagicNumber")
@@ -247,7 +263,21 @@ internal class OmhInfoWindow(
 
                 val infoWindowIconID = addOrUpdateMarkerIconImage(bitmap)
                 infoWindowSymbolLayer.iconImage(infoWindowIconID)
+
+                updatePosition()
             }
+        }
+    }
+
+    /**
+     * Ensures the current icon is removed before changing it so as not to cause a memory leak;
+     * also used just to clear the memory when the IW is hidden.
+     */
+    private fun removeCurrentStyleImage() {
+        lastInfoWindowIconID?.let {
+            safeStyle.removeStyleImage(it)
+
+            lastInfoWindowIconID = null
         }
     }
 
@@ -261,16 +291,14 @@ internal class OmhInfoWindow(
     private fun addOrUpdateMarkerIconImage(
         bitmap: Bitmap
     ): String {
-        // ensure the other icon is removed so as not to cause a memory leak
-        lastInfoWindowIconID?.let { safeStyle.removeStyleImage(it) }
+        // ensure the other icon is removed before change so as not to cause a memory leak
+        removeCurrentStyleImage()
 
         val infoWindowIconID = generateInfoWindowIconID()
         lastInfoWindowIconID = infoWindowIconID
 
         iwBitmapWidth = bitmap.width
         iwBitmapHeight = bitmap.height
-
-        reapplyInfoWindowIconOffset()
 
         val addImageResult = safeStyle.addImage(
             infoWindowIconID,
@@ -349,26 +377,23 @@ internal class OmhInfoWindow(
         return false
     }
 
-    /**
-     * Gets the offset of the info window handle from the marker's position.
-     *
-     * @return The offset in pixels.
-     */
-    override fun getHandleOffset(): Offset2D<Double> {
-        // convert discrete anchor to continuous anchor
-        val offsetX =
-            -(bufferedInfoWindowAnchor.first - 1.0f).roundToInt() // invert the x-axis to match MapBox coordinate system
-        val offsetY =
-            (bufferedInfoWindowAnchor.second - 1.0f).roundToInt() // invert the y-axis to match MapBox coordinate system
+    @SuppressWarnings("MagicNumber")
+    override fun getHandleCenterOffset(): Offset2D<Double> {
+        val offset = getInfoWindowIconOffset()
 
+        // here, we only offset the IW up by half of its height, since the alignment is top-to-top
         return Offset2D(
-            (offsetX * iwBitmapWidth).toDouble(),
-            (offsetY * iwBitmapHeight).toDouble()
-        ) + getInfoWindowIconOffset()
+            offset.x + (bufferedInfoWindowAnchor.first - 0.5) * omhMarker.iconWidth / 2.0,
+            offset.y + (bufferedInfoWindowAnchor.second) * omhMarker.iconHeight - iwBitmapHeight / 2.0
+        )
     }
 
     override fun getLongClickable(): Boolean {
         return this.getIsInfoWindowShown()
+    }
+
+    override fun getClickable(): Boolean {
+        return this.omhMarker.getClickable() && this.getIsInfoWindowShown()
     }
 
     fun setCustomInfoWindowViewFactory(factory: OmhInfoWindowViewFactory?) {
