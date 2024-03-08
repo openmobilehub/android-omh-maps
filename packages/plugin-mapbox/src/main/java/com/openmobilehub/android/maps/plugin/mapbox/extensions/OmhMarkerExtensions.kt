@@ -16,8 +16,8 @@
 
 package com.openmobilehub.android.maps.plugin.mapbox.extensions
 
+import android.content.Context
 import com.mapbox.geojson.Feature
-import com.mapbox.maps.MapView
 import com.mapbox.maps.extension.style.layers.generated.SymbolLayer
 import com.mapbox.maps.extension.style.layers.generated.symbolLayer
 import com.mapbox.maps.extension.style.sources.generated.GeoJsonSource
@@ -30,12 +30,12 @@ import com.openmobilehub.android.maps.plugin.mapbox.utils.CoordinateConverter
 import java.util.UUID
 
 internal fun OmhMarkerOptions.addOmhMarker(
-    mapView: MapView,
+    context: Context
 ): Triple<OmhMarkerImpl, GeoJsonSource, SymbolLayer> {
     val pointOnMap = CoordinateConverter.convertToPoint(position)
     val omhMarker = OmhMarkerImpl(
         markerUUID = UUID.randomUUID(),
-        mapView = mapView,
+        context = context,
         position = position,
         title = title,
         snippet = snippet,

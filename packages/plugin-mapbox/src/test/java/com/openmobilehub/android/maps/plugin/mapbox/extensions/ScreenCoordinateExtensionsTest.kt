@@ -25,16 +25,16 @@ import org.junit.Test
 class ScreenCoordinateExtensionsTest {
 
     @Test
-    fun testPlusOperator() {
+    fun `plus operator should properly offset screen coordinates`() {
         // Arrange
         val coordinate = ScreenCoordinate(5.0, 10.0)
-        val offset = Offset2D(1, 7)
+        val offset = Offset2D(1, -7)
 
         // Act
         val result = coordinate + offset
 
         // Assert
-        assertEquals(ScreenCoordinate(6.0, 17.0), result)
+        assertEquals(ScreenCoordinate(6.0, 3.0), result)
     }
 
     @Test
@@ -48,5 +48,31 @@ class ScreenCoordinateExtensionsTest {
 
         // Assert
         assertNotSame(coordinate, result)
+    }
+
+    @Test
+    fun `distanceTo should calculate distance between two coordinates`() {
+        // Arrange
+        val coordinate1 = ScreenCoordinate(0.0, 0.0)
+        val coordinate2 = ScreenCoordinate(3.0, -4.0)
+
+        // Act
+        val distance = coordinate1.distanceTo(coordinate2)
+
+        // Assert
+        assertEquals(5.0, distance)
+    }
+
+    @Test
+    fun `distanceTo should handle zero coordinates`() {
+        // Arrange
+        val coordinate1 = ScreenCoordinate(0.0, 0.0)
+        val coordinate2 = ScreenCoordinate(0.0, 0.0)
+
+        // Act
+        val distance = coordinate1.distanceTo(coordinate2)
+
+        // Assert
+        assertEquals(0.0, distance)
     }
 }

@@ -18,7 +18,15 @@ package com.openmobilehub.android.maps.plugin.mapbox.extensions
 
 import com.mapbox.maps.ScreenCoordinate
 import com.openmobilehub.android.maps.plugin.mapbox.utils.Offset2D
+import kotlin.math.pow
+import kotlin.math.sqrt
 
 operator fun ScreenCoordinate.plus(offset: Offset2D): ScreenCoordinate {
     return ScreenCoordinate(x + offset.x, y + offset.y)
+}
+
+fun ScreenCoordinate.distanceTo(other: ScreenCoordinate): Double {
+    return sqrt(
+        (other.x - x).pow(2.0) + (other.y - y).pow(2.0)
+    )
 }

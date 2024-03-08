@@ -50,7 +50,7 @@ internal object Constants {
 
     /** time threshold for continuous pointer event in [ACTIVE_MOTION_EVENTS] down to be considered a drag */
     const val MAP_TOUCH_DRAG_TOUCHDOWN_THRESHOLD_MS =
-        400L
+        700L
 
     const val MAP_TOUCH_SAME_COORDINATES_THRESHOLD_PX = 4.0
 }

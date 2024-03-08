@@ -16,10 +16,10 @@
 
 package com.openmobilehub.android.maps.plugin.mapbox.presentation.maps
 
+import android.content.Context
 import android.graphics.drawable.Drawable
 import androidx.core.content.res.ResourcesCompat
 import com.mapbox.geojson.Feature
-import com.mapbox.maps.MapView
 import com.mapbox.maps.Style
 import com.mapbox.maps.extension.style.layers.addLayer
 import com.mapbox.maps.extension.style.layers.generated.SymbolLayer
@@ -44,7 +44,7 @@ import com.openmobilehub.android.maps.core.presentation.models.Constants as OmhC
 @SuppressWarnings("TooManyFunctions", "LongParameterList")
 internal class OmhMarkerImpl(
     private val markerUUID: UUID,
-    private val mapView: MapView,
+    private val context: Context,
     private var position: OmhCoordinate,
     private var title: String?,
     private var snippet: String?,
@@ -120,7 +120,7 @@ internal class OmhMarkerImpl(
     }
 
     override fun getHandleOffset(): Offset2D {
-        val offsetX = (bufferedAnchor.first - 1.0f).roundToInt()
+        val offsetX = -(bufferedAnchor.first - 1.0f).roundToInt()
         val offsetY = (bufferedAnchor.second - 1.0f).roundToInt()
 
         return Offset2D(offsetX * iconWidth, offsetY * iconHeight)
@@ -282,7 +282,7 @@ internal class OmhMarkerImpl(
 
     private fun getDefaultIcon(): Drawable {
         return ResourcesCompat.getDrawable(
-            mapView.context.resources,
+            context.resources,
             R.drawable.marker_pin,
             null
         )!!
