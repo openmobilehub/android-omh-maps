@@ -59,6 +59,7 @@ import com.openmobilehub.android.maps.plugin.mapbox.extensions.distanceTo
 import com.openmobilehub.android.maps.plugin.mapbox.extensions.plus
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IDraggable
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IMapDragManagerDelegate
+import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IMapMarkerManagerDelegate
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.maps.managers.MapDragManager
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.maps.managers.MapMarkerManager
 import com.openmobilehub.android.maps.plugin.mapbox.utils.Constants
@@ -70,11 +71,11 @@ import com.openmobilehub.android.maps.plugin.mapbox.utils.commonLogger
 @SuppressWarnings("TooManyFunctions")
 internal class OmhMapImpl(
     @SuppressWarnings("UnusedPrivateMember")
-    private val mapView: MapView,
+    override val mapView: MapView,
     private val context: Context,
     private val myLocationIcon: ImageView = MyLocationIcon(context),
     private val logger: Logger = commonLogger
-) : OmhMap, IMapDragManagerDelegate {
+) : OmhMap, IMapDragManagerDelegate, IMapMarkerManagerDelegate {
     /**
      * This flag is used to prevent the onCameraMoveStarted listener from being called multiple times
      */
@@ -86,7 +87,7 @@ internal class OmhMapImpl(
 
     private var mapDragManager = MapDragManager(this)
 
-    private var markerManager = MapMarkerManager(mapView.context)
+    private var markerManager = MapMarkerManager(this)
 
     private var style: Style? = null
 
@@ -109,9 +110,7 @@ internal class OmhMapImpl(
         get() = Constants.PROVIDER_NAME
 
     override fun addMarker(options: OmhMarkerOptions): OmhMarker {
-        synchronized(this) {
-            return markerManager.addMarker(options, style)
-        }
+        return markerManager.addMarker(options, style)
     }
 
     override fun addPolyline(options: OmhPolylineOptions): OmhPolyline? {
@@ -255,24 +254,24 @@ internal class OmhMapImpl(
         return hit
     }
 
+    override fun queryRenderedLayerIdAt(
+        screenCoordinate: ScreenCoordinate,
+        callback: (layerId: String?) -> Unit
+    ) {
+        mapView.mapboxMap.queryRenderedFeatures(
+            RenderedQueryGeometry(screenCoordinate),
+            RenderedQueryOptions(null, null)
+        ) {
+            val layerId = it.value?.getOrNull(0)?.layers?.getOrNull(0)
+
+            callback(layerId)
+        }
+    }
+
     @SuppressLint("ClickableViewAccessibility")
     private fun setupTouchInteractionListeners() {
         mapView.gestures.addOnMapClickListener { point ->
-            val screenCoordinate = mapView.mapboxMap.pixelForCoordinate(point)
-
-            mapView.mapboxMap.queryRenderedFeatures(
-                RenderedQueryGeometry(screenCoordinate),
-                RenderedQueryOptions(null, null)
-            ) {
-                val layerId = it.value?.getOrNull(0)?.layers?.getOrNull(0)
-
-                val omhMarker = markerManager.markers[layerId]
-
-                if (omhMarker !== null && omhMarker.getClickable()) {
-                    markerManager.markerClick(omhMarker)
-                }
-            }
-            true
+            markerManager.handleMapClick(point)
         }
 
         mapView.setOnTouchListener { _, event ->

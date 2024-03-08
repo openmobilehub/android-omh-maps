@@ -16,7 +16,7 @@
 
 package com.openmobilehub.android.maps.plugin.mapbox.presentation.maps.managers
 
-import android.content.Context
+import com.mapbox.geojson.Point
 import com.mapbox.maps.Style
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMarker
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMarkerClickListener
@@ -24,23 +24,26 @@ import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMar
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
 import com.openmobilehub.android.maps.plugin.mapbox.extensions.addOmhMarker
+import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IMapMarkerManagerDelegate
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.maps.OmhMarkerImpl
 
-internal class MapMarkerManager(private val context: Context) {
+internal class MapMarkerManager(private val delegate: IMapMarkerManagerDelegate) {
     private var markerClickListener: OmhOnMarkerClickListener? = null
     private var markerDragListener: OmhOnMarkerDragListener? = null
-    val markers = mutableMapOf<String, OmhMarker>()
+    internal val markers = mutableMapOf<String, OmhMarker>()
 
     fun addMarker(options: OmhMarkerOptions, style: Style?): OmhMarkerImpl {
-        val (omhMarker, _, layer) = options.addOmhMarker(context)
+        synchronized(this) {
+            val (omhMarker, _, layer) = options.addOmhMarker(delegate.mapView.context)
 
-        style?.let { safeStyle ->
-            omhMarker.applyBufferedProperties(safeStyle)
+            style?.let { safeStyle ->
+                omhMarker.applyBufferedProperties(safeStyle)
+            }
+
+            markers[layer.layerId] = omhMarker
+
+            return omhMarker
         }
-
-        markers[layer.layerId] = omhMarker
-
-        return omhMarker
     }
 
     fun addQueuedElementsToStyle(style: Style) {
@@ -75,7 +78,23 @@ internal class MapMarkerManager(private val context: Context) {
         markerDragListener?.onMarkerDragEnd(omhMarker)
     }
 
-    fun markerClick(omhMarker: OmhMarker) {
-        markerClickListener?.onMarkerClick(omhMarker)
+    fun handleMapClick(point: Point): Boolean {
+        val screenCoordinate = delegate.mapView.mapboxMap.pixelForCoordinate(point)
+
+        delegate.queryRenderedLayerIdAt(screenCoordinate) { layerId ->
+            val omhMarker = markers[layerId]
+
+            if (omhMarker !== null && omhMarker.getClickable()) {
+                // note: here, markerClick returns a boolean informing whether the event
+                // was consumed by the handler, yet we swallow it instead of returning
+                // as this is a callback and there is no way to return in main scope here
+                // either way, this makes no difference, since Mapbox doesn't have a default
+                // behaviour in situation when false is returned; for safety, the outer function
+                // always returns true to inform that the event has been handled
+                markerClickListener?.onMarkerClick(omhMarker)
+            }
+        }
+
+        return true
     }
 }

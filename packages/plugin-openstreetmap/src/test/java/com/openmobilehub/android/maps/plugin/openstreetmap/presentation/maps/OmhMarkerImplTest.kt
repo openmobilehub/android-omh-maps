@@ -10,11 +10,10 @@ import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import org.osmdroid.views.MapView
-import org.osmdroid.views.overlay.Marker
 
 class OmhMarkerImplTest {
 
-    private lateinit var marker: Marker
+    private lateinit var marker: CustomMarker
     private lateinit var omhMarker: OmhMarkerImpl
     private lateinit var mockMapView: MapView
     private lateinit var mockLogger: UnsupportedFeatureLogger

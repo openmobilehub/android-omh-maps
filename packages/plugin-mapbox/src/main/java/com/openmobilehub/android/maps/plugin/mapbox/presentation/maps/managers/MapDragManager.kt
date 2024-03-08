@@ -61,16 +61,21 @@ internal class MapDragManager(private val delegate: IMapDragManagerDelegate) {
                         if (deltaTime > Constants.MAP_TOUCH_DRAG_TOUCHDOWN_THRESHOLD_MS) {
                             // the touch interaction time allows for treating this as a drag, if applicable
                             val draggableEntity = delegate.findDraggableEntity(screenCoordinate)
-                            if (draggableEntity !== null && draggableEntity.getDraggable()) {
-                                // drag start
-                                currentlyDraggedEntity = draggableEntity
+                            if (draggableEntity !== null) {
+                                if (draggableEntity.getDraggable()) {
+                                    // drag start
+                                    currentlyDraggedEntity = draggableEntity
 
-                                delegate.handleDragStart(omhCoordinate, currentlyDraggedEntity!!)
-                            } else {
-                                // drag end (draggable entity ceased to be draggable or to exist)
-                                delegate.handleDragEnd(omhCoordinate, currentlyDraggedEntity!!)
+                                    delegate.handleDragStart(
+                                        omhCoordinate,
+                                        currentlyDraggedEntity!!
+                                    )
+                                } else {
+                                    // drag end (draggable entity ceased to be draggable or to exist)
+                                    delegate.handleDragEnd(omhCoordinate, currentlyDraggedEntity!!)
 
-                                currentlyDraggedEntity = null
+                                    currentlyDraggedEntity = null
+                                }
                             }
 
                             return true

@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.util.DisplayMetrics
 import android.view.MotionEvent
 import android.view.View
+import com.mapbox.bindgen.Expected
 import com.mapbox.common.Cancelable
 import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraChanged
@@ -16,6 +17,9 @@ import com.mapbox.maps.MapLoaded
 import com.mapbox.maps.MapLoadedCallback
 import com.mapbox.maps.MapView
 import com.mapbox.maps.MapboxMap
+import com.mapbox.maps.QueriedRenderedFeature
+import com.mapbox.maps.QueryRenderedFeaturesCallback
+import com.mapbox.maps.RenderedQueryGeometry
 import com.mapbox.maps.ScreenCoordinate
 import com.mapbox.maps.Style
 import com.mapbox.maps.plugin.Plugin
@@ -24,6 +28,7 @@ import com.mapbox.maps.plugin.annotation.AnnotationType
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationManager
 import com.mapbox.maps.plugin.compass.CompassPlugin
 import com.mapbox.maps.plugin.gestures.GesturesPlugin
+import com.mapbox.maps.plugin.gestures.OnMapClickListener
 import com.mapbox.maps.plugin.gestures.gestures
 import com.mapbox.maps.plugin.locationcomponent.location
 import com.mapbox.maps.plugin.scalebar.ScaleBarPlugin
@@ -43,12 +48,14 @@ import com.openmobilehub.android.maps.plugin.mapbox.utils.Constants
 import com.openmobilehub.android.maps.plugin.mapbox.utils.CoordinateConverter
 import com.openmobilehub.android.maps.plugin.mapbox.utils.JSONUtil
 import com.openmobilehub.android.maps.plugin.mapbox.utils.TimestampHelper
+import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.mockkObject
 import io.mockk.runs
 import io.mockk.slot
+import io.mockk.spyk
 import io.mockk.verify
 import org.junit.Assert
 import org.junit.Before
@@ -68,6 +75,7 @@ class OmhMapImplTest {
     private val myLocationIcon = mockk<MyLocationIcon>(relaxed = true)
     private val logger = mockk<Logger>(relaxed = true)
     private val onMapTouchListenerSlot = slot<View.OnTouchListener>()
+    private val onMapClickListenerSlot = slot<OnMapClickListener>()
 
     private fun mockMotionEvent(
         action: Int,
@@ -101,6 +109,50 @@ class OmhMapImplTest {
 
     @Before
     fun setUp() {
+        clearAllMocks()
+        // mocks for map click listener
+        every { gesturesPlugin.addOnMapClickListener(capture(onMapClickListenerSlot)) } just runs
+        every { gesturesPlugin.onTouchEvent(any()) } answers mock@{
+            val event = it.invocation.args[0] as MotionEvent
+
+            if (event.actionMasked == MotionEvent.ACTION_UP) {
+                return@mock onMapClickListenerSlot.captured.onMapClick(
+                    map.mapboxMap.coordinateForPixel(
+                        ScreenCoordinate(event.x.toDouble(), event.y.toDouble())
+                    )
+                )
+            }
+
+            return@mock false
+        }
+        every {
+            map.mapboxMap.queryRenderedFeatures(any(), any(), any())
+        } answers {
+            val renderedQueryGeometry = it.invocation.args[0] as RenderedQueryGeometry
+            val callback = it.invocation.args[2] as QueryRenderedFeaturesCallback
+
+            val mockedExpectedArg = mockk<Expected<String, List<QueriedRenderedFeature>>>()
+            val mockedRenderedFeature = mockk<QueriedRenderedFeature>()
+
+            every { mockedRenderedFeature.layers } answers mock@{
+                val draggableEntity =
+                    omhMapImpl.findDraggableEntity(renderedQueryGeometry.screenCoordinate)
+
+                if (draggableEntity is OmhMarkerImpl) {
+                    return@mock listOf<String?>(draggableEntity.getSymbolLayerID())
+                }
+
+                return@mock listOf<String?>()
+            }
+            every { mockedExpectedArg.isValue } returns true
+            every { mockedExpectedArg.value } returns listOf(mockedRenderedFeature)
+
+            callback.run(mockedExpectedArg)
+
+            mockk<Cancelable>(relaxed = true)
+        }
+
+        // all other map mocks
         every { map.getPlugin<GesturesPlugin>(Plugin.MAPBOX_GESTURES_PLUGIN_ID) } returns gesturesPlugin
         every { map.getPlugin<ScaleBarPlugin>(Plugin.MAPBOX_SCALEBAR_PLUGIN_ID) } returns scaleBarPlugin
         every { map.getPlugin<CompassPlugin>(Plugin.MAPBOX_COMPASS_PLUGIN_ID) } returns compassPlugin
@@ -115,17 +167,7 @@ class OmhMapImplTest {
         every { map.mapboxMap } returns mockk<MapboxMap>(relaxed = true)
         every { map.setOnTouchListener(capture(onMapTouchListenerSlot)) } just runs
 
-//        val context = mockk<Context>()
-//        val resources = mockk<Resources>()
-//        val displayMetrics = mockk<DisplayMetrics>()
-//        every { map.context } returns context
-//        every { context.resources } returns resources
-//        every { resources.displayMetrics } returns displayMetrics
-//        every { displayMetrics.widthPixels } returns 1080
-//        every { displayMetrics.heightPixels } returns 720
-//        val displayMetrics = mockk<DisplayMetrics>()
-//        every { displayMetrics.widthPixels } returns 1080
-//        every { displayMetrics.heightPixels } returns 720
+        // DisplayMetrics mock
         every { map.context } returns context
         every { context.resources.displayMetrics } returns DisplayMetrics().apply {
             densityDpi = 400
@@ -135,7 +177,7 @@ class OmhMapImplTest {
 
         mockkObject(JSONUtil)
 
-        omhMapImpl = OmhMapImpl(map, context, myLocationIcon, logger)
+        omhMapImpl = spyk(OmhMapImpl(map, context, myLocationIcon, logger))
     }
 
     @Test
@@ -544,18 +586,24 @@ class OmhMapImplTest {
         verify(exactly = 0) { listener.onMarkerClick(any()) }
 
         // Act - click on the marker
+        // pointer down
         onMapTouchListenerSlot.captured.onTouch(
             map,
             // touch down
             mockMotionEvent(MotionEvent.ACTION_DOWN, 0f, 0f)
         )
+
+        // Assert that the listener was triggered
+        verify(exactly = 0) { listener.onMarkerClick(omhMarker) }
+
+        // pointer up
         onMapTouchListenerSlot.captured.onTouch(
             map,
             // touch up
             mockMotionEvent(MotionEvent.ACTION_UP, 0f, 0f)
         )
 
-        // Assert that the listener was triggered
+        // Assert that the listener was triggered; give some more time for callback to fire for sure
         verify(exactly = 1) { listener.onMarkerClick(omhMarker) }
     }
 

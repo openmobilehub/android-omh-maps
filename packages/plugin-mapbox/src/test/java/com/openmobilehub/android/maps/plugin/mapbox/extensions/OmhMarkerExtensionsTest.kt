@@ -116,7 +116,7 @@ internal class OmhMarkerExtensionsTest(
     @Test
     @SuppressWarnings("LongMethod")
     fun `OmhMarkerOptions addOmhMarker creates an OmhMarker and all properties are properly handled`() {
-        var (omhMarker, geoJsonSource, _) = data.addOmhMarker(mapView)
+        var (omhMarker, geoJsonSource, _) = data.addOmhMarker(mapView.context)
 
         fun verifyIconLoaderProcessing(icon: Drawable?, bMarkerBufferedMode: Boolean) {
             if (bMarkerBufferedMode) {
@@ -226,7 +226,7 @@ internal class OmhMarkerExtensionsTest(
             thirdArg<(Layer) -> Unit>().invoke(mock)
             mock
         }
-        val newMarkerPack = data.addOmhMarker(mapView)
+        val newMarkerPack = data.addOmhMarker(mapView.context)
         omhMarker = newMarkerPack.first
         geoJsonSource = newMarkerPack.second
         val symbolLayer = newMarkerPack.third

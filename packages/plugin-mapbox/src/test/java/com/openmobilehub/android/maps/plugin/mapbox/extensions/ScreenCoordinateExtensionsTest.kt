@@ -60,7 +60,7 @@ class ScreenCoordinateExtensionsTest {
         val distance = coordinate1.distanceTo(coordinate2)
 
         // Assert
-        assertEquals(5.0, distance)
+        assertEquals(5.0, distance, 1e-4)
     }
 
     @Test
@@ -73,6 +73,6 @@ class ScreenCoordinateExtensionsTest {
         val distance = coordinate1.distanceTo(coordinate2)
 
         // Assert
-        assertEquals(0.0, distance)
+        assertEquals(0.0, distance, 1e-4)
     }
 }
