@@ -22,7 +22,17 @@ import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.VectorDrawable
 
+/**
+ * Utility for converting drawables to bitmaps.
+ */
 object DrawableConverter {
+    /**
+     * Converts a drawable to a bitmap.
+     *
+     * @param drawable The drawable to convert.
+     *
+     * @return The bitmap.
+     */
     fun convertDrawableToBitmap(drawable: Drawable): Bitmap {
         if (drawable is VectorDrawable) {
             val bitmap = Bitmap.createBitmap(

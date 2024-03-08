@@ -14,19 +14,20 @@
  * limitations under the License.
  */
 
-package com.openmobilehub.android.maps.plugin.mapbox.extensions
+package com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces
 
-import com.mapbox.maps.ScreenCoordinate
-import com.openmobilehub.android.maps.plugin.mapbox.utils.cartesian.Offset2D
-import kotlin.math.pow
-import kotlin.math.sqrt
+/**
+ * Delegate interface having capabilities to handle long click events on the map.
+ */
+internal interface IMapLongClickManagerDelegate {
 
-operator fun ScreenCoordinate.plus(offset: Offset2D<Double>): ScreenCoordinate {
-    return ScreenCoordinate(x + offset.x, y + offset.y)
-}
-
-fun ScreenCoordinate.distanceTo(other: ScreenCoordinate): Double {
-    return sqrt(
-        (other.x - x).pow(2.0) + (other.y - y).pow(2.0)
-    )
+    /**
+     * Callback invoked when long click event is detected.
+     *
+     * @param longClickedEntity The [ITouchInteractable] entity that has been long clicked
+     * and returns `true` from `getLongClickable()`.
+     *
+     * @return `true` if the event has been consumed, `false` otherwise.
+     */
+    fun handleLongClick(longClickedEntity: ITouchInteractable): Boolean
 }

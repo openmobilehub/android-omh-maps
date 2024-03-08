@@ -41,17 +41,17 @@ internal object AnchorConverter {
      * Also taking into account combinations, e.g. `Pair(0.1f, 0.9f)` would be mapped to `BOTTOM_LEFT`
      */
     internal fun genericConvertContinuousToDiscreteAnchor(anchorContinuous: Pair<Float, Float>): DiscreteAnchor {
-        val RANGE = 1f
-        val HALF_RANGE = RANGE / 2f
-        val QUARTER_RANGE = HALF_RANGE / 2f
+        val range = 1f
+        val halfRange = range / 2f
+        val quarterRange = halfRange / 2f
         // for ease of computation, transform the values from range <0; 1> to <-0.5; 0.5>
-        val x = anchorContinuous.first - HALF_RANGE
-        val y = anchorContinuous.second - HALF_RANGE
+        val x = anchorContinuous.first - halfRange
+        val y = anchorContinuous.second - halfRange
 
-        val xNearCenter = x.absoluteValue < QUARTER_RANGE
-        val yNearCenter = y.absoluteValue < QUARTER_RANGE
-        val xRight = x >= QUARTER_RANGE
-        val yBottom = y >= QUARTER_RANGE
+        val xNearCenter = x.absoluteValue < quarterRange
+        val yNearCenter = y.absoluteValue < quarterRange
+        val xRight = x >= quarterRange
+        val yBottom = y >= quarterRange
 
         return if (xNearCenter || yNearCenter) {
             if (xNearCenter && yNearCenter) {

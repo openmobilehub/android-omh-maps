@@ -18,29 +18,34 @@ package com.openmobilehub.android.maps.plugin.mapbox.extensions
 
 import android.content.Context
 import com.mapbox.geojson.Feature
-import com.mapbox.maps.extension.style.expressions.generated.Expression
 import com.mapbox.maps.extension.style.layers.generated.SymbolLayer
 import com.mapbox.maps.extension.style.layers.generated.symbolLayer
-import com.mapbox.maps.extension.style.layers.properties.generated.IconAnchor
 import com.mapbox.maps.extension.style.sources.generated.GeoJsonSource
 import com.mapbox.maps.extension.style.sources.generated.geoJsonSource
 import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
+import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IMapInfoWindowManagerDelegate
+import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IOmhInfoWindowMapViewDelegate
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.maps.OmhMarkerImpl
 import com.openmobilehub.android.maps.plugin.mapbox.utils.AnchorConverter
 import com.openmobilehub.android.maps.plugin.mapbox.utils.Constants
 import com.openmobilehub.android.maps.plugin.mapbox.utils.CoordinateConverter
-import java.util.UUID
+import com.openmobilehub.android.maps.plugin.mapbox.utils.uuid.DefaultUUIDGenerator
+import com.openmobilehub.android.maps.plugin.mapbox.utils.uuid.UUIDGenerator
 
 internal fun OmhMarkerOptions.addOmhMarker(
-    context: Context
-): Triple<OmhMarkerImpl, GeoJsonSource, SymbolLayer> {
+    context: Context,
+    infoWindowManagerDelegate: IMapInfoWindowManagerDelegate,
+    infoWindowMapViewDelegate: IOmhInfoWindowMapViewDelegate,
+    uuidGenerator: UUIDGenerator = DefaultUUIDGenerator()
+): Triple<OmhMarkerImpl, GeoJsonSource, Pair<SymbolLayer, SymbolLayer>> {
     val pointOnMap = CoordinateConverter.convertToPoint(position)
     val omhMarker = OmhMarkerImpl(
-        markerUUID = UUID.randomUUID(),
+        markerUUID = uuidGenerator.generate(),
         context = context,
         position = position,
-        title = title,
-        snippet = snippet,
+        initialTitle = title,
+        initialSnippet = snippet,
+        initialInfoWindowAnchor = infoWindowAnchor,
         draggable = draggable,
         clickable = clickable,
         backgroundColor = backgroundColor,
@@ -49,7 +54,9 @@ internal fun OmhMarkerOptions.addOmhMarker(
         bufferedIsVisible = isVisible,
         bufferedAnchor = anchor,
         bufferedIsFlat = isFlat,
-        bufferedRotation = rotation
+        bufferedRotation = rotation,
+        infoWindowManagerDelegate = infoWindowManagerDelegate,
+        infoWindowMapViewDelegate = infoWindowMapViewDelegate
     )
 
     val geoJsonSourceID = omhMarker.getGeoJsonSourceID()
@@ -61,6 +68,7 @@ internal fun OmhMarkerOptions.addOmhMarker(
     val markerLayer = symbolLayer(omhMarker.getMarkerLayerID(), geoJsonSourceID) {
         // icon
         // iconImage(markerImageID) will be handled by setIcon
+        iconSize(1.0) // icon scale
         iconIgnorePlacement(true)
         iconAllowOverlap(true)
 
@@ -85,16 +93,9 @@ internal fun OmhMarkerOptions.addOmhMarker(
     }
     omhMarker.setMarkerLayer(markerLayer)
 
-    val infoWindowLayer = symbolLayer(omhMarker.getInfoWindowLayerID(), geoJsonSourceID) {
-//        iconImage(omhMarker.getMarkerIconID())
-        iconAnchor(IconAnchor.TOP)
-        iconAllowOverlap(true)
-        // iconOffset(arrayOf<Float>(-2f, -28f))
-    }.filter(
-        // filter to only show the info window when active
-        Expression.literal(true)
+    return Triple(
+        omhMarker,
+        geoJsonSource,
+        markerLayer to omhMarker.omhInfoWindow.infoWindowSymbolLayer
     )
-    omhMarker.setInfoWindowLayer(infoWindowLayer)
-
-    return Triple(omhMarker, geoJsonSource, markerLayer)
 }

@@ -17,7 +17,7 @@
 package com.openmobilehub.android.maps.plugin.mapbox.extensions
 
 import com.mapbox.maps.ScreenCoordinate
-import com.openmobilehub.android.maps.plugin.mapbox.utils.Offset2D
+import com.openmobilehub.android.maps.plugin.mapbox.utils.cartesian.Offset2D
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotSame
 import org.junit.Test
@@ -28,20 +28,20 @@ class ScreenCoordinateExtensionsTest {
     fun `plus operator should properly offset screen coordinates`() {
         // Arrange
         val coordinate = ScreenCoordinate(5.0, 10.0)
-        val offset = Offset2D(1, -7)
+        val offset = Offset2D(1.0, -7.1)
 
         // Act
         val result = coordinate + offset
 
         // Assert
-        assertEquals(ScreenCoordinate(6.0, 3.0), result)
+        assertEquals(ScreenCoordinate(6.0, 2.9), result)
     }
 
     @Test
     fun testPlusOperatorCreatesNewInstance() {
         // Arrange
         val coordinate = ScreenCoordinate(5.0, 10.0)
-        val offset = Offset2D(1, 7)
+        val offset = Offset2D(1.0, 7.0)
 
         // Act
         val result = coordinate + offset

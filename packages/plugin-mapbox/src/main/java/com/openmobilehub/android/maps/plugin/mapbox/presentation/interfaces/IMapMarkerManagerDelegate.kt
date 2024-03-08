@@ -20,7 +20,11 @@ import com.mapbox.maps.MapView
 import com.mapbox.maps.ScreenCoordinate
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.maps.managers.MapMarkerManager
 
-interface IMapMarkerManagerDelegate {
+/**
+ * Delegate interface having capabilities to provide interfaces for the [MapMarkerManager]
+ *  to interact with the [MapView].
+ */
+internal interface IMapMarkerManagerDelegate {
     val mapView: MapView
 
     /**

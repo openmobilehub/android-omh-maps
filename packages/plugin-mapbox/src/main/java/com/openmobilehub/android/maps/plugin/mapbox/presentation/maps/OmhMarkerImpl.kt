@@ -32,22 +32,24 @@ import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMarke
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.utils.DrawableConverter
 import com.openmobilehub.android.maps.plugin.mapbox.R
-import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IDraggable
+import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IMapInfoWindowManagerDelegate
+import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IOmhInfoWindowMapViewDelegate
+import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.ITouchInteractable
 import com.openmobilehub.android.maps.plugin.mapbox.utils.AnchorConverter
 import com.openmobilehub.android.maps.plugin.mapbox.utils.Constants
 import com.openmobilehub.android.maps.plugin.mapbox.utils.CoordinateConverter
-import com.openmobilehub.android.maps.plugin.mapbox.utils.Offset2D
+import com.openmobilehub.android.maps.plugin.mapbox.utils.cartesian.Offset2D
 import java.util.UUID
 import kotlin.math.roundToInt
 import com.openmobilehub.android.maps.core.presentation.models.Constants as OmhConstants
 
 @SuppressWarnings("TooManyFunctions", "LongParameterList")
 internal class OmhMarkerImpl(
-    private val markerUUID: UUID,
-    private val context: Context,
+    internal val markerUUID: UUID,
+    internal val context: Context,
     private var position: OmhCoordinate,
-    private var title: String?,
-    private var snippet: String?,
+    initialTitle: String?,
+    initialSnippet: String?,
     private var draggable: Boolean,
     private var clickable: Boolean,
     private var backgroundColor: Int?,
@@ -56,22 +58,35 @@ internal class OmhMarkerImpl(
     private var bufferedIsFlat: Boolean = OmhConstants.DEFAULT_IS_FLAT,
     private var bufferedRotation: Float = OmhConstants.DEFAULT_ROTATION,
     internal var bufferedAnchor: Pair<Float, Float> = OmhConstants.ANCHOR_CENTER to OmhConstants.ANCHOR_CENTER,
-    initialIcon: Drawable?
-) : OmhMarker, IDraggable {
+    initialInfoWindowAnchor: Pair<Float, Float> = OmhConstants.ANCHOR_CENTER to OmhConstants.ANCHOR_TOP,
+    initialIcon: Drawable?,
+    infoWindowManagerDelegate: IMapInfoWindowManagerDelegate,
+    infoWindowMapViewDelegate: IOmhInfoWindowMapViewDelegate
+) : OmhMarker, ITouchInteractable {
 
     private lateinit var geoJsonSource: GeoJsonSource
     private lateinit var markerSymbolLayer: SymbolLayer
-    private lateinit var infoWindowLayer: SymbolLayer
     private lateinit var safeStyle: Style
+    internal var omhInfoWindow: OmhInfoWindow
     private var isCustomIconSet: Boolean = false
-    private var iconWidth: Int = 0
-    private var iconHeight: Int = 0
+    internal var iconWidth: Int = 0
+    internal var iconHeight: Int = 0
 
     internal var bufferedIcon: Drawable? = null
 
     init {
         isCustomIconSet = initialIcon != null
         setIcon(initialIcon) // will be buffered if the layer has not been not added to the map yet
+
+        omhInfoWindow = OmhInfoWindow(
+            title = initialTitle,
+            snippet = initialSnippet,
+            iwAnchor = initialInfoWindowAnchor,
+            infoWindowManagerDelegate = infoWindowManagerDelegate,
+            omhMarker = this,
+            geoJsonSourceID = getGeoJsonSourceID(),
+            mapViewDelegate = infoWindowMapViewDelegate
+        )
     }
 
     fun setGeoJsonSource(geoJsonSource: GeoJsonSource) {
@@ -80,14 +95,6 @@ internal class OmhMarkerImpl(
 
     fun setMarkerLayer(markerLayer: SymbolLayer) {
         this.markerSymbolLayer = markerLayer
-    }
-
-    fun setInfoWindowLayer(infoWindowLayer: SymbolLayer) {
-        this.infoWindowLayer = infoWindowLayer
-    }
-
-    fun getMarkerUUID(): UUID {
-        return markerUUID
     }
 
     override fun getPosition(): OmhCoordinate {
@@ -104,12 +111,11 @@ internal class OmhMarkerImpl(
     }
 
     override fun getTitle(): String? {
-        return title
+        return omhInfoWindow.getTitle()
     }
 
     override fun setTitle(title: String?) {
-        this.title = title
-        this.invalidateInfoWindow()
+        omhInfoWindow.setTitle(title)
     }
 
     override fun getClickable(): Boolean {
@@ -124,11 +130,18 @@ internal class OmhMarkerImpl(
         return draggable
     }
 
-    override fun getHandleOffset(): Offset2D {
-        val offsetX = -(bufferedAnchor.first - 1.0f).roundToInt()
-        val offsetY = (bufferedAnchor.second - 1.0f).roundToInt()
+    override fun getHandleOffset(): Offset2D<Double> {
+        // convert discrete anchor to continuous anchor
+        val offsetX =
+            -(bufferedAnchor.first - 1.0f).roundToInt() // invert the x-axis to match MapBox coordinate system
+        val offsetY =
+            -(bufferedAnchor.second - 1.0f).roundToInt() // invert the y-axis to match MapBox coordinate system
 
-        return Offset2D(offsetX * iconWidth, offsetY * iconHeight)
+        return Offset2D((offsetX * iconWidth).toDouble(), (offsetY * iconHeight).toDouble())
+    }
+
+    override fun getLongClickable(): Boolean {
+        return false
     }
 
     override fun setDraggable(draggable: Boolean) {
@@ -143,7 +156,7 @@ internal class OmhMarkerImpl(
     }
 
     override fun setInfoWindowAnchor(iwAnchorU: Float, iwAnchorV: Float) {
-        TODO("Not yet implemented")
+        omhInfoWindow.setInfoWindowAnchor(iwAnchorU, iwAnchorV)
     }
 
     fun applyBufferedProperties(safeStyle: Style) {
@@ -154,6 +167,10 @@ internal class OmhMarkerImpl(
 
             this.safeStyle.addSource(geoJsonSource)
 
+            this.safeStyle.addLayer(markerSymbolLayer)
+
+            omhInfoWindow.applyBufferedProperties(this.safeStyle)
+
             setIcon(bufferedIcon)
             setAlpha(bufferedAlpha)
             setIsVisible(bufferedIsVisible)
@@ -161,8 +178,7 @@ internal class OmhMarkerImpl(
             setRotation(bufferedRotation)
             setAnchor(bufferedAnchor.first, bufferedAnchor.second)
 
-            this.safeStyle.addLayer(markerSymbolLayer)
-            this.safeStyle.addLayer(infoWindowLayer)
+            omhInfoWindow.reapplyInfoWindowIconOffset()
 
             // (possibly) clear some memory
             bufferedIcon = null
@@ -187,12 +203,11 @@ internal class OmhMarkerImpl(
     }
 
     override fun getSnippet(): String? {
-        return snippet
+        return omhInfoWindow.getSnippet()
     }
 
     override fun setSnippet(snippet: String?) {
-        this.snippet = snippet
-        this.invalidateInfoWindow()
+        omhInfoWindow.setSnippet(snippet)
     }
 
     override fun setIcon(icon: Drawable?) {
@@ -223,6 +238,11 @@ internal class OmhMarkerImpl(
         } else {
             // if the layer was not added to the map yet, buffer the icon value to apply it later
             bufferedIsVisible = visible
+        }
+
+        if (!visible) {
+            // close the info window if the marker is hidden, for parity
+            hideInfoWindow()
         }
     }
 
@@ -279,19 +299,15 @@ internal class OmhMarkerImpl(
     }
 
     override fun showInfoWindow() {
-        TODO("Not yet implemented")
+        omhInfoWindow.setInfoWindowVisibility(true)
     }
 
     override fun hideInfoWindow() {
-        TODO("Not yet implemented")
+        omhInfoWindow.setInfoWindowVisibility(false)
     }
 
     override fun getIsInfoWindowShown(): Boolean {
-        TODO("Not yet implemented")
-    }
-
-    private fun invalidateInfoWindow() {
-        // TODO implement this
+        return omhInfoWindow.getIsInfoWindowShown()
     }
 
     internal fun getMarkerIconID(bForCustomIcon: Boolean): String {
@@ -340,6 +356,8 @@ internal class OmhMarkerImpl(
 
         iconWidth = bitmap.width
         iconHeight = bitmap.height
+
+        omhInfoWindow.reapplyInfoWindowIconOffset()
 
         val addImageResult = safeStyle.addImage(
             markerImageID,

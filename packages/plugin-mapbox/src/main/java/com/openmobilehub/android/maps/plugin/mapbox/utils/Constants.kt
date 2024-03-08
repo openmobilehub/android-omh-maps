@@ -50,12 +50,12 @@ internal object Constants {
     const val MAP_TOUCH_HIT_RADIUS_MAX_PX = 85.0
 
     /** Time threshold for continuous pointer event in [ACTIVE_MOTION_EVENTS] down to be considered a drag */
-    const val MAP_TOUCH_DRAG_TOUCHDOWN_THRESHOLD_MS = 700L
+    const val MAP_TOUCH_DRAG_TOUCHDOWN_THRESHOLD_MS = 550L
 
     /**
      * The threshold in pixels denoting, how far from the original touch down point can the event happen
      * to be considered still in the same place.
      */
-    const val MAP_TOUCH_SAME_COORDINATES_THRESHOLD_PX = 4.0
+    const val MAP_TOUCH_SAME_COORDINATES_THRESHOLD_PX = 20.0
     const val DEFAULT_POLYLINE_COLOR = Color.BLACK
 }

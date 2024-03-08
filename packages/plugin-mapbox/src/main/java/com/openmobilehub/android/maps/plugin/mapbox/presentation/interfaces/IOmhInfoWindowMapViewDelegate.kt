@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package com.openmobilehub.android.maps.plugin.mapbox.presentation.maps
+package com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces
 
-import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
-
-interface PolylineDelegate {
-    fun updatePolylinePoints(sourceId: String, points: List<OmhCoordinate>)
+internal interface IOmhInfoWindowMapViewDelegate {
+    fun getMapWidth(): Int
+    fun getMapHeight(): Int
 }

@@ -19,14 +19,17 @@ package com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces
 import com.mapbox.maps.ScreenCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 
-interface IMapDragManagerDelegate {
+/**
+ * Delegate interface having capabilities to handle drag events on the map.
+ */
+internal interface IMapDragManagerDelegate {
 
     /**
      * Returns an entity (if present and in draggable state) that can possibly be dragged.
      *
      * @param screenCoordinate Coordinate on the screen for which to find the entity to possibly be dragged.
      */
-    fun findDraggableEntity(screenCoordinate: ScreenCoordinate): IDraggable?
+    fun findDraggableEntity(screenCoordinate: ScreenCoordinate): ITouchInteractable?
 
     /**
      * Callback invoked when drag event is started.
@@ -34,7 +37,7 @@ interface IMapDragManagerDelegate {
      * @param omhCoordinate Coordinate on the map where the clicked entity has been dragged to.
      * @param draggedEntity The entity that has been dragged.
      */
-    fun handleDragStart(omhCoordinate: OmhCoordinate, draggedEntity: Any)
+    fun handleDragStart(omhCoordinate: OmhCoordinate, draggedEntity: ITouchInteractable)
 
     /**
      * Callback invoked when drag event is in progress, called
@@ -43,7 +46,7 @@ interface IMapDragManagerDelegate {
      * @param omhCoordinate Coordinate on the map where the clicked entity has been dragged to.
      * @param draggedEntity The entity that has been dragged.
      */
-    fun handleDragContinuation(omhCoordinate: OmhCoordinate, draggedEntity: Any)
+    fun handleDragMove(omhCoordinate: OmhCoordinate, draggedEntity: ITouchInteractable)
 
     /**
      * Callback invoked when drag event is finished.
@@ -51,5 +54,5 @@ interface IMapDragManagerDelegate {
      * @param omhCoordinate Coordinate on the map where the clicked entity has been dragged to.
      * @param draggedEntity The entity that has been dragged.
      */
-    fun handleDragEnd(omhCoordinate: OmhCoordinate, draggedEntity: Any)
+    fun handleDragEnd(omhCoordinate: OmhCoordinate, draggedEntity: ITouchInteractable)
 }

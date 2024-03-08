@@ -177,9 +177,6 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
                         marker.getPosition()
                     }"
                 )
-
-                eventsToast.setText("Marker '${marker.getTitle()}' is being dragged, currently at ${marker.getPosition()}")
-                eventsToast.show()
             }
 
             override fun onMarkerDragEnd(marker: OmhMarker) {

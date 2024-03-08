@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
-package com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces
+package com.openmobilehub.android.maps.plugin.mapbox.utils.cartesian
 
-import com.openmobilehub.android.maps.plugin.mapbox.utils.Offset2D
+import com.mapbox.maps.ScreenCoordinate
 
-/**
- * Common interface for draggable entities on the map.
- */
-interface IDraggable {
-    fun getDraggable(): Boolean
-
-    fun getHandleOffset(): Offset2D
+class BoundingBox2D(
+    private val left: Double,
+    private val right: Double,
+    private val top: Double,
+    private val bottom: Double
+) {
+    fun contains(screenCoordinate: ScreenCoordinate): Boolean {
+        return (left..right).contains(screenCoordinate.x) && (bottom..top).contains(screenCoordinate.y)
+    }
 }
