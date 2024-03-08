@@ -5,7 +5,7 @@ name: Android CD
 
 on:
   push:
-    branches: [ci/docs-pipeline, main]
+    branches: [main]
 
 # GITHUB_TOKEN needs to be granted the permissions required to make a Pages deployment
 permissions:
@@ -47,7 +47,7 @@ jobs:
 
     steps:
       - name: Check out code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
@@ -64,7 +64,7 @@ jobs:
 
       - name: Setup Pages
         id: pages
-        uses: actions/configure-pages@v3
+        uses: actions/configure-pages@v4
 
       - name: Setup secrets
         run: bash ./.github/scripts/setup_secrets.sh "${{ secrets.MAPBOX_SECRET_TOKEN }}" "${{ secrets.GOOGLE_MAPS_API_KEY }}" "${{ secrets.MAPBOX_PUBLIC_TOKEN }}"
@@ -73,7 +73,7 @@ jobs:
         run: echo useMavenLocal=true >> local.properties
 
       - name: Restore Cache MavenLocal
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.m2/repository
           key: mavenLocal-core-and-plugins-${{ github.run_id }}
@@ -82,7 +82,7 @@ jobs:
         run: ./gradlew buildDocs
 
       - name: Cache MavenLocal
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.m2/repository
           key: ${{ inputs.output-cache-prefix }}-${{ github.run_id }}
