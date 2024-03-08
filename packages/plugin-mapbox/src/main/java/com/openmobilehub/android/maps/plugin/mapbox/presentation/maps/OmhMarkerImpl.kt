@@ -24,6 +24,7 @@ import com.mapbox.geojson.Feature
 import com.mapbox.maps.Style
 import com.mapbox.maps.extension.style.layers.addLayer
 import com.mapbox.maps.extension.style.layers.generated.SymbolLayer
+import com.mapbox.maps.extension.style.layers.properties.generated.IconAnchor
 import com.mapbox.maps.extension.style.layers.properties.generated.IconPitchAlignment
 import com.mapbox.maps.extension.style.layers.properties.generated.IconRotationAlignment
 import com.mapbox.maps.extension.style.layers.properties.generated.Visibility
@@ -40,10 +41,8 @@ import com.openmobilehub.android.maps.plugin.mapbox.utils.AnchorConverter
 import com.openmobilehub.android.maps.plugin.mapbox.utils.Constants
 import com.openmobilehub.android.maps.plugin.mapbox.utils.CoordinateConverter
 import com.openmobilehub.android.maps.plugin.mapbox.utils.cartesian.Offset2D
-import com.openmobilehub.android.maps.plugin.mapbox.utils.cartesian.plus
 import java.util.UUID
 import kotlin.math.cos
-import kotlin.math.roundToInt
 import kotlin.math.sin
 import com.openmobilehub.android.maps.core.presentation.models.Constants as OmhConstants
 
@@ -136,15 +135,24 @@ internal class OmhMarkerImpl(
 
     @SuppressWarnings("MagicNumber")
     internal fun getHandleTranslation(): Offset2D<Double> {
-        val offsetCoeffX =
-            -(bufferedAnchor.first - 0.5f).roundToInt() // invert the x-axis to match MapBox coordinate system
-        val offsetCoeffY =
-            -(bufferedAnchor.second - 1.0f).roundToInt() // invert the y-axis to match MapBox coordinate system
+        val discreteAnchor = AnchorConverter.convertContinuousToDiscreteIconAnchor(bufferedAnchor)
+        var (offsetCoeffX, offsetCoeffY) = when (discreteAnchor) {
+            IconAnchor.CENTER -> 0.0 to 0.0
+            IconAnchor.LEFT -> -0.5 to 0.0
+            IconAnchor.RIGHT -> 0.5 to 0.0
+            IconAnchor.TOP -> 0.0 to -1.0
+            IconAnchor.BOTTOM -> 0.0 to 1.0
+            IconAnchor.TOP_LEFT -> -0.5 to -1.0
+            IconAnchor.TOP_RIGHT -> 0.5 to -1.0
+            IconAnchor.BOTTOM_LEFT -> -0.5 to 1.0
+            IconAnchor.BOTTOM_RIGHT -> 0.5 to 1.0
+            else -> 0.0 to 0.0 // for safety
+        }
 
         val offsetX = offsetCoeffX * iconWidth
-        val offsetY = offsetCoeffY * iconHeight
+        val offsetY = offsetCoeffY * iconHeight / 2.0
 
-        return Offset2D(offsetX.toDouble(), offsetY.toDouble())
+        return Offset2D(offsetX, offsetY)
     }
 
     private fun rotateOffset(translation: Offset2D<Double>): Offset2D<Double> {

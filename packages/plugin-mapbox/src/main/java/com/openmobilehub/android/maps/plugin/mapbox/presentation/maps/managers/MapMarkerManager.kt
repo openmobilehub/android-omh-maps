@@ -49,6 +49,10 @@ internal class MapMarkerManager(
     internal val markers = mutableMapOf<String, OmhMarkerImpl>()
     internal val infoWindows = mutableMapOf<String, OmhInfoWindow>()
 
+    fun updateAllInfoWindowsPositions() {
+        infoWindows.values.forEach { it.updatePosition() }
+    }
+
     fun addMarker(options: OmhMarkerOptions, style: Style?): OmhMarkerImpl {
         synchronized(this) {
             val (omhMarker, _, layers) = options.addOmhMarker(

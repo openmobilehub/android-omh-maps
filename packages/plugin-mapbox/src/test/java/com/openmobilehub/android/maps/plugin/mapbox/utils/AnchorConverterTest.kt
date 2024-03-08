@@ -1,7 +1,5 @@
-package com.openmobilehub.android.maps.plugin.mapbox.utlis
+package com.openmobilehub.android.maps.plugin.mapbox.utils
 
-import com.openmobilehub.android.maps.plugin.mapbox.utils.AnchorConverter
-import com.openmobilehub.android.maps.plugin.mapbox.utils.DiscreteAnchor
 import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith

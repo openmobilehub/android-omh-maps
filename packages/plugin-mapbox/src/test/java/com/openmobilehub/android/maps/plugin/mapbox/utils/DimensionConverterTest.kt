@@ -1,8 +1,7 @@
-package com.openmobilehub.android.maps.plugin.mapbox.utlis
+package com.openmobilehub.android.maps.plugin.mapbox.utils
 
 import android.content.Context
 import android.util.DisplayMetrics
-import com.openmobilehub.android.maps.plugin.mapbox.utils.DimensionConverter
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.Assert

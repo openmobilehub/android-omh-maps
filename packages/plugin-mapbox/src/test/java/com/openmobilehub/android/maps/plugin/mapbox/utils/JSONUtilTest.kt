@@ -1,8 +1,7 @@
-package com.openmobilehub.android.maps.plugin.mapbox.utlis
+package com.openmobilehub.android.maps.plugin.mapbox.utils
 
 import android.content.Context
 import com.openmobilehub.android.maps.core.utils.logging.Logger
-import com.openmobilehub.android.maps.plugin.mapbox.utils.JSONUtil
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify

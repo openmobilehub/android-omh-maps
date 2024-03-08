@@ -16,19 +16,25 @@
 
 package com.openmobilehub.android.maps.plugin.mapbox.utils.cartesian
 
-data class Offset2D<T : Number>(val x: T, val y: T)
+data class Offset2D<T : Number>(val x: T, val y: T) {
+    operator fun plus(other: Offset2D<T>): Offset2D<T> {
+        return when (x) {
+            is Int -> Offset2D(
+                x.toInt() + other.x.toInt(),
+                y.toInt() + other.y.toInt()
+            )
 
-@JvmName("plusInt")
-operator fun Offset2D<Int>.plus(other: Offset2D<Int>): Offset2D<Int> {
-    return Offset2D(x + other.x, y + other.y)
-}
+            is Double -> Offset2D(
+                x.toDouble() + other.x.toDouble(),
+                y.toDouble() + other.y.toDouble()
+            )
 
-@JvmName("plusDouble")
-operator fun Offset2D<Double>.plus(other: Offset2D<Double>): Offset2D<Double> {
-    return Offset2D(x + other.x, y + other.y)
-}
+            is Float -> Offset2D(
+                x.toFloat() + other.x.toFloat(),
+                y.toFloat() + other.y.toFloat()
+            )
 
-@JvmName("plusFloat")
-operator fun Offset2D<Float>.plus(other: Offset2D<Float>): Offset2D<Float> {
-    return Offset2D(x + other.x, y + other.y)
+            else -> throw IllegalArgumentException("Unsupported type passed to Offset2D")
+        } as Offset2D<T>
+    }
 }

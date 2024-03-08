@@ -45,6 +45,15 @@ class BoundingBox2D(
         bottom = centerPoint.y - halfHeightAndHitRadius
     }
 
+    /**
+     * Tests if the give [screenCoordinate] lays inside the bounding box
+     * (in all directions: within half width or height + half of hit border from the center point,
+     * inclusive).
+     *
+     * @param screenCoordinate The screen coordinate to test.
+     *
+     * @return `true` if the [screenCoordinate] lays inside the bounding box, `false` otherwise.
+     */
     fun contains(screenCoordinate: ScreenCoordinate): Boolean {
         return (left..right).contains(screenCoordinate.x) && (bottom..top).contains(screenCoordinate.y)
     }

@@ -39,6 +39,7 @@ import com.mapbox.maps.extension.style.sources.addSource
 import com.mapbox.maps.extension.style.sources.generated.GeoJsonSource
 import com.mapbox.maps.extension.style.sources.generated.geoJsonSource
 import com.mapbox.maps.extension.style.sources.getSource
+import com.mapbox.maps.plugin.animation.camera
 import com.mapbox.maps.plugin.compass.compass
 import com.mapbox.maps.plugin.gestures.gestures
 import com.mapbox.maps.plugin.locationcomponent.location
@@ -124,6 +125,13 @@ internal class OmhMapImpl(
         setupMapViewUIControls()
         addQueuedMapElements()
         setupTouchInteractionListeners()
+        setupZoomListenerForInfoWindows()
+    }
+
+    private fun setupZoomListenerForInfoWindows() {
+        mapView.camera.addCameraZoomChangeListener {
+            mapMarkerManager.updateAllInfoWindowsPositions()
+        }
     }
 
     private fun addQueuedMapElements() {

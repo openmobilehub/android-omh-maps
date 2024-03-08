@@ -85,10 +85,7 @@ internal class OmhInfoWindow(
             symbolLayer(getSymbolLayerID(), getGeoJsonSourceID()) {
                 iconSize(1.0) // icon scale
                 iconImage(generateInfoWindowIconID())
-                // the IW anchor is in the center of the marker's icon vertically
-                // and centered horizontally w.r.t. the marker's icon,
-                // or - in other words - the bottom edge of the IW touches the marker icon's center
-                iconAnchor(IconAnchor.TOP)
+                iconAnchor(IconAnchor.CENTER)
                 iconAllowOverlap(true)
                 iconIgnorePlacement(true)
                 visibility(Visibility.NONE)
@@ -165,7 +162,7 @@ internal class OmhInfoWindow(
     fun setInfoWindowAnchor(iwAnchorU: Float, iwAnchorV: Float) {
         bufferedInfoWindowAnchor = iwAnchorU to iwAnchorV
 
-        invalidateInfoWindow()
+        updatePosition()
     }
 
     /**
@@ -380,11 +377,13 @@ internal class OmhInfoWindow(
     @SuppressWarnings("MagicNumber")
     override fun getHandleCenterOffset(): Offset2D<Double> {
         val offset = getInfoWindowIconOffset()
+        val anchorOffsetX = (bufferedInfoWindowAnchor.first - 0.5) * omhMarker.iconWidth / 2.0
+        val anchorOffsetY = bufferedInfoWindowAnchor.second * omhMarker.iconHeight
 
-        // here, we only offset the IW up by half of its height, since the alignment is top-to-top
         return Offset2D(
-            offset.x + (bufferedInfoWindowAnchor.first - 0.5) * omhMarker.iconWidth / 2.0,
-            offset.y + (bufferedInfoWindowAnchor.second) * omhMarker.iconHeight - iwBitmapHeight / 2.0
+            offset.x + anchorOffsetX,
+            // also, translate up (-) by the IW's height to ensure it always fits above the marker
+            offset.y + anchorOffsetY + omhMarker.iconHeight / 2.0 - iwBitmapHeight / 2.0
         )
     }
 

@@ -130,11 +130,12 @@ internal class OmhMarkerExtensionsTest(
     @Test
     @SuppressWarnings("LongMethod")
     fun `OmhMarkerOptions addOmhMarker creates an OmhMarker and all properties are properly handled`() {
-        var (omhMarker, geoJsonSource, _) = data.addOmhMarker(
+        var (omhMarker, sources, _) = data.addOmhMarker(
             mapView.context,
             infoWindowManagerDelegate = omhMap.mapMarkerManager,
             infoWindowMapViewDelegate = omhMap
         )
+        var (markerGeoJsonSource, infoWindowGeoJsonSource) = sources
 
         fun verifyIconLoaderProcessing(icon: Drawable?, bMarkerBufferedMode: Boolean) {
             if (bMarkerBufferedMode) {
@@ -172,7 +173,7 @@ internal class OmhMarkerExtensionsTest(
         )
         assertEquals(
             omhMarker.getGeoJsonSourceID(),
-            geoJsonSource.sourceId
+            markerGeoJsonSource.sourceId
         )
         assertEquals(data.alpha, omhMarker.getAlpha())
         assertEquals(data.title, omhMarker.getTitle())
@@ -251,7 +252,8 @@ internal class OmhMarkerExtensionsTest(
             infoWindowMapViewDelegate = omhMap
         )
         omhMarker = newMarkerPack.first
-        geoJsonSource = newMarkerPack.second
+        markerGeoJsonSource = newMarkerPack.second.first
+        infoWindowGeoJsonSource = newMarkerPack.second.second
         val layers = newMarkerPack.third
         val (markerIconLayer, infoWindowLayer) = layers
         // mock (on the new OmhMarker instance) that the map style had been loaded
@@ -300,11 +302,12 @@ internal class OmhMarkerExtensionsTest(
     @Test
     @SuppressWarnings("LongMethod")
     fun `OmhMarkerOptions addOmhMarker creates an OmhInfoWindow assigned to OmhMarker and the IW works properly`() {
-        var (omhMarker, geoJsonSource, _) = data.addOmhMarker(
+        var (omhMarker, sources, _) = data.addOmhMarker(
             mapView.context,
             infoWindowManagerDelegate = omhMap.mapMarkerManager,
             infoWindowMapViewDelegate = omhMap
         )
+        var (markerGeoJsonSource, infoWindowGeoJsonSource) = sources
 
         // assert property values
         assertEquals(
@@ -313,7 +316,7 @@ internal class OmhMarkerExtensionsTest(
         )
         assertEquals(
             omhMarker.getGeoJsonSourceID(),
-            geoJsonSource.sourceId
+            markerGeoJsonSource.sourceId
         )
         assertEquals(false, omhMarker.omhInfoWindow.getIsInfoWindowShown())
         assertEquals(data.title, omhMarker.getTitle())
@@ -365,7 +368,8 @@ internal class OmhMarkerExtensionsTest(
             infoWindowMapViewDelegate = omhMap
         )
         omhMarker = newMarkerPack.first
-        geoJsonSource = newMarkerPack.second
+        markerGeoJsonSource = newMarkerPack.second.first
+        infoWindowGeoJsonSource = newMarkerPack.second.second
         val layers = newMarkerPack.third
         val (markerIconLayer, infoWindowLayer) = layers
         // mock (on the new OmhMarker instance) that the map style had been loaded
