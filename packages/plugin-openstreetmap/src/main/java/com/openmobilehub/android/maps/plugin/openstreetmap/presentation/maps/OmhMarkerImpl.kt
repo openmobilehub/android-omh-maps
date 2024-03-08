@@ -24,11 +24,10 @@ import com.openmobilehub.android.maps.plugin.openstreetmap.extensions.toGeoPoint
 import com.openmobilehub.android.maps.plugin.openstreetmap.extensions.toOmhCoordinate
 import com.openmobilehub.android.maps.plugin.openstreetmap.utils.markerLogger
 import org.osmdroid.views.MapView
-import org.osmdroid.views.overlay.Marker
 
 @SuppressWarnings("TooManyFunctions")
 internal class OmhMarkerImpl(
-    private val marker: Marker,
+    private val marker: CustomMarker,
     private val mapView: MapView,
     private var clickable: Boolean = true,
     private val logger: UnsupportedFeatureLogger = markerLogger
@@ -43,7 +42,7 @@ internal class OmhMarkerImpl(
         mapView.postInvalidate()
     }
 
-    override fun getTitle(): String? {
+    override fun getTitle(): String {
         return marker.title
     }
 
@@ -106,7 +105,10 @@ internal class OmhMarkerImpl(
     }
 
     override fun setIcon(icon: Drawable?) {
+        // the anchor may be overwritten by setDefaultIcon, thus we copy the anchor here
+        val previousAnchor = marker.mAnchorU to marker.mAnchorV
         marker.icon = icon
+        marker.setAnchor(previousAnchor.first, previousAnchor.second)
         mapView.postInvalidate()
     }
 

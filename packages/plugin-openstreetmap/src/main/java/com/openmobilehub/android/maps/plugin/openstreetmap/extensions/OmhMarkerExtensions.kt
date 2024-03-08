@@ -2,15 +2,15 @@ package com.openmobilehub.android.maps.plugin.openstreetmap.extensions
 
 import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
 import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
+import com.openmobilehub.android.maps.plugin.openstreetmap.presentation.maps.CustomMarker
 import com.openmobilehub.android.maps.plugin.openstreetmap.utils.markerLogger
 import org.osmdroid.views.MapView
-import org.osmdroid.views.overlay.Marker
 
 internal fun OmhMarkerOptions.toMarkerOptions(
     mapView: MapView,
     logger: UnsupportedFeatureLogger = markerLogger
-): Marker {
-    val marker = Marker(mapView)
+): CustomMarker {
+    val marker = CustomMarker(mapView)
 
     marker.position = position.toGeoPoint()
     marker.title = title
