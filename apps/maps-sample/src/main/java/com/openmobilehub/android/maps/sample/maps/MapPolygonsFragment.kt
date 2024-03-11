@@ -41,7 +41,7 @@ import com.openmobilehub.android.maps.sample.customviews.PanelColorSeekbar
 import com.openmobilehub.android.maps.sample.customviews.PanelSeekbar
 import com.openmobilehub.android.maps.sample.customviews.PanelSpinner
 import com.openmobilehub.android.maps.sample.databinding.FragmentMapPolygonsBinding
-
+import com.openmobilehub.android.maps.sample.utils.Constants
 
 class MapPolygonsFragment : Fragment(), OmhOnMapReadyCallback {
 
@@ -99,8 +99,6 @@ class MapPolygonsFragment : Fragment(), OmhOnMapReadyCallback {
         val omhMapFragment =
             childFragmentManager.findFragmentById(R.id.fragment_map_container) as? OmhMapFragment
         omhMapFragment?.getMapAsync(this)
-
-        setupUI(view)
     }
 
     override fun onMapReady(omhMap: OmhMap) {
@@ -124,6 +122,12 @@ class MapPolygonsFragment : Fragment(), OmhOnMapReadyCallback {
 
         customizablePolygon = DebugPolygonHelper.addDebugPolygon(omhMap)
         DebugPolygonHelper.addReferencePolygon(omhMap)
+
+        view?.let { setupUI(it) }
+    }
+
+    private fun getSupportedStatus(supportedProviders: List<String>): Boolean {
+        return supportedProviders.contains(omhMap?.providerName)
     }
 
     private fun mapSpinnerPositionToOmhPattern(position: Int): List<OmhPatternItem>? {
@@ -158,21 +162,25 @@ class MapPolygonsFragment : Fragment(), OmhOnMapReadyCallback {
     private fun setupUI(view: View) {
         // randomizeOutline
         randomizeOutlineButton = view.findViewById(R.id.button_randomizeOutline)
+        randomizeOutlineButton?.isEnabled = getSupportedStatus(Constants.ALL_PROVIDERS)
         randomizeOutlineButton?.setOnClickListener {
             customizablePolygon?.setOutline(DebugPolygonHelper.getRandomizedOutlinePoints())
         }
         // isVisible
         isVisibleCheckbox = view.findViewById(R.id.checkBox_isVisible)
+        isVisibleCheckbox?.isEnabled = getSupportedStatus(Constants.ALL_PROVIDERS)
         isVisibleCheckbox?.setOnCheckedChangeListener { _, isChecked ->
             customizablePolygon?.setVisible(isChecked)
         }
         // isClickable
         isClickableCheckbox = view.findViewById(R.id.checkBox_isClickable)
+        isClickableCheckbox?.isEnabled = getSupportedStatus(Constants.ALL_PROVIDERS)
         isClickableCheckbox?.setOnCheckedChangeListener { _, isChecked ->
             customizablePolygon?.setClickable(isChecked)
         }
         // holes
         withHolesCheckbox = view.findViewById(R.id.checkBox_withHoles)
+        withHolesCheckbox?.isEnabled = getSupportedStatus(Constants.ALL_PROVIDERS)
         withHolesCheckbox?.setOnCheckedChangeListener { _, isChecked ->
             val holes = if (isChecked)
                 listOf(
@@ -193,27 +201,32 @@ class MapPolygonsFragment : Fragment(), OmhOnMapReadyCallback {
         }
         // strokeWidth
         strokeWidthSeekbar = view.findViewById(R.id.panelSeekbar_width)
+        strokeWidthSeekbar?.isEnabled = getSupportedStatus(Constants.ALL_PROVIDERS)
         strokeWidthSeekbar?.setOnProgressChangedCallback { progress: Int ->
             customizablePolygon?.setStrokeWidth(progress.toFloat())
         }
         // strokeColor
         strokeColorSeekbar = view.findViewById(R.id.panelColorSeekbar_color)
+        strokeColorSeekbar?.isEnabled = getSupportedStatus(Constants.ALL_PROVIDERS)
         strokeColorSeekbar?.setOnColorChangedCallback { color: Int ->
             customizablePolygon?.setStrokeColor(color)
         }
         // fillColor
         fillColorSeekbar = view.findViewById(R.id.panelColorSeekbar_fillColor)
+        fillColorSeekbar?.isEnabled = getSupportedStatus(Constants.ALL_PROVIDERS)
         fillColorSeekbar?.setOnColorChangedCallback { color: Int ->
             customizablePolygon?.setFillColor(color)
         }
         // jointType
         strokeJointTypeSpinner = view.findViewById(R.id.panelSpinner_joinType)
+        strokeJointTypeSpinner?.isEnabled = getSupportedStatus(Constants.ALL_PROVIDERS)
         strokeJointTypeSpinner?.setValues(requireContext(), jointTypeNameResourceID)
         strokeJointTypeSpinner?.setOnItemSelectedCallback { position: Int ->
             customizablePolygon?.setStrokeJointType(position)
         }
         // pattern
         strokePatternSpinner = view.findViewById(R.id.panelSpinner_pattern)
+        strokePatternSpinner?.isEnabled = getSupportedStatus(listOf(Constants.GOOGLE_PROVIDER))
         strokePatternSpinner?.setValues(requireContext(), patternTypeNameResourceID)
         strokePatternSpinner?.setOnItemSelectedCallback { position: Int ->
             val pattern = mapSpinnerPositionToOmhPattern(position)
@@ -221,6 +234,7 @@ class MapPolygonsFragment : Fragment(), OmhOnMapReadyCallback {
         }
         // zIndex
         zIndexSeekbar = view.findViewById(R.id.panelSeekbar_zIndex)
+        zIndexSeekbar?.isEnabled = getSupportedStatus(listOf(Constants.GOOGLE_PROVIDER))
         zIndexSeekbar?.setOnProgressChangedCallback { progress: Int ->
             customizablePolygon?.setZIndex(progress.toFloat())
         }

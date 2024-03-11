@@ -67,6 +67,11 @@ internal class OmhPolygonImpl(
     }
 
     override fun setStrokePattern(pattern: List<OmhPatternItem>) {
+        if (pattern.isEmpty()) {
+            polygon.strokePattern = null
+            return
+        }
+
         polygon.strokePattern = pattern.map { patternItem ->
             PatternConverter.convertToPatternItem(patternItem)
         }

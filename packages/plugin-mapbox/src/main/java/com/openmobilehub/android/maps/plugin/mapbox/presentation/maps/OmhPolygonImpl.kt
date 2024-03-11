@@ -1,5 +1,6 @@
 package com.openmobilehub.android.maps.plugin.mapbox.presentation.maps
 
+import com.mapbox.maps.Style
 import com.mapbox.maps.extension.style.layers.generated.FillLayer
 import com.mapbox.maps.extension.style.layers.generated.LineLayer
 import com.mapbox.maps.extension.style.layers.properties.generated.Visibility
@@ -11,8 +12,9 @@ import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogge
 import com.openmobilehub.android.maps.plugin.mapbox.utils.JoinTypeConverter
 import com.openmobilehub.android.maps.plugin.mapbox.utils.polygonLogger
 
-@SuppressWarnings("TooManyFunctions")
-internal class OmhPolygonImpl(
+@SuppressWarnings("TooManyFunctions", "LongParameterList")
+class OmhPolygonImpl(
+    private var style: Style?,
     private val fillLayer: FillLayer,
     private val lineLayer: LineLayer,
     options: OmhPolygonOptions,
@@ -20,16 +22,27 @@ internal class OmhPolygonImpl(
     private val polygonDelegate: PolygonDelegate,
     private val logger: UnsupportedFeatureLogger = polygonLogger
 ) : OmhPolygon {
+    // Internal properties
     private var clickable: Boolean = false
     private var outline: List<OmhCoordinate> = options.outline
     private var holes: List<List<OmhCoordinate>>? = null
+    private var tag: Any? = null
+
+    // Buffered properties
+    private var bufferedStrokeColor: Int? = null
+    private var bufferedFillColor: Int? = null
+    private var bufferedStrokeJointType: Int? = null
+    private var bufferedStrokeWidth: Float? = null
+    private var bufferedVisibility: Boolean = true
 
     init {
         options.clickable?.let { clickable = it }
         options.holes?.let { holes = it }
     }
 
-    private var tag: Any? = null
+    private fun isStyleLoaded(): Boolean {
+        return style?.isStyleLoaded() ?: false
+    }
 
     override fun getClickable(): Boolean {
         return clickable
@@ -40,27 +53,48 @@ internal class OmhPolygonImpl(
     }
 
     override fun getStrokeColor(): Int? {
-        return lineLayer.lineColorAsColorInt
+        if (isStyleLoaded()) {
+            return lineLayer.lineColorAsColorInt
+        }
+        return bufferedStrokeColor
     }
 
     override fun setStrokeColor(color: Int) {
-        lineLayer.lineColor(color)
+        if (isStyleLoaded()) {
+            lineLayer.lineColor(color)
+        } else {
+            bufferedStrokeColor = color
+        }
     }
 
     override fun getFillColor(): Int? {
-        return fillLayer.fillColorAsColorInt
+        if (isStyleLoaded()) {
+            return fillLayer.fillColorAsColorInt
+        }
+        return bufferedFillColor
     }
 
     override fun setFillColor(color: Int) {
-        fillLayer.fillColor(color)
+        if (isStyleLoaded()) {
+            fillLayer.fillColor(color)
+        } else {
+            bufferedFillColor = color
+        }
     }
 
     override fun getStrokeJointType(): Int? {
-        return JoinTypeConverter.convertToOmhJointType(lineLayer.lineJoin)
+        if (isStyleLoaded()) {
+            return JoinTypeConverter.convertToOmhJointType(lineLayer.lineJoin)
+        }
+        return bufferedStrokeJointType
     }
 
     override fun setStrokeJointType(jointType: Int) {
-        lineLayer.lineJoin(JoinTypeConverter.convertToLineJoin(jointType))
+        if (isStyleLoaded()) {
+            lineLayer.lineJoin(JoinTypeConverter.convertToLineJoin(jointType))
+        } else {
+            bufferedStrokeJointType = jointType
+        }
     }
 
     override fun getStrokePattern(): List<OmhPatternItem>? {
@@ -78,7 +112,7 @@ internal class OmhPolygonImpl(
 
     override fun setOutline(omhCoordinates: List<OmhCoordinate>) {
         outline = omhCoordinates
-        polygonDelegate.updatePolygonOutline(fillLayer.sourceId, omhCoordinates, holes)
+        polygonDelegate.updatePolygonSource(fillLayer.sourceId, omhCoordinates, holes)
     }
 
     override fun getHoles(): List<List<OmhCoordinate>>? {
@@ -87,7 +121,7 @@ internal class OmhPolygonImpl(
 
     override fun setHoles(omhCoordinates: List<List<OmhCoordinate>>) {
         holes = omhCoordinates
-        polygonDelegate.updatePolygonHoles(fillLayer.sourceId, outline, omhCoordinates)
+        polygonDelegate.updatePolygonSource(fillLayer.sourceId, outline, omhCoordinates)
     }
 
     override fun getTag(): Any? {
@@ -99,11 +133,19 @@ internal class OmhPolygonImpl(
     }
 
     override fun getStrokeWidth(): Float? {
-        return lineLayer.lineWidth?.toFloat()?.times(scaleFactor)
+        if (isStyleLoaded()) {
+            return lineLayer.lineWidth?.toFloat()
+                ?.times(scaleFactor)
+        }
+        return bufferedStrokeWidth
     }
 
     override fun setStrokeWidth(width: Float) {
-        lineLayer.lineWidth((width / scaleFactor).toDouble())
+        if (isStyleLoaded()) {
+            lineLayer.lineWidth((width / scaleFactor).toDouble())
+        } else {
+            bufferedStrokeWidth = width
+        }
     }
 
     override fun getZIndex(): Float? {
@@ -116,12 +158,34 @@ internal class OmhPolygonImpl(
     }
 
     override fun isVisible(): Boolean {
-        return lineLayer.visibility === Visibility.VISIBLE && fillLayer.visibility === Visibility.VISIBLE
+        if (isStyleLoaded()) {
+            return lineLayer.visibility === Visibility.VISIBLE && fillLayer.visibility === Visibility.VISIBLE
+        }
+        return bufferedVisibility
     }
 
     override fun setVisible(visible: Boolean) {
-        val visibility = if (visible) Visibility.VISIBLE else Visibility.NONE
-        lineLayer.visibility(visibility)
-        fillLayer.visibility(visibility)
+        if (isStyleLoaded()) {
+            val visibility = if (visible) Visibility.VISIBLE else Visibility.NONE
+            lineLayer.visibility(visibility)
+            fillLayer.visibility(visibility)
+        } else {
+            bufferedVisibility = visible
+        }
+    }
+
+    fun applyBufferedProperties(style: Style) {
+        this.style = style
+
+        bufferedStrokeColor?.let { setStrokeColor(it) }
+        bufferedFillColor?.let { setFillColor(it) }
+        bufferedStrokeJointType?.let { setStrokeJointType(it) }
+        bufferedStrokeWidth?.let { setStrokeWidth(it) }
+        setVisible(bufferedVisibility)
+
+        bufferedStrokeColor = null
+        bufferedFillColor = null
+        bufferedStrokeJointType = null
+        bufferedStrokeWidth = null
     }
 }

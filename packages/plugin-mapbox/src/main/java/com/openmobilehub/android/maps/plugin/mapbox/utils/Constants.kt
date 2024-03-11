@@ -16,6 +16,8 @@
 
 package com.openmobilehub.android.maps.plugin.mapbox.utils
 
+import android.graphics.Color
+
 internal object Constants {
     // Common
     const val PROVIDER_NAME = "Mapbox"
@@ -28,4 +30,8 @@ internal object Constants {
     // UI Controls
     const val MAPBOX_ICON_SIZE = 48
     const val MAPBOX_ICON_MARGIN = 8
+
+    // Map Style
+    const val DEFAULT_POLYGON_FILL_COLOR = Color.TRANSPARENT
+    const val DEFAULT_POLYGON_STROKE_COLOR = Color.BLACK
 }
