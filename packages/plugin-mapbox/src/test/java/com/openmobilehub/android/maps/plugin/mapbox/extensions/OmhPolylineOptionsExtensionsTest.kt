@@ -65,7 +65,7 @@ class OmhPolylineOptionsExtensionsTest {
     }
 
     @Test
-    fun `applyPolylineOptions should apply polyline options to layers`() {
+    fun `applyPolylineOptions should apply polyline options to layer`() {
         // Arrange
         val lineJoin = mockk<LineJoin>()
         every { JoinTypeConverter.convertToLineJoin(any<Int>()) } returns lineJoin

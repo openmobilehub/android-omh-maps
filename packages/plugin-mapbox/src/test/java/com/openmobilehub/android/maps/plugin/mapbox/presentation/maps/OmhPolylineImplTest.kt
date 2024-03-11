@@ -230,7 +230,6 @@ class OmhPolylineImplTest {
         Assert.assertNull(width)
     }
 
-    //
     @Test
     fun `without style - getWidth returns buffered width if it was set`() {
         // Arrange
@@ -260,7 +259,7 @@ class OmhPolylineImplTest {
 
     @Test
     fun `with style - isVisible returns polyline visibility`() {
-        //        // Arrange
+        // Arrange
         val expectedVisibility = true
         every { lineLayer.visibility } returns Visibility.VISIBLE
 
@@ -455,7 +454,7 @@ class OmhPolylineImplTest {
     }
 
     @Test
-    fun `setOutline calls delegate method`() {
+    fun `setPoints calls delegate method`() {
         // Arrange
         val updatedPoints = listOf(
             OmhCoordinate(0.0, 0.0),

@@ -22,12 +22,12 @@ import com.openmobilehub.android.maps.core.presentation.models.OmhPolylineOption
 import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
 import com.openmobilehub.android.maps.plugin.mapbox.utils.CapConverter
 import com.openmobilehub.android.maps.plugin.mapbox.utils.JoinTypeConverter
-import com.openmobilehub.android.maps.plugin.mapbox.utils.polygonLogger
+import com.openmobilehub.android.maps.plugin.mapbox.utils.polylineLogger
 
 internal fun OmhPolylineOptions.applyPolylineOptions(
     lineLayer: LineLayer,
     scaleFactor: Float,
-    logger: UnsupportedFeatureLogger = polygonLogger
+    logger: UnsupportedFeatureLogger = polylineLogger
 ) {
     color?.let { lineLayer.lineColor(it) }
     width?.let { lineLayer.lineWidth(it.toDouble() / scaleFactor) }
