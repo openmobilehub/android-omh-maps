@@ -43,7 +43,6 @@ class MenuFragment : Fragment() {
                 android.R.layout.simple_spinner_item,
                 mapProviders.map { it.name })
         mapProviderSpinner.adapter = adapterMapProvider
-        mapProviderSpinner.setSelection(2)
         mapProviderSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
                 parent: AdapterView<*>?,

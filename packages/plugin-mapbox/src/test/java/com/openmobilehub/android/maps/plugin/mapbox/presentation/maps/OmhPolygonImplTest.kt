@@ -65,27 +65,6 @@ class OmhPolygonImplTest {
     }
 
     @Test
-    fun `getClickable returns initial clickable state`() {
-        // Act
-        val clickable = omhPolygon.getClickable()
-
-        // Assert
-        Assert.assertEquals(DEFAULT_CLICKABLE_STATE, clickable)
-    }
-
-    @Test
-    fun `setClickable sets clickable state`() {
-        // Arrange
-        val expectedValue = true
-
-        // Act
-        omhPolygon.setClickable(expectedValue)
-
-        // Assert
-        Assert.assertEquals(expectedValue, omhPolygon.getClickable())
-    }
-
-    @Test
     fun `with style - getStrokeColor returns stroke color`() {
         // Arrange
         val expectedColor = Color.RED
@@ -410,6 +389,27 @@ class OmhPolygonImplTest {
         verify(exactly = 0) { lineLayer.visibility(any<Visibility>()) }
         verify(exactly = 0) { fillLayer.visibility(any<Visibility>()) }
         Assert.assertEquals(expectedVisibility, omhPolygonWithoutStyle.isVisible())
+    }
+
+    @Test
+    fun `getClickable returns initial clickable state`() {
+        // Act
+        val clickable = omhPolygon.getClickable()
+
+        // Assert
+        Assert.assertEquals(DEFAULT_CLICKABLE_STATE, clickable)
+    }
+
+    @Test
+    fun `setClickable sets clickable state`() {
+        // Arrange
+        val expectedValue = true
+
+        // Act
+        omhPolygon.setClickable(expectedValue)
+
+        // Assert
+        Assert.assertEquals(expectedValue, omhPolygon.getClickable())
     }
 
     @Test

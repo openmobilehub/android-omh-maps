@@ -26,7 +26,7 @@ class OmhPolygonOptionsExtensionsTest {
     private val scaleFactor = 1f
     private val logger = mockk<UnsupportedFeatureLogger>(relaxed = true)
 
-    private val omhPolygonOption = OmhPolygonOptions().apply {
+    private val omhPolygonOptions = OmhPolygonOptions().apply {
         outline = listOf(
             OmhCoordinate(0.0, 0.0),
             OmhCoordinate(0.0, 20.0),
@@ -67,7 +67,7 @@ class OmhPolygonOptionsExtensionsTest {
         every { JoinTypeConverter.convertToLineJoin(any<Int>()) } returns lineJoin
 
         // Act
-        omhPolygonOption.applyPolygonOptions(lineLayer, fillLayer, scaleFactor, logger)
+        omhPolygonOptions.applyPolygonOptions(lineLayer, fillLayer, scaleFactor, logger)
 
         // Assert
         verify { lineLayer.lineColor(Color.RED) }

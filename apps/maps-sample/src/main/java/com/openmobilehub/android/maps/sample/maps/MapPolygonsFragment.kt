@@ -219,7 +219,8 @@ class MapPolygonsFragment : Fragment(), OmhOnMapReadyCallback {
         }
         // jointType
         strokeJointTypeSpinner = view.findViewById(R.id.panelSpinner_joinType)
-        strokeJointTypeSpinner?.isEnabled = getSupportedStatus(Constants.ALL_PROVIDERS)
+        strokeJointTypeSpinner?.isEnabled =
+            getSupportedStatus(listOf(Constants.GOOGLE_PROVIDER, Constants.MAPBOX_PROVIDER))
         strokeJointTypeSpinner?.setValues(requireContext(), jointTypeNameResourceID)
         strokeJointTypeSpinner?.setOnItemSelectedCallback { position: Int ->
             customizablePolygon?.setStrokeJointType(position)

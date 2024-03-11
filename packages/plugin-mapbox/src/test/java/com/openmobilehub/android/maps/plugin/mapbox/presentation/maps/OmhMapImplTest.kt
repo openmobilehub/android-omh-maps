@@ -555,7 +555,7 @@ class OmhMapImplTest {
     }
 
     @Test
-    fun `addPolygon calls polygonManage_addPolygon`() {
+    fun `addPolygon calls polygonManager_addPolygon`() {
         // Arrange
         val omhPolygon = mockk<OmhPolygon>()
         every { polygonManager.addPolygon(any(), any()) } returns omhPolygon
@@ -593,7 +593,6 @@ class OmhMapImplTest {
         mockQueryRenderedFeatures("polygon-$DEFAULT_UUID", "Polygon")
         mockPixelForCoordinate()
 
-//        val onMapClickListenerSlot = slot<OnMapClickListener>()
         every { map.gestures.addOnMapClickListener(any()) } just runs
 
         // Act

@@ -62,34 +62,37 @@ class PolygonManager(
         }
     }
 
+    private fun getLineString(coordinates: List<OmhCoordinate>): LineString {
+        val closedCoordinates = coordinates.toMutableList()
+        closedCoordinates.add(coordinates.first())
+
+        return LineString.fromLngLats(
+            closedCoordinates.map { CoordinateConverter.convertToPoint(it) }
+        )
+    }
+
+    private fun getPolygonFeature(outline: List<OmhCoordinate>, holes: List<List<OmhCoordinate>>?): Feature {
+        val outlineLineString = getLineString(outline)
+
+        val holeLineStringList = holes?.map { hole ->
+            getLineString(hole)
+        } ?: emptyList()
+
+        return Feature.fromGeometry(
+            Polygon.fromOuterInner(
+                outlineLineString,
+                holeLineStringList
+            )
+        )
+    }
+
     fun addPolygon(options: OmhPolygonOptions, style: Style?): OmhPolygon {
         val polygonId = generatePolygonId()
         val polygonOutlineId = generatePolygonOutlineId(polygonId)
 
-        val closedOutline = options.outline.toMutableList()
-        closedOutline.add(options.outline.first())
-
-        val outlineLineString = LineString.fromLngLats(
-            closedOutline.map { CoordinateConverter.convertToPoint(it) }
-        )
-
-        val holeLineStringList = options.holes?.map { hole ->
-            val closedHole = hole.toMutableList()
-            closedHole.add(hole.first())
-
-            LineString.fromLngLats(
-                closedHole.map { CoordinateConverter.convertToPoint(it) }
-            )
-        }
-
         val source = geoJsonSource(polygonId) {
             feature(
-                Feature.fromGeometry(
-                    Polygon.fromOuterInner(
-                        outlineLineString,
-                        holeLineStringList ?: emptyList()
-                    )
-                ),
+                getPolygonFeature(options.outline, options.holes),
                 polygonId
             )
         }
@@ -136,30 +139,8 @@ class PolygonManager(
         outline: List<OmhCoordinate>,
         holes: List<List<OmhCoordinate>>?
     ) {
-        val closedOutline = outline.toMutableList()
-        closedOutline.add(outline.first())
-
-        val outlineLineString = LineString.fromLngLats(
-            closedOutline.map { CoordinateConverter.convertToPoint(it) }
-        )
-
-        val holeLineStringList = holes?.map { hole ->
-            val closedHole = hole.toMutableList()
-            closedHole.add(hole.first())
-
-            LineString.fromLngLats(
-                closedHole.map { CoordinateConverter.convertToPoint(it) }
-            )
-        }
-
         mapView.mapboxMap.style?.let { style ->
-            val feature =
-                Feature.fromGeometry(
-                    Polygon.fromOuterInner(
-                        outlineLineString,
-                        holeLineStringList ?: emptyList()
-                    )
-                )
+            val feature = getPolygonFeature(outline, holes)
             val source = (style.getSource(sourceId) as GeoJsonSource)
             source.feature(feature)
         }

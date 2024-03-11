@@ -44,7 +44,7 @@ class PolygonManagerTest {
     }
 
     @Test
-    fun `maybeHandleClick does nothing if Polygon with given id does not exist`() {
+    fun `maybeHandleClick does nothing if type does not match Polygon type`() {
         // Arrange
         val clickHandler = mockk<OmhOnPolygonClickListener>(relaxed = true)
         polygonManager.clickListener = clickHandler
@@ -57,7 +57,7 @@ class PolygonManagerTest {
     }
 
     @Test
-    fun `maybeHandleClick does nothing if type does not match Polygon type`() {
+    fun `maybeHandleClick does nothing if Polygon with given id does not exist`() {
         // Arrange
         // We have empty polygons map
         val clickHandler = mockk<OmhOnPolygonClickListener>(relaxed = true)
