@@ -622,7 +622,7 @@ class OmhMapImplTest {
     }
 
     @Test
-    fun `polygon_maybeHandleClick is called when polygon is clicked`() {
+    fun `polygonManager_maybeHandleClick is called when polygon is clicked`() {
         // Arrange
         val listener = mockk<OmhOnPolygonClickListener>(relaxed = true)
 
