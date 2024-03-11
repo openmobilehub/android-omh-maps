@@ -5,7 +5,6 @@ import android.graphics.Bitmap
 import android.view.View
 import com.mapbox.bindgen.Expected
 import com.mapbox.common.Cancelable
-import com.mapbox.geojson.Feature
 import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraChanged
 import com.mapbox.maps.CameraChangedCallback
@@ -16,13 +15,10 @@ import com.mapbox.maps.MapLoaded
 import com.mapbox.maps.MapLoadedCallback
 import com.mapbox.maps.MapView
 import com.mapbox.maps.MapboxMap
-import com.mapbox.maps.MapboxStyleManager
 import com.mapbox.maps.QueriedRenderedFeature
 import com.mapbox.maps.QueryRenderedFeaturesCallback
 import com.mapbox.maps.ScreenCoordinate
 import com.mapbox.maps.Style
-import com.mapbox.maps.extension.style.sources.generated.GeoJsonSource
-import com.mapbox.maps.extension.style.sources.getSource
 import com.mapbox.maps.plugin.Plugin
 import com.mapbox.maps.plugin.compass.CompassPlugin
 import com.mapbox.maps.plugin.gestures.OnMapClickListener
@@ -38,12 +34,14 @@ import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMyL
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnPolygonClickListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnPolylineClickListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhPolygon
+import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhPolyline
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhSnapshotReadyCallback
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolygonOptions
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolylineOptions
 import com.openmobilehub.android.maps.core.utils.logging.Logger
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.maps.managers.PolygonManager
+import com.openmobilehub.android.maps.plugin.mapbox.presentation.maps.managers.PolylineManager
 import com.openmobilehub.android.maps.plugin.mapbox.utils.Constants
 import com.openmobilehub.android.maps.plugin.mapbox.utils.JSONUtil
 import com.openmobilehub.android.maps.plugin.mapbox.utils.uuid.UUIDGenerator
@@ -68,6 +66,7 @@ class OmhMapImplTest {
     private val viewportPlugin = mockk<ViewportPlugin>(relaxed = true)
     private val context = mockk<Context>(relaxed = true)
     private val myLocationIcon = mockk<MyLocationIcon>(relaxed = true)
+    private val polylineManager = mockk<PolylineManager>(relaxed = true)
     private val polygonManager = mockk<PolygonManager>(relaxed = true)
     private val logger = mockk<Logger>(relaxed = true)
     private val uuidGenerator = mockk<UUIDGenerator>()
@@ -111,7 +110,15 @@ class OmhMapImplTest {
         mockkStatic("com.mapbox.maps.extension.style.sources.SourceUtils")
 
         omhMapImpl =
-            OmhMapImpl(map, context, myLocationIcon, 1.0f, polygonManager, logger, uuidGenerator)
+            OmhMapImpl(
+                map,
+                context,
+                myLocationIcon,
+                1.0f,
+                polylineManager,
+                polygonManager,
+                logger,
+            )
     }
 
     @Test
@@ -481,77 +488,81 @@ class OmhMapImplTest {
     }
 
     @Test
-    fun `addPolyline adds polyline to map and returns OmhPolyline`() {
+    fun `addPolyline calls polylineManager_addPolyline`() {
         // Arrange
+        val omhPolyline = mockk<OmhPolyline>()
+        every { polylineManager.addPolyline(any(), any()) } returns omhPolyline
         val omhPolylineOptions = OmhPolylineOptions()
-        omhPolylineOptions.points = listOf(
-            OmhCoordinate(0.0, 0.0),
-            OmhCoordinate(1.0, 1.0)
-        )
 
         // Act
-        val result = omhMapImpl.addPolyline(omhPolylineOptions)
+        val addedPolyline = omhMapImpl.addPolyline(omhPolylineOptions)
 
         // Assert
-        Assert.assertNotNull(result)
+        Assert.assertEquals(omhPolyline, addedPolyline)
+        verify { polylineManager.addPolyline(omhPolylineOptions, null) }
     }
 
     @Test
-    fun `click listener gets triggered when polyline is clicked`() {
+    fun `polylineManager_onStyleLoaded is called on map init`() {
         // Arrange
-        val point = Point.fromLngLat(0.0, 0.0)
-        val listener = mockk<OmhOnPolylineClickListener>(relaxed = true)
+        val slot = slot<Style.OnStyleLoaded>()
+        every { map.mapboxMap.loadStyle(any<String>(), capture(slot)) } answers {
+            slot.captured.onStyleLoaded(mockk())
+        }
 
-        val onMapClickListenerSlot = slot<OnMapClickListener>()
-        every { map.gestures.addOnMapClickListener(capture(onMapClickListenerSlot)) } just runs
+        // Act
+        omhMapImpl =
+            OmhMapImpl(
+                map,
+                context,
+                myLocationIcon,
+                1.0f,
+                polylineManager,
+                polygonManager,
+                logger,
+            )
+
+        // Assert
+        verify { polylineManager.onStyleLoaded(any()) }
+    }
+
+    @Test
+    fun `setOnPolylineClickListener sets listener on polylineManager`() {
+        // Arrange
+        val listener = mockk<OmhOnPolylineClickListener>(relaxed = true)
 
         mockQueryRenderedFeatures("polyline-$DEFAULT_UUID", "LineString")
         mockPixelForCoordinate()
 
+        every { map.gestures.addOnMapClickListener(any()) } just runs
+
         // Act
         omhMapImpl.setOnPolylineClickListener(listener)
-        val addedPolyline = omhMapImpl.addPolyline(OmhPolylineOptions().apply { clickable = true })
-        onMapClickListenerSlot.captured.onMapClick(point)
 
         // Assert
-        verify { listener.onPolylineClick(addedPolyline) }
+        verify { polylineManager.clickListener = listener }
     }
 
     @Test
-    fun `click listener does not get triggered when polyline is not clickable`() {
+    fun `polylineManager_maybeHandleClick is called when polyline is clicked`() {
         // Arrange
-        val point = Point.fromLngLat(0.0, 0.0)
         val listener = mockk<OmhOnPolylineClickListener>(relaxed = true)
+
+        val layerId = "polyline-$DEFAULT_UUID"
+        val type = "LineString"
+
+        mockQueryRenderedFeatures(layerId, type)
+        mockPixelForCoordinate()
 
         val onMapClickListenerSlot = slot<OnMapClickListener>()
         every { map.gestures.addOnMapClickListener(capture(onMapClickListenerSlot)) } just runs
 
-        mockQueryRenderedFeatures("polyline-$DEFAULT_UUID", "LineString")
-        mockPixelForCoordinate()
-
         // Act
         omhMapImpl.setOnPolylineClickListener(listener)
-        val addedPolyline = omhMapImpl.addPolyline(OmhPolylineOptions().apply { clickable = false })
-        onMapClickListenerSlot.captured.onMapClick(point)
+        onMapClickListenerSlot.captured.onMapClick(Point.fromLngLat(0.0, 0.0))
 
         // Assert
-        verify(exactly = 0) { listener.onPolylineClick(addedPolyline) }
-    }
-
-    @Test
-    fun `updatePolylinePoints updates the polyline points on the map`() {
-        // Arrange
-        val sourceId = "sourceId"
-        val points = listOf(OmhCoordinate(0.0, 0.0), OmhCoordinate(1.0, 1.0))
-        val geoJsonSource = mockk<GeoJsonSource>(relaxed = true)
-
-        every { any<MapboxStyleManager>().getSource(any()) } returns geoJsonSource
-
-        // Act
-        omhMapImpl.updatePolylinePoints(sourceId, points)
-
-        // Assert
-        verify { geoJsonSource.feature(any<Feature>()) }
+        verify { polylineManager.maybeHandleClick(type, layerId) }
     }
 
     @Test
@@ -579,7 +590,15 @@ class OmhMapImplTest {
 
         // Act
         omhMapImpl =
-            OmhMapImpl(map, context, myLocationIcon, 1.0f, polygonManager, logger, uuidGenerator)
+            OmhMapImpl(
+                map,
+                context,
+                myLocationIcon,
+                1.0f,
+                polylineManager,
+                polygonManager,
+                logger,
+            )
 
         // Assert
         verify { polygonManager.onStyleLoaded(any()) }

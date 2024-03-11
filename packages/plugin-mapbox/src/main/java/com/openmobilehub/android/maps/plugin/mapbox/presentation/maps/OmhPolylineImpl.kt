@@ -16,6 +16,7 @@
 
 package com.openmobilehub.android.maps.plugin.mapbox.presentation.maps
 
+import com.mapbox.maps.Style
 import com.mapbox.maps.extension.style.layers.generated.LineLayer
 import com.mapbox.maps.extension.style.layers.properties.generated.Visibility
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhCap
@@ -23,6 +24,7 @@ import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhPatte
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhPolyline
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhStyleSpan
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
+import com.openmobilehub.android.maps.core.presentation.models.OmhPolylineOptions
 import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
 import com.openmobilehub.android.maps.plugin.mapbox.utils.CapConverter
 import com.openmobilehub.android.maps.plugin.mapbox.utils.JoinTypeConverter
@@ -30,20 +32,46 @@ import com.openmobilehub.android.maps.plugin.mapbox.utils.polylineLogger
 
 @SuppressWarnings("TooManyFunctions")
 internal class OmhPolylineImpl(
+    private var style: Style?,
     private val lineLayer: LineLayer,
-    private var clickable: Boolean,
+    options: OmhPolylineOptions,
     private var scaleFactor: Float,
     private var polylineDelegate: PolylineDelegate,
     private var logger: UnsupportedFeatureLogger = polylineLogger
 ) : OmhPolyline {
+    // Internal properties
+    private var clickable: Boolean = false
+    private var points: List<OmhCoordinate> = options.points
     private var tag: Any? = null
 
+    // Buffered properties
+    private var bufferedCap: OmhCap? = null
+    private var bufferedColor: Int? = null
+    private var bufferedJointType: Int? = null
+    private var bufferedWidth: Float? = null
+    private var bufferedVisibility: Boolean = true
+
+    init {
+        options.clickable?.let { clickable = it }
+    }
+
+    private fun isStyleLoaded(): Boolean {
+        return style?.isStyleLoaded() ?: false
+    }
+
     override fun getCap(): OmhCap? {
-        return lineLayer.lineCap?.let { CapConverter.convertToOmhCap(it) }
+        if (isStyleLoaded()) {
+            return lineLayer.lineCap?.let { CapConverter.convertToOmhCap(it) }
+        }
+        return bufferedCap
     }
 
     override fun setCap(cap: OmhCap) {
-        lineLayer.lineCap(CapConverter.convertToLineCap(cap))
+        if (isStyleLoaded()) {
+            lineLayer.lineCap(CapConverter.convertToLineCap(cap))
+        } else {
+            bufferedCap = cap
+        }
     }
 
     override fun getClickable(): Boolean {
@@ -55,11 +83,18 @@ internal class OmhPolylineImpl(
     }
 
     override fun getColor(): Int? {
-        return lineLayer.lineColorAsColorInt
+        if (isStyleLoaded()) {
+            return lineLayer.lineColorAsColorInt
+        }
+        return bufferedColor
     }
 
     override fun setColor(color: Int) {
-        lineLayer.lineColor(color)
+        if (isStyleLoaded()) {
+            lineLayer.lineColor(color)
+        } else {
+            bufferedColor = color
+        }
     }
 
     override fun getEndCap(): OmhCap? {
@@ -71,12 +106,19 @@ internal class OmhPolylineImpl(
         logger.logSetterNotSupported("endCap")
     }
 
-    override fun getJointType(): Int {
-        return JoinTypeConverter.convertToOmhJointType(lineLayer.lineJoin)
+    override fun getJointType(): Int? {
+        if (isStyleLoaded()) {
+            return JoinTypeConverter.convertToOmhJointType(lineLayer.lineJoin)
+        }
+        return bufferedJointType
     }
 
     override fun setJointType(jointType: Int) {
-        lineLayer.lineJoin(JoinTypeConverter.convertToLineJoin(jointType))
+        if (isStyleLoaded()) {
+            lineLayer.lineJoin(JoinTypeConverter.convertToLineJoin(jointType))
+        } else {
+            bufferedJointType = jointType
+        }
     }
 
     override fun getPattern(): List<OmhPatternItem>? {
@@ -88,13 +130,13 @@ internal class OmhPolylineImpl(
         logger.logSetterNotSupported("pattern")
     }
 
-    override fun getPoints(): List<OmhCoordinate>? {
-        logger.logGetterNotSupported("points")
-        return null
+    override fun getPoints(): List<OmhCoordinate> {
+        return points
     }
 
     override fun setPoints(omhCoordinates: List<OmhCoordinate>) {
         polylineDelegate.updatePolylinePoints(lineLayer.sourceId, omhCoordinates)
+        points = omhCoordinates
     }
 
     override fun getSpans(): List<OmhStyleSpan>? {
@@ -124,19 +166,33 @@ internal class OmhPolylineImpl(
     }
 
     override fun getWidth(): Float? {
-        return lineLayer.lineWidth?.toFloat()?.times(scaleFactor)
+        if (isStyleLoaded()) {
+            return lineLayer.lineWidth?.toFloat()?.times(scaleFactor)
+        }
+        return bufferedWidth
     }
 
     override fun setWidth(width: Float) {
-        lineLayer.lineWidth((width / scaleFactor).toDouble())
+        if (isStyleLoaded()) {
+            lineLayer.lineWidth((width / scaleFactor).toDouble())
+        } else {
+            bufferedWidth = width
+        }
     }
 
     override fun isVisible(): Boolean {
-        return lineLayer.visibility === Visibility.VISIBLE
+        if (isStyleLoaded()) {
+            return lineLayer.visibility === Visibility.VISIBLE
+        }
+        return bufferedVisibility
     }
 
     override fun setVisible(visible: Boolean) {
-        lineLayer.visibility(if (visible) Visibility.VISIBLE else Visibility.NONE)
+        if (isStyleLoaded()) {
+            lineLayer.visibility(if (visible) Visibility.VISIBLE else Visibility.NONE)
+        } else {
+            bufferedVisibility = visible
+        }
     }
 
     override fun getZIndex(): Float? {
@@ -146,5 +202,20 @@ internal class OmhPolylineImpl(
 
     override fun setZIndex(zIndex: Float) {
         logger.logSetterNotSupported("zIndex")
+    }
+
+    fun applyBufferedProperties(style: Style) {
+        this.style = style
+
+        bufferedCap?.let { setCap(it) }
+        bufferedColor?.let { setColor(it) }
+        bufferedJointType?.let { setJointType(it) }
+        bufferedWidth?.let { setWidth(it) }
+        setVisible(bufferedVisibility)
+
+        bufferedCap = null
+        bufferedColor = null
+        bufferedJointType = null
+        bufferedWidth = null
     }
 }

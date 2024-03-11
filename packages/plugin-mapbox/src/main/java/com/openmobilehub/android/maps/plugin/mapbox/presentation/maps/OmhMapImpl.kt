@@ -22,20 +22,11 @@ import android.content.Context
 import android.view.Gravity
 import android.widget.ImageView
 import androidx.annotation.RequiresPermission
-import com.mapbox.geojson.Feature
-import com.mapbox.geojson.LineString
 import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.MapView
 import com.mapbox.maps.RenderedQueryGeometry
 import com.mapbox.maps.RenderedQueryOptions
 import com.mapbox.maps.Style
-import com.mapbox.maps.extension.style.layers.Layer
-import com.mapbox.maps.extension.style.layers.addLayer
-import com.mapbox.maps.extension.style.layers.generated.lineLayer
-import com.mapbox.maps.extension.style.sources.addSource
-import com.mapbox.maps.extension.style.sources.generated.GeoJsonSource
-import com.mapbox.maps.extension.style.sources.generated.geoJsonSource
-import com.mapbox.maps.extension.style.sources.getSource
 import com.mapbox.maps.plugin.compass.compass
 import com.mapbox.maps.plugin.gestures.gestures
 import com.mapbox.maps.plugin.locationcomponent.location
@@ -67,13 +58,12 @@ import com.openmobilehub.android.maps.core.presentation.models.OmhPolygonOptions
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolylineOptions
 import com.openmobilehub.android.maps.core.utils.logging.Logger
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.maps.managers.PolygonManager
+import com.openmobilehub.android.maps.plugin.mapbox.presentation.maps.managers.PolylineManager
 import com.openmobilehub.android.maps.plugin.mapbox.utils.Constants
 import com.openmobilehub.android.maps.plugin.mapbox.utils.CoordinateConverter
 import com.openmobilehub.android.maps.plugin.mapbox.utils.DimensionConverter
 import com.openmobilehub.android.maps.plugin.mapbox.utils.JSONUtil
 import com.openmobilehub.android.maps.plugin.mapbox.utils.commonLogger
-import com.openmobilehub.android.maps.plugin.mapbox.utils.uuid.DefaultUUIDGenerator
-import com.openmobilehub.android.maps.plugin.mapbox.utils.uuid.UUIDGenerator
 
 @SuppressWarnings("TooManyFunctions", "LongParameterList")
 internal class OmhMapImpl(
@@ -81,10 +71,10 @@ internal class OmhMapImpl(
     private val context: Context,
     private val myLocationIcon: ImageView = MyLocationIcon(context),
     private var scaleFactor: Float = 1.0f,
+    private val polylineManager: PolylineManager = PolylineManager(mapView, scaleFactor),
     private val polygonManager: PolygonManager = PolygonManager(mapView, scaleFactor),
     private val logger: Logger = commonLogger,
-    private val uuidGenerator: UUIDGenerator = DefaultUUIDGenerator()
-) : OmhMap, PolylineDelegate {
+) : OmhMap {
     /**
      * This flag is used to prevent the onCameraMoveStarted listener from being called multiple times
      */
@@ -95,11 +85,6 @@ internal class OmhMapImpl(
     private var style: Style? = null
 
     private var onMyLocationButtonClickListener: OmhOnMyLocationButtonClickListener? = null
-    private var polylineClickListener: OmhOnPolylineClickListener? = null
-
-    private val pendingMapElements = mutableListOf<Pair<GeoJsonSource, List<Layer>>>()
-
-    private val polylines = mutableMapOf<String, OmhPolyline>()
 
     init {
         setupMapViewUIControls()
@@ -111,11 +96,7 @@ internal class OmhMapImpl(
             this.style = safeStyle
 
             polygonManager.onStyleLoaded(safeStyle)
-
-            pendingMapElements.forEach { (source, layers) ->
-                safeStyle.addSource(source)
-                layers.forEach { layer -> safeStyle.addLayer(layer) }
-            }
+            polylineManager.onStyleLoaded(safeStyle)
         }
     }
 
@@ -127,38 +108,7 @@ internal class OmhMapImpl(
     }
 
     override fun addPolyline(options: OmhPolylineOptions): OmhPolyline {
-        val polylineId = "polyline-${uuidGenerator.generate()}"
-
-        val source = geoJsonSource(polylineId) {
-            feature(
-                Feature.fromGeometry(
-                    LineString.fromLngLats(
-                        options.points.map { CoordinateConverter.convertToPoint(it) }
-                    )
-                ),
-                polylineId
-            )
-        }
-
-        val layer = lineLayer(polylineId, polylineId) {}
-        InitialOptions.applyPolylineOptions(layer, options, this.scaleFactor)
-
-        val initiallyClickable = options.clickable ?: false
-        val omhPolyline = OmhPolylineImpl(
-            layer,
-            initiallyClickable,
-            this.scaleFactor,
-            this
-        )
-
-        polylines[polylineId] = omhPolyline
-
-        style?.let { safeStyle ->
-            safeStyle.addSource(source)
-            safeStyle.addLayer(layer)
-        } ?: pendingMapElements.add(Pair(source, listOf(layer)))
-
-        return omhPolyline
+        return polylineManager.addPolyline(options, style)
     }
 
     override fun addPolygon(options: OmhPolygonOptions): OmhPolygon? {
@@ -270,7 +220,7 @@ internal class OmhMapImpl(
     }
 
     override fun setOnPolylineClickListener(listener: OmhOnPolylineClickListener) {
-        polylineClickListener = listener
+        polylineManager.clickListener = listener
         setupClickListeners()
     }
 
@@ -293,14 +243,7 @@ internal class OmhMapImpl(
                 }
 
                 polygonManager.maybeHandleClick(type, layerId)
-
-                if (type === "LineString") {
-                    val omhPolyline = polylines[layerId]
-
-                    if (omhPolyline !== null && omhPolyline.getClickable()) {
-                        polylineClickListener?.onPolylineClick(omhPolyline)
-                    }
-                }
+                polylineManager.maybeHandleClick(type, layerId)
             }
             true
         }
@@ -332,17 +275,6 @@ internal class OmhMapImpl(
 
     override fun setScaleFactor(scaleFactor: Float) {
         this.scaleFactor = scaleFactor
-    }
-
-    override fun updatePolylinePoints(sourceId: String, points: List<OmhCoordinate>) {
-        val feature = Feature.fromGeometry(
-            LineString.fromLngLats(
-                points.map { CoordinateConverter.convertToPoint(it) }
-            )
-        )
-        mapView.mapboxMap.style?.let { style ->
-            (style.getSource(sourceId) as GeoJsonSource).feature(feature)
-        }
     }
 
     private fun setupMapViewUIControls() {

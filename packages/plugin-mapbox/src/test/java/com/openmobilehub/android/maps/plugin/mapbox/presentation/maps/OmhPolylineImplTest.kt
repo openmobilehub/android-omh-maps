@@ -1,6 +1,7 @@
 package com.openmobilehub.android.maps.plugin.mapbox.presentation.maps
 
 import android.graphics.Color
+import com.mapbox.maps.Style
 import com.mapbox.maps.extension.style.layers.generated.LineLayer
 import com.mapbox.maps.extension.style.layers.properties.generated.LineCap
 import com.mapbox.maps.extension.style.layers.properties.generated.LineJoin
@@ -9,6 +10,7 @@ import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhCap
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhPatternItem
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhStyleSpan
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
+import com.openmobilehub.android.maps.core.presentation.models.OmhPolylineOptions
 import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
 import com.openmobilehub.android.maps.plugin.mapbox.utils.CapConverter
 import com.openmobilehub.android.maps.plugin.mapbox.utils.JoinTypeConverter
@@ -22,44 +24,48 @@ import org.junit.Test
 
 class OmhPolylineImplTest {
     private val lineLayer = mockk<LineLayer>(relaxed = true)
-    private lateinit var omhPolyline: OmhPolylineImpl
-    private val initiallyClickable = true
     private val scaleFactor = 3.0f
     private val polylineDelegate = mockk<PolylineDelegate>(relaxed = true)
     private val logger: UnsupportedFeatureLogger =
         mockk<UnsupportedFeatureLogger>(relaxed = true)
+
+    private val style = mockk<Style>(relaxed = true)
+
+    private val initialOptions = OmhPolylineOptions().apply {
+        clickable = DEFAULT_CLICKABLE_STATE
+        points = DEFAULT_POINTS
+    }
+
+    private lateinit var omhPolyline: OmhPolylineImpl
+    private lateinit var omhPolylineWithoutStyle: OmhPolylineImpl
 
     @Before
     fun setUp() {
         mockkObject(CapConverter)
         mockkObject(JoinTypeConverter)
 
-        omhPolyline =
-            OmhPolylineImpl(lineLayer, initiallyClickable, scaleFactor, polylineDelegate, logger)
+        every { style.isStyleLoaded() } returns true
+
+        omhPolyline = OmhPolylineImpl(
+            style,
+            lineLayer,
+            initialOptions,
+            scaleFactor,
+            polylineDelegate,
+            logger
+        )
+        omhPolylineWithoutStyle = OmhPolylineImpl(
+            null,
+            lineLayer,
+            initialOptions,
+            scaleFactor,
+            polylineDelegate,
+            logger
+        )
     }
 
     @Test
-    fun `getClickable returns clickable state`() {
-        // Act
-        val clickable = omhPolyline.getClickable()
-
-        // Assert
-        Assert.assertEquals(initiallyClickable, clickable)
-    }
-
-    @Test
-    fun `setClickable sets clickable state`() {
-        // Arrange
-        val expectedValue = true
-        // Act
-        omhPolyline.setClickable(expectedValue)
-
-        // Assert
-        Assert.assertEquals(expectedValue, omhPolyline.getClickable())
-    }
-
-    @Test
-    fun `getColor returns polyline color`() {
+    fun `with style - getColor returns color`() {
         // Arrange
         val expectedColor = Color.RED
         every { lineLayer.lineColorAsColorInt } returns expectedColor
@@ -68,11 +74,12 @@ class OmhPolylineImplTest {
         val color = omhPolyline.getColor()
 
         // Assert
+        verify(exactly = 1) { lineLayer.lineColorAsColorInt }
         Assert.assertEquals(expectedColor, color)
     }
 
     @Test
-    fun `setColor sets polyline color`() {
+    fun `with style - setColor sets color`() {
         // Arrange
         val expectedColor = Color.RED
         every { lineLayer.lineColor(any<Int>()) } returns lineLayer
@@ -82,6 +89,390 @@ class OmhPolylineImplTest {
 
         // Assert
         verify { lineLayer.lineColor(expectedColor) }
+    }
+
+    @Test
+    fun `without style - getColor returns null if color was not set`() {
+        // Act
+        val color = omhPolylineWithoutStyle.getColor()
+
+        // Assert
+        verify(exactly = 0) { lineLayer.lineColor }
+        Assert.assertNull(color)
+    }
+
+    @Test
+    fun `without style - getColor returns buffered color if it was set`() {
+        // Arrange
+        val expectedColor = Color.RED
+
+        // Act
+        omhPolylineWithoutStyle.setColor(expectedColor)
+        val color = omhPolylineWithoutStyle.getColor()
+
+        // Assert
+        verify(exactly = 0) { lineLayer.lineColor }
+        Assert.assertEquals(expectedColor, color)
+    }
+
+    @Test
+    fun `without style - setColor sets buffered color`() {
+        // Arrange
+        val expectedColor = Color.RED
+
+        // Act
+        omhPolylineWithoutStyle.setColor(expectedColor)
+
+        // Assert
+        verify(exactly = 0) { lineLayer.lineColor(expectedColor) }
+        Assert.assertEquals(expectedColor, omhPolylineWithoutStyle.getColor())
+    }
+
+    @Test
+    fun `with style - getJointType returns joint type`() {
+        // Arrange
+        val omhLineJoin = mockk<Int>(relaxed = true)
+        every { JoinTypeConverter.convertToOmhJointType(any<LineJoin>()) } returns omhLineJoin
+
+        // Act
+        val jointType = omhPolyline.getJointType()
+
+        // Assert
+        verify(exactly = 1) { lineLayer.lineJoin }
+        Assert.assertEquals(omhLineJoin, jointType)
+    }
+
+    @Test
+    fun `with style - setJointType sets joint type`() {
+        // Arrange
+        val lineJoin = mockk<LineJoin>()
+        every { JoinTypeConverter.convertToLineJoin(any<Int>()) } returns lineJoin
+
+        // Act
+        omhPolyline.setJointType(mockk<Int>(relaxed = true))
+
+        // Assert
+        verify { lineLayer.lineJoin(lineJoin) }
+    }
+
+    @Test
+    fun `without style - getJointType returns null if join type was not set`() {
+        // Act
+        val joinType = omhPolylineWithoutStyle.getJointType()
+
+        // Assert
+        verify(exactly = 0) { lineLayer.lineJoin }
+        Assert.assertNull(joinType)
+    }
+
+    @Test
+    fun `without style - getJointType returns buffered join type if it was set`() {
+        // Arrange
+        val omhJointType = mockk<Int>(relaxed = true)
+
+        // Act
+        omhPolylineWithoutStyle.setJointType(omhJointType)
+        val jointType = omhPolylineWithoutStyle.getJointType()
+
+        // Assert
+        verify(exactly = 0) { lineLayer.lineJoin }
+        Assert.assertEquals(omhJointType, jointType)
+    }
+
+    @Test
+    fun `without style - setJointType sets buffered join type`() {
+        // Arrange
+        val omhJointType = mockk<Int>(relaxed = true)
+
+        // Act
+        omhPolylineWithoutStyle.setJointType(omhJointType)
+
+        // Assert
+        verify(exactly = 0) { lineLayer.lineJoin(any<LineJoin>()) }
+        Assert.assertEquals(omhJointType, omhPolylineWithoutStyle.getJointType())
+    }
+
+    @Test
+    fun `with style - getWidth returns width`() {
+        // Arrange
+        val nativeWidth = 10.0
+        val expectedWidth = (nativeWidth * scaleFactor).toFloat()
+        every { lineLayer.lineWidth } returns nativeWidth
+
+        // Act
+        val width = omhPolyline.getWidth()
+
+        // Assert
+        verify(exactly = 1) { lineLayer.lineWidth }
+        Assert.assertEquals(expectedWidth, width)
+    }
+
+    @Test
+    fun `with style - setWidth sets width`() {
+        // Arrange
+        val width = 30.0f
+        val nativeWidth = (width / scaleFactor).toDouble()
+
+        // Act
+        omhPolyline.setWidth(width)
+
+        // Assert
+        verify { lineLayer.lineWidth(nativeWidth) }
+    }
+
+    @Test
+    fun `without style - getWidth returns null if width was not set`() {
+        // Act
+        val width = omhPolylineWithoutStyle.getWidth()
+
+        // Assert
+        verify(exactly = 0) { lineLayer.lineWidth }
+        Assert.assertNull(width)
+    }
+
+    //
+    @Test
+    fun `without style - getWidth returns buffered width if it was set`() {
+        // Arrange
+        val expectedWidth = 10f
+
+        // Act
+        omhPolylineWithoutStyle.setWidth(expectedWidth)
+        val width = omhPolylineWithoutStyle.getWidth()
+
+        // Assert
+        verify(exactly = 0) { lineLayer.lineWidth }
+        Assert.assertEquals(expectedWidth, width)
+    }
+
+    @Test
+    fun `without style - setWidth sets buffered width`() {
+        // Arrange
+        val expectedWidth = 10f
+
+        // Act
+        omhPolylineWithoutStyle.setWidth(expectedWidth)
+
+        // Assert
+        verify(exactly = 0) { lineLayer.lineWidth(any<Double>()) }
+        Assert.assertEquals(expectedWidth, omhPolylineWithoutStyle.getWidth())
+    }
+
+    @Test
+    fun `with style - isVisible returns polyline visibility`() {
+        //        // Arrange
+        val expectedVisibility = true
+        every { lineLayer.visibility } returns Visibility.VISIBLE
+
+        // Act
+        val visibility = omhPolyline.isVisible()
+
+        // Assert
+        verify(exactly = 1) { lineLayer.visibility }
+        Assert.assertEquals(expectedVisibility, visibility)
+    }
+
+    @Test
+    fun `with style - setVisible sets polyline visibility`() {
+        // Arrange
+        val visibility = true
+
+        // Act
+        omhPolyline.setVisible(visibility)
+
+        // Assert
+        verify { lineLayer.visibility(Visibility.VISIBLE) }
+    }
+
+    @Test
+    fun `without style - isVisible returns initial visibility if it was not set`() {
+        // Act
+        val visibility = omhPolylineWithoutStyle.isVisible()
+
+        // Assert
+        verify(exactly = 0) { lineLayer.visibility }
+        Assert.assertTrue(visibility)
+    }
+
+    @Test
+    fun `without style - isVisible returns buffered visibility if it was set`() {
+        // Arrange
+        val expectedVisibility = false
+
+        // Act
+        omhPolylineWithoutStyle.setVisible(expectedVisibility)
+        val visibility = omhPolylineWithoutStyle.isVisible()
+
+        // Assert
+        verify(exactly = 0) { lineLayer.visibility }
+        Assert.assertEquals(expectedVisibility, visibility)
+    }
+
+    @Test
+    fun `without style - setVisible sets buffered visibility`() {
+        // Arrange
+        val expectedVisibility = false
+
+        // Act
+        omhPolylineWithoutStyle.setVisible(expectedVisibility)
+
+        // Assert
+        verify(exactly = 0) { lineLayer.visibility(any<Visibility>()) }
+        Assert.assertEquals(expectedVisibility, omhPolylineWithoutStyle.isVisible())
+    }
+
+    @Test
+    fun `with style - getCap returns cap`() {
+        // Arrange
+        val omhCap = mockk<OmhCap>(relaxed = true)
+        every { CapConverter.convertToOmhCap(any<LineCap>()) } returns omhCap
+
+        // Act
+        val cap = omhPolyline.getCap()
+
+        // Assert
+        verify(exactly = 1) { lineLayer.lineCap }
+        Assert.assertEquals(omhCap, cap)
+    }
+
+    @Test
+    fun `with style - setCap sets cap`() {
+        // Arrange
+        val lineCap = mockk<LineCap>()
+        every { CapConverter.convertToLineCap(any<OmhCap>()) } returns lineCap
+
+        // Act
+        omhPolyline.setCap(mockk<OmhCap>(relaxed = true))
+
+        // Assert
+        verify { lineLayer.lineCap(lineCap) }
+    }
+
+    @Test
+    fun `without style - getCap returns null if cap was not set`() {
+        // Act
+        val cap = omhPolylineWithoutStyle.getCap()
+
+        // Assert
+        verify(exactly = 0) { lineLayer.lineCap }
+        Assert.assertNull(cap)
+    }
+
+    @Test
+    fun `without style - getCap returns buffered cap if it was set`() {
+        // Arrange
+        val omhCap = mockk<OmhCap>(relaxed = true)
+
+        // Act
+        omhPolylineWithoutStyle.setCap(omhCap)
+        val cap = omhPolylineWithoutStyle.getCap()
+
+        // Assert
+        verify(exactly = 0) { lineLayer.lineCap }
+        Assert.assertEquals(omhCap, cap)
+    }
+
+    @Test
+    fun `without style - setCap sets buffered cap`() {
+        // Arrange
+        val omhCap = mockk<OmhCap>(relaxed = true)
+
+        // Act
+        omhPolylineWithoutStyle.setCap(omhCap)
+
+        // Assert
+        verify(exactly = 0) { lineLayer.lineCap(any<LineCap>()) }
+        Assert.assertEquals(omhCap, omhPolylineWithoutStyle.getCap())
+    }
+
+    @Test
+    fun `getClickable returns initial clickable state`() {
+        // Act
+        val clickable = omhPolyline.getClickable()
+
+        // Assert
+        Assert.assertEquals(DEFAULT_CLICKABLE_STATE, clickable)
+    }
+
+    @Test
+    fun `setClickable sets clickable state`() {
+        // Arrange
+        val expectedValue = true
+
+        // Act
+        omhPolyline.setClickable(expectedValue)
+
+        // Assert
+        Assert.assertEquals(expectedValue, omhPolyline.getClickable())
+    }
+
+    @Test
+    fun `getTag returns null if tag was not set`() {
+        // Act
+        val tag = omhPolyline.getTag()
+
+        // Assert
+        Assert.assertNull(tag)
+    }
+
+    @Test
+    fun `getTag returns tag if tag was set`() {
+        // Arrange
+        val expectedTag = "tag"
+
+        // Act
+        omhPolyline.setTag(expectedTag)
+        val tag = omhPolyline.getTag()
+
+        // Assert
+        Assert.assertEquals(expectedTag, tag)
+    }
+
+    @Test
+    fun `getPoints returns initial points if it was not updated`() {
+        // Act
+        val result = omhPolyline.getPoints()
+
+        // Assert
+        Assert.assertEquals(DEFAULT_POINTS, result)
+    }
+
+    @Test
+    fun `getPoints returns updated points if it was updated`() {
+        // Arrange
+        val updatedPoints = listOf(
+            OmhCoordinate(0.0, 0.0),
+            OmhCoordinate(0.0, 10.0),
+            OmhCoordinate(10.0, 10.0),
+        )
+
+        // Act
+        omhPolyline.setPoints(updatedPoints)
+        val result = omhPolyline.getPoints()
+
+        // Assert
+        Assert.assertEquals(updatedPoints, result)
+    }
+
+    @Test
+    fun `setOutline calls delegate method`() {
+        // Arrange
+        val updatedPoints = listOf(
+            OmhCoordinate(0.0, 0.0),
+            OmhCoordinate(0.0, 10.0),
+            OmhCoordinate(10.0, 10.0),
+        )
+
+        // Act
+        omhPolyline.setPoints(updatedPoints)
+
+        // Assert
+        verify {
+            polylineDelegate.updatePolylinePoints(
+                lineLayer.sourceId,
+                updatedPoints,
+            )
+        }
     }
 
     @Test
@@ -107,33 +498,6 @@ class OmhPolylineImplTest {
     }
 
     @Test
-    fun `getJointType returns join type value`() {
-        // Arrange
-        val omhLineJoin = mockk<Int>(relaxed = true)
-        every { JoinTypeConverter.convertToOmhJointType(any<LineJoin>()) } returns omhLineJoin
-
-        // Act
-        val jointType = omhPolyline.getJointType()
-
-        // Assert
-        Assert.assertEquals(omhLineJoin, jointType)
-    }
-
-    @Test
-    fun `setJointType sets join type value`() {
-        // Arrange
-        val omhJointType = mockk<Int>(relaxed = true)
-        val lineJoin = mockk<LineJoin>()
-        every { JoinTypeConverter.convertToLineJoin(omhJointType) } returns lineJoin
-
-        // Act
-        omhPolyline.setJointType(omhJointType)
-
-        // Assert
-        verify { lineLayer.lineJoin(lineJoin) }
-    }
-
-    @Test
     fun `getPattern logs getter not supported and returns null`() {
         // Act
         val result = omhPolyline.getPattern()
@@ -153,30 +517,6 @@ class OmhPolylineImplTest {
 
         // Assert
         verify { logger.logSetterNotSupported("pattern") }
-    }
-
-    @Test
-    fun `getPoints logs getter not supported and return null`() {
-        // Act
-        val result = omhPolyline.getPoints()
-
-        // Assert
-        Assert.assertNull(result)
-        verify { logger.logGetterNotSupported("points") }
-    }
-
-    @Test
-    fun `setPoints calls delegate method`() {
-        // Arrange
-        val omhCoordinate1 = mockk<OmhCoordinate>()
-        val omhCoordinate2 = mockk<OmhCoordinate>()
-        val points = listOf(omhCoordinate1, omhCoordinate2)
-
-        // Act
-        omhPolyline.setPoints(points)
-
-        // Assert
-        verify { polylineDelegate.updatePolylinePoints(lineLayer.sourceId, points) }
     }
 
     @Test
@@ -224,58 +564,6 @@ class OmhPolylineImplTest {
     }
 
     @Test
-    fun `getWidth returns polyline width multiplied by scale factor`() {
-        // Arrange
-        val nativeWidth = 10.0
-        val expectedWidth = (nativeWidth * scaleFactor).toFloat()
-        every { lineLayer.lineWidth } returns nativeWidth
-
-        // Act
-        val width = omhPolyline.getWidth()
-
-        // Assert
-        Assert.assertEquals(expectedWidth, width)
-    }
-
-    @Test
-    fun `setWidth sets polyline width divided by scale factor`() {
-        // Arrange
-        val width = 30.0f
-        val nativeWidth = (width / scaleFactor).toDouble()
-
-        // Act
-        omhPolyline.setWidth(width)
-
-        // Assert
-        verify { lineLayer.lineWidth(nativeWidth) }
-    }
-
-    @Test
-    fun `isVisible returns polyline visibility`() {
-        // Arrange
-        val expectedVisibility = true
-        every { lineLayer.visibility } returns Visibility.VISIBLE
-
-        // Act
-        val visibility = omhPolyline.isVisible()
-
-        // Assert
-        Assert.assertEquals(expectedVisibility, visibility)
-    }
-
-    @Test
-    fun `setVisible sets polyline visibility`() {
-        // Arrange
-        val visibility = true
-
-        // Act
-        omhPolyline.setVisible(visibility)
-
-        // Assert
-        verify { lineLayer.visibility(Visibility.VISIBLE) }
-    }
-
-    @Test
     fun `getZIndex logs getter not supported and return null`() {
         // Act
         val zIndex = omhPolyline.getZIndex()
@@ -298,53 +586,41 @@ class OmhPolylineImplTest {
     }
 
     @Test
-    fun `getCap returns correct cap`() {
+    fun `applyBufferedProperties sets buffered properties`() {
         // Arrange
-        val omhCap = mockk<OmhCap>()
-        every { CapConverter.convertToOmhCap(any<LineCap>()) } returns omhCap
+        val lineJoin = mockk<LineJoin>()
+        every { JoinTypeConverter.convertToLineJoin(any<Int>()) } returns lineJoin
 
-        // Act
-        val cap = omhPolyline.getCap()
-
-        // Assert
-        Assert.assertEquals(omhCap, cap)
-    }
-
-    @Test
-    fun `setCap sets cap value`() {
-        val omhCap = mockk<OmhCap>()
         val lineCap = mockk<LineCap>()
-        every { CapConverter.convertToLineCap(omhCap) } returns lineCap
+        every { CapConverter.convertToLineCap(any<OmhCap>()) } returns lineCap
+
+        val expectedStrokeColor = Color.RED
+        val expectedStrokeWidth = 30f
+        val expectedNativeStrokeWidth = 10.0
+        val expectedVisibility = false
 
         // Act
-        omhPolyline.setCap(omhCap)
+        omhPolylineWithoutStyle.setCap(mockk<OmhCap>(relaxed = true))
+        omhPolylineWithoutStyle.setColor(expectedStrokeColor)
+        omhPolylineWithoutStyle.setJointType(mockk<Int>(relaxed = true))
+        omhPolylineWithoutStyle.setWidth(expectedStrokeWidth)
+        omhPolylineWithoutStyle.setVisible(expectedVisibility)
+
+        omhPolylineWithoutStyle.applyBufferedProperties(style)
 
         // Assert
-        verify { lineLayer.lineCap(lineCap) }
+        verify { lineLayer.lineColor(expectedStrokeColor) }
+        verify { lineLayer.lineJoin(lineJoin) }
+        verify { lineLayer.lineWidth(expectedNativeStrokeWidth) }
+        verify { lineLayer.visibility(Visibility.NONE) }
     }
 
-    @Test
-    fun `getTag returns tag`() {
-        // Arrange
-        val tag = "tag"
-        omhPolyline.setTag(tag)
-
-        // Act
-        val result = omhPolyline.getTag()
-
-        // Assert
-        Assert.assertEquals(tag, result)
-    }
-
-    @Test
-    fun `setTag sets tag`() {
-        // Arrange
-        val tag = "tag"
-
-        // Act
-        omhPolyline.setTag(tag)
-
-        // Assert
-        Assert.assertEquals(tag, omhPolyline.getTag())
+    companion object {
+        private val DEFAULT_POINTS = listOf(
+            OmhCoordinate(-20.0, 25.0),
+            OmhCoordinate(-30.0, 20.0),
+            OmhCoordinate(-30.0, 30.0),
+        )
+        private const val DEFAULT_CLICKABLE_STATE = true
     }
 }
