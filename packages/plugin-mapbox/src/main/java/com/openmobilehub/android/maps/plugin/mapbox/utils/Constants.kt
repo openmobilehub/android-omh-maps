@@ -58,4 +58,6 @@ internal object Constants {
      */
     const val MAP_TOUCH_SAME_COORDINATES_THRESHOLD_PX = 20.0
     const val DEFAULT_POLYLINE_COLOR = Color.BLACK
+
+    const val MARKER_OR_INFO_WINDOW_LAYER_TYPE = "Point"
 }

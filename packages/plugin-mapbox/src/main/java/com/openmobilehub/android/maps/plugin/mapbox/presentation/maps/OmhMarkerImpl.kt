@@ -50,6 +50,7 @@ import com.openmobilehub.android.maps.core.presentation.models.Constants as OmhC
 internal class OmhMarkerImpl(
     internal val markerUUID: UUID,
     internal val context: Context,
+    private val markerSymbolLayer: SymbolLayer,
     private var position: OmhCoordinate,
     initialTitle: String?,
     initialSnippet: String?,
@@ -68,8 +69,7 @@ internal class OmhMarkerImpl(
 ) : OmhMarker, ITouchInteractable {
 
     private lateinit var geoJsonSource: GeoJsonSource
-    private lateinit var markerSymbolLayer: SymbolLayer
-    private lateinit var safeStyle: Style
+    private lateinit var style: Style
     internal var omhInfoWindow: OmhInfoWindow
     private var isCustomIconSet: Boolean = false
     internal var iconWidth: Int = 0
@@ -93,10 +93,6 @@ internal class OmhMarkerImpl(
 
     fun setGeoJsonSource(geoJsonSource: GeoJsonSource) {
         this.geoJsonSource = geoJsonSource
-    }
-
-    fun setMarkerLayer(markerLayer: SymbolLayer) {
-        this.markerSymbolLayer = markerLayer
     }
 
     override fun getPosition(): OmhCoordinate {
@@ -205,36 +201,49 @@ internal class OmhMarkerImpl(
         omhInfoWindow.setInfoWindowAnchor(iwAnchorU, iwAnchorV)
     }
 
-    fun applyBufferedProperties(safeStyle: Style) {
-        check(!this::safeStyle.isInitialized) { "Buffered properties have already been applied" }
+    private fun addSourceAndLayerToStyle() {
+        this.style.addSource(geoJsonSource)
+        this.style.addLayer(markerSymbolLayer)
+    }
+
+    private fun applyBufferedProperties() {
+        setIcon(bufferedIcon)
+        setAlpha(bufferedAlpha)
+        setIsVisible(bufferedIsVisible)
+        setIsFlat(bufferedIsFlat)
+        setRotation(bufferedRotation)
+        setAnchor(bufferedAnchor.first, bufferedAnchor.second)
+        setBackgroundColor(backgroundColor)
+
+        // one call to updatePosition will happen in omhInfoWindow.applyBufferedProperties(),
+        // yet after buffered properties were applied, a re-invalidation is needed
+        omhInfoWindow.updatePosition()
+
+        // (possibly) clear some memory
+        bufferedIcon = null
+
+        omhInfoWindow.applyBufferedProperties()
+    }
+
+    private fun isStyleReady(): Boolean {
+        return this::style.isInitialized && this.style.isStyleLoaded()
+    }
+
+    fun onStyleLoaded(safeStyle: Style) {
+        check(!isStyleReady()) { "Buffered properties have already been applied" }
 
         synchronized(this) {
-            this.safeStyle = safeStyle
+            this.style = safeStyle
 
-            this.safeStyle.addSource(geoJsonSource)
-            this.safeStyle.addLayer(markerSymbolLayer)
+            addSourceAndLayerToStyle()
+            applyBufferedProperties()
 
-            omhInfoWindow.applyBufferedProperties(this.safeStyle)
-
-            setIcon(bufferedIcon)
-            setAlpha(bufferedAlpha)
-            setIsVisible(bufferedIsVisible)
-            setIsFlat(bufferedIsFlat)
-            setRotation(bufferedRotation)
-            setAnchor(bufferedAnchor.first, bufferedAnchor.second)
-            setBackgroundColor(backgroundColor)
-
-            // one call to updatePosition will happen in omhInfoWindow.applyBufferedProperties(),
-            // yet after buffered properties were applied, a re-invalidation is needed
-            omhInfoWindow.updatePosition()
-
-            // (possibly) clear some memory
-            bufferedIcon = null
+            omhInfoWindow.onStyleLoaded(safeStyle)
         }
     }
 
     override fun getAlpha(): Float {
-        return if (this::safeStyle.isInitialized) {
+        return if (isStyleReady()) {
             markerSymbolLayer.iconOpacity?.toFloat() ?: OmhConstants.DEFAULT_ALPHA
         } else {
             bufferedAlpha
@@ -242,7 +251,7 @@ internal class OmhMarkerImpl(
     }
 
     override fun setAlpha(alpha: Float) {
-        if (this::safeStyle.isInitialized) {
+        if (isStyleReady()) {
             markerSymbolLayer.iconOpacity(alpha.toDouble())
         } else {
             // if the layer was not added to the map yet, buffer the alpha value to apply it later
@@ -261,7 +270,7 @@ internal class OmhMarkerImpl(
     override fun setIcon(icon: Drawable?) {
         isCustomIconSet = icon != null
 
-        if (this::safeStyle.isInitialized) {
+        if (isStyleReady()) {
             val addedIconID = addOrUpdateMarkerIconImage(icon)
             // color the icon image using Mapbox's SDF implementation
             markerSymbolLayer.iconColor(Constants.DEFAULT_MARKER_COLOR)
@@ -273,7 +282,7 @@ internal class OmhMarkerImpl(
     }
 
     override fun getIsVisible(): Boolean {
-        return if (this::safeStyle.isInitialized) {
+        return if (isStyleReady()) {
             markerSymbolLayer.visibility == Visibility.VISIBLE
         } else {
             bufferedIsVisible
@@ -281,7 +290,7 @@ internal class OmhMarkerImpl(
     }
 
     override fun setIsVisible(visible: Boolean) {
-        if (this::safeStyle.isInitialized) {
+        if (isStyleReady()) {
             markerSymbolLayer.visibility(getIconsVisibility(visible))
         } else {
             // if the layer was not added to the map yet, buffer the icon value to apply it later
@@ -295,7 +304,7 @@ internal class OmhMarkerImpl(
     }
 
     override fun getIsFlat(): Boolean {
-        return if (this::safeStyle.isInitialized) {
+        return if (isStyleReady()) {
             markerSymbolLayer.iconPitchAlignment == IconPitchAlignment.MAP
         } else {
             bufferedIsFlat
@@ -303,7 +312,7 @@ internal class OmhMarkerImpl(
     }
 
     override fun setIsFlat(flat: Boolean) {
-        if (this::safeStyle.isInitialized) {
+        if (isStyleReady()) {
             markerSymbolLayer.iconPitchAlignment(getIconsPitchAlignment(flat))
             markerSymbolLayer.iconRotationAlignment(getIconsRotationAlignment(flat))
         } else {
@@ -313,7 +322,7 @@ internal class OmhMarkerImpl(
     }
 
     override fun getRotation(): Float {
-        return if (this::safeStyle.isInitialized) {
+        return if (isStyleReady()) {
             markerSymbolLayer.iconRotate?.toFloat() ?: OmhConstants.DEFAULT_ROTATION
         } else {
             bufferedRotation
@@ -321,7 +330,7 @@ internal class OmhMarkerImpl(
     }
 
     override fun setRotation(rotation: Float) {
-        if (this::safeStyle.isInitialized) {
+        if (isStyleReady()) {
             markerSymbolLayer.iconRotate(rotation.toDouble())
 
             omhInfoWindow.updatePosition()
@@ -360,16 +369,8 @@ internal class OmhMarkerImpl(
         return omhInfoWindow.getIsInfoWindowShown()
     }
 
-    internal fun getMarkerIconID(bForCustomIcon: Boolean): String {
+    private fun getMarkerIconID(bForCustomIcon: Boolean): String {
         return "$markerUUID-omh-marker-icon-${if (bForCustomIcon) "custom" else "default"}"
-    }
-
-    internal fun getGeoJsonSourceID(): String {
-        return "$markerUUID-omh-marker-geojson-source"
-    }
-
-    internal fun getSymbolLayerID(): String {
-        return "$markerUUID-omh-marker-layer"
     }
 
     private fun getDefaultIcon(): Drawable {
@@ -396,7 +397,7 @@ internal class OmhMarkerImpl(
         val markerImageID = getMarkerIconID(icon != null)
 
         // ensure the other icon is removed for memory optimization
-        safeStyle.removeStyleImage(getMarkerIconID(!isCustomIconSet))
+        style.removeStyleImage(getMarkerIconID(!isCustomIconSet))
 
         val bitmap = DrawableConverter.convertDrawableToBitmap(icon ?: getDefaultIcon())
 
@@ -405,7 +406,7 @@ internal class OmhMarkerImpl(
 
         omhInfoWindow.updatePosition() // iconWidth & iconHeight have an impact on the IW's position
 
-        val addImageResult = safeStyle.addImage(
+        val addImageResult = style.addImage(
             markerImageID,
             bitmap,
             icon === null // apply backgroundColor to the default image, only if icon is null
@@ -441,6 +442,14 @@ internal class OmhMarkerImpl(
             } else {
                 Visibility.NONE
             }
+        }
+
+        internal fun getSymbolLayerID(markerUUID: UUID): String {
+            return "$markerUUID-omh-marker-layer"
+        }
+
+        internal fun getGeoJsonSourceID(markerUUID: UUID): String {
+            return "$markerUUID-omh-marker-geojson-source"
         }
     }
 }

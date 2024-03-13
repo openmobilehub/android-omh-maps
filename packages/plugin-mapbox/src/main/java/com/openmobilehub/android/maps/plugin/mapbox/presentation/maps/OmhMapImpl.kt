@@ -73,7 +73,6 @@ import com.openmobilehub.android.maps.core.utils.ScreenUnitConverter
 import com.openmobilehub.android.maps.core.utils.logging.Logger
 import com.openmobilehub.android.maps.plugin.mapbox.extensions.plus
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IMapDragManagerDelegate
-import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IMapMarkerManagerDelegate
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IOmhInfoWindowMapViewDelegate
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.ITouchInteractable
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.PolylineDelegate
@@ -90,14 +89,13 @@ import com.openmobilehub.android.maps.plugin.mapbox.utils.uuid.UUIDGenerator
 @SuppressWarnings("TooManyFunctions")
 internal class OmhMapImpl(
     @SuppressWarnings("UnusedPrivateMember")
-    override val mapView: MapView,
+    private val mapView: MapView,
     private val context: Context,
     private val myLocationIcon: ImageView = MyLocationIcon(context),
     private val logger: Logger = commonLogger,
     private val uuidGenerator: UUIDGenerator = DefaultUUIDGenerator()
 ) : OmhMap,
     IMapDragManagerDelegate,
-    IMapMarkerManagerDelegate,
     IOmhInfoWindowMapViewDelegate,
     PolylineDelegate {
     /**
@@ -118,7 +116,7 @@ internal class OmhMapImpl(
 
     private val polylines = mutableMapOf<String, OmhPolyline>()
 
-    internal val mapMarkerManager = MapMarkerManager(this, this)
+    internal val mapMarkerManager = MapMarkerManager(mapView.context, this)
     private val mapTouchInteractionManager = MapTouchInteractionManager(this, mapMarkerManager)
 
     init {
@@ -138,7 +136,7 @@ internal class OmhMapImpl(
         mapView.mapboxMap.loadStyle(Style.STANDARD) { safeStyle ->
             synchronized(this) {
                 this.style = safeStyle
-                mapMarkerManager.addQueuedElementsToStyle(safeStyle)
+                mapMarkerManager.onStyleLoaded(safeStyle)
 
                 pendingMapElements.forEach { (source, layer) ->
                     safeStyle.addSource(source)
@@ -360,24 +358,38 @@ internal class OmhMapImpl(
         return hits
     }
 
-    override fun queryRenderedLayerIdAt(
+    /**
+     * Queries ID of the layer managed by the [MapMarkerManager] at the given screen
+     * coordinate [screenCoordinate] and returns the result through [callback].
+     *
+     * @param screenCoordinate The screen coordinate to query the layer ID at.
+     * @param callback The callback to return the layer ID through. Returns `true` if there was
+     * a hit (that does not necessarily have to end with the consummation of any event)
+     * or `false` otherwise. A `false` means that the hit was not used and
+     * the callback shall be called sequentially with other layer IDs found at the coordinates,
+     * unless a `true` is returned or there are no more layers. The callback's parameter is `null`
+     * if no layer has been found or a pair of: layer ID and layer type otherwise.
+     */
+    private fun queryRenderedLayerIdsAt(
         screenCoordinate: ScreenCoordinate,
-        callback: (layerId: String?) -> Boolean
+        callback: (layerInfo: Pair<String, String>?) -> Boolean
     ) {
         mapView.mapboxMap.queryRenderedFeatures(
             RenderedQueryGeometry(screenCoordinate),
             RenderedQueryOptions(
-                (mapMarkerManager.markers.keys union mapMarkerManager.infoWindows.keys).toList(),
+                null,
                 null
             )
         ) {
-            val layerIds = it.value?.getOrNull(0)?.layers
+            val hit = it.value?.getOrNull(0)
+            val layerIds = hit?.layers
+            val layerType = hit?.queriedFeature?.feature?.geometry()?.type()
 
-            if (layerIds === null) {
+            if (layerIds === null || layerType === null) {
                 callback(null)
             } else {
                 for (layerId in layerIds) {
-                    if (callback(layerId)) break
+                    if (callback(layerId to layerType)) break
                 }
             }
         }
@@ -386,9 +398,25 @@ internal class OmhMapImpl(
     @SuppressLint("ClickableViewAccessibility")
     private fun setupTouchInteractionListeners() {
         mapView.gestures.addOnMapClickListener { point ->
-            mapMarkerManager.handleMapClick(point) { eventConsumed ->
-                if (eventConsumed) mapTouchInteractionManager.resetDragState()
+            val screenCoordinate = mapView.mapboxMap.pixelForCoordinate(point)
+
+            queryRenderedLayerIdsAt(screenCoordinate) lambda@{ layerInfo ->
+                if (layerInfo === null) return@lambda false
+
+                val (layerId, layerType) = layerInfo
+
+                when (layerType) {
+                    Constants.MARKER_OR_INFO_WINDOW_LAYER_TYPE -> mapMarkerManager.maybeHandleClick(
+                        layerId
+                    ) { eventConsumed ->
+                        if (eventConsumed) mapTouchInteractionManager.resetDragState()
+                    }
+
+                    else -> false // Noop
+                }
             }
+
+            true
         }
 
         mapView.setOnTouchListener touchListener@{ _, event ->

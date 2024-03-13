@@ -58,7 +58,7 @@ internal class OmhInfoWindow(
     private val uuidGenerator: UUIDGenerator = DefaultUUIDGenerator(),
     private val mapViewDelegate: IOmhInfoWindowMapViewDelegate
 ) : ITouchInteractable {
-    private lateinit var safeStyle: Style
+    private lateinit var style: Style
     private lateinit var geoJsonSource: GeoJsonSource
     internal var infoWindowSymbolLayer: SymbolLayer
 
@@ -96,14 +96,10 @@ internal class OmhInfoWindow(
         this.geoJsonSource = geoJsonSource
     }
 
-    fun applyBufferedProperties(safeStyle: Style) {
-        check(!this::safeStyle.isInitialized) { "Buffered properties have already been applied" }
+    fun applyBufferedProperties() {
+        check(!this::style.isInitialized) { "Buffered properties have already been applied" }
 
         synchronized(this) {
-            this.safeStyle = safeStyle
-            this.safeStyle.addLayer(infoWindowSymbolLayer)
-            this.safeStyle.addSource(geoJsonSource)
-
             setInfoWindowAnchor(
                 bufferedInfoWindowAnchor.first,
                 bufferedInfoWindowAnchor.second
@@ -111,9 +107,29 @@ internal class OmhInfoWindow(
         }
     }
 
+    private fun isStyleReady(): Boolean {
+        return this::style.isInitialized && this.style.isStyleLoaded()
+    }
+
+    private fun addSourceAndLayerToStyle() {
+        this.style.addLayer(infoWindowSymbolLayer)
+        this.style.addSource(geoJsonSource)
+    }
+
+    fun onStyleLoaded(safeStyle: Style) {
+        check(!isStyleReady()) { "Buffered properties have already been applied" }
+
+        synchronized(this) {
+            this.style = safeStyle
+
+            addSourceAndLayerToStyle()
+            applyBufferedProperties()
+        }
+    }
+
     fun setInfoWindowVisibility(visible: Boolean) {
         val wasInfoWindowShown = getIsInfoWindowShown()
-        if (this::safeStyle.isInitialized) {
+        if (this::style.isInitialized) {
             infoWindowSymbolLayer.visibility(OmhMarkerImpl.getIconsVisibility(visible))
         } else {
             // if the layer was not added to the map yet, buffer the icon value to apply it later
@@ -138,7 +154,7 @@ internal class OmhInfoWindow(
     }
 
     fun getIsInfoWindowShown(): Boolean {
-        return if (this::safeStyle.isInitialized) {
+        return if (this::style.isInitialized) {
             infoWindowSymbolLayer.visibility == OmhMarkerImpl.getIconsVisibility(true)
         } else {
             bufferedInfoWindowIsVisible
@@ -175,7 +191,7 @@ internal class OmhInfoWindow(
     private fun getInfoWindowIconOffset(): Offset2D<Double> {
         // we want to mitigate the scaling-by-icon-size behaviour
         // described in the docs: https://docs.mapbox.com/android/maps/api/10.2.0/mapbox-maps-android/com.mapbox.maps.plugin.annotation.generated/-point-annotation/icon-offset.html
-        val iconSize = if (this::safeStyle.isInitialized) {
+        val iconSize = if (this::style.isInitialized) {
             infoWindowSymbolLayer.iconSize ?: SymbolLayer.defaultIconSize
         } else {
             null
@@ -195,10 +211,12 @@ internal class OmhInfoWindow(
         val markerPoint = CoordinateConverter.convertToPoint(omhMarker.getPosition())
         val screenCoordinate =
             mapViewDelegate.pixelForCoordinate(markerPoint) + omhMarker.getHandleTopOffset() + getHandleCenterOffset()
+
         Log.d(
             "OmhInfoWindow",
             "updatePosition: screenCoordinate: $screenCoordinate; rot: ${omhMarker.getRotation()}"
         )
+
         geoJsonSource.feature(
             Feature.fromGeometry(
                 mapViewDelegate.coordinateForPixel(
@@ -218,7 +236,7 @@ internal class OmhInfoWindow(
 
     @SuppressWarnings("MagicNumber")
     private fun invalidateInfoWindow() {
-        if (!this::safeStyle.isInitialized) return
+        if (!this::style.isInitialized) return
 
         backgroundThreadExecutor.execute {
             // this scope runs on a background thread
@@ -272,7 +290,7 @@ internal class OmhInfoWindow(
      */
     private fun removeCurrentStyleImage() {
         lastInfoWindowIconID?.let {
-            safeStyle.removeStyleImage(it)
+            style.removeStyleImage(it)
 
             lastInfoWindowIconID = null
         }
@@ -297,7 +315,7 @@ internal class OmhInfoWindow(
         iwBitmapWidth = bitmap.width
         iwBitmapHeight = bitmap.height
 
-        val addImageResult = safeStyle.addImage(
+        val addImageResult = style.addImage(
             infoWindowIconID,
             bitmap
         )

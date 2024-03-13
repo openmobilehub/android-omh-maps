@@ -16,8 +16,11 @@
 
 package com.openmobilehub.android.maps.plugin.mapbox.presentation.maps.managers
 
-import com.mapbox.geojson.Point
+import android.content.Context
+import com.mapbox.geojson.Feature
 import com.mapbox.maps.Style
+import com.mapbox.maps.extension.style.layers.generated.symbolLayer
+import com.mapbox.maps.extension.style.sources.generated.geoJsonSource
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhInfoWindowViewFactory
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMarker
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnInfoWindowClickListener
@@ -27,18 +30,19 @@ import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMar
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMarkerDragListener
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
-import com.openmobilehub.android.maps.plugin.mapbox.extensions.addOmhMarker
+import com.openmobilehub.android.maps.plugin.mapbox.extensions.applyMarkerOptions
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IMapInfoWindowManagerDelegate
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IMapLongClickManagerDelegate
-import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IMapMarkerManagerDelegate
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IOmhInfoWindowMapViewDelegate
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.ITouchInteractable
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.maps.OmhInfoWindow
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.maps.OmhMarkerImpl
+import com.openmobilehub.android.maps.plugin.mapbox.utils.CoordinateConverter
+import com.openmobilehub.android.maps.plugin.mapbox.utils.uuid.DefaultUUIDGenerator
 
 @SuppressWarnings("TooManyFunctions")
 internal class MapMarkerManager(
-    private val mapMarkerManagerDelegate: IMapMarkerManagerDelegate,
+    private val context: Context,
     private val infoWindowMapViewDelegate: IOmhInfoWindowMapViewDelegate,
 ) : IMapInfoWindowManagerDelegate, IMapLongClickManagerDelegate {
     private var markerClickListener: OmhOnMarkerClickListener? = null
@@ -54,29 +58,63 @@ internal class MapMarkerManager(
     }
 
     fun addMarker(options: OmhMarkerOptions, style: Style?): OmhMarkerImpl {
-        synchronized(this) {
-            val (omhMarker, _, layers) = options.addOmhMarker(
-                mapMarkerManagerDelegate.mapView.context,
-                infoWindowManagerDelegate = this,
-                infoWindowMapViewDelegate = infoWindowMapViewDelegate
-            )
-            val (markerIconLayer, infoWindowLayer) = layers
+        val uuidGenerator = DefaultUUIDGenerator()
+        val markerUUID = uuidGenerator.generate()
+        val markerGeoJsonSourceID = OmhMarkerImpl.getGeoJsonSourceID(markerUUID)
 
-            style?.let { safeStyle ->
-                omhMarker.applyBufferedProperties(safeStyle)
-            }
+        val pointOnMap = CoordinateConverter.convertToPoint(options.position)
 
-            markers[markerIconLayer.layerId] = omhMarker
-            infoWindows[infoWindowLayer.layerId] = omhMarker.omhInfoWindow
+        val markerLayer =
+            symbolLayer(OmhMarkerImpl.getSymbolLayerID(markerUUID), markerGeoJsonSourceID) {}
 
-            return omhMarker
+        options.applyMarkerOptions(markerLayer)
+
+        val omhMarker = OmhMarkerImpl(
+            markerUUID = markerUUID,
+            context = context,
+            markerSymbolLayer = markerLayer,
+            position = options.position,
+            initialTitle = options.title,
+            initialSnippet = options.snippet,
+            initialInfoWindowAnchor = options.infoWindowAnchor,
+            draggable = options.draggable,
+            clickable = options.clickable,
+            backgroundColor = options.backgroundColor,
+            initialIcon = options.icon,
+            bufferedAlpha = options.alpha,
+            bufferedIsVisible = options.isVisible,
+            bufferedAnchor = options.anchor,
+            bufferedIsFlat = options.isFlat,
+            bufferedRotation = options.rotation,
+            infoWindowManagerDelegate = this,
+            infoWindowMapViewDelegate = infoWindowMapViewDelegate
+        )
+
+        val markerGeoJsonSource = geoJsonSource(markerGeoJsonSourceID) {
+            feature(Feature.fromGeometry(pointOnMap))
         }
+        omhMarker.setGeoJsonSource(markerGeoJsonSource)
+
+        val infoWindowGeoJsonSourceID = omhMarker.omhInfoWindow.getGeoJsonSourceID()
+        val infoWindowGeoJsonSource = geoJsonSource(infoWindowGeoJsonSourceID) {
+            feature(Feature.fromGeometry(pointOnMap))
+        }
+        omhMarker.omhInfoWindow.setGeoJsonSource(infoWindowGeoJsonSource)
+
+        markers[markerLayer.layerId] = omhMarker
+        infoWindows[omhMarker.omhInfoWindow.getSymbolLayerID()] = omhMarker.omhInfoWindow
+
+        style?.let { safeStyle ->
+            omhMarker.onStyleLoaded(safeStyle)
+        }
+
+        return omhMarker
     }
 
-    fun addQueuedElementsToStyle(style: Style) {
+    fun onStyleLoaded(style: Style) {
         markers.values.forEach { omhMarker ->
             // re-apply the icons now, since they can be added to the map for real
-            omhMarker.applyBufferedProperties(style)
+            omhMarker.onStyleLoaded(style)
         }
     }
 
@@ -115,58 +153,53 @@ internal class MapMarkerManager(
         markerDragListener?.onMarkerDragEnd(omhMarker)
     }
 
-    fun handleMapClick(
-        point: Point,
+    @SuppressWarnings("ReturnCount")
+    fun maybeHandleClick(
+        layerId: String,
         eventConsumedCallback: (eventConsumed: Boolean) -> Unit
     ): Boolean {
-        val screenCoordinate = mapMarkerManagerDelegate.mapView.mapboxMap.pixelForCoordinate(point)
+        // try if a marker was hit
+        val omhMarker = markers[layerId]
 
-        mapMarkerManagerDelegate.queryRenderedLayerIdAt(screenCoordinate) { layerId ->
-            // try if a marker was hit
-            val omhMarker = markers[layerId]
-
-            if (omhMarker !== null && omhMarker.getClickable()) {
-                // note: here, markerClick returns a boolean informing whether the event
-                // was consumed by the handler, yet we swallow it instead of returning
-                // as this is a callback and there is no way to return in main scope here
-                // either way, this makes no difference, since Mapbox doesn't have a default
-                // behaviour in situation when false is returned; for safety, the outer function
-                // always returns true to inform that the event has been handled
-                // moreover, the real consumed result is passed back in a callback for side effects
-                eventConsumedCallback(
-                    markerClickListener?.onMarkerClick(omhMarker)?.let { eventConsumed ->
-                        if (!eventConsumed) {
-                            // to achieve feature parity with GoogleMaps, the info window should be opened on click
-                            if (!omhMarker.getIsInfoWindowShown()) {
-                                omhMarker.showInfoWindow()
-                            }
+        if (omhMarker !== null && omhMarker.getClickable()) {
+            // note: here, markerClick returns a boolean informing whether the event
+            // was consumed by the handler, yet we swallow it instead of returning
+            // as this is a callback and there is no way to return in main scope here
+            // either way, this makes no difference, since Mapbox doesn't have a default
+            // behaviour in situation when false is returned; for safety, the outer function
+            // always returns true to inform that the event has been handled
+            // moreover, the real consumed result is passed back in a callback for side effects
+            eventConsumedCallback(
+                markerClickListener?.onMarkerClick(omhMarker)?.let { eventConsumed ->
+                    if (!eventConsumed) {
+                        // to achieve feature parity with GoogleMaps, the info window should be opened on click
+                        if (!omhMarker.getIsInfoWindowShown()) {
+                            omhMarker.showInfoWindow()
                         }
+                    }
 
-                        eventConsumed
-                    } ?: false
-                )
-                return@queryRenderedLayerIdAt true // prevent further processing
-            }
-
-            // try if an info window was hit
-            val omhInfoWindow = infoWindows[layerId]
-
-            if (omhInfoWindow !== null && omhInfoWindow.getClickable()) {
-                eventConsumedCallback(
-                    infoWindowClickListener?.let {
-                        it.onInfoWindowClick(omhInfoWindow.omhMarker)
-                        true
-                    } ?: false
-                )
-                return@queryRenderedLayerIdAt true // prevent further processing
-            }
-
-            // reaching here means no hit, in which case we want the source to fire the callback
-            // with all remaining layer IDs (if any), unless there is a hit
-            return@queryRenderedLayerIdAt false
+                    eventConsumed
+                } ?: false
+            )
+            return true // prevent further processing
         }
 
-        return true
+        // try if an info window was hit
+        val omhInfoWindow = infoWindows[layerId]
+
+        if (omhInfoWindow !== null && omhInfoWindow.getClickable()) {
+            eventConsumedCallback(
+                infoWindowClickListener?.let {
+                    it.onInfoWindowClick(omhInfoWindow.omhMarker)
+                    true
+                } ?: false
+            )
+            return true // prevent further processing
+        }
+
+        // reaching here means no hit, in which case we want the source to fire the callback
+        // with all remaining layer IDs (if any), unless there is a hit
+        return false
     }
 
     override fun onInfoWindowClick(omhMarkerImpl: OmhMarkerImpl) {

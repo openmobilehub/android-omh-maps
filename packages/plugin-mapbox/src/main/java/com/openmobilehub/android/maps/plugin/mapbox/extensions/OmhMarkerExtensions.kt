@@ -16,92 +16,37 @@
 
 package com.openmobilehub.android.maps.plugin.mapbox.extensions
 
-import android.content.Context
-import com.mapbox.geojson.Feature
 import com.mapbox.maps.extension.style.layers.generated.SymbolLayer
-import com.mapbox.maps.extension.style.layers.generated.symbolLayer
-import com.mapbox.maps.extension.style.sources.generated.GeoJsonSource
-import com.mapbox.maps.extension.style.sources.generated.geoJsonSource
 import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
-import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IMapInfoWindowManagerDelegate
-import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IOmhInfoWindowMapViewDelegate
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.maps.OmhMarkerImpl
 import com.openmobilehub.android.maps.plugin.mapbox.utils.AnchorConverter
 import com.openmobilehub.android.maps.plugin.mapbox.utils.Constants
-import com.openmobilehub.android.maps.plugin.mapbox.utils.CoordinateConverter
-import com.openmobilehub.android.maps.plugin.mapbox.utils.uuid.DefaultUUIDGenerator
-import com.openmobilehub.android.maps.plugin.mapbox.utils.uuid.UUIDGenerator
 
-internal fun OmhMarkerOptions.addOmhMarker(
-    context: Context,
-    infoWindowManagerDelegate: IMapInfoWindowManagerDelegate,
-    infoWindowMapViewDelegate: IOmhInfoWindowMapViewDelegate,
-    uuidGenerator: UUIDGenerator = DefaultUUIDGenerator()
-): Triple<OmhMarkerImpl, Pair<GeoJsonSource, GeoJsonSource>, Pair<SymbolLayer, SymbolLayer>> {
-    val pointOnMap = CoordinateConverter.convertToPoint(position)
-    val omhMarker = OmhMarkerImpl(
-        markerUUID = uuidGenerator.generate(),
-        context = context,
-        position = position,
-        initialTitle = title,
-        initialSnippet = snippet,
-        initialInfoWindowAnchor = infoWindowAnchor,
-        draggable = draggable,
-        clickable = clickable,
-        backgroundColor = backgroundColor,
-        initialIcon = icon,
-        bufferedAlpha = alpha,
-        bufferedIsVisible = isVisible,
-        bufferedAnchor = anchor,
-        bufferedIsFlat = isFlat,
-        bufferedRotation = rotation,
-        infoWindowManagerDelegate = infoWindowManagerDelegate,
-        infoWindowMapViewDelegate = infoWindowMapViewDelegate
-    )
+internal fun OmhMarkerOptions.applyMarkerOptions(
+    markerSymbolLayer: SymbolLayer
+) {
+    // icon
+    // iconImage(markerImageID) will be handled by setIcon
+    markerSymbolLayer.iconSize(1.0) // icon scale
+    markerSymbolLayer.iconIgnorePlacement(true)
+    markerSymbolLayer.iconAllowOverlap(true)
 
-    val markerGeoJsonSourceID = omhMarker.getGeoJsonSourceID()
-    val markerGeoJsonSource = geoJsonSource(markerGeoJsonSourceID) {
-        feature(Feature.fromGeometry(pointOnMap))
-    }
-    omhMarker.setGeoJsonSource(markerGeoJsonSource)
+    // backgroundColor
+    markerSymbolLayer.iconColor(backgroundColor ?: Constants.DEFAULT_MARKER_COLOR)
 
-    val infoWindowGeoJsonSourceID = omhMarker.omhInfoWindow.getGeoJsonSourceID()
-    val infoWindowGeoJsonSource = geoJsonSource(infoWindowGeoJsonSourceID) {
-        feature(Feature.fromGeometry(pointOnMap))
-    }
-    omhMarker.omhInfoWindow.setGeoJsonSource(infoWindowGeoJsonSource)
+    // anchor
+    markerSymbolLayer.iconAnchor(AnchorConverter.convertContinuousToDiscreteIconAnchor(anchor))
 
-    val markerLayer = symbolLayer(omhMarker.getSymbolLayerID(), markerGeoJsonSourceID) {
-        // icon
-        // iconImage(markerImageID) will be handled by setIcon
-        iconSize(1.0) // icon scale
-        iconIgnorePlacement(true)
-        iconAllowOverlap(true)
+    // alpha
+    markerSymbolLayer.iconOpacity(alpha.toDouble())
 
-        // backgroundColor
-        iconColor(backgroundColor ?: Constants.DEFAULT_MARKER_COLOR)
+    // isVisible
+    markerSymbolLayer.visibility(OmhMarkerImpl.getIconsVisibility(isVisible))
 
-        // anchor
-        iconAnchor(AnchorConverter.convertContinuousToDiscreteIconAnchor(anchor))
+    // rotation
+    markerSymbolLayer.iconRotate(rotation.toDouble())
 
-        // alpha
-        iconOpacity(alpha.toDouble())
-
-        // isVisible
-        visibility(OmhMarkerImpl.getIconsVisibility(isVisible))
-
-        // rotation
-        iconRotate(rotation.toDouble())
-
-        // isFlat
-        iconPitchAlignment(OmhMarkerImpl.getIconsPitchAlignment(isFlat))
-        iconRotationAlignment(OmhMarkerImpl.getIconsRotationAlignment(isFlat))
-    }
-    omhMarker.setMarkerLayer(markerLayer)
-
-    return Triple(
-        omhMarker,
-        markerGeoJsonSource to infoWindowGeoJsonSource,
-        markerLayer to omhMarker.omhInfoWindow.infoWindowSymbolLayer
-    )
+    // isFlat
+    markerSymbolLayer.iconPitchAlignment(OmhMarkerImpl.getIconsPitchAlignment(isFlat))
+    markerSymbolLayer.iconRotationAlignment(OmhMarkerImpl.getIconsRotationAlignment(isFlat))
 }
