@@ -17,7 +17,6 @@
 package com.openmobilehub.android.maps.plugin.mapbox.utils
 
 import android.graphics.Color
-import com.mapbox.maps.extension.style.layers.properties.generated.LineCap
 
 internal object Constants {
     // Common
@@ -32,6 +31,10 @@ internal object Constants {
     const val MAPBOX_ICON_SIZE = 48
     const val MAPBOX_ICON_MARGIN = 8
 
-    val DEFAULT_LINE_CAP = LineCap.BUTT
-    val DEFAULT_POLYLINE_COLOR = Color.BLACK
+    // Map Style
+    const val DEFAULT_POLYGON_FILL_COLOR = Color.TRANSPARENT
+    const val DEFAULT_POLYGON_STROKE_COLOR = Color.BLACK
+
+    // Map Elements
+    const val LineString = "LineString"
 }

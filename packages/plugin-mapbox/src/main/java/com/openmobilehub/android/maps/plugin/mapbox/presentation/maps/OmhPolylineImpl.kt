@@ -25,7 +25,6 @@ import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhStyle
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
 import com.openmobilehub.android.maps.plugin.mapbox.utils.CapConverter
-import com.openmobilehub.android.maps.plugin.mapbox.utils.Constants
 import com.openmobilehub.android.maps.plugin.mapbox.utils.JoinTypeConverter
 import com.openmobilehub.android.maps.plugin.mapbox.utils.polylineLogger
 
@@ -55,8 +54,8 @@ internal class OmhPolylineImpl(
         this.clickable = clickable
     }
 
-    override fun getColor(): Int {
-        return lineLayer.lineColorAsColorInt ?: Constants.DEFAULT_POLYLINE_COLOR
+    override fun getColor(): Int? {
+        return lineLayer.lineColorAsColorInt
     }
 
     override fun setColor(color: Int) {

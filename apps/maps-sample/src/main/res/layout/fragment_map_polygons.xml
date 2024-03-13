@@ -35,6 +35,12 @@
             android:orientation="vertical"
             android:padding="16dp">
 
+            <Button
+                android:id="@+id/button_randomizeOutline"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/randomize_outline" />
+
             <CheckBox
                 android:id="@+id/checkBox_isVisible"
                 android:layout_width="match_parent"

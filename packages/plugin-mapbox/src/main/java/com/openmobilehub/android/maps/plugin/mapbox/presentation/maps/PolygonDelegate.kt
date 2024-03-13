@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package com.openmobilehub.android.maps.plugin.mapbox.utils
+package com.openmobilehub.android.maps.plugin.mapbox.presentation.maps
 
-import com.openmobilehub.android.maps.core.utils.logging.Logger
-import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
+import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 
-val commonLogger = Logger(Constants.PROVIDER_NAME)
-val polylineLogger = UnsupportedFeatureLogger(Constants.PROVIDER_NAME, "OmhPolyline")
-val polygonLogger = UnsupportedFeatureLogger(Constants.PROVIDER_NAME, "OmhPolygon")
+interface PolygonDelegate {
+    fun updatePolygonSource(sourceId: String, outline: List<OmhCoordinate>, holes: List<List<OmhCoordinate>>?)
+}

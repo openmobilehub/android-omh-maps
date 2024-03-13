@@ -10,14 +10,10 @@ object DebugPolygonHelper {
     fun addDebugPolygon(omhMap: OmhMap): OmhPolygon? {
         val polygonOptions = OmhPolygonOptions().apply {
             outline = listOf(
-                OmhCoordinate(-25.0, -15.0),
-                OmhCoordinate(-25.0, 20.0),
-                OmhCoordinate(-20.0, 20.0),
-                OmhCoordinate(-15.0, 15.0),
-                OmhCoordinate(10.0, 15.0),
-                OmhCoordinate(20.0, 10.0),
-                OmhCoordinate(20.0, -5.0),
-                OmhCoordinate(5.0, -15.0),
+                OmhCoordinate(27.5, -27.5),
+                OmhCoordinate(27.5, 27.5),
+                OmhCoordinate(-27.5, 27.5),
+                OmhCoordinate(-27.5, -27.5),
             )
         }
 
@@ -30,9 +26,9 @@ object DebugPolygonHelper {
     fun addReferencePolygon(omhMap: OmhMap): OmhPolygon? {
         val polygonOptions = OmhPolygonOptions().apply {
             outline = listOf(
-                OmhCoordinate(-23.0, 19.5),
-                OmhCoordinate(-27.0, 21.5),
-                OmhCoordinate(-27.0, 17.5),
+                OmhCoordinate(-20.0, 25.0),
+                OmhCoordinate(-30.0, 20.0),
+                OmhCoordinate(-30.0, 30.0),
             )
             strokeColor = Color.DKGRAY
             fillColor = Color.LTGRAY
@@ -44,5 +40,22 @@ object DebugPolygonHelper {
         polygon?.setTag("Reference Polygon pressed")
 
         return polygon
+    }
+
+    private fun getRandomizedValue(): Double {
+        return (20..40).random().toDouble()
+    }
+
+    private fun getNegativeRandomizedValue(): Double {
+        return (-40..-20).random().toDouble()
+    }
+
+    fun getRandomizedOutlinePoints(): List<OmhCoordinate> {
+        val point1 = OmhCoordinate(getRandomizedValue(), getNegativeRandomizedValue())
+        val point2 = OmhCoordinate(getRandomizedValue(), getRandomizedValue())
+        val point3 = OmhCoordinate(getNegativeRandomizedValue(), getRandomizedValue())
+        val point4 = OmhCoordinate(getNegativeRandomizedValue(), getNegativeRandomizedValue())
+
+        return listOf(point1, point2, point3, point4)
     }
 }

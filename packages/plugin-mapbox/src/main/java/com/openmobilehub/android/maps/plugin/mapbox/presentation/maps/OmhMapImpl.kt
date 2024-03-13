@@ -66,6 +66,7 @@ import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolygonOptions
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolylineOptions
 import com.openmobilehub.android.maps.core.utils.logging.Logger
+import com.openmobilehub.android.maps.plugin.mapbox.presentation.maps.managers.PolygonManager
 import com.openmobilehub.android.maps.plugin.mapbox.utils.Constants
 import com.openmobilehub.android.maps.plugin.mapbox.utils.CoordinateConverter
 import com.openmobilehub.android.maps.plugin.mapbox.utils.DimensionConverter
@@ -74,12 +75,13 @@ import com.openmobilehub.android.maps.plugin.mapbox.utils.commonLogger
 import com.openmobilehub.android.maps.plugin.mapbox.utils.uuid.DefaultUUIDGenerator
 import com.openmobilehub.android.maps.plugin.mapbox.utils.uuid.UUIDGenerator
 
-@SuppressWarnings("TooManyFunctions")
+@SuppressWarnings("TooManyFunctions", "LongParameterList")
 internal class OmhMapImpl(
-    @SuppressWarnings("UnusedPrivateMember")
     private val mapView: MapView,
     private val context: Context,
     private val myLocationIcon: ImageView = MyLocationIcon(context),
+    private var scaleFactor: Float = 1.0f,
+    private val polygonManager: PolygonManager = PolygonManager(mapView, scaleFactor),
     private val logger: Logger = commonLogger,
     private val uuidGenerator: UUIDGenerator = DefaultUUIDGenerator()
 ) : OmhMap, PolylineDelegate {
@@ -90,14 +92,12 @@ internal class OmhMapImpl(
 
     private var isMyLocationIconAdded = false
 
-    private var scaleFactor = 1.0f
-
     private var style: Style? = null
 
     private var onMyLocationButtonClickListener: OmhOnMyLocationButtonClickListener? = null
     private var polylineClickListener: OmhOnPolylineClickListener? = null
 
-    private val pendingMapElements = mutableListOf<Pair<GeoJsonSource, Layer>>()
+    private val pendingMapElements = mutableListOf<Pair<GeoJsonSource, List<Layer>>>()
 
     private val polylines = mutableMapOf<String, OmhPolyline>()
 
@@ -110,9 +110,11 @@ internal class OmhMapImpl(
         mapView.mapboxMap.loadStyle(Style.STANDARD) { safeStyle ->
             this.style = safeStyle
 
-            pendingMapElements.forEach { (source, layer) ->
+            polygonManager.onStyleLoaded(safeStyle)
+
+            pendingMapElements.forEach { (source, layers) ->
                 safeStyle.addSource(source)
-                safeStyle.addLayer(layer)
+                layers.forEach { layer -> safeStyle.addLayer(layer) }
             }
         }
     }
@@ -154,14 +156,13 @@ internal class OmhMapImpl(
         style?.let { safeStyle ->
             safeStyle.addSource(source)
             safeStyle.addLayer(layer)
-        } ?: pendingMapElements.add(Pair(source, layer))
+        } ?: pendingMapElements.add(Pair(source, listOf(layer)))
 
         return omhPolyline
     }
 
     override fun addPolygon(options: OmhPolygonOptions): OmhPolygon? {
-        // To be implemented
-        return null
+        return polygonManager.addPolygon(options, style)
     }
 
     override fun getCameraPositionCoordinate(): OmhCoordinate {
@@ -282,17 +283,23 @@ internal class OmhMapImpl(
                 RenderedQueryGeometry(screenCoordinate),
                 RenderedQueryOptions(null, null)
             ) {
-                val layerId = try {
-                    it.value?.get(0)?.layers?.get(0)
-                } catch (e: Exception) {
-                    logger.logInfo("No layer found at the clicked point. Exception: $e")
-                    null
+                val result = it.value?.getOrNull(0)
+
+                val layerId = result?.layers?.getOrNull(0)
+                val type = result?.queriedFeature?.feature?.geometry()?.type()
+
+                if (layerId === null || type === null) {
+                    return@queryRenderedFeatures
                 }
 
-                val omhPolyline = polylines[layerId]
+                polygonManager.maybeHandleClick(type, layerId)
 
-                if (omhPolyline !== null && omhPolyline.getClickable()) {
-                    polylineClickListener?.onPolylineClick(omhPolyline)
+                if (type === Constants.LineString) {
+                    val omhPolyline = polylines[layerId]
+
+                    if (omhPolyline !== null && omhPolyline.getClickable()) {
+                        polylineClickListener?.onPolylineClick(omhPolyline)
+                    }
                 }
             }
             true
@@ -300,7 +307,8 @@ internal class OmhMapImpl(
     }
 
     override fun setOnPolygonClickListener(listener: OmhOnPolygonClickListener) {
-        // To be implemented
+        polygonManager.clickListener = listener
+        setupClickListeners()
     }
 
     override fun setMapStyle(json: Int?) {
