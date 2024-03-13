@@ -69,6 +69,7 @@ import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolygonOptions
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolylineOptions
+import com.openmobilehub.android.maps.core.utils.ScreenUnitConverter
 import com.openmobilehub.android.maps.core.utils.logging.Logger
 import com.openmobilehub.android.maps.plugin.mapbox.extensions.plus
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IMapDragManagerDelegate
@@ -80,7 +81,6 @@ import com.openmobilehub.android.maps.plugin.mapbox.presentation.maps.managers.M
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.maps.managers.MapTouchInteractionManager
 import com.openmobilehub.android.maps.plugin.mapbox.utils.Constants
 import com.openmobilehub.android.maps.plugin.mapbox.utils.CoordinateConverter
-import com.openmobilehub.android.maps.plugin.mapbox.utils.DimensionConverter
 import com.openmobilehub.android.maps.plugin.mapbox.utils.JSONUtil
 import com.openmobilehub.android.maps.plugin.mapbox.utils.cartesian.BoundingBox2D
 import com.openmobilehub.android.maps.plugin.mapbox.utils.commonLogger
@@ -495,7 +495,7 @@ internal class OmhMapImpl(
     private fun setupMapViewUIControls() {
         // To have parity with Google Maps
         val iconMargin =
-            DimensionConverter.pxFromDp(context, Constants.MAPBOX_ICON_MARGIN).toFloat()
+            ScreenUnitConverter.dpToPx(Constants.MAPBOX_ICON_MARGIN.toFloat(), context)
         mapView.compass.marginLeft = iconMargin
         mapView.compass.marginTop = iconMargin
         mapView.compass.position = Gravity.TOP or Gravity.START
