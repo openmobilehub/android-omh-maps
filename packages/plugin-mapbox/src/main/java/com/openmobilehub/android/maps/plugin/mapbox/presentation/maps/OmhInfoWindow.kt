@@ -58,22 +58,22 @@ internal class OmhInfoWindow(
     private val uuidGenerator: UUIDGenerator = DefaultUUIDGenerator(),
     private val mapViewDelegate: IOmhInfoWindowMapViewDelegate
 ) : ITouchInteractable {
-    internal lateinit var safeStyle: Style
+    private lateinit var safeStyle: Style
     private lateinit var geoJsonSource: GeoJsonSource
     internal var infoWindowSymbolLayer: SymbolLayer
 
     private var bufferedInfoWindowIsVisible: Boolean = false
     internal var bufferedInfoWindowAnchor: Pair<Float, Float>
 
-    internal var customInfoWindowViewFactory: OmhInfoWindowViewFactory? = null
-    internal var infoWindowContentsViewFactory: OmhInfoWindowViewFactory? = null
+    private var customInfoWindowViewFactory: OmhInfoWindowViewFactory? = null
+    private var infoWindowContentsViewFactory: OmhInfoWindowViewFactory? = null
 
     internal var lastInfoWindowIconID: String? = null
     internal var iwBitmapWidth: Int = 0
     internal var iwBitmapHeight: Int = 0
 
     /** Executor used for rendering views that won't be mounted in the UI, but rendered to a [Bitmap] */
-    private val backgroundThreadExecutor = Executors.newSingleThreadExecutor()
+    internal var backgroundThreadExecutor = Executors.newSingleThreadExecutor()
 
     /** Handler used to post tasks to the main (UI) thread */
     private val mainThreadHandler = Handler(Looper.getMainLooper())
@@ -285,7 +285,7 @@ internal class OmhInfoWindow(
      *
      * @return the ID of the added or updated info window icon image
      */
-    private fun addOrUpdateMarkerIconImage(
+    internal fun addOrUpdateMarkerIconImage(
         bitmap: Bitmap
     ): String {
         // ensure the other icon is removed before change so as not to cause a memory leak
@@ -364,7 +364,7 @@ internal class OmhInfoWindow(
         return windowLinearLayout
     }
 
-    internal fun generateInfoWindowIconID(): String {
+    private fun generateInfoWindowIconID(): String {
         // the random UUID suffix below is to cause an invalidation of the map
         // when the info window is re-rendered (invalidated)
         return "${omhMarker.markerUUID}-omh-marker-icon-info-window-${uuidGenerator.generate()}"

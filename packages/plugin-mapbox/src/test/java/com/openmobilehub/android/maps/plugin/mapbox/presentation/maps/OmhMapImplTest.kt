@@ -27,6 +27,7 @@ import com.mapbox.maps.Style
 import com.mapbox.maps.extension.style.sources.generated.GeoJsonSource
 import com.mapbox.maps.extension.style.sources.getSource
 import com.mapbox.maps.plugin.Plugin
+import com.mapbox.maps.plugin.animation.CameraAnimationsPlugin
 import com.mapbox.maps.plugin.annotation.AnnotationPlugin
 import com.mapbox.maps.plugin.annotation.AnnotationType
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationManager
@@ -79,6 +80,7 @@ class OmhMapImplTest {
     private val compassPlugin = mockk<CompassPlugin>(relaxed = true)
     private val viewportPlugin = mockk<ViewportPlugin>(relaxed = true)
     private val annotationPlugin = mockk<AnnotationPlugin>(relaxed = true)
+    private val cameraAnimationsPlugin = mockk<CameraAnimationsPlugin>(relaxed = true)
     private val pointAnnotationManager = mockk<PointAnnotationManager>(relaxed = true)
     private val context = mockk<Context>(relaxed = true)
     private val myLocationIcon = mockk<MyLocationIcon>(relaxed = true)
@@ -227,6 +229,7 @@ class OmhMapImplTest {
         every { map.getPlugin<ScaleBarPlugin>(Plugin.MAPBOX_SCALEBAR_PLUGIN_ID) } returns scaleBarPlugin
         every { map.getPlugin<CompassPlugin>(Plugin.MAPBOX_COMPASS_PLUGIN_ID) } returns compassPlugin
         every { map.getPlugin<ViewportPlugin>(Plugin.MAPBOX_VIEWPORT_PLUGIN_ID) } returns viewportPlugin
+        every { map.getPlugin<CameraAnimationsPlugin>(Plugin.MAPBOX_CAMERA_PLUGIN_ID) } returns cameraAnimationsPlugin
         every {
             annotationPlugin.createAnnotationManager(
                 AnnotationType.PointAnnotation,

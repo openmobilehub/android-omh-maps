@@ -21,6 +21,7 @@ import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.util.DisplayMetrics
+import android.view.LayoutInflater
 import androidx.core.content.res.ResourcesCompat
 import com.mapbox.bindgen.Expected
 import com.mapbox.bindgen.None
@@ -45,15 +46,16 @@ import io.mockk.mockkObject
 import io.mockk.mockkStatic
 import io.mockk.slot
 import io.mockk.verify
-import org.junit.Assert
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import org.junit.runners.Parameterized.Parameters
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 
 @RunWith(Parameterized::class)
 internal class OmhMarkerExtensionsTest(
@@ -65,6 +67,7 @@ internal class OmhMarkerExtensionsTest(
     private val safeStyle = mockk<Style>(relaxed = true)
     private val defaultMarkerIconDrawable = mockk<Drawable>()
     private val convertDrawableToBitmapMock = mockk<Bitmap>()
+    private lateinit var mockedViewDrawnToBitmap: Bitmap
 
     companion object {
         private val omhCoordinate = OmhCoordinate(16.9, 166.0)
@@ -118,6 +121,7 @@ internal class OmhMarkerExtensionsTest(
         val mockAddImageResult = mockk<Expected<String, None>>(relaxed = true)
         every { mockAddImageResult.error } returns null
         every { safeStyle.addImage(any(), any<Bitmap>(), any()) } returns mockAddImageResult
+        every { safeStyle.addImage(any(), any<Bitmap>()) } returns mockAddImageResult
         every { convertDrawableToBitmapMock.width } returns 80
         every { convertDrawableToBitmapMock.height } returns 80
 
@@ -125,6 +129,13 @@ internal class OmhMarkerExtensionsTest(
             this.density = 3f
         }
         every { context.resources.displayMetrics } returns displayMetrics
+
+        mockedViewDrawnToBitmap = mockk<Bitmap>(relaxed = true)
+        every { mockedViewDrawnToBitmap.width } returns 80
+        every { mockedViewDrawnToBitmap.height } returns 80
+
+        mockkStatic(LayoutInflater::class)
+        mockkStatic(Executors::class) // for mocking the executor handling View.drawToBitmap(...)
     }
 
     @Test
@@ -309,6 +320,20 @@ internal class OmhMarkerExtensionsTest(
         )
         var (markerGeoJsonSource, infoWindowGeoJsonSource) = sources
 
+        every { Executors.newSingleThreadExecutor() } answers {
+            val executor = mockk<ExecutorService>(relaxed = true)
+
+            every { executor.execute(any()) } answers {
+                val infoWindowIconID =
+                    omhMarker.omhInfoWindow.addOrUpdateMarkerIconImage(mockedViewDrawnToBitmap)
+                omhMarker.omhInfoWindow.infoWindowSymbolLayer.iconImage(infoWindowIconID)
+
+                omhMarker.omhInfoWindow.updatePosition()
+            }
+
+            executor
+        }
+
         // assert property values
         assertEquals(
             data.infoWindowAnchor,
@@ -378,38 +403,29 @@ internal class OmhMarkerExtensionsTest(
         // make sure the IW is invalidated after changing visibility
         val previousIWImageID = omhMarker.omhInfoWindow.lastInfoWindowIconID
         omhMarker.omhInfoWindow.setInfoWindowVisibility(true)
-        Assert.assertNotEquals(previousIWImageID, omhMarker.omhInfoWindow.lastInfoWindowIconID)
+        assertNotEquals(previousIWImageID, omhMarker.omhInfoWindow.lastInfoWindowIconID)
+        assertNotNull(omhMarker.omhInfoWindow.lastInfoWindowIconID)
+        assertEquals(mockedViewDrawnToBitmap.width, omhMarker.omhInfoWindow.iwBitmapWidth)
+        assertEquals(mockedViewDrawnToBitmap.height, omhMarker.omhInfoWindow.iwBitmapHeight)
 
         // here we check if IW properties are valid & set properly on the layer after map style is loaded
         verify {
             infoWindowLayer.iconImage(omhMarker.omhInfoWindow.lastInfoWindowIconID!!)
             infoWindowLayer.iconSize(1.0)
             infoWindowLayer.iconImage(any<String>())
-            infoWindowLayer.iconAnchor(IconAnchor.BOTTOM)
+            infoWindowLayer.iconAnchor(IconAnchor.CENTER)
             infoWindowLayer.iconAllowOverlap(true)
             infoWindowLayer.iconIgnorePlacement(true)
             infoWindowLayer.visibility(Visibility.NONE)
         }
 
-        // check if the icon image is loaded or unloaded based on IW state
-        if (omhMarker.omhInfoWindow.getIsInfoWindowShown()) {
-            assertNotNull(omhMarker.omhInfoWindow.lastInfoWindowIconID)
-        } else {
-            assertNull(omhMarker.omhInfoWindow.lastInfoWindowIconID)
-        }
-
         // ensure both source & symbol layers were added to map via the style
-        val capturedSource = slot<GeoJsonSource>()
-        val capturedLayer = slot<SymbolLayer>()
-        every { safeStyle.addSource(capture(capturedSource)) } answers {}
-        every { safeStyle.addLayer(capture(capturedLayer)) } answers {}
-
         verify {
-            safeStyle.addImage(
-                omhMarker.omhInfoWindow.lastInfoWindowIconID!!,
-                any<Bitmap>(),
-                any()
-            )
+            safeStyle.addSource(markerGeoJsonSource)
+            safeStyle.addSource(infoWindowGeoJsonSource)
+
+            safeStyle.addLayer(markerIconLayer)
+            safeStyle.addLayer(infoWindowLayer)
         }
     }
 }
