@@ -34,4 +34,7 @@ internal object Constants {
     // Map Style
     const val DEFAULT_POLYGON_FILL_COLOR = Color.TRANSPARENT
     const val DEFAULT_POLYGON_STROKE_COLOR = Color.BLACK
+
+    // Map Elements
+    const val LineString = "LineString"
 }

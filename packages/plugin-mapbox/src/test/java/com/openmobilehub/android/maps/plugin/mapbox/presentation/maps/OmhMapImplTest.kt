@@ -505,7 +505,7 @@ class OmhMapImplTest {
         val onMapClickListenerSlot = slot<OnMapClickListener>()
         every { map.gestures.addOnMapClickListener(capture(onMapClickListenerSlot)) } just runs
 
-        mockQueryRenderedFeatures("polyline-$DEFAULT_UUID", "LineString")
+        mockQueryRenderedFeatures("polyline-$DEFAULT_UUID", Constants.LineString)
         mockPixelForCoordinate()
 
         // Act
@@ -526,7 +526,7 @@ class OmhMapImplTest {
         val onMapClickListenerSlot = slot<OnMapClickListener>()
         every { map.gestures.addOnMapClickListener(capture(onMapClickListenerSlot)) } just runs
 
-        mockQueryRenderedFeatures("polyline-$DEFAULT_UUID", "LineString")
+        mockQueryRenderedFeatures("polyline-$DEFAULT_UUID", Constants.LineString)
         mockPixelForCoordinate()
 
         // Act

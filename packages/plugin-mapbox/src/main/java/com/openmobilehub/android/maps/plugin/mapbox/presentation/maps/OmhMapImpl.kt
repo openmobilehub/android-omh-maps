@@ -294,7 +294,7 @@ internal class OmhMapImpl(
 
                 polygonManager.maybeHandleClick(type, layerId)
 
-                if (type === "LineString") {
+                if (type === Constants.LineString) {
                     val omhPolyline = polylines[layerId]
 
                     if (omhPolyline !== null && omhPolyline.getClickable()) {
