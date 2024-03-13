@@ -55,11 +55,11 @@ This plugin provides support for Mapbox by utilizing the [Mapbox Android SDK](ht
 | setOnCameraMoveStartedListener          |     🟨     |
 | setOnCameraIdleListener                 |     ✅     |
 | setOnMapLoadedCallback                  |     ✅     |
-| setOnMarkerClickListener                |     ?      |
-| setOnMarkerDragListener                 |     ?      |
-| setOnInfoWindowOpenStatusChangeListener |     ?      |
-| setOnInfoWindowClickListener            |     ?      |
-| setOnInfoWindowLongClickListener        |     ?      |
+| setOnMarkerClickListener                |     ✅     |
+| setOnMarkerDragListener                 |     ✅     |
+| setOnInfoWindowOpenStatusChangeListener |     ✅     |
+| setOnInfoWindowClickListener            |     ✅     |
+| setOnInfoWindowLongClickListener        |     ✅     |
 | setOnPolylineClickListener              |     ✅     |
 | setOnPolygonClickListener               |     ?      |
 | snapshot                                |     ✅     |
@@ -81,14 +81,14 @@ Comments for partially supported 🟨 properties:
 | title            |      ✅       |
 | draggable        |      ✅       |
 | anchor           |      🟨       |
-| infoWindowAnchor |       ?       |
-| alpha            |       ?       |
-| snippet          |       ?       |
-| isVisible        |       ?       |
-| isFlat           |       ?       |
-| rotation         |       ?       |
-| backgroundColor  |       ?       |
-| clickable        |       ?       |
+| infoWindowAnchor |      ✅       |
+| alpha            |      ✅       |
+| snippet          |      ✅       |
+| isVisible        |      ✅       |
+| isFlat           |      ✅       |
+| rotation         |      ✅       |
+| backgroundColor  |      ✅       |
+| clickable        |      ✅       |
 
 Comments for partially supported 🟨 properties:
 
@@ -100,44 +100,38 @@ Comments for partially supported 🟨 properties:
 
 | Method               | Support level |
 | -------------------- | :-----------: |
-| getPosition          |       ?       |
-| setPosition          |       ?       |
-| getTitle             |       ?       |
-| setTitle             |       ?       |
-| getClickable         |       ?       |
-| setClickable         |       ?       |
-| getDraggable         |       ?       |
-| setDraggable         |       ?       |
-| setAnchor            |       ?       |
-| setInfoWindowAnchor  |       ?       |
-| getAlpha             |       ?       |
-| setAlpha             |       ?       |
-| getSnippet           |       ?       |
-| setSnippet           |       ?       |
-| setIcon              |       ?       |
-| getIsVisible         |       ?       |
-| setIsVisible         |       ?       |
-| getIsFlat            |       ?       |
-| setIsFlat            |       ?       |
-| getRotation          |       ?       |
-| setRotation          |       ?       |
-| getBackgroundColor   |       ?       |
-| setBackgroundColor   |       ?       |
-| showInfoWindow       |       ?       |
-| hideInfoWindow       |       ?       |
-| getIsInfoWindowShown |       ?       |
-
-<<<<<<< HEAD
+| getPosition          |      ✅       |
+| setPosition          |      ✅       |
+| getTitle             |      ✅       |
+| setTitle             |      ✅       |
+| getClickable         |      ✅       |
+| setClickable         |      ✅       |
+| getDraggable         |      ✅       |
+| setDraggable         |      ✅       |
+| setAnchor            |      🟨       |
+| setInfoWindowAnchor  |      ✅       |
+| getAlpha             |      ✅       |
+| setAlpha             |      ✅       |
+| getSnippet           |      ✅       |
+| setSnippet           |      ✅       |
+| setIcon              |      ✅       |
+| getIsVisible         |      ✅       |
+| setIsVisible         |      ✅       |
+| getIsFlat            |      ✅       |
+| setIsFlat            |      ✅       |
+| getRotation          |      ✅       |
+| setRotation          |      ✅       |
+| getBackgroundColor   |      ✅       |
+| setBackgroundColor   |      ✅       |
+| showInfoWindow       |      ✅       |
+| hideInfoWindow       |      ✅       |
+| getIsInfoWindowShown |      ✅       |
 
 Comments for partially supported 🟨 properties:
 
-| Property | Comments |
-| -------- | -------- |
-|          |          |
-
-=======
-
-> > > > > > > main
+| Property | Comments                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| anchor   | Mapbox provider only supports [enumerated (discrete) values](https://docs.mapbox.com/android/maps/api/10.0.0/mapbox-maps-android/com.mapbox.maps.extension.style.layers.properties.generated/-icon-anchor/), opposed to continuous (`Float`) values in OMH; this property is mapped for each axis such that ranges: <br/>&bull; `<0; 0.25>` is mapped to left or top <br/>&bull; `<0.75; 0.1>` is mapped to right or bottom <br/>&bull; `(0.25; 0.75)` is mapped to center <br/> Also taking into account combinations, e.g. `Pair(0.1f, 0.9f)` would be mapped to `BOTTOM_LEFT` |
 
 ### Polyline
 
