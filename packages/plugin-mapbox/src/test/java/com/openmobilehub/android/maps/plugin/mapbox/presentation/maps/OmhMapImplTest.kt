@@ -19,6 +19,7 @@ import com.mapbox.maps.MapLoadedCallback
 import com.mapbox.maps.MapView
 import com.mapbox.maps.MapboxMap
 import com.mapbox.maps.MapboxStyleManager
+import com.mapbox.maps.QueriedFeature
 import com.mapbox.maps.QueriedRenderedFeature
 import com.mapbox.maps.QueryRenderedFeaturesCallback
 import com.mapbox.maps.RenderedQueryGeometry
@@ -174,38 +175,49 @@ class OmhMapImplTest {
             val mockedExpectedArg = mockk<Expected<String, List<QueriedRenderedFeature>>>()
             val mockedRenderedFeature = mockk<QueriedRenderedFeature>()
 
-            every { mockedRenderedFeature.layers } answers {
-                val interactableEntity =
-                    omhMapImpl.findInteractableEntities(
-                        renderedQueryGeometry.screenCoordinate
-                    ) { predicate ->
-                        var ok = true
+            val interactableEntity =
+                omhMapImpl.findInteractableEntities(
+                    renderedQueryGeometry.screenCoordinate
+                ) { predicate ->
+                    var ok = true
 
-                        if (filterClickable) {
-                            ok = ok && predicate.getClickable()
-                        }
+                    if (filterClickable) {
+                        ok = ok && predicate.getClickable()
+                    }
 
-                        if (filterDraggable) {
-                            ok = ok && predicate.getDraggable()
-                        }
+                    if (filterDraggable) {
+                        ok = ok && predicate.getDraggable()
+                    }
 
-                        if (filterLongClickable) {
-                            ok = ok && predicate.getLongClickable()
-                        }
+                    if (filterLongClickable) {
+                        ok = ok && predicate.getLongClickable()
+                    }
 
-                        ok
-                    }.getOrNull(0)
+                    ok
+                }.getOrNull(0)
 
-                when (interactableEntity) {
-                    is OmhMarkerImpl -> listOf<String?>(
-                        OmhMarkerImpl.getSymbolLayerID(
-                            interactableEntity.markerUUID
-                        )
+            val (layers, layerType) = when (interactableEntity) {
+                is OmhMarkerImpl -> listOf<String?>(
+                    OmhMarkerImpl.getSymbolLayerID(
+                        interactableEntity.markerUUID
                     )
+                ) to Constants.MARKER_OR_INFO_WINDOW_LAYER_TYPE
 
-                    is OmhInfoWindow -> listOf<String?>(interactableEntity.getSymbolLayerID())
-                    else -> listOf<String?>()
-                }
+                is OmhInfoWindow -> Pair(
+                    listOf<String?>(interactableEntity.getSymbolLayerID()),
+                    Constants.MARKER_OR_INFO_WINDOW_LAYER_TYPE
+                )
+
+                else -> listOf<String?>() to ""
+            }
+
+            every { mockedRenderedFeature.layers } returns layers
+            every { mockedRenderedFeature.queriedFeature } answers {
+                val queriedFeature = mockk<QueriedFeature>()
+
+                every { queriedFeature.feature.geometry()?.type() } returns layerType
+
+                queriedFeature
             }
             every { mockedExpectedArg.isValue } returns true
             every { mockedExpectedArg.value } returns listOf(mockedRenderedFeature)

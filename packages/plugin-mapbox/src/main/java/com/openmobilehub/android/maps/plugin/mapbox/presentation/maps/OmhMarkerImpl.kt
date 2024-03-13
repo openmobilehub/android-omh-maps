@@ -18,7 +18,6 @@ package com.openmobilehub.android.maps.plugin.mapbox.presentation.maps
 
 import android.content.Context
 import android.graphics.drawable.Drawable
-import android.util.Log
 import androidx.core.content.res.ResourcesCompat
 import com.mapbox.geojson.Feature
 import com.mapbox.maps.Style
@@ -154,7 +153,7 @@ internal class OmhMarkerImpl(
     private fun rotateOffset(translation: Offset2D<Double>): Offset2D<Double> {
         // rotation angle
         val theta = Math.toRadians(getRotation().toDouble())
-        Log.d("OmhMarkerImpl", "rotateOffset: theta = $theta")
+
         return Offset2D(
             -(cos(theta) * translation.x - sin(theta) * translation.y),
             -(sin(theta) * translation.x + cos(theta) * translation.y)
@@ -229,7 +228,7 @@ internal class OmhMarkerImpl(
         return this::style.isInitialized && this.style.isStyleLoaded()
     }
 
-    fun onStyleLoaded(safeStyle: Style) {
+    internal fun onStyleLoaded(safeStyle: Style) {
         check(!isStyleReady()) { "Buffered properties have already been applied" }
 
         synchronized(this) {
@@ -369,7 +368,7 @@ internal class OmhMarkerImpl(
         return omhInfoWindow.getIsInfoWindowShown()
     }
 
-    private fun getMarkerIconID(bForCustomIcon: Boolean): String {
+    internal fun getMarkerIconID(bForCustomIcon: Boolean): String {
         return "$markerUUID-omh-marker-icon-${if (bForCustomIcon) "custom" else "default"}"
     }
 

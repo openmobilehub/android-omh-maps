@@ -39,6 +39,7 @@ import com.openmobilehub.android.maps.plugin.mapbox.presentation.maps.OmhInfoWin
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.maps.OmhMarkerImpl
 import com.openmobilehub.android.maps.plugin.mapbox.utils.CoordinateConverter
 import com.openmobilehub.android.maps.plugin.mapbox.utils.uuid.DefaultUUIDGenerator
+import com.openmobilehub.android.maps.plugin.mapbox.utils.uuid.UUIDGenerator
 
 @SuppressWarnings("TooManyFunctions")
 internal class MapMarkerManager(
@@ -57,8 +58,11 @@ internal class MapMarkerManager(
         infoWindows.values.forEach { it.updatePosition() }
     }
 
-    fun addMarker(options: OmhMarkerOptions, style: Style?): OmhMarkerImpl {
-        val uuidGenerator = DefaultUUIDGenerator()
+    fun addMarker(
+        options: OmhMarkerOptions,
+        style: Style?,
+        uuidGenerator: UUIDGenerator = DefaultUUIDGenerator()
+    ): OmhMarkerImpl {
         val markerUUID = uuidGenerator.generate()
         val markerGeoJsonSourceID = OmhMarkerImpl.getGeoJsonSourceID(markerUUID)
 

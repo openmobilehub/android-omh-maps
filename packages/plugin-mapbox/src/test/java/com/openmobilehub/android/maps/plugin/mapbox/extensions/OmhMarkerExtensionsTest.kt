@@ -25,21 +25,26 @@ import android.view.LayoutInflater
 import androidx.core.content.res.ResourcesCompat
 import com.mapbox.bindgen.Expected
 import com.mapbox.bindgen.None
+import com.mapbox.geojson.Feature
 import com.mapbox.maps.MapView
 import com.mapbox.maps.Style
 import com.mapbox.maps.extension.style.layers.Layer
 import com.mapbox.maps.extension.style.layers.addLayer
 import com.mapbox.maps.extension.style.layers.generated.SymbolLayer
+import com.mapbox.maps.extension.style.layers.generated.symbolLayer
 import com.mapbox.maps.extension.style.layers.properties.generated.IconAnchor
 import com.mapbox.maps.extension.style.layers.properties.generated.Visibility
 import com.mapbox.maps.extension.style.sources.addSource
 import com.mapbox.maps.extension.style.sources.generated.GeoJsonSource
+import com.mapbox.maps.extension.style.sources.generated.geoJsonSource
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
 import com.openmobilehub.android.maps.core.utils.DrawableConverter
 import com.openmobilehub.android.maps.plugin.mapbox.R
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.maps.OmhMapImpl
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.maps.OmhMarkerImpl
+import com.openmobilehub.android.maps.plugin.mapbox.utils.CoordinateConverter
+import com.openmobilehub.android.maps.plugin.mapbox.utils.uuid.DefaultUUIDGenerator
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkObject
@@ -54,6 +59,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import org.junit.runners.Parameterized.Parameters
+import java.util.UUID
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -68,6 +74,7 @@ internal class OmhMarkerExtensionsTest(
     private val defaultMarkerIconDrawable = mockk<Drawable>()
     private val convertDrawableToBitmapMock = mockk<Bitmap>()
     private lateinit var mockedViewDrawnToBitmap: Bitmap
+    private val markerUUID = DefaultUUIDGenerator().generate()
 
     companion object {
         private val omhCoordinate = OmhCoordinate(16.9, 166.0)
@@ -122,6 +129,7 @@ internal class OmhMarkerExtensionsTest(
         every { mockAddImageResult.error } returns null
         every { safeStyle.addImage(any(), any<Bitmap>(), any()) } returns mockAddImageResult
         every { safeStyle.addImage(any(), any<Bitmap>()) } returns mockAddImageResult
+        every { safeStyle.isStyleLoaded() } returns true
         every { convertDrawableToBitmapMock.width } returns 80
         every { convertDrawableToBitmapMock.height } returns 80
 
@@ -138,14 +146,68 @@ internal class OmhMarkerExtensionsTest(
         mockkStatic(Executors::class) // for mocking the executor handling View.drawToBitmap(...)
     }
 
-    @Test
-    @SuppressWarnings("LongMethod")
-    fun `OmhMarkerOptions addOmhMarker creates an OmhMarker and all properties are properly handled`() {
-        var (omhMarker, sources, _) = data.addOmhMarker(
-            mapView.context,
+    private fun createMarker(
+        context: Context,
+        markerUUID: UUID,
+        options: OmhMarkerOptions
+    ): Triple<OmhMarkerImpl, Pair<SymbolLayer, SymbolLayer>, Pair<GeoJsonSource, GeoJsonSource>> {
+        val markerGeoJsonSourceID = OmhMarkerImpl.getGeoJsonSourceID(markerUUID)
+
+        val pointOnMap = CoordinateConverter.convertToPoint(options.position)
+
+        val markerLayer =
+            symbolLayer(OmhMarkerImpl.getSymbolLayerID(markerUUID), markerGeoJsonSourceID) {}
+
+        options.applyMarkerOptions(markerLayer)
+
+        val omhMarker = OmhMarkerImpl(
+            markerUUID = markerUUID,
+            context = context,
+            markerSymbolLayer = markerLayer,
+            position = options.position,
+            initialTitle = options.title,
+            initialSnippet = options.snippet,
+            initialInfoWindowAnchor = options.infoWindowAnchor,
+            draggable = options.draggable,
+            clickable = options.clickable,
+            backgroundColor = options.backgroundColor,
+            initialIcon = options.icon,
+            bufferedAlpha = options.alpha,
+            bufferedIsVisible = options.isVisible,
+            bufferedAnchor = options.anchor,
+            bufferedIsFlat = options.isFlat,
+            bufferedRotation = options.rotation,
             infoWindowManagerDelegate = omhMap.mapMarkerManager,
             infoWindowMapViewDelegate = omhMap
         )
+
+        val markerGeoJsonSource = geoJsonSource(markerGeoJsonSourceID) {
+            feature(Feature.fromGeometry(pointOnMap))
+        }
+        omhMarker.setGeoJsonSource(markerGeoJsonSource)
+
+        val infoWindowGeoJsonSourceID = omhMarker.omhInfoWindow.getGeoJsonSourceID()
+        val infoWindowGeoJsonSource = geoJsonSource(infoWindowGeoJsonSourceID) {
+            feature(Feature.fromGeometry(pointOnMap))
+        }
+        omhMarker.omhInfoWindow.setGeoJsonSource(infoWindowGeoJsonSource)
+
+        return Triple(
+            omhMarker,
+            markerLayer to omhMarker.omhInfoWindow.infoWindowSymbolLayer,
+            markerGeoJsonSource to infoWindowGeoJsonSource
+        )
+    }
+
+    @Test
+    @SuppressWarnings("LongMethod")
+    fun `OmhMarkerOptions addOmhMarker creates an OmhMarker and all properties are properly handled`() {
+        var (omhMarker, layers, sources) = createMarker(
+            mapView.context,
+            markerUUID,
+            data
+        )
+        var (markerSymbolLayer, infoWindowSymbolLayer) = layers
         var (markerGeoJsonSource, infoWindowGeoJsonSource) = sources
 
         fun verifyIconLoaderProcessing(icon: Drawable?, bMarkerBufferedMode: Boolean) {
@@ -183,7 +245,7 @@ internal class OmhMarkerExtensionsTest(
             0.0
         )
         assertEquals(
-            omhMarker.getGeoJsonSourceID(),
+            OmhMarkerImpl.getGeoJsonSourceID(markerUUID),
             markerGeoJsonSource.sourceId
         )
         assertEquals(data.alpha, omhMarker.getAlpha())
@@ -245,7 +307,7 @@ internal class OmhMarkerExtensionsTest(
 
         // add a new marker, this time mocking the SymbolLayer to verify setters
         every {
-            com.mapbox.maps.extension.style.layers.generated.symbolLayer(
+            symbolLayer(
                 any(),
                 any(),
                 any()
@@ -257,18 +319,19 @@ internal class OmhMarkerExtensionsTest(
             mock
         }
 
-        val newMarkerPack = data.addOmhMarker(
+        val newMarkerPack = createMarker(
             mapView.context,
-            infoWindowManagerDelegate = omhMap.mapMarkerManager,
-            infoWindowMapViewDelegate = omhMap
+            markerUUID,
+            data
         )
         omhMarker = newMarkerPack.first
-        markerGeoJsonSource = newMarkerPack.second.first
-        infoWindowGeoJsonSource = newMarkerPack.second.second
-        val layers = newMarkerPack.third
+        layers = newMarkerPack.second
         val (markerIconLayer, infoWindowLayer) = layers
+        sources = newMarkerPack.third
+        markerGeoJsonSource = sources.first
+        infoWindowGeoJsonSource = sources.second
         // mock (on the new OmhMarker instance) that the map style had been loaded
-        omhMarker.applyBufferedProperties(safeStyle)
+        omhMarker.onStyleLoaded(safeStyle)
 
         // here we check if marker properties are valid & set properly on the layer after map style is loaded
         verify {
@@ -313,11 +376,12 @@ internal class OmhMarkerExtensionsTest(
     @Test
     @SuppressWarnings("LongMethod")
     fun `OmhMarkerOptions addOmhMarker creates an OmhInfoWindow assigned to OmhMarker and the IW works properly`() {
-        var (omhMarker, sources, _) = data.addOmhMarker(
+        var (omhMarker, layers, sources) = createMarker(
             mapView.context,
-            infoWindowManagerDelegate = omhMap.mapMarkerManager,
-            infoWindowMapViewDelegate = omhMap
+            markerUUID,
+            data
         )
+        var (markerSymbolLayer, infoWindowSymbolLayer) = layers
         var (markerGeoJsonSource, infoWindowGeoJsonSource) = sources
 
         every { Executors.newSingleThreadExecutor() } answers {
@@ -340,7 +404,7 @@ internal class OmhMarkerExtensionsTest(
             omhMarker.omhInfoWindow.bufferedInfoWindowAnchor,
         )
         assertEquals(
-            omhMarker.getGeoJsonSourceID(),
+            OmhMarkerImpl.getGeoJsonSourceID(markerUUID),
             markerGeoJsonSource.sourceId
         )
         assertEquals(false, omhMarker.omhInfoWindow.getIsInfoWindowShown())
@@ -375,7 +439,7 @@ internal class OmhMarkerExtensionsTest(
 
         // add a new marker, this time mocking the SymbolLayer to verify setters
         every {
-            com.mapbox.maps.extension.style.layers.generated.symbolLayer(
+            symbolLayer(
                 any(),
                 any(),
                 any()
@@ -387,18 +451,19 @@ internal class OmhMarkerExtensionsTest(
             mock
         }
 
-        val newMarkerPack = data.addOmhMarker(
+        val newMarkerPack = createMarker(
             mapView.context,
-            infoWindowManagerDelegate = omhMap.mapMarkerManager,
-            infoWindowMapViewDelegate = omhMap
+            markerUUID,
+            data
         )
         omhMarker = newMarkerPack.first
-        markerGeoJsonSource = newMarkerPack.second.first
-        infoWindowGeoJsonSource = newMarkerPack.second.second
-        val layers = newMarkerPack.third
+        layers = newMarkerPack.second
         val (markerIconLayer, infoWindowLayer) = layers
+        sources = newMarkerPack.third
+        markerGeoJsonSource = sources.first
+        infoWindowGeoJsonSource = sources.second
         // mock (on the new OmhMarker instance) that the map style had been loaded
-        omhMarker.applyBufferedProperties(safeStyle)
+        omhMarker.onStyleLoaded(safeStyle)
 
         // make sure the IW is invalidated after changing visibility
         val previousIWImageID = omhMarker.omhInfoWindow.lastInfoWindowIconID

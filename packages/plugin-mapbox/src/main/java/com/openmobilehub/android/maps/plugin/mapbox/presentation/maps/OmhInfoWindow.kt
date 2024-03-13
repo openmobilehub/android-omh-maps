@@ -19,7 +19,6 @@ package com.openmobilehub.android.maps.plugin.mapbox.presentation.maps
 import android.graphics.Bitmap
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.LinearLayout
@@ -97,14 +96,10 @@ internal class OmhInfoWindow(
     }
 
     fun applyBufferedProperties() {
-        check(!this::style.isInitialized) { "Buffered properties have already been applied" }
-
-        synchronized(this) {
-            setInfoWindowAnchor(
-                bufferedInfoWindowAnchor.first,
-                bufferedInfoWindowAnchor.second
-            )
-        }
+        setInfoWindowAnchor(
+            bufferedInfoWindowAnchor.first,
+            bufferedInfoWindowAnchor.second
+        )
     }
 
     private fun isStyleReady(): Boolean {
@@ -211,11 +206,6 @@ internal class OmhInfoWindow(
         val markerPoint = CoordinateConverter.convertToPoint(omhMarker.getPosition())
         val screenCoordinate =
             mapViewDelegate.pixelForCoordinate(markerPoint) + omhMarker.getHandleTopOffset() + getHandleCenterOffset()
-
-        Log.d(
-            "OmhInfoWindow",
-            "updatePosition: screenCoordinate: $screenCoordinate; rot: ${omhMarker.getRotation()}"
-        )
 
         geoJsonSource.feature(
             Feature.fromGeometry(
@@ -410,7 +400,9 @@ internal class OmhInfoWindow(
     }
 
     override fun getClickable(): Boolean {
-        return this.omhMarker.getClickable() && this.getIsInfoWindowShown()
+        // note: for parity with other providers, there is no check for if the marker is clickable
+        // since it should not have an impact on the info window's clickability
+        return this.omhMarker.getIsVisible() && this.getIsInfoWindowShown()
     }
 
     fun setCustomInfoWindowViewFactory(factory: OmhInfoWindowViewFactory?) {
