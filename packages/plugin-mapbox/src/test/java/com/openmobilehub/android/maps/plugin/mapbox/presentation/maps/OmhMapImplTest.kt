@@ -45,13 +45,17 @@ import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnCam
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMarkerClickListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMarkerDragListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMyLocationButtonClickListener
+import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnPolygonClickListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnPolylineClickListener
+import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhPolygon
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhSnapshotReadyCallback
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
+import com.openmobilehub.android.maps.core.presentation.models.OmhPolygonOptions
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolylineOptions
 import com.openmobilehub.android.maps.core.utils.logging.Logger
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.ITouchInteractable
+import com.openmobilehub.android.maps.plugin.mapbox.presentation.maps.managers.PolygonManager
 import com.openmobilehub.android.maps.plugin.mapbox.utils.Constants
 import com.openmobilehub.android.maps.plugin.mapbox.utils.CoordinateConverter
 import com.openmobilehub.android.maps.plugin.mapbox.utils.JSONUtil
@@ -84,6 +88,7 @@ class OmhMapImplTest {
     private val pointAnnotationManager = mockk<PointAnnotationManager>(relaxed = true)
     private val context = mockk<Context>(relaxed = true)
     private val myLocationIcon = mockk<MyLocationIcon>(relaxed = true)
+    private val polygonManager = mockk<PolygonManager>(relaxed = true)
     private val logger = mockk<Logger>(relaxed = true)
     private val onMapTouchListenerSlot = slot<View.OnTouchListener>()
     private val onMapClickListenerSlot = slot<OnMapClickListener>()
@@ -120,9 +125,14 @@ class OmhMapImplTest {
 
     private val uuidGenerator = mockk<UUIDGenerator>()
 
-    private fun simpleMockQueryRenderedFeatures(layerID: String) {
+    private fun mockQueryRenderedFeatures(layerID: String, type: String) {
         val mockValue = mockk<Expected<String, List<QueriedRenderedFeature>>>(relaxed = true)
-        every { mockValue.value?.get(0)?.layers?.get(0) } returns layerID
+
+        val mockQueriedRenderedFeature = mockk<QueriedRenderedFeature>(relaxed = true)
+        every { mockQueriedRenderedFeature.queriedFeature.feature.geometry()?.type() } returns type
+        every { mockQueriedRenderedFeature.layers } returns listOf(layerID)
+
+        every { mockValue.value } returns listOf(mockQueriedRenderedFeature)
 
         val queryRenderedFeaturesCallbackSlot = slot<QueryRenderedFeaturesCallback>()
         every {
@@ -187,7 +197,12 @@ class OmhMapImplTest {
                     }.getOrNull(0)
 
                 when (interactableEntity) {
-                    is OmhMarkerImpl -> listOf<String?>(interactableEntity.getSymbolLayerID())
+                    is OmhMarkerImpl -> listOf<String?>(
+                        OmhMarkerImpl.getSymbolLayerID(
+                            interactableEntity.markerUUID
+                        )
+                    )
+
                     is OmhInfoWindow -> listOf<String?>(interactableEntity.getSymbolLayerID())
                     else -> listOf<String?>()
                 }
@@ -253,7 +268,17 @@ class OmhMapImplTest {
         // Required for style.getSource
         mockkStatic("com.mapbox.maps.extension.style.sources.SourceUtils")
 
-        omhMapImpl = spyk(OmhMapImpl(map, context, myLocationIcon, logger, uuidGenerator))
+        omhMapImpl = spyk(
+            OmhMapImpl(
+                map,
+                context,
+                myLocationIcon,
+                1.0f,
+                polygonManager,
+                logger,
+                uuidGenerator
+            )
+        )
     }
 
     @Test
@@ -820,7 +845,7 @@ class OmhMapImplTest {
         val onMapClickListenerSlot = slot<OnMapClickListener>()
         every { map.gestures.addOnMapClickListener(capture(onMapClickListenerSlot)) } just runs
 
-        simpleMockQueryRenderedFeatures("polyline-$DEFAULT_UUID")
+        mockQueryRenderedFeatures("polyline-$DEFAULT_UUID", Constants.LineString)
         mockPixelForCoordinate()
 
         // Act
@@ -841,7 +866,7 @@ class OmhMapImplTest {
         val onMapClickListenerSlot = slot<OnMapClickListener>()
         every { map.gestures.addOnMapClickListener(capture(onMapClickListenerSlot)) } just runs
 
-        simpleMockQueryRenderedFeatures("polyline-$DEFAULT_UUID")
+        mockQueryRenderedFeatures("polyline-$DEFAULT_UUID", Constants.LineString)
         mockPixelForCoordinate()
 
         // Act
@@ -855,18 +880,88 @@ class OmhMapImplTest {
 
     @Test
     fun `updatePolylinePoints updates the polyline points on the map`() {
-        // Given
+        // Arrange
         val sourceId = "sourceId"
         val points = listOf(OmhCoordinate(0.0, 0.0), OmhCoordinate(1.0, 1.0))
         val geoJsonSource = mockk<GeoJsonSource>(relaxed = true)
 
         every { any<MapboxStyleManager>().getSource(any()) } returns geoJsonSource
 
-        // When
+        // Act
         omhMapImpl.updatePolylinePoints(sourceId, points)
 
-        // Then
+        // Assert
         verify { geoJsonSource.feature(any<Feature>()) }
+    }
+
+    @Test
+    fun `addPolygon calls polygonManager_addPolygon`() {
+        // Arrange
+        val omhPolygon = mockk<OmhPolygon>()
+        every { polygonManager.addPolygon(any(), any()) } returns omhPolygon
+        val omhPolygonOptions = OmhPolygonOptions()
+
+        // Act
+        val addedPolygon = omhMapImpl.addPolygon(omhPolygonOptions)
+
+        // Assert
+        Assert.assertEquals(omhPolygon, addedPolygon)
+        verify { polygonManager.addPolygon(omhPolygonOptions, null) }
+    }
+
+    @Test
+    fun `polygonManager_onStyleLoaded is called on map init`() {
+        // Arrange
+        val slot = slot<Style.OnStyleLoaded>()
+        every { map.mapboxMap.loadStyle(any<String>(), capture(slot)) } answers {
+            slot.captured.onStyleLoaded(mockk())
+        }
+
+        // Act
+        omhMapImpl =
+            OmhMapImpl(map, context, myLocationIcon, 1.0f, polygonManager, logger, uuidGenerator)
+
+        // Assert
+        verify { polygonManager.onStyleLoaded(any()) }
+    }
+
+    @Test
+    fun `setOnPolygonClickListener sets listener on polygonManager`() {
+        // Arrange
+        val listener = mockk<OmhOnPolygonClickListener>(relaxed = true)
+
+        mockQueryRenderedFeatures("polygon-$DEFAULT_UUID", "Polygon")
+        mockPixelForCoordinate()
+
+        every { map.gestures.addOnMapClickListener(any()) } just runs
+
+        // Act
+        omhMapImpl.setOnPolygonClickListener(listener)
+
+        // Assert
+        verify { polygonManager.clickListener = listener }
+    }
+
+    @Test
+    fun `polygonManager_maybeHandleClick is called when polygon is clicked`() {
+        // Arrange
+        val listener = mockk<OmhOnPolygonClickListener>(relaxed = true)
+
+        val layerId = "polygon-$DEFAULT_UUID"
+        val type = "Polygon"
+
+        mockQueryRenderedFeatures(layerId, type)
+        mockPixelForCoordinate()
+
+        val onMapClickListenerSlot = slot<OnMapClickListener>()
+        every { map.gestures.addOnMapClickListener(capture(onMapClickListenerSlot)) } just runs
+
+        // Act
+        omhMapImpl.setOnPolygonClickListener(listener)
+        onMapClickListenerSlot.captured.onMapClick(Point.fromLngLat(0.0, 0.0))
+
+        // Assert
+        verify { polygonManager.maybeHandleClick(type, layerId) }
     }
 
     companion object {

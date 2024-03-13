@@ -388,5 +388,9 @@ class MapPolylinesFragment : Fragment(), OmhOnMapReadyCallback {
         fun newInstance(): MapPolylinesFragment {
             return MapPolylinesFragment()
         }
+
+        const val MAPBOX = "Mapbox"
+        const val OPENSTREETMAP = "OpenStreetMap"
+        const val GOOGLE = "GoogleMaps"
     }
 }

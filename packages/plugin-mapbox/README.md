@@ -43,7 +43,7 @@ This plugin provides support for Mapbox by utilizing the [Mapbox Android SDK](ht
 | Method                                  | Supported? |
 | --------------------------------------- | :--------: |
 | addMarker                               |     ?      |
-| addPolyline                             |     ?      |
+| addPolyline                             |     ✅      |
 | addPolygon                              |     ✅     |
 | getCameraPositionCoordinate             |     ✅     |
 | moveCamera                              |     ✅     |
@@ -61,7 +61,7 @@ This plugin provides support for Mapbox by utilizing the [Mapbox Android SDK](ht
 | setOnInfoWindowClickListener            |     ✅     |
 | setOnInfoWindowLongClickListener        |     ✅     |
 | setOnPolylineClickListener              |     ✅     |
-| setOnPolygonClickListener               |     ?      |
+| setOnPolygonClickListener               |     ✅      |
 | snapshot                                |     ✅     |
 | setMapStyle                             |     ✅     |
 
@@ -189,43 +189,43 @@ Comments for partially supported 🟨 properties:
 
 | Property        | Supported? |
 | --------------- | :--------: |
-| outline         |     ?      |
-| clickable       |     ?      |
-| fillColor       |     ?      |
-| holes           |     ?      |
-| isVisible       |     ?      |
-| strokeColor     |     ?      |
-| strokeJointType |     ?      |
-| strokePattern   |     ?      |
-| strokeWidth     |     ?      |
-| zIndex          |     ?      |
+| outline         |     ✅     |
+| clickable       |     ✅     |
+| fillColor       |     ✅     |
+| holes           |     ✅     |
+| isVisible       |     ✅     |
+| strokeColor     |     ✅     |
+| strokeJointType |     ✅     |
+| strokePattern   |     ❌     |
+| strokeWidth     |     ✅     |
+| zIndex          |     ❌     |
 
 #### OmhPolygon
 
 | Method             | Supported? |
 | ------------------ | :--------: |
-| getClickable       |     ?      |
-| setClickable       |     ?      |
-| getStrokeColor     |     ?      |
-| setStrokeColor     |     ?      |
-| getFillColor       |     ?      |
-| setFillColor       |     ?      |
-| getStrokeJointType |     ?      |
-| setStrokeJointType |     ?      |
-| getStrokePattern   |     ?      |
-| setStrokePattern   |     ?      |
-| getOutline         |     ?      |
-| setOutline         |     ?      |
-| getHoles           |     ?      |
-| setHoles           |     ?      |
-| getTag             |     ?      |
-| setTag             |     ?      |
-| getStrokeWidth     |     ?      |
-| setStrokeWidth     |     ?      |
-| getZIndex          |     ?      |
-| setZIndex          |     ?      |
-| isVisible          |     ?      |
-| setVisible         |     ?      |
+| getClickable       |     ✅     |
+| setClickable       |     ✅     |
+| getStrokeColor     |     ✅     |
+| setStrokeColor     |     ✅     |
+| getFillColor       |     ✅     |
+| setFillColor       |     ✅     |
+| getStrokeJointType |     ✅     |
+| setStrokeJointType |     ✅     |
+| getStrokePattern   |     ❌     |
+| setStrokePattern   |     ❌     |
+| getOutline         |     ✅     |
+| setOutline         |     ✅     |
+| getHoles           |     ✅     |
+| setHoles           |     ✅     |
+| getTag             |     ✅     |
+| setTag             |     ✅     |
+| getStrokeWidth     |     ✅     |
+| setStrokeWidth     |     ✅     |
+| getZIndex          |     ❌     |
+| setZIndex          |     ❌     |
+| isVisible          |     ✅     |
+| setVisible         |     ✅     |
 
 ## Documentation
 
