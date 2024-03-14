@@ -102,10 +102,10 @@ Legend of support levels:
 
 Comments for partially supported 🟨 properties:
 
-| Property                                | Comments                                                                                                                                                                                                                                                                                      |
-| --------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| setOnInfoWindowOpenStatusChangeListener | only the onInfoWindowClose event is supported                                                                                                                                                                                                                                                 |
-| setOnMarkerClickListener                | (1) the default behaviour of the on click listener (or when a custom handler returns `false`) is to center the map on the clicked marker <br/> (2) there is a non-overrideable behaviour of the Google Maps plugin, which hides (closes) an open info window when the map is tapped elsewhere |
+| Property                                | Comments                                                                                                                                                                                                                                                                                                                  |
+| --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| setOnInfoWindowOpenStatusChangeListener | (1) only the `onInfoWindowClose` event is supported <br/> (2) the listener is invoked **before** `OmhOnMarkerClickListener`, in contrast to other providers, which implies that if the window was already open before a click on the marker, the marker click listener would always be invoked after the window is closed |
+| setOnMarkerClickListener                | (1) the default behaviour of the on click listener (or when a custom handler returns `false`) is to center the map on the clicked marker <br/> (2) there is a non-overrideable behaviour of the Google Maps plugin, which hides (closes) an open info window when the map is tapped elsewhere                             |
 
 ### Marker
 
