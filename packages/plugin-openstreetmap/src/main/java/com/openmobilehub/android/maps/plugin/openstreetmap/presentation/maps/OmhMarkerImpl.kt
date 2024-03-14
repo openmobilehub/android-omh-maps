@@ -42,7 +42,7 @@ internal class OmhMarkerImpl(
         mapView.postInvalidate()
     }
 
-    override fun getTitle(): String? {
+    override fun getTitle(): String {
         return marker.title
     }
 

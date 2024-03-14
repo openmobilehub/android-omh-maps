@@ -18,16 +18,19 @@ package com.openmobilehub.android.maps.plugin.mapbox.presentation.maps
 
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
+import android.annotation.SuppressLint
 import android.content.Context
 import android.view.Gravity
 import android.widget.ImageView
 import androidx.annotation.RequiresPermission
 import com.mapbox.geojson.Feature
 import com.mapbox.geojson.LineString
+import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.MapView
 import com.mapbox.maps.RenderedQueryGeometry
 import com.mapbox.maps.RenderedQueryOptions
+import com.mapbox.maps.ScreenCoordinate
 import com.mapbox.maps.Style
 import com.mapbox.maps.extension.style.layers.Layer
 import com.mapbox.maps.extension.style.layers.addLayer
@@ -36,6 +39,7 @@ import com.mapbox.maps.extension.style.sources.addSource
 import com.mapbox.maps.extension.style.sources.generated.GeoJsonSource
 import com.mapbox.maps.extension.style.sources.generated.geoJsonSource
 import com.mapbox.maps.extension.style.sources.getSource
+import com.mapbox.maps.plugin.animation.camera
 import com.mapbox.maps.plugin.compass.compass
 import com.mapbox.maps.plugin.gestures.gestures
 import com.mapbox.maps.plugin.locationcomponent.location
@@ -65,12 +69,20 @@ import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolygonOptions
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolylineOptions
+import com.openmobilehub.android.maps.core.utils.ScreenUnitConverter
 import com.openmobilehub.android.maps.core.utils.logging.Logger
+import com.openmobilehub.android.maps.plugin.mapbox.extensions.plus
+import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IMapDragManagerDelegate
+import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IOmhInfoWindowMapViewDelegate
+import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.ITouchInteractable
+import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.PolylineDelegate
+import com.openmobilehub.android.maps.plugin.mapbox.presentation.maps.managers.MapMarkerManager
+import com.openmobilehub.android.maps.plugin.mapbox.presentation.maps.managers.MapTouchInteractionManager
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.maps.managers.PolygonManager
 import com.openmobilehub.android.maps.plugin.mapbox.utils.Constants
 import com.openmobilehub.android.maps.plugin.mapbox.utils.CoordinateConverter
-import com.openmobilehub.android.maps.plugin.mapbox.utils.DimensionConverter
 import com.openmobilehub.android.maps.plugin.mapbox.utils.JSONUtil
+import com.openmobilehub.android.maps.plugin.mapbox.utils.cartesian.BoundingBox2D
 import com.openmobilehub.android.maps.plugin.mapbox.utils.commonLogger
 import com.openmobilehub.android.maps.plugin.mapbox.utils.uuid.DefaultUUIDGenerator
 import com.openmobilehub.android.maps.plugin.mapbox.utils.uuid.UUIDGenerator
@@ -84,7 +96,10 @@ internal class OmhMapImpl(
     private val polygonManager: PolygonManager = PolygonManager(mapView, scaleFactor),
     private val logger: Logger = commonLogger,
     private val uuidGenerator: UUIDGenerator = DefaultUUIDGenerator()
-) : OmhMap, PolylineDelegate {
+) : OmhMap,
+    IMapDragManagerDelegate,
+    IOmhInfoWindowMapViewDelegate,
+    PolylineDelegate {
     /**
      * This flag is used to prevent the onCameraMoveStarted listener from being called multiple times
      */
@@ -101,20 +116,34 @@ internal class OmhMapImpl(
 
     private val polylines = mutableMapOf<String, OmhPolyline>()
 
+    internal val mapMarkerManager = MapMarkerManager(mapView.context, this)
+    private val mapTouchInteractionManager = MapTouchInteractionManager(this, mapMarkerManager)
+
     init {
         setupMapViewUIControls()
-        addPendingMapElements()
+        addQueuedMapElements()
+        setupTouchInteractionListeners()
+        setupZoomListenerForInfoWindows()
     }
 
-    private fun addPendingMapElements() {
+    private fun setupZoomListenerForInfoWindows() {
+        mapView.camera.addCameraZoomChangeListener {
+            mapMarkerManager.updateAllInfoWindowsPositions()
+        }
+    }
+
+    private fun addQueuedMapElements() {
         mapView.mapboxMap.loadStyle(Style.STANDARD) { safeStyle ->
-            this.style = safeStyle
+            synchronized(this) {
+                this.style = safeStyle
+                mapMarkerManager.onStyleLoaded(safeStyle)
 
-            polygonManager.onStyleLoaded(safeStyle)
+                polygonManager.onStyleLoaded(safeStyle)
 
-            pendingMapElements.forEach { (source, layers) ->
-                safeStyle.addSource(source)
-                layers.forEach { layer -> safeStyle.addLayer(layer) }
+                pendingMapElements.forEach { (source, layers) ->
+                    safeStyle.addSource(source)
+                    layers.forEach { layer -> safeStyle.addLayer(layer) }
+                }
             }
         }
     }
@@ -122,8 +151,8 @@ internal class OmhMapImpl(
     override val providerName: String
         get() = Constants.PROVIDER_NAME
 
-    override fun addMarker(options: OmhMarkerOptions): OmhMarker? {
-        return null
+    override fun addMarker(options: OmhMarkerOptions): OmhMarker {
+        return mapMarkerManager.addMarker(options, style)
     }
 
     override fun addPolyline(options: OmhPolylineOptions): OmhPolyline {
@@ -249,24 +278,178 @@ internal class OmhMapImpl(
         }
     }
 
+    override fun handleDragStart(omhCoordinate: OmhCoordinate, draggedEntity: ITouchInteractable) {
+        when (draggedEntity) {
+            is OmhMarkerImpl -> mapMarkerManager.markerDragStart(omhCoordinate, draggedEntity)
+            else -> {} // Noop
+        }
+    }
+
+    override fun handleDragMove(omhCoordinate: OmhCoordinate, draggedEntity: ITouchInteractable) {
+        when (draggedEntity) {
+            is OmhMarkerImpl -> mapMarkerManager.markerDrag(omhCoordinate, draggedEntity)
+            else -> {} // Noop
+        }
+    }
+
+    override fun handleDragEnd(omhCoordinate: OmhCoordinate, draggedEntity: ITouchInteractable) {
+        when (draggedEntity) {
+            is OmhMarkerImpl -> mapMarkerManager.markerDragEnd(omhCoordinate, draggedEntity)
+            else -> {} // Noop
+        }
+    }
+
+    @SuppressWarnings("LongMethod")
+    override fun findInteractableEntities(
+        screenCoordinate: ScreenCoordinate,
+        validator: ((predicate: ITouchInteractable) -> Boolean)?
+    ): List<ITouchInteractable> {
+        val minScreenDimension = mapView.context.resources.displayMetrics.widthPixels.coerceAtMost(
+            mapView.context.resources.displayMetrics.heightPixels
+        )
+        val hitRadius =
+            (minScreenDimension.toDouble() * Constants.MAP_TOUCH_HIT_RADIUS_PERCENT_OF_SCREEN_DIM)
+                .coerceIn(
+                    Constants.MAP_TOUCH_HIT_RADIUS_MIN_PX..Constants.MAP_TOUCH_HIT_RADIUS_MAX_PX
+                )
+        val hits = mutableListOf<ITouchInteractable>()
+
+        // try if an info window was hit
+        for (infoWindow in mapMarkerManager.infoWindows.values.reversed()) {
+            if (validator?.invoke(infoWindow) == false) continue
+
+            val markerPositionOnScreen = mapView.mapboxMap.pixelForCoordinate(
+                CoordinateConverter.convertToPoint(infoWindow.omhMarker.getPosition())
+            ) + infoWindow.omhMarker.getHandleTopOffset()
+            val centerPositionOnScreen =
+                markerPositionOnScreen + infoWindow.getHandleCenterOffset()
+
+            val iwBoundingBox = BoundingBox2D(
+                centerPoint = centerPositionOnScreen,
+                width = infoWindow.iwBitmapWidth.toDouble(),
+                height = infoWindow.iwBitmapHeight.toDouble(),
+                hitBorder = hitRadius
+            )
+
+            if (iwBoundingBox.contains(screenCoordinate)) {
+                hits.add(infoWindow)
+            }
+        }
+
+        // try if a marker was hit
+        for (marker in mapMarkerManager.markers.values.reversed()) {
+            if (validator?.invoke(marker) == false) continue
+
+            val markerCenterPositionOnScreen = mapView.mapboxMap.pixelForCoordinate(
+                CoordinateConverter.convertToPoint(marker.getPosition())
+            ) + marker.getHandleCenterOffset()
+
+            val markerBoundingBox = BoundingBox2D(
+                centerPoint = markerCenterPositionOnScreen,
+                width = marker.iconWidth.toDouble(),
+                height = marker.iconHeight.toDouble(),
+                hitBorder = hitRadius
+            )
+
+            if (markerBoundingBox.contains(screenCoordinate)) {
+                hits.add(marker)
+            }
+        }
+
+        return hits
+    }
+
+    /**
+     * Queries ID of the layer managed by the [MapMarkerManager] at the given screen
+     * coordinate [screenCoordinate] and returns the result through [callback].
+     *
+     * @param screenCoordinate The screen coordinate to query the layer ID at.
+     * @param callback The callback to return the layer ID through. Returns `true` if there was
+     * a hit (that does not necessarily have to end with the consummation of any event)
+     * or `false` otherwise. A `false` means that the hit was not used and
+     * the callback shall be called sequentially with other layer IDs found at the coordinates,
+     * unless a `true` is returned or there are no more layers. The callback's parameter is `null`
+     * if no layer has been found or a pair of: layer ID and layer type otherwise.
+     */
+    private fun queryRenderedLayerIdsAt(
+        screenCoordinate: ScreenCoordinate,
+        callback: (layerInfo: Pair<String, String>?) -> Boolean
+    ) {
+        mapView.mapboxMap.queryRenderedFeatures(
+            RenderedQueryGeometry(screenCoordinate),
+            RenderedQueryOptions(
+                null,
+                null
+            )
+        ) {
+            val hit = it.value?.getOrNull(0)
+            val layerIds = hit?.layers
+            val layerType = hit?.queriedFeature?.feature?.geometry()?.type()
+
+            if (layerIds === null || layerType === null) {
+                callback(null)
+            } else {
+                for (layerId in layerIds) {
+                    if (callback(layerId to layerType)) break
+                }
+            }
+        }
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private fun setupTouchInteractionListeners() {
+        mapView.gestures.addOnMapClickListener { point ->
+            val screenCoordinate = mapView.mapboxMap.pixelForCoordinate(point)
+
+            queryRenderedLayerIdsAt(screenCoordinate) lambda@{ layerInfo ->
+                if (layerInfo === null) return@lambda false
+
+                val (layerId, layerType) = layerInfo
+
+                when (layerType) {
+                    Constants.MARKER_OR_INFO_WINDOW_LAYER_TYPE -> mapMarkerManager.maybeHandleClick(
+                        layerId
+                    ) { eventConsumed ->
+                        if (eventConsumed) mapTouchInteractionManager.resetDragState()
+                    }
+
+                    else -> false // Noop
+                }
+            }
+
+            true
+        }
+
+        mapView.setOnTouchListener touchListener@{ _, event ->
+            val screenCoordinates = ScreenCoordinate(event.x.toDouble(), event.y.toDouble())
+            val point = mapView.mapboxMap.coordinateForPixel(screenCoordinates)
+
+            mapTouchInteractionManager.handleOnTouch(
+                event.actionMasked,
+                screenCoordinates,
+                point
+            ) || mapView.gestures.onTouchEvent(event)
+        }
+    }
+
     override fun setOnMarkerClickListener(listener: OmhOnMarkerClickListener) {
-        // To be implemented
+        mapMarkerManager.setMarkerClickListener(listener)
     }
 
     override fun setOnMarkerDragListener(listener: OmhOnMarkerDragListener) {
-        // To be implemented
+        mapMarkerManager.setMarkerDragListener(listener)
     }
 
     override fun setOnInfoWindowOpenStatusChangeListener(listener: OmhOnInfoWindowOpenStatusChangeListener) {
-        // To be implemented
+        mapMarkerManager.setInfoWindowOpenStatusChangeListener(listener)
     }
 
     override fun setOnInfoWindowClickListener(listener: OmhOnInfoWindowClickListener) {
-        // To be implemented
+        mapMarkerManager.setOnInfoWindowClickListener(listener)
     }
 
     override fun setOnInfoWindowLongClickListener(listener: OmhOnInfoWindowLongClickListener) {
-        // To be implemented
+        mapMarkerManager.setOnInfoWindowLongClickListener(listener)
     }
 
     override fun setOnPolylineClickListener(listener: OmhOnPolylineClickListener) {
@@ -348,7 +531,7 @@ internal class OmhMapImpl(
     private fun setupMapViewUIControls() {
         // To have parity with Google Maps
         val iconMargin =
-            DimensionConverter.pxFromDp(context, Constants.MAPBOX_ICON_MARGIN).toFloat()
+            ScreenUnitConverter.dpToPx(Constants.MAPBOX_ICON_MARGIN.toFloat(), context)
         mapView.compass.marginLeft = iconMargin
         mapView.compass.marginTop = iconMargin
         mapView.compass.position = Gravity.TOP or Gravity.START
@@ -382,10 +565,26 @@ internal class OmhMapImpl(
     }
 
     override fun setCustomInfoWindowViewFactory(factory: OmhInfoWindowViewFactory?) {
-        // To be implemented
+        mapMarkerManager.setCustomInfoWindowViewFactory(factory)
     }
 
     override fun setCustomInfoWindowContentsViewFactory(factory: OmhInfoWindowViewFactory?) {
-        // To be implemented
+        mapMarkerManager.setCustomInfoWindowContentsViewFactory(factory)
+    }
+
+    override fun getMapWidth(): Int {
+        return mapView.width
+    }
+
+    override fun getMapHeight(): Int {
+        return mapView.height
+    }
+
+    override fun coordinateForPixel(screenCoordinate: ScreenCoordinate): Point {
+        return mapView.mapboxMap.coordinateForPixel(screenCoordinate)
+    }
+
+    override fun pixelForCoordinate(point: Point): ScreenCoordinate {
+        return mapView.mapboxMap.pixelForCoordinate(point)
     }
 }

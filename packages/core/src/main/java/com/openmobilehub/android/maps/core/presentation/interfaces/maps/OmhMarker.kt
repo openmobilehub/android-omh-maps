@@ -17,6 +17,7 @@
 package com.openmobilehub.android.maps.core.presentation.interfaces.maps
 
 import android.graphics.drawable.Drawable
+import androidx.annotation.ColorInt
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 
 /**
@@ -184,19 +185,23 @@ interface OmhMarker {
     fun setRotation(rotation: Float)
 
     /**
-     * Gets the background color of the marker.
+     * Gets the ARGB background color of the marker represented as an integer.
      *
-     * @return the color of the marker or null if not set.
+     * @return the ARGB color of the marker or null if not set.
      */
+    @ColorInt
     fun getBackgroundColor(): Int?
 
     /**
      * Sets the color of the marker or resets the color to the provider's default value if null.
      * Note: this overrides [setIcon].
      *
-     * @param color color of the marker or null.
+     * @param color ARGB color of the marker or `null`.
+     *
+     * **NOTE:** please remember to pass color integers with set bytes corresponding
+     * to alpha channel (e.g. of shape `0xAARRGGBB`).
      */
-    fun setBackgroundColor(color: Int?)
+    fun setBackgroundColor(@ColorInt color: Int?)
 
     /**
      * Imperatively shows the info window associated with this marker.

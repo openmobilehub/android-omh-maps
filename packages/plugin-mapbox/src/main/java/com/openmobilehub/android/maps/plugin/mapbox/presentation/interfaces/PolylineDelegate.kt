@@ -14,16 +14,10 @@
  * limitations under the License.
  */
 
-package com.openmobilehub.android.maps.plugin.mapbox.utils
+package com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces
 
-import android.content.Context
+import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 
-internal object DimensionConverter {
-    fun dpFromPx(context: Context, px: Int): Int {
-        return (px / context.resources.displayMetrics.density).toInt()
-    }
-
-    fun pxFromDp(context: Context, dp: Int): Int {
-        return (dp * context.resources.displayMetrics.density).toInt()
-    }
+interface PolylineDelegate {
+    fun updatePolylinePoints(sourceId: String, points: List<OmhCoordinate>)
 }

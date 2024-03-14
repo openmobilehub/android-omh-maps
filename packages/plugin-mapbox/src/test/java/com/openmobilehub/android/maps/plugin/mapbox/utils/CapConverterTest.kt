@@ -1,10 +1,9 @@
-package com.openmobilehub.android.maps.plugin.mapbox.utlis
+package com.openmobilehub.android.maps.plugin.mapbox.utils
 
 import com.mapbox.maps.extension.style.layers.properties.generated.LineCap
 import com.openmobilehub.android.maps.core.presentation.models.OmhButtCap
 import com.openmobilehub.android.maps.core.presentation.models.OmhRoundCap
 import com.openmobilehub.android.maps.core.presentation.models.OmhSquareCap
-import com.openmobilehub.android.maps.plugin.mapbox.utils.CapConverter
 import org.junit.Assert
 import org.junit.Test
 
