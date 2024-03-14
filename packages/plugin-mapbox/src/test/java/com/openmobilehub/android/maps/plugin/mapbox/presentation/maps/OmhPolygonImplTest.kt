@@ -1,29 +1,38 @@
 package com.openmobilehub.android.maps.plugin.mapbox.presentation.maps
 
 import android.graphics.Color
+import com.mapbox.maps.MapboxStyleManager
 import com.mapbox.maps.Style
+import com.mapbox.maps.extension.style.layers.addLayer
 import com.mapbox.maps.extension.style.layers.generated.FillLayer
 import com.mapbox.maps.extension.style.layers.generated.LineLayer
 import com.mapbox.maps.extension.style.layers.properties.generated.LineJoin
 import com.mapbox.maps.extension.style.layers.properties.generated.Visibility
+import com.mapbox.maps.extension.style.sources.addSource
+import com.mapbox.maps.extension.style.sources.generated.GeoJsonSource
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhPatternItem
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolygonOptions
 import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
+import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IPolygonDelegate
 import com.openmobilehub.android.maps.plugin.mapbox.utils.JoinTypeConverter
 import io.mockk.every
+import io.mockk.just
 import io.mockk.mockk
 import io.mockk.mockkObject
+import io.mockk.mockkStatic
+import io.mockk.runs
 import io.mockk.verify
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 
 class OmhPolygonImplTest {
+    private val source = mockk<GeoJsonSource>(relaxed = true)
     private val lineLayer = mockk<LineLayer>(relaxed = true)
     private val fillLayer = mockk<FillLayer>(relaxed = true)
     private val scaleFactor = 3.0f
-    private val polygonDelegate = mockk<PolygonDelegate>(relaxed = true)
+    private val polygonDelegate = mockk<IPolygonDelegate>(relaxed = true)
     private val logger: UnsupportedFeatureLogger =
         mockk<UnsupportedFeatureLogger>(relaxed = true)
 
@@ -36,25 +45,18 @@ class OmhPolygonImplTest {
     }
 
     private lateinit var omhPolygon: OmhPolygonImpl
-    private lateinit var omhPolygonWithoutStyle: OmhPolygonImpl
 
     @Before
     fun setUp() {
+        mockkStatic("com.mapbox.maps.extension.style.sources.SourceUtils")
+        mockkStatic("com.mapbox.maps.extension.style.layers.LayerUtils")
+
         mockkObject(JoinTypeConverter)
 
         every { style.isStyleLoaded() } returns true
 
         omhPolygon = OmhPolygonImpl(
-            style,
-            fillLayer,
-            lineLayer,
-            initialOptions,
-            scaleFactor,
-            polygonDelegate,
-            logger
-        )
-        omhPolygonWithoutStyle = OmhPolygonImpl(
-            null,
+            source,
             fillLayer,
             lineLayer,
             initialOptions,
@@ -67,6 +69,8 @@ class OmhPolygonImplTest {
     @Test
     fun `with style - getStrokeColor returns stroke color`() {
         // Arrange
+        omhPolygon.onStyleLoaded(style)
+
         val expectedColor = Color.RED
         every { lineLayer.lineColorAsColorInt } returns expectedColor
 
@@ -81,6 +85,8 @@ class OmhPolygonImplTest {
     @Test
     fun `with style - setStrokeColor sets stroke color`() {
         // Arrange
+        omhPolygon.onStyleLoaded(style)
+
         val expectedColor = Color.RED
         every { lineLayer.lineColor(any<Int>()) } returns lineLayer
 
@@ -94,7 +100,7 @@ class OmhPolygonImplTest {
     @Test
     fun `without style - getStrokeColor returns null if stroke color was not set`() {
         // Act
-        val color = omhPolygonWithoutStyle.getStrokeColor()
+        val color = omhPolygon.getStrokeColor()
 
         // Assert
         verify(exactly = 0) { lineLayer.lineColor }
@@ -107,8 +113,8 @@ class OmhPolygonImplTest {
         val expectedColor = Color.RED
 
         // Act
-        omhPolygonWithoutStyle.setStrokeColor(expectedColor)
-        val color = omhPolygonWithoutStyle.getStrokeColor()
+        omhPolygon.setStrokeColor(expectedColor)
+        val color = omhPolygon.getStrokeColor()
 
         // Assert
         verify(exactly = 0) { lineLayer.lineColor }
@@ -121,16 +127,18 @@ class OmhPolygonImplTest {
         val expectedColor = Color.RED
 
         // Act
-        omhPolygonWithoutStyle.setStrokeColor(expectedColor)
+        omhPolygon.setStrokeColor(expectedColor)
 
         // Assert
         verify(exactly = 0) { lineLayer.lineColor(expectedColor) }
-        Assert.assertEquals(expectedColor, omhPolygonWithoutStyle.getStrokeColor())
+        Assert.assertEquals(expectedColor, omhPolygon.getStrokeColor())
     }
 
     @Test
     fun `with style - getFillColor returns fill color`() {
         // Arrange
+        omhPolygon.onStyleLoaded(style)
+
         val expectedColor = Color.RED
         every { fillLayer.fillColorAsColorInt } returns expectedColor
 
@@ -145,6 +153,8 @@ class OmhPolygonImplTest {
     @Test
     fun `with style - setFillColor sets fill color`() {
         // Arrange
+        omhPolygon.onStyleLoaded(style)
+
         val expectedColor = Color.RED
         every { fillLayer.fillColor(any<Int>()) } returns fillLayer
 
@@ -158,7 +168,7 @@ class OmhPolygonImplTest {
     @Test
     fun `without style - getFillColor returns null if fill color was not set`() {
         // Act
-        val color = omhPolygonWithoutStyle.getFillColor()
+        val color = omhPolygon.getFillColor()
 
         // Assert
         verify(exactly = 0) { fillLayer.fillColor }
@@ -171,8 +181,8 @@ class OmhPolygonImplTest {
         val expectedColor = Color.RED
 
         // Act
-        omhPolygonWithoutStyle.setFillColor(expectedColor)
-        val color = omhPolygonWithoutStyle.getFillColor()
+        omhPolygon.setFillColor(expectedColor)
+        val color = omhPolygon.getFillColor()
 
         // Assert
         verify(exactly = 0) { fillLayer.fillColor }
@@ -185,16 +195,18 @@ class OmhPolygonImplTest {
         val expectedColor = Color.RED
 
         // Act
-        omhPolygonWithoutStyle.setFillColor(expectedColor)
+        omhPolygon.setFillColor(expectedColor)
 
         // Assert
         verify(exactly = 0) { fillLayer.fillColor(expectedColor) }
-        Assert.assertEquals(expectedColor, omhPolygonWithoutStyle.getFillColor())
+        Assert.assertEquals(expectedColor, omhPolygon.getFillColor())
     }
 
     @Test
     fun `with style - getStrokeJointType returns stroke joint type`() {
         // Arrange
+        omhPolygon.onStyleLoaded(style)
+
         val omhLineJoin = mockk<Int>(relaxed = true)
         every { JoinTypeConverter.convertToOmhJointType(any<LineJoin>()) } returns omhLineJoin
 
@@ -209,6 +221,8 @@ class OmhPolygonImplTest {
     @Test
     fun `with style - setStrokeJointType sets stroke joint type`() {
         // Arrange
+        omhPolygon.onStyleLoaded(style)
+
         val lineJoin = mockk<LineJoin>()
         every { JoinTypeConverter.convertToLineJoin(any<Int>()) } returns lineJoin
 
@@ -222,7 +236,7 @@ class OmhPolygonImplTest {
     @Test
     fun `without style - getStrokeJointType returns null if stroke join type was not set`() {
         // Act
-        val joinType = omhPolygonWithoutStyle.getStrokeJointType()
+        val joinType = omhPolygon.getStrokeJointType()
 
         // Assert
         verify(exactly = 0) { lineLayer.lineJoin }
@@ -235,8 +249,8 @@ class OmhPolygonImplTest {
         val mockedJointType = mockk<Int>(relaxed = true)
 
         // Act
-        omhPolygonWithoutStyle.setStrokeJointType(mockedJointType)
-        val jointType = omhPolygonWithoutStyle.getStrokeJointType()
+        omhPolygon.setStrokeJointType(mockedJointType)
+        val jointType = omhPolygon.getStrokeJointType()
 
         // Assert
         verify(exactly = 0) { lineLayer.lineJoin }
@@ -249,16 +263,18 @@ class OmhPolygonImplTest {
         val mockedJointType = mockk<Int>(relaxed = true)
 
         // Act
-        omhPolygonWithoutStyle.setStrokeJointType(mockedJointType)
+        omhPolygon.setStrokeJointType(mockedJointType)
 
         // Assert
         verify(exactly = 0) { lineLayer.lineJoin(any<LineJoin>()) }
-        Assert.assertEquals(mockedJointType, omhPolygonWithoutStyle.getStrokeJointType())
+        Assert.assertEquals(mockedJointType, omhPolygon.getStrokeJointType())
     }
 
     @Test
     fun `with style - getStrokeWidth returns stroke width`() {
         // Arrange
+        omhPolygon.onStyleLoaded(style)
+
         val nativeWidth = 10.0
         val expectedWidth = (nativeWidth * scaleFactor).toFloat()
         every { lineLayer.lineWidth } returns nativeWidth
@@ -274,6 +290,8 @@ class OmhPolygonImplTest {
     @Test
     fun `with style - setStrokeWidth sets stroke width`() {
         // Arrange
+        omhPolygon.onStyleLoaded(style)
+
         val width = 30.0f
         val nativeWidth = (width / scaleFactor).toDouble()
 
@@ -287,7 +305,7 @@ class OmhPolygonImplTest {
     @Test
     fun `without style - getStrokeWidth returns null if stroke width was not set`() {
         // Act
-        val width = omhPolygonWithoutStyle.getStrokeWidth()
+        val width = omhPolygon.getStrokeWidth()
 
         // Assert
         verify(exactly = 0) { lineLayer.lineWidth }
@@ -301,8 +319,8 @@ class OmhPolygonImplTest {
         val expectedWidth = 10f
 
         // Act
-        omhPolygonWithoutStyle.setStrokeWidth(expectedWidth)
-        val width = omhPolygonWithoutStyle.getStrokeWidth()
+        omhPolygon.setStrokeWidth(expectedWidth)
+        val width = omhPolygon.getStrokeWidth()
 
         // Assert
         verify(exactly = 0) { lineLayer.lineWidth }
@@ -315,16 +333,18 @@ class OmhPolygonImplTest {
         val expectedWidth = 10f
 
         // Act
-        omhPolygonWithoutStyle.setStrokeWidth(expectedWidth)
+        omhPolygon.setStrokeWidth(expectedWidth)
 
         // Assert
         verify(exactly = 0) { lineLayer.lineWidth(any<Double>()) }
-        Assert.assertEquals(expectedWidth, omhPolygonWithoutStyle.getStrokeWidth())
+        Assert.assertEquals(expectedWidth, omhPolygon.getStrokeWidth())
     }
 
     @Test
     fun `with style - isVisible returns polygon visibility`() {
-        //        // Arrange
+        // Arrange
+        omhPolygon.onStyleLoaded(style)
+
         val expectedVisibility = true
         every { lineLayer.visibility } returns Visibility.VISIBLE
         every { fillLayer.visibility } returns Visibility.VISIBLE
@@ -341,6 +361,8 @@ class OmhPolygonImplTest {
     @Test
     fun `with style - setVisible sets polygon visibility`() {
         // Arrange
+        omhPolygon.onStyleLoaded(style)
+
         val visibility = true
 
         // Act
@@ -354,7 +376,7 @@ class OmhPolygonImplTest {
     @Test
     fun `without style - isVisible returns initial visibility if it was not set`() {
         // Act
-        val visibility = omhPolygonWithoutStyle.isVisible()
+        val visibility = omhPolygon.isVisible()
 
         // Assert
         verify(exactly = 0) { lineLayer.visibility }
@@ -368,8 +390,8 @@ class OmhPolygonImplTest {
         val expectedVisibility = false
 
         // Act
-        omhPolygonWithoutStyle.setVisible(expectedVisibility)
-        val visibility = omhPolygonWithoutStyle.isVisible()
+        omhPolygon.setVisible(expectedVisibility)
+        val visibility = omhPolygon.isVisible()
 
         // Assert
         verify(exactly = 0) { lineLayer.visibility }
@@ -383,12 +405,12 @@ class OmhPolygonImplTest {
         val expectedVisibility = false
 
         // Act
-        omhPolygonWithoutStyle.setVisible(expectedVisibility)
+        omhPolygon.setVisible(expectedVisibility)
 
         // Assert
         verify(exactly = 0) { lineLayer.visibility(any<Visibility>()) }
         verify(exactly = 0) { fillLayer.visibility(any<Visibility>()) }
-        Assert.assertEquals(expectedVisibility, omhPolygonWithoutStyle.isVisible())
+        Assert.assertEquals(expectedVisibility, omhPolygon.isVisible())
     }
 
     @Test
@@ -579,8 +601,11 @@ class OmhPolygonImplTest {
     }
 
     @Test
-    fun `applyBufferedProperties sets buffered properties`() {
+    fun `onStyleLoaded sets buffered properties and adds source and layers to map`() {
         // Arrange
+        every { any<MapboxStyleManager>().addSource(any()) } just runs
+        every { any<MapboxStyleManager>().addLayer(any()) } just runs
+
         val lineJoin = mockk<LineJoin>()
         every { JoinTypeConverter.convertToLineJoin(any<Int>()) } returns lineJoin
 
@@ -592,13 +617,13 @@ class OmhPolygonImplTest {
         val expectedVisibility = false
 
         // Act
-        omhPolygonWithoutStyle.setStrokeColor(expectedStrokeColor)
-        omhPolygonWithoutStyle.setFillColor(expectedFillColor)
-        omhPolygonWithoutStyle.setStrokeJointType(expectedStrokeJoinType)
-        omhPolygonWithoutStyle.setStrokeWidth(expectedStrokeWidth)
-        omhPolygonWithoutStyle.setVisible(expectedVisibility)
+        omhPolygon.setStrokeColor(expectedStrokeColor)
+        omhPolygon.setFillColor(expectedFillColor)
+        omhPolygon.setStrokeJointType(expectedStrokeJoinType)
+        omhPolygon.setStrokeWidth(expectedStrokeWidth)
+        omhPolygon.setVisible(expectedVisibility)
 
-        omhPolygonWithoutStyle.applyBufferedProperties(style)
+        omhPolygon.onStyleLoaded(style)
 
         // Assert
         verify { lineLayer.lineColor(expectedStrokeColor) }
@@ -607,6 +632,10 @@ class OmhPolygonImplTest {
         verify { lineLayer.lineWidth(expectedNativeStrokeWidth) }
         verify { lineLayer.visibility(Visibility.NONE) }
         verify { fillLayer.visibility(Visibility.NONE) }
+
+        verify { style.addSource(source) }
+        verify { style.addLayer(fillLayer) }
+        verify { style.addLayer(lineLayer) }
     }
 
     companion object {

@@ -117,6 +117,7 @@ class MapPolygonsFragment : Fragment(), OmhOnMapReadyCallback {
                 dialog.dismiss()
             }
             alert.show()
+            return@OmhOnPolygonClickListener true
         }
         omhMap.setOnPolygonClickListener(omhOnPolygonClickListener)
 

@@ -168,7 +168,7 @@ Comments for partially supported 🟨 properties:
 | setJoinType  |     ✅     |
 | getPattern   |     ❌     |
 | setPattern   |     ❌     |
-| getPoints    |     ❌     |
+| getPoints    |     ✅     |
 | setPoints    |     ✅     |
 | getSpans     |     ❌     |
 | setSpans     |     ❌     |

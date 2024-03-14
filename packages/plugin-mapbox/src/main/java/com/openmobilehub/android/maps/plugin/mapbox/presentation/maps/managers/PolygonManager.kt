@@ -21,12 +21,8 @@ import com.mapbox.geojson.LineString
 import com.mapbox.geojson.Polygon
 import com.mapbox.maps.MapView
 import com.mapbox.maps.Style
-import com.mapbox.maps.extension.style.layers.Layer
-import com.mapbox.maps.extension.style.layers.addLayer
 import com.mapbox.maps.extension.style.layers.generated.fillLayer
 import com.mapbox.maps.extension.style.layers.generated.lineLayer
-import com.mapbox.maps.extension.style.sources.Source
-import com.mapbox.maps.extension.style.sources.addSource
 import com.mapbox.maps.extension.style.sources.generated.GeoJsonSource
 import com.mapbox.maps.extension.style.sources.generated.geoJsonSource
 import com.mapbox.maps.extension.style.sources.getSource
@@ -36,8 +32,9 @@ import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolygonOptions
 import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
 import com.openmobilehub.android.maps.plugin.mapbox.extensions.applyPolygonOptions
+import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IPolygonDelegate
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.maps.OmhPolygonImpl
-import com.openmobilehub.android.maps.plugin.mapbox.presentation.maps.PolygonDelegate
+import com.openmobilehub.android.maps.plugin.mapbox.utils.Constants
 import com.openmobilehub.android.maps.plugin.mapbox.utils.CoordinateConverter
 import com.openmobilehub.android.maps.plugin.mapbox.utils.polygonLogger
 import com.openmobilehub.android.maps.plugin.mapbox.utils.uuid.DefaultUUIDGenerator
@@ -48,14 +45,9 @@ class PolygonManager(
     private val scaleFactor: Float,
     private val uuidGenerator: UUIDGenerator = DefaultUUIDGenerator(),
     private val logger: UnsupportedFeatureLogger = polygonLogger
-) : PolygonDelegate {
+) : IPolygonDelegate {
     private var polygons = mutableMapOf<String, OmhPolygonImpl>()
-    private var queue = mutableListOf<Pair<Source, List<Layer>>>()
     var clickListener: OmhOnPolygonClickListener? = null
-
-    fun getQueue(): List<Pair<Source, List<Layer>>> {
-        return queue
-    }
 
     private fun generatePolygonId(): String {
         return POLYGON_LAYER_PREFIX + uuidGenerator.generate()
@@ -69,13 +61,17 @@ class PolygonManager(
         return layerId.replace(POLYGON_OUTLINE_LAYER_PREFIX, "")
     }
 
-    fun maybeHandleClick(type: String, layerId: String) {
+    fun maybeHandleClick(type: String, layerId: String): Boolean {
         if (type === POLYGON_LAYER_TYPE) {
             val omhPolygon = polygons[getPolygonId(layerId)]
             if (omhPolygon !== null && omhPolygon.getClickable()) {
-                clickListener?.onPolygonClick(omhPolygon)
+                clickListener?.onPolygonClick(omhPolygon)?.let { evenConsumed ->
+                    return evenConsumed
+                }
             }
         }
+
+        return false
     }
 
     private fun getLineString(coordinates: List<OmhCoordinate>): LineString {
@@ -87,7 +83,10 @@ class PolygonManager(
         )
     }
 
-    private fun getPolygonFeature(outline: List<OmhCoordinate>, holes: List<List<OmhCoordinate>>?): Feature {
+    private fun getPolygonFeature(
+        outline: List<OmhCoordinate>,
+        holes: List<List<OmhCoordinate>>?
+    ): Feature {
         val outlineLineString = getLineString(outline)
 
         val holeLineStringList = holes?.map { hole ->
@@ -113,12 +112,15 @@ class PolygonManager(
             )
         }
 
-        val fillLayer = fillLayer(polygonId, polygonId) {}
-        val outlineLayer = lineLayer(polygonOutlineId, polygonId) { }
+        val fillLayer = fillLayer(polygonId, polygonId) { }
+        val outlineLayer = lineLayer(polygonOutlineId, polygonId) {
+            lineMiterLimit(Constants.LINE_JOIN_MITER_LIMIT)
+            lineRoundLimit(Constants.LINE_JOINT_ROUND_LIMIT)
+        }
         options.applyPolygonOptions(outlineLayer, fillLayer, scaleFactor, logger)
 
         val omhPolygon = OmhPolygonImpl(
-            style,
+            source,
             fillLayer,
             outlineLayer,
             options,
@@ -129,25 +131,16 @@ class PolygonManager(
         polygons[polygonId] = omhPolygon
 
         style?.let { safeStyle ->
-            safeStyle.addSource(source)
-            safeStyle.addLayer(fillLayer)
-            safeStyle.addLayer(outlineLayer)
-        } ?: queue.add(Pair(source, listOf(fillLayer, outlineLayer)))
+            omhPolygon.onStyleLoaded(safeStyle)
+        }
 
         return omhPolygon
     }
 
     fun onStyleLoaded(style: Style) {
-        queue.forEach { (source, layers) ->
-            style.addSource(source)
-            layers.forEach { layer -> style.addLayer(layer) }
-        }
-
         polygons.forEach {
-            it.value.applyBufferedProperties(style)
+            it.value.onStyleLoaded(style)
         }
-
-        queue.clear()
     }
 
     override fun updatePolygonSource(
