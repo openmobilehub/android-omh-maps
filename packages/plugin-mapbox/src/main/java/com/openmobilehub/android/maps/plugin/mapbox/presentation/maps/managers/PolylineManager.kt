@@ -62,7 +62,7 @@ class PolylineManager(
     }
 
     fun maybeHandleClick(type: String, layerId: String): Boolean {
-        if (type === POLYLINE_LAYER_TYPE) {
+        if (type === Constants.POLYLINE_LAYER_TYPE) {
             val omhPolyline = polylines[layerId]
             if (omhPolyline !== null && omhPolyline.getClickable()) {
                 clickListener?.onPolylineClick(omhPolyline)
@@ -121,6 +121,5 @@ class PolylineManager(
 
     companion object {
         private const val POLYLINE_LAYER_PREFIX = "polyline-"
-        private const val POLYLINE_LAYER_TYPE = "LineString"
     }
 }
