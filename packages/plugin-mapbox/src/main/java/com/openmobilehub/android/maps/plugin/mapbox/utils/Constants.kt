@@ -61,7 +61,13 @@ internal object Constants {
      * to be considered still in the same place.
      */
     const val MAP_TOUCH_SAME_COORDINATES_THRESHOLD_PX = 20.0
-    const val DEFAULT_POLYLINE_COLOR = Color.BLACK
+
+    /**
+     * Large limits prevents converting line joins to bevel joins for sharp angles.
+     *  It's required to have parity with Google Maps
+     */
+    const val LINE_JOIN_MITER_LIMIT = 1000.0
+    const val LINE_JOINT_ROUND_LIMIT = 1000.0
 
     // Map Elements
     const val POLYLINE_LAYER_TYPE = "LineString"

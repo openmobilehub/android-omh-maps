@@ -32,6 +32,7 @@ import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogge
 import com.openmobilehub.android.maps.plugin.mapbox.extensions.applyPolylineOptions
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IPolylineDelegate
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.maps.OmhPolylineImpl
+import com.openmobilehub.android.maps.plugin.mapbox.utils.Constants
 import com.openmobilehub.android.maps.plugin.mapbox.utils.CoordinateConverter
 import com.openmobilehub.android.maps.plugin.mapbox.utils.polylineLogger
 import com.openmobilehub.android.maps.plugin.mapbox.utils.uuid.DefaultUUIDGenerator
@@ -81,7 +82,10 @@ class PolylineManager(
             )
         }
 
-        val layer = lineLayer(polylineId, polylineId) { }
+        val layer = lineLayer(polylineId, polylineId) {
+            lineMiterLimit(Constants.LINE_JOIN_MITER_LIMIT)
+            lineRoundLimit(Constants.LINE_JOINT_ROUND_LIMIT)
+        }
         options.applyPolylineOptions(layer, scaleFactor, logger)
 
         val omhPolyline = OmhPolylineImpl(

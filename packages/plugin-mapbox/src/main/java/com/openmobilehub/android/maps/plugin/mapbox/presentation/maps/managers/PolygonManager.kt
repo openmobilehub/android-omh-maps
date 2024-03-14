@@ -34,6 +34,7 @@ import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogge
 import com.openmobilehub.android.maps.plugin.mapbox.extensions.applyPolygonOptions
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IPolygonDelegate
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.maps.OmhPolygonImpl
+import com.openmobilehub.android.maps.plugin.mapbox.utils.Constants
 import com.openmobilehub.android.maps.plugin.mapbox.utils.CoordinateConverter
 import com.openmobilehub.android.maps.plugin.mapbox.utils.polygonLogger
 import com.openmobilehub.android.maps.plugin.mapbox.utils.uuid.DefaultUUIDGenerator
@@ -81,7 +82,10 @@ class PolygonManager(
         )
     }
 
-    private fun getPolygonFeature(outline: List<OmhCoordinate>, holes: List<List<OmhCoordinate>>?): Feature {
+    private fun getPolygonFeature(
+        outline: List<OmhCoordinate>,
+        holes: List<List<OmhCoordinate>>?
+    ): Feature {
         val outlineLineString = getLineString(outline)
 
         val holeLineStringList = holes?.map { hole ->
@@ -107,8 +111,11 @@ class PolygonManager(
             )
         }
 
-        val fillLayer = fillLayer(polygonId, polygonId) {}
-        val outlineLayer = lineLayer(polygonOutlineId, polygonId) { }
+        val fillLayer = fillLayer(polygonId, polygonId) { }
+        val outlineLayer = lineLayer(polygonOutlineId, polygonId) {
+            lineMiterLimit(Constants.LINE_JOIN_MITER_LIMIT)
+            lineRoundLimit(Constants.LINE_JOINT_ROUND_LIMIT)
+        }
         options.applyPolygonOptions(outlineLayer, fillLayer, scaleFactor, logger)
 
         val omhPolygon = OmhPolygonImpl(

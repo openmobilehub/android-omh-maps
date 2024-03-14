@@ -359,8 +359,15 @@ internal class OmhMapImpl(
                     ) { eventConsumed ->
                         if (eventConsumed) mapTouchInteractionManager.resetDragState()
                     }
-                    Constants.POLYLINE_LAYER_TYPE -> polylineManager.maybeHandleClick(layerType, layerId)
-                    Constants.POLYGON_LAYER_TYPE -> polygonManager.maybeHandleClick(layerType, layerId)
+                    Constants.POLYLINE_LAYER_TYPE -> polylineManager.maybeHandleClick(
+                        layerType,
+                        layerId
+                    )
+
+                    Constants.POLYGON_LAYER_TYPE -> polygonManager.maybeHandleClick(
+                        layerType,
+                        layerId
+                    )
                     else -> false // Noop
                 }
             }

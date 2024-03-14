@@ -206,6 +206,14 @@ class MapPolylinesFragment : Fragment(), OmhOnMapReadyCallback {
         return supportedProviders.contains(omhMap?.providerName)
     }
 
+    private fun getDisabledCapTypeSpinnerPositions(): HashSet<Int> {
+        if (omhMap?.providerName === Constants.GOOGLE_PROVIDER) {
+            return hashSetOf()
+        }
+
+        return hashSetOf(capTypeNameResourceID.indexOf(R.string.cap_type_custom))
+    }
+
     private fun setupUI(view: View) {
         spanProperties = view.findViewById(R.id.spanProperties)
         spanGradientProperties = view.findViewById(R.id.spanGradientProperties)
@@ -246,6 +254,7 @@ class MapPolylinesFragment : Fragment(), OmhOnMapReadyCallback {
         // cap
         capSpinner = view.findViewById(R.id.panelSpinner_cap)
         capSpinner?.isEnabled = getSupportedStatus(Constants.ALL_PROVIDERS)
+        capSpinner?.setDisabledPositions(getDisabledCapTypeSpinnerPositions())
         capSpinner?.setValues(requireContext(), capTypeNameResourceID)
         capSpinner?.setOnItemSelectedCallback { position: Int ->
             val cap = mapSpinnerPositionToOmhCap(position)
@@ -256,6 +265,7 @@ class MapPolylinesFragment : Fragment(), OmhOnMapReadyCallback {
         // startCap
         startCapSpinner = view.findViewById(R.id.panelSpinner_startCap)
         startCapSpinner?.isEnabled = getSupportedStatus(listOf(Constants.GOOGLE_PROVIDER))
+        capSpinner?.setDisabledPositions(getDisabledCapTypeSpinnerPositions())
         startCapSpinner?.setValues(requireContext(), capTypeNameResourceID)
         startCapSpinner?.setOnItemSelectedCallback { position: Int ->
             val cap = mapSpinnerPositionToOmhCap(position)
@@ -266,6 +276,7 @@ class MapPolylinesFragment : Fragment(), OmhOnMapReadyCallback {
         // endCap
         endCapSpinner = view.findViewById(R.id.panelSpinner_endCap)
         endCapSpinner?.isEnabled = getSupportedStatus(listOf(Constants.GOOGLE_PROVIDER))
+        capSpinner?.setDisabledPositions(getDisabledCapTypeSpinnerPositions())
         endCapSpinner?.setValues(requireContext(), capTypeNameResourceID)
         endCapSpinner?.setOnItemSelectedCallback { position: Int ->
             val cap = mapSpinnerPositionToOmhCap(position)
@@ -388,9 +399,5 @@ class MapPolylinesFragment : Fragment(), OmhOnMapReadyCallback {
         fun newInstance(): MapPolylinesFragment {
             return MapPolylinesFragment()
         }
-
-        const val MAPBOX = "Mapbox"
-        const val OPENSTREETMAP = "OpenStreetMap"
-        const val GOOGLE = "GoogleMaps"
     }
 }
