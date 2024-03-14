@@ -28,6 +28,7 @@ import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhPolyg
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolygonOptions
 import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
+import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IPolygonDelegate
 import com.openmobilehub.android.maps.plugin.mapbox.utils.JoinTypeConverter
 import com.openmobilehub.android.maps.plugin.mapbox.utils.polygonLogger
 
@@ -38,7 +39,7 @@ class OmhPolygonImpl(
     private val lineLayer: LineLayer,
     options: OmhPolygonOptions,
     private val scaleFactor: Float,
-    private val polygonDelegate: PolygonDelegate,
+    private val polygonDelegate: IPolygonDelegate,
     private val logger: UnsupportedFeatureLogger = polygonLogger
 ) : OmhPolygon {
     private lateinit var style: Style

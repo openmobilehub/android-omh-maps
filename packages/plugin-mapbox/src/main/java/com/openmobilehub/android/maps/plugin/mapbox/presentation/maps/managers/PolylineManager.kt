@@ -30,7 +30,7 @@ import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolylineOptions
 import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
 import com.openmobilehub.android.maps.plugin.mapbox.extensions.applyPolylineOptions
-import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.PolylineDelegate
+import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IPolylineDelegate
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.maps.OmhPolylineImpl
 import com.openmobilehub.android.maps.plugin.mapbox.utils.CoordinateConverter
 import com.openmobilehub.android.maps.plugin.mapbox.utils.polylineLogger
@@ -42,7 +42,7 @@ class PolylineManager(
     private val scaleFactor: Float,
     private val uuidGenerator: UUIDGenerator = DefaultUUIDGenerator(),
     private val logger: UnsupportedFeatureLogger = polylineLogger
-) : PolylineDelegate {
+) : IPolylineDelegate {
     private var polylines = mutableMapOf<String, OmhPolylineImpl>()
     var clickListener: OmhOnPolylineClickListener? = null
 

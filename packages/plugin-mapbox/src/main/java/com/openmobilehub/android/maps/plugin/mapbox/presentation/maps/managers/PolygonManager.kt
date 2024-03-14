@@ -32,8 +32,8 @@ import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolygonOptions
 import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
 import com.openmobilehub.android.maps.plugin.mapbox.extensions.applyPolygonOptions
+import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IPolygonDelegate
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.maps.OmhPolygonImpl
-import com.openmobilehub.android.maps.plugin.mapbox.presentation.maps.PolygonDelegate
 import com.openmobilehub.android.maps.plugin.mapbox.utils.CoordinateConverter
 import com.openmobilehub.android.maps.plugin.mapbox.utils.polygonLogger
 import com.openmobilehub.android.maps.plugin.mapbox.utils.uuid.DefaultUUIDGenerator
@@ -44,7 +44,7 @@ class PolygonManager(
     private val scaleFactor: Float,
     private val uuidGenerator: UUIDGenerator = DefaultUUIDGenerator(),
     private val logger: UnsupportedFeatureLogger = polygonLogger
-) : PolygonDelegate {
+) : IPolygonDelegate {
     private var polygons = mutableMapOf<String, OmhPolygonImpl>()
     var clickListener: OmhOnPolygonClickListener? = null
 

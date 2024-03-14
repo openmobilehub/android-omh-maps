@@ -29,7 +29,7 @@ import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhStyle
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolylineOptions
 import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
-import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.PolylineDelegate
+import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IPolylineDelegate
 import com.openmobilehub.android.maps.plugin.mapbox.utils.CapConverter
 import com.openmobilehub.android.maps.plugin.mapbox.utils.JoinTypeConverter
 import com.openmobilehub.android.maps.plugin.mapbox.utils.polylineLogger
@@ -40,7 +40,7 @@ internal class OmhPolylineImpl(
     private val lineLayer: LineLayer,
     options: OmhPolylineOptions,
     private var scaleFactor: Float,
-    private var polylineDelegate: PolylineDelegate,
+    private var polylineDelegate: IPolylineDelegate,
     private var logger: UnsupportedFeatureLogger = polylineLogger
 ) : OmhPolyline {
     private lateinit var style: Style

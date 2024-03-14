@@ -14,6 +14,7 @@ import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhPatte
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolygonOptions
 import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
+import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IPolygonDelegate
 import com.openmobilehub.android.maps.plugin.mapbox.utils.JoinTypeConverter
 import io.mockk.every
 import io.mockk.just
@@ -31,7 +32,7 @@ class OmhPolygonImplTest {
     private val lineLayer = mockk<LineLayer>(relaxed = true)
     private val fillLayer = mockk<FillLayer>(relaxed = true)
     private val scaleFactor = 3.0f
-    private val polygonDelegate = mockk<PolygonDelegate>(relaxed = true)
+    private val polygonDelegate = mockk<IPolygonDelegate>(relaxed = true)
     private val logger: UnsupportedFeatureLogger =
         mockk<UnsupportedFeatureLogger>(relaxed = true)
 

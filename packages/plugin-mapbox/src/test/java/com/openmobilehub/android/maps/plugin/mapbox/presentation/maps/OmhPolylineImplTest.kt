@@ -16,7 +16,7 @@ import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhStyle
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolylineOptions
 import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
-import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.PolylineDelegate
+import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IPolylineDelegate
 import com.openmobilehub.android.maps.plugin.mapbox.utils.CapConverter
 import com.openmobilehub.android.maps.plugin.mapbox.utils.JoinTypeConverter
 import io.mockk.every
@@ -34,7 +34,7 @@ class OmhPolylineImplTest {
     private val source = mockk<GeoJsonSource>(relaxed = true)
     private val lineLayer = mockk<LineLayer>(relaxed = true)
     private val scaleFactor = 3.0f
-    private val polylineDelegate = mockk<PolylineDelegate>(relaxed = true)
+    private val polylineDelegate = mockk<IPolylineDelegate>(relaxed = true)
     private val logger: UnsupportedFeatureLogger =
         mockk<UnsupportedFeatureLogger>(relaxed = true)
 
