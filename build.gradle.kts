@@ -1,26 +1,30 @@
-import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 import org.gradle.internal.Cast.uncheckedCast
 import org.jetbrains.dokka.DokkaConfiguration
 import org.jetbrains.dokka.base.DokkaBase
 import org.jetbrains.dokka.base.DokkaBaseConfiguration
 import org.jetbrains.dokka.gradle.DokkaTaskPartial
 import java.net.URL
-import java.util.Properties
 
-val properties = Properties()
-val localPropertiesFile = project.file("local.properties")
-if (localPropertiesFile.exists()) {
-    properties.load(localPropertiesFile.inputStream())
-}
-val useMavenLocal = getBooleanFromProperties("useMavenLocal")
-val useLocalProjects = getBooleanFromProperties("useLocalProjects")
+apply("./plugin/propertiesHelpers.gradle.kts")
+val getValueFromEnvOrProperties =
+    uncheckedCast<(name: String, propertiesFile: File?) -> String?>(extra["getValueFromEnvOrProperties"])!!
+val getBooleanFromProperties =
+    uncheckedCast<(name: String, propertiesFile: File?) -> Boolean>(extra["getBooleanFromProperties"])!!
+
+val useMavenLocal = getBooleanFromProperties("useMavenLocal", null)
+val useLocalProjects = getBooleanFromProperties("useLocalProjects", null)
 
 if (useLocalProjects) {
     println("OMH Maps project running with useLocalProjects enabled ")
 }
 
 if (useMavenLocal) {
-    println("OMH Maps project running with useMavenLocal enabled${if (useLocalProjects) ", but only publishing will be altered since dependencies are overriden by useLocalProjects" else ""} ")
+    println(
+        "OMH Maps project running with useMavenLocal enabled${
+            if (useLocalProjects) ", but only publishing will be altered since dependencies are overriden by useLocalProjects"
+            else ""
+        } "
+    )
 }
 
 project.extra.set("useLocalProjects", useLocalProjects)
@@ -134,12 +138,12 @@ tasks {
 }
 
 if (!useMavenLocal) {
-    val ossrhUsername by extra(getValueFromEnvOrProperties("OSSRH_USERNAME"))
-    val ossrhPassword by extra(getValueFromEnvOrProperties("OSSRH_PASSWORD"))
-    val mStagingProfileId by extra(getValueFromEnvOrProperties("SONATYPE_STAGING_PROFILE_ID"))
-    val signingKeyId by extra(getValueFromEnvOrProperties("SIGNING_KEY_ID"))
-    val signingPassword by extra(getValueFromEnvOrProperties("SIGNING_PASSWORD"))
-    val signingKey by extra(getValueFromEnvOrProperties("SIGNING_KEY"))
+    val ossrhUsername = getValueFromEnvOrProperties("OSSRH_USERNAME", null)
+    val ossrhPassword = getValueFromEnvOrProperties("OSSRH_PASSWORD", null)
+    val mStagingProfileId = getValueFromEnvOrProperties("SONATYPE_STAGING_PROFILE_ID", null)
+    val signingKeyId by extra(getValueFromEnvOrProperties("SIGNING_KEY_ID", null))
+    val signingPassword by extra(getValueFromEnvOrProperties("SIGNING_PASSWORD", null))
+    val signingKey by extra(getValueFromEnvOrProperties("SIGNING_KEY", null))
 
     // Set up Sonatype repository
     nexusPublishing {
@@ -154,16 +158,6 @@ if (!useMavenLocal) {
             }
         }
     }
-}
-
-fun getValueFromEnvOrProperties(name: String): String? {
-    val localProperties = gradleLocalProperties(rootDir)
-    return System.getenv(name) ?: localProperties[name]?.toString()
-}
-
-fun getBooleanFromProperties(name: String): Boolean {
-    val localProperties = gradleLocalProperties(rootDir)
-    return (project.ext.has(name) && project.ext.get(name) == "true") || localProperties[name] == "true"
 }
 
 fun RepositoryHandler.configureMapboxMaven() {

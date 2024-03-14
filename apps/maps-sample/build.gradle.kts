@@ -1,6 +1,7 @@
 @file:Suppress("UnstableApiUsage")
 
-import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+import org.gradle.internal.Cast.uncheckedCast
+
 
 val useLocalProjects = project.rootProject.extra["useLocalProjects"] as Boolean
 
@@ -11,14 +12,20 @@ plugins {
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
 }
 
-// validation for Android secrets substitution to provide more detailed error messages
-getRequiredValueFromEnvOrProperties("MAPS_API_KEY", rootDir)
+apply("../../plugin/propertiesHelpers.gradle.kts")
+val getValueFromEnvOrProperties =
+    uncheckedCast<(name: String, propertiesFile: File?) -> String?>(extra["getValueFromEnvOrProperties"])!!
+val getRequiredValueFromEnvOrProperties =
+    uncheckedCast<(name: String, propertiesFile: File?) -> String>(extra["getRequiredValueFromEnvOrProperties"])!!
 
 android {
     namespace = "com.openmobilehub.android.maps.sample"
 
     defaultConfig {
-        val mapboxPublicToken = getRequiredValueFromEnvOrProperties("MAPBOX_PUBLIC_TOKEN", rootDir)
+        val mapboxPublicToken = getRequiredValueFromEnvOrProperties(
+            "MAPBOX_PUBLIC_TOKEN",
+            rootProject.file("local.properties")
+        )
 
         versionCode = 1
         versionName = "1.0"
@@ -35,13 +42,13 @@ android {
         // The alternative would be to pass all the environment variables for signing apk to the packages workflows.
         create("release") {
             val storeFileName =
-                getValueFromEnvOrProperties("SAMPLE_APP_KEYSTORE_FILE_NAME", ".")
+                getValueFromEnvOrProperties("SAMPLE_APP_KEYSTORE_FILE_NAME", null)
             val storePassword =
-                getValueFromEnvOrProperties("SAMPLE_APP_KEYSTORE_STORE_PASSWORD", ".")
+                getValueFromEnvOrProperties("SAMPLE_APP_KEYSTORE_STORE_PASSWORD", null)
             val keyAlias =
-                getValueFromEnvOrProperties("SAMPLE_APP_KEYSTORE_KEY_ALIAS", ".")
+                getValueFromEnvOrProperties("SAMPLE_APP_KEYSTORE_KEY_ALIAS", null)
             val keyPassword =
-                getValueFromEnvOrProperties("SAMPLE_APP_KEYSTORE_KEY_PASSWORD", ".")
+                getValueFromEnvOrProperties("SAMPLE_APP_KEYSTORE_KEY_PASSWORD", null)
 
             if (storeFileName != null && storePassword != null && keyAlias != null && keyPassword != null) {
                 this.storeFile = file(storeFileName)
@@ -103,19 +110,6 @@ dependencies {
         implementation("com.openmobilehub.android.maps:plugin-openstreetmap:2.0.0-beta")
         implementation("com.openmobilehub.android.maps:plugin-mapbox:1.0.0-beta")
     }
-}
-
-fun getValueFromEnvOrProperties(name: String, propertiesFilePath: Any): String? {
-    val localProperties = gradleLocalProperties(file(propertiesFilePath))
-    return System.getenv(name) ?: localProperties[name]?.toString()
-}
-
-fun getRequiredValueFromEnvOrProperties(name: String, propertiesFilePath: Any): String {
-    return getValueFromEnvOrProperties(name, propertiesFilePath) ?: throw GradleException(
-        "$name was not found in environment variables, nor in local.properties. ".plus(
-            "Did you forget to set it?"
-        )
-    )
 }
 
 tasks.dokkaHtmlPartial {
