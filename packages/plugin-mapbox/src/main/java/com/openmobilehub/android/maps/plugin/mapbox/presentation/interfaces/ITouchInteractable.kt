@@ -44,5 +44,10 @@ internal interface ITouchInteractable {
      */
     fun getLongClickable(): Boolean
 
+    /**
+     * Returns whether the entity is clickable.
+     *
+     * @return `true` if the entity is clickable, `false` otherwise.
+     */
     fun getClickable(): Boolean
 }
