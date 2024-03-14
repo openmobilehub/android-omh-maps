@@ -8,11 +8,13 @@ import java.net.URL
 apply("./plugin/propertiesHelpers.gradle.kts")
 val getValueFromEnvOrProperties =
     uncheckedCast<(name: String, propertiesFile: File?) -> String?>(extra["getValueFromEnvOrProperties"])!!
+val getRequiredValueFromEnvOrProperties =
+    uncheckedCast<(name: String, propertiesFile: File?) -> String>(extra["getRequiredValueFromEnvOrProperties"])!!
 val getBooleanFromProperties =
     uncheckedCast<(name: String, propertiesFile: File?) -> Boolean>(extra["getBooleanFromProperties"])!!
 
-val useMavenLocal = getBooleanFromProperties("useMavenLocal", null)
-val useLocalProjects = getBooleanFromProperties("useLocalProjects", null)
+val useMavenLocal by extra(getBooleanFromProperties("useMavenLocal", null))
+val useLocalProjects by extra(getBooleanFromProperties("useLocalProjects", null))
 
 if (useLocalProjects) {
     println("OMH Maps project running with useLocalProjects enabled ")
@@ -26,9 +28,6 @@ if (useMavenLocal) {
         } "
     )
 }
-
-project.extra.set("useLocalProjects", useLocalProjects)
-project.extra.set("useMavenLocal", useMavenLocal)
 
 plugins {
     id("io.github.gradle-nexus.publish-plugin") version "1.1.0"
@@ -162,12 +161,7 @@ if (!useMavenLocal) {
 
 fun RepositoryHandler.configureMapboxMaven() {
     maven {
-        val mapboxDownloadToken =
-            providers.gradleProperty("MAPBOX_DOWNLOADS_TOKEN").orNull ?: throw GradleException(
-                "MAPBOX_DOWNLOADS_TOKEN is missing in local.properties. ".plus(
-                    "Did you forget to set it?"
-                )
-            )
+        val mapboxDownloadToken = getRequiredValueFromEnvOrProperties("MAPBOX_DOWNLOADS_TOKEN", null)
 
         url = uri("https://api.mapbox.com/downloads/v2/releases/maven")
         credentials.username = "mapbox"

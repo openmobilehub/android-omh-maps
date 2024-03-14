@@ -2,7 +2,6 @@
 
 import org.gradle.internal.Cast.uncheckedCast
 
-
 val useLocalProjects = project.rootProject.extra["useLocalProjects"] as Boolean
 
 plugins {
