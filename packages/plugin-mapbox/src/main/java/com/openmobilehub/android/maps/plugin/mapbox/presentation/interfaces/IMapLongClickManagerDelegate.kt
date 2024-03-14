@@ -14,12 +14,20 @@
  * limitations under the License.
  */
 
-package com.openmobilehub.android.maps.plugin.mapbox.utils
+package com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces
 
-import com.openmobilehub.android.maps.core.utils.logging.Logger
-import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
+/**
+ * Delegate interface having capabilities to handle long click events on the map.
+ */
+internal interface IMapLongClickManagerDelegate {
 
-val commonLogger = Logger(Constants.PROVIDER_NAME)
-val markerLogger = UnsupportedFeatureLogger(Constants.PROVIDER_NAME, "OmhMarker")
-val polylineLogger = UnsupportedFeatureLogger(Constants.PROVIDER_NAME, "OmhPolyline")
-val polygonLogger = UnsupportedFeatureLogger(Constants.PROVIDER_NAME, "OmhPolygon")
+    /**
+     * Callback invoked when long click event is detected.
+     *
+     * @param longClickedEntity The [ITouchInteractable] entity that has been long clicked
+     * and returns `true` from `getLongClickable()`.
+     *
+     * @return `true` if the event has been consumed, `false` otherwise.
+     */
+    fun handleLongClick(longClickedEntity: ITouchInteractable): Boolean
+}

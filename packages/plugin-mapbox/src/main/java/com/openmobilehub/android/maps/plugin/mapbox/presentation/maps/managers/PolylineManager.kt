@@ -34,8 +34,8 @@ import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolylineOptions
 import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
 import com.openmobilehub.android.maps.plugin.mapbox.extensions.applyPolylineOptions
+import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.PolylineDelegate
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.maps.OmhPolylineImpl
-import com.openmobilehub.android.maps.plugin.mapbox.presentation.maps.PolylineDelegate
 import com.openmobilehub.android.maps.plugin.mapbox.utils.CoordinateConverter
 import com.openmobilehub.android.maps.plugin.mapbox.utils.polylineLogger
 import com.openmobilehub.android.maps.plugin.mapbox.utils.uuid.DefaultUUIDGenerator
@@ -69,13 +69,15 @@ class PolylineManager(
         )
     }
 
-    fun maybeHandleClick(type: String, layerId: String) {
+    fun maybeHandleClick(type: String, layerId: String): Boolean {
         if (type === POLYLINE_LAYER_TYPE) {
             val omhPolyline = polylines[layerId]
             if (omhPolyline !== null && omhPolyline.getClickable()) {
                 clickListener?.onPolylineClick(omhPolyline)
+                return true
             }
         }
+        return false
     }
 
     fun addPolyline(options: OmhPolylineOptions, style: Style?): OmhPolyline {

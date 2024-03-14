@@ -26,6 +26,7 @@ import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhStyle
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolylineOptions
 import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
+import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.PolylineDelegate
 import com.openmobilehub.android.maps.plugin.mapbox.utils.CapConverter
 import com.openmobilehub.android.maps.plugin.mapbox.utils.JoinTypeConverter
 import com.openmobilehub.android.maps.plugin.mapbox.utils.polylineLogger

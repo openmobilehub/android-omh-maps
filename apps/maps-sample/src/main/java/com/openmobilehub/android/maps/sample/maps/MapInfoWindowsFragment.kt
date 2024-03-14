@@ -156,7 +156,8 @@ open class MapInfoWindowsFragment : Fragment(), OmhOnMapReadyCallback {
 
         omhMap.setOnMarkerClickListener(OmhOnMarkerClickListener { marker ->
             if (demoShouldToggleWindowOnMarkerClickCheckbox?.isChecked != true) {
-                return@OmhOnMarkerClickListener false
+                // prevent the default behaviour: showing the info window on click by consuming the event
+                return@OmhOnMarkerClickListener true
             }
 
             val executeToggle = {
@@ -298,7 +299,6 @@ open class MapInfoWindowsFragment : Fragment(), OmhOnMapReadyCallback {
 
     @SuppressLint("InflateParams", "SetTextI18n")
     private fun inflateInfoWindowView(isWholeWindow: Boolean, omhMarker: OmhMarker): View {
-
         val view = this.layoutInflater.inflate(
             if (isWholeWindow) R.layout.info_window else R.layout.info_window_contents,
             null
@@ -408,7 +408,11 @@ open class MapInfoWindowsFragment : Fragment(), OmhOnMapReadyCallback {
         // hasSnippet
         hasSnippetCheckbox = view.findViewById(R.id.checkBox_hasSnippet)
         hasSnippetCheckbox?.setOnCheckedChangeListener { _, isChecked ->
-            demoMarker?.setSnippet(if (isChecked) "A sample snippet with long description" else null)
+            demoMarker?.setSnippet(
+                if (isChecked)
+                    "A sample snippet with long description that should wrap across lines properly."
+                else null
+            )
         }
 
         // anchorU

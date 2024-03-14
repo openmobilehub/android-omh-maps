@@ -60,13 +60,16 @@ class PolygonManager(
         return layerId.replace(POLYGON_OUTLINE_LAYER_PREFIX, "")
     }
 
-    fun maybeHandleClick(type: String, layerId: String) {
+    fun maybeHandleClick(type: String, layerId: String): Boolean {
         if (type === POLYGON_LAYER_TYPE) {
             val omhPolygon = polygons[getPolygonId(layerId)]
             if (omhPolygon !== null && omhPolygon.getClickable()) {
                 clickListener?.onPolygonClick(omhPolygon)
+                return true
             }
         }
+
+        return false
     }
 
     private fun getLineString(coordinates: List<OmhCoordinate>): LineString {
