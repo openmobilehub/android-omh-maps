@@ -75,9 +75,9 @@ import com.openmobilehub.android.maps.plugin.mapbox.utils.uuid.DefaultUUIDGenera
 import com.openmobilehub.android.maps.plugin.mapbox.utils.uuid.UUIDGenerator
 
 @SuppressWarnings("TooManyFunctions")
-internal class OmhMapImpl(
+class OmhMapImpl(
     @SuppressWarnings("UnusedPrivateMember")
-    private val mapView: MapView,
+    val mapView: MapView,
     private val context: Context,
     private val myLocationIcon: ImageView = MyLocationIcon(context),
     private val logger: Logger = commonLogger,
