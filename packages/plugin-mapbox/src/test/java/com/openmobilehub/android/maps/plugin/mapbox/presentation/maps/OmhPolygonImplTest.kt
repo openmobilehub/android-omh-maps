@@ -6,6 +6,7 @@ import com.mapbox.maps.extension.style.layers.generated.FillLayer
 import com.mapbox.maps.extension.style.layers.generated.LineLayer
 import com.mapbox.maps.extension.style.layers.properties.generated.LineJoin
 import com.mapbox.maps.extension.style.layers.properties.generated.Visibility
+import com.mapbox.maps.extension.style.sources.generated.GeoJsonSource
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhPatternItem
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolygonOptions
@@ -20,6 +21,7 @@ import org.junit.Before
 import org.junit.Test
 
 class OmhPolygonImplTest {
+    private val source = mockk<GeoJsonSource>(relaxed = true)
     private val lineLayer = mockk<LineLayer>(relaxed = true)
     private val fillLayer = mockk<FillLayer>(relaxed = true)
     private val scaleFactor = 3.0f
@@ -45,7 +47,7 @@ class OmhPolygonImplTest {
         every { style.isStyleLoaded() } returns true
 
         omhPolygon = OmhPolygonImpl(
-            style,
+            source,
             fillLayer,
             lineLayer,
             initialOptions,
@@ -54,7 +56,7 @@ class OmhPolygonImplTest {
             logger
         )
         omhPolygonWithoutStyle = OmhPolygonImpl(
-            null,
+            source,
             fillLayer,
             lineLayer,
             initialOptions,
@@ -598,7 +600,7 @@ class OmhPolygonImplTest {
         omhPolygonWithoutStyle.setStrokeWidth(expectedStrokeWidth)
         omhPolygonWithoutStyle.setVisible(expectedVisibility)
 
-        omhPolygonWithoutStyle.applyBufferedProperties(style)
+        omhPolygonWithoutStyle.onStyleLoaded(style)
 
         // Assert
         verify { lineLayer.lineColor(expectedStrokeColor) }

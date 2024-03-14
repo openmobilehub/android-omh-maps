@@ -21,12 +21,8 @@ import com.mapbox.geojson.LineString
 import com.mapbox.geojson.Polygon
 import com.mapbox.maps.MapView
 import com.mapbox.maps.Style
-import com.mapbox.maps.extension.style.layers.Layer
-import com.mapbox.maps.extension.style.layers.addLayer
 import com.mapbox.maps.extension.style.layers.generated.fillLayer
 import com.mapbox.maps.extension.style.layers.generated.lineLayer
-import com.mapbox.maps.extension.style.sources.Source
-import com.mapbox.maps.extension.style.sources.addSource
 import com.mapbox.maps.extension.style.sources.generated.GeoJsonSource
 import com.mapbox.maps.extension.style.sources.generated.geoJsonSource
 import com.mapbox.maps.extension.style.sources.getSource
@@ -50,12 +46,7 @@ class PolygonManager(
     private val logger: UnsupportedFeatureLogger = polygonLogger
 ) : PolygonDelegate {
     private var polygons = mutableMapOf<String, OmhPolygonImpl>()
-    private var queue = mutableListOf<Pair<Source, List<Layer>>>()
     var clickListener: OmhOnPolygonClickListener? = null
-
-    fun getQueue(): List<Pair<Source, List<Layer>>> {
-        return queue
-    }
 
     private fun generatePolygonId(): String {
         return POLYGON_LAYER_PREFIX + uuidGenerator.generate()
@@ -118,7 +109,7 @@ class PolygonManager(
         options.applyPolygonOptions(outlineLayer, fillLayer, scaleFactor, logger)
 
         val omhPolygon = OmhPolygonImpl(
-            style,
+            source,
             fillLayer,
             outlineLayer,
             options,
@@ -129,25 +120,16 @@ class PolygonManager(
         polygons[polygonId] = omhPolygon
 
         style?.let { safeStyle ->
-            safeStyle.addSource(source)
-            safeStyle.addLayer(fillLayer)
-            safeStyle.addLayer(outlineLayer)
-        } ?: queue.add(Pair(source, listOf(fillLayer, outlineLayer)))
+            omhPolygon.onStyleLoaded(safeStyle)
+        }
 
         return omhPolygon
     }
 
     fun onStyleLoaded(style: Style) {
-        queue.forEach { (source, layers) ->
-            style.addSource(source)
-            layers.forEach { layer -> style.addLayer(layer) }
-        }
-
         polygons.forEach {
-            it.value.applyBufferedProperties(style)
+            it.value.onStyleLoaded(style)
         }
-
-        queue.clear()
     }
 
     override fun updatePolygonSource(

@@ -129,22 +129,6 @@ class PolygonManagerTest {
     }
 
     @Test
-    fun `addPolygon returns OmhPolygon and add polygon source and layers to queue if style was initialized`() {
-        // Arrange
-        val polygonOptions = OmhPolygonOptions().apply {
-            outline = DEFAULT_OUTLINE
-            holes = EXAMPLE_HOLES
-        }
-
-        // Act
-        val polygon = polygonManager.addPolygon(polygonOptions, null)
-
-        // Assert
-        Assert.assertTrue(polygonManager.getQueue().isNotEmpty())
-        Assert.assertNotNull(polygon)
-    }
-
-    @Test
     fun `onStyleLoaded adds source and layers to style and applies buffered properties for each polygon`() {
         // Arrange
         every { any<MapboxStyleManager>().addSource(any()) } just runs
@@ -161,8 +145,7 @@ class PolygonManagerTest {
         // Assert
         verify(exactly = 1) { style.addSource(any()) }
         verify(exactly = 2) { style.addLayer(any()) }
-        verify(exactly = 1) { polygon.applyBufferedProperties(style) }
-        Assert.assertTrue(polygonManager.getQueue().isEmpty())
+        verify(exactly = 1) { polygon.onStyleLoaded(style) }
     }
 
     @Test

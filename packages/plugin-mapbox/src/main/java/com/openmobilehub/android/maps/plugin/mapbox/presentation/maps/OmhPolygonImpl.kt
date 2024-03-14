@@ -17,9 +17,12 @@
 package com.openmobilehub.android.maps.plugin.mapbox.presentation.maps
 
 import com.mapbox.maps.Style
+import com.mapbox.maps.extension.style.layers.addLayer
 import com.mapbox.maps.extension.style.layers.generated.FillLayer
 import com.mapbox.maps.extension.style.layers.generated.LineLayer
 import com.mapbox.maps.extension.style.layers.properties.generated.Visibility
+import com.mapbox.maps.extension.style.sources.Source
+import com.mapbox.maps.extension.style.sources.addSource
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhPatternItem
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhPolygon
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
@@ -30,14 +33,16 @@ import com.openmobilehub.android.maps.plugin.mapbox.utils.polygonLogger
 
 @SuppressWarnings("TooManyFunctions", "LongParameterList")
 class OmhPolygonImpl(
-    private var style: Style?,
-    private val fillLayer: FillLayer,
-    private val lineLayer: LineLayer,
+    internal val source: Source,
+    internal val fillLayer: FillLayer,
+    internal val lineLayer: LineLayer,
     options: OmhPolygonOptions,
     private val scaleFactor: Float,
     private val polygonDelegate: PolygonDelegate,
     private val logger: UnsupportedFeatureLogger = polygonLogger
 ) : OmhPolygon {
+    private lateinit var style: Style
+
     // Internal properties
     private var clickable: Boolean = false
     private var outline: List<OmhCoordinate> = options.outline
@@ -56,8 +61,8 @@ class OmhPolygonImpl(
         options.holes?.let { holes = it }
     }
 
-    private fun isStyleLoaded(): Boolean {
-        return style?.isStyleLoaded() ?: false
+    private fun isStyleReady(): Boolean {
+        return this::style.isInitialized && this.style.isStyleLoaded()
     }
 
     override fun getClickable(): Boolean {
@@ -69,14 +74,14 @@ class OmhPolygonImpl(
     }
 
     override fun getStrokeColor(): Int? {
-        if (isStyleLoaded()) {
+        if (isStyleReady()) {
             return lineLayer.lineColorAsColorInt
         }
         return bufferedStrokeColor
     }
 
     override fun setStrokeColor(color: Int) {
-        if (isStyleLoaded()) {
+        if (isStyleReady()) {
             lineLayer.lineColor(color)
         } else {
             bufferedStrokeColor = color
@@ -84,14 +89,14 @@ class OmhPolygonImpl(
     }
 
     override fun getFillColor(): Int? {
-        if (isStyleLoaded()) {
+        if (isStyleReady()) {
             return fillLayer.fillColorAsColorInt
         }
         return bufferedFillColor
     }
 
     override fun setFillColor(color: Int) {
-        if (isStyleLoaded()) {
+        if (isStyleReady()) {
             fillLayer.fillColor(color)
         } else {
             bufferedFillColor = color
@@ -99,14 +104,14 @@ class OmhPolygonImpl(
     }
 
     override fun getStrokeJointType(): Int? {
-        if (isStyleLoaded()) {
+        if (isStyleReady()) {
             return JoinTypeConverter.convertToOmhJointType(lineLayer.lineJoin)
         }
         return bufferedStrokeJointType
     }
 
     override fun setStrokeJointType(jointType: Int) {
-        if (isStyleLoaded()) {
+        if (isStyleReady()) {
             lineLayer.lineJoin(JoinTypeConverter.convertToLineJoin(jointType))
         } else {
             bufferedStrokeJointType = jointType
@@ -149,7 +154,7 @@ class OmhPolygonImpl(
     }
 
     override fun getStrokeWidth(): Float? {
-        if (isStyleLoaded()) {
+        if (isStyleReady()) {
             return lineLayer.lineWidth?.toFloat()
                 ?.times(scaleFactor)
         }
@@ -157,7 +162,7 @@ class OmhPolygonImpl(
     }
 
     override fun setStrokeWidth(width: Float) {
-        if (isStyleLoaded()) {
+        if (isStyleReady()) {
             lineLayer.lineWidth((width / scaleFactor).toDouble())
         } else {
             bufferedStrokeWidth = width
@@ -174,14 +179,14 @@ class OmhPolygonImpl(
     }
 
     override fun isVisible(): Boolean {
-        if (isStyleLoaded()) {
+        if (isStyleReady()) {
             return lineLayer.visibility === Visibility.VISIBLE && fillLayer.visibility === Visibility.VISIBLE
         }
         return bufferedVisibility
     }
 
     override fun setVisible(visible: Boolean) {
-        if (isStyleLoaded()) {
+        if (isStyleReady()) {
             val visibility = if (visible) Visibility.VISIBLE else Visibility.NONE
             lineLayer.visibility(visibility)
             fillLayer.visibility(visibility)
@@ -190,9 +195,7 @@ class OmhPolygonImpl(
         }
     }
 
-    fun applyBufferedProperties(style: Style) {
-        this.style = style
-
+    private fun applyBufferedProperties() {
         bufferedStrokeColor?.let { setStrokeColor(it) }
         bufferedFillColor?.let { setFillColor(it) }
         bufferedStrokeJointType?.let { setStrokeJointType(it) }
@@ -203,5 +206,21 @@ class OmhPolygonImpl(
         bufferedFillColor = null
         bufferedStrokeJointType = null
         bufferedStrokeWidth = null
+    }
+
+    private fun addSourceAndLayersToMap() {
+        style.addSource(source)
+        style.addLayer(fillLayer)
+        style.addLayer(lineLayer)
+    }
+
+    fun onStyleLoaded(style: Style) {
+        check(!isStyleReady()) { "Buffered properties have already been applied" }
+
+        synchronized(this) {
+            this.style = style
+            addSourceAndLayersToMap()
+            applyBufferedProperties()
+        }
     }
 }

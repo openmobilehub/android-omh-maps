@@ -89,6 +89,7 @@ internal class OmhMapImpl(
     init {
         setupMapViewUIControls()
         addPendingMapElements()
+        setupClickListeners()
     }
 
     private fun addPendingMapElements() {
@@ -221,7 +222,6 @@ internal class OmhMapImpl(
 
     override fun setOnPolylineClickListener(listener: OmhOnPolylineClickListener) {
         polylineManager.clickListener = listener
-        setupClickListeners()
     }
 
     @SuppressWarnings("TooGenericExceptionCaught")
@@ -251,7 +251,6 @@ internal class OmhMapImpl(
 
     override fun setOnPolygonClickListener(listener: OmhOnPolygonClickListener) {
         polygonManager.clickListener = listener
-        setupClickListeners()
     }
 
     override fun setMapStyle(json: Int?) {
