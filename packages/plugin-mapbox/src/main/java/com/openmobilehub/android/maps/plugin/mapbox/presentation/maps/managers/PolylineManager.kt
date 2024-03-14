@@ -65,8 +65,9 @@ class PolylineManager(
         if (type === Constants.POLYLINE_LAYER_TYPE) {
             val omhPolyline = polylines[layerId]
             if (omhPolyline !== null && omhPolyline.getClickable()) {
-                clickListener?.onPolylineClick(omhPolyline)
-                return true
+                clickListener?.onPolylineClick(omhPolyline)?.let { eventConsumed ->
+                    return eventConsumed
+                }
             }
         }
         return false

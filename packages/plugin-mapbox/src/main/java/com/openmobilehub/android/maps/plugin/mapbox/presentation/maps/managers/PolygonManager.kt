@@ -65,8 +65,9 @@ class PolygonManager(
         if (type === POLYGON_LAYER_TYPE) {
             val omhPolygon = polygons[getPolygonId(layerId)]
             if (omhPolygon !== null && omhPolygon.getClickable()) {
-                clickListener?.onPolygonClick(omhPolygon)
-                return true
+                clickListener?.onPolygonClick(omhPolygon)?.let { evenConsumed ->
+                    return evenConsumed
+                }
             }
         }
 

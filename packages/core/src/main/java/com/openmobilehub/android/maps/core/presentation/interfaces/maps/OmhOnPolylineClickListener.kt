@@ -23,6 +23,7 @@ fun interface OmhOnPolylineClickListener {
     /**
      * Called when a polyline on the map is clicked.
      * @param polyline The polyline that was clicked.
+     * @return true if the default behavior should be suppressed; false otherwise
      */
-    fun onPolylineClick(polyline: OmhPolyline)
+    fun onPolylineClick(polyline: OmhPolyline): Boolean
 }

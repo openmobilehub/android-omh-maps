@@ -154,6 +154,7 @@ class MapPolylinesFragment : Fragment(), OmhOnMapReadyCallback {
                 dialog.dismiss()
             }
             alert.show()
+            return@OmhOnPolylineClickListener true
         }
         omhMap.setOnPolylineClickListener(omhOnPolylineClickListener)
 
