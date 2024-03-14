@@ -20,11 +20,7 @@ import com.mapbox.geojson.Feature
 import com.mapbox.geojson.LineString
 import com.mapbox.maps.MapView
 import com.mapbox.maps.Style
-import com.mapbox.maps.extension.style.layers.Layer
-import com.mapbox.maps.extension.style.layers.addLayer
 import com.mapbox.maps.extension.style.layers.generated.lineLayer
-import com.mapbox.maps.extension.style.sources.Source
-import com.mapbox.maps.extension.style.sources.addSource
 import com.mapbox.maps.extension.style.sources.generated.GeoJsonSource
 import com.mapbox.maps.extension.style.sources.generated.geoJsonSource
 import com.mapbox.maps.extension.style.sources.getSource
@@ -48,12 +44,7 @@ class PolylineManager(
     private val logger: UnsupportedFeatureLogger = polylineLogger
 ) : PolylineDelegate {
     private var polylines = mutableMapOf<String, OmhPolylineImpl>()
-    private var queue = mutableListOf<Pair<Source, Layer>>()
     var clickListener: OmhOnPolylineClickListener? = null
-
-    fun getQueue(): List<Pair<Source, Layer>> {
-        return queue
-    }
 
     private fun generatePolylineId(): String {
         return POLYLINE_LAYER_PREFIX + uuidGenerator.generate()
@@ -94,7 +85,7 @@ class PolylineManager(
         options.applyPolylineOptions(layer, scaleFactor, logger)
 
         val omhPolyline = OmhPolylineImpl(
-            style,
+            source,
             layer,
             options,
             scaleFactor,
@@ -104,24 +95,16 @@ class PolylineManager(
         polylines[polylineId] = omhPolyline
 
         style?.let { safeStyle ->
-            safeStyle.addSource(source)
-            safeStyle.addLayer(layer)
-        } ?: queue.add(Pair(source, layer))
+            omhPolyline.onStyleLoaded(safeStyle)
+        }
 
         return omhPolyline
     }
 
     fun onStyleLoaded(style: Style) {
-        queue.forEach { (source, layer) ->
-            style.addSource(source)
-            style.addLayer(layer)
-        }
-
         polylines.forEach {
-            it.value.applyBufferedProperties(style)
+            it.value.onStyleLoaded(style)
         }
-
-        queue.clear()
     }
 
     override fun updatePolylinePoints(sourceId: String, points: List<OmhCoordinate>) {

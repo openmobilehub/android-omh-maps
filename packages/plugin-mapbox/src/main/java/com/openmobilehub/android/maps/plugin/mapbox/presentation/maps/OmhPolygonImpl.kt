@@ -34,8 +34,8 @@ import com.openmobilehub.android.maps.plugin.mapbox.utils.polygonLogger
 @SuppressWarnings("TooManyFunctions", "LongParameterList")
 class OmhPolygonImpl(
     internal val source: Source,
-    internal val fillLayer: FillLayer,
-    internal val lineLayer: LineLayer,
+    private val fillLayer: FillLayer,
+    private val lineLayer: LineLayer,
     options: OmhPolygonOptions,
     private val scaleFactor: Float,
     private val polygonDelegate: PolygonDelegate,

@@ -128,21 +128,6 @@ class PolylineManagerTest {
     }
 
     @Test
-    fun `addPolyline returns OmhPolyline and add polyline source and layers to queue if style was initialized`() {
-        // Arrange
-        val polylineOptions = OmhPolylineOptions().apply {
-            points = DEFAULT_POINTS
-        }
-
-        // Act
-        val polyline = polylineManager.addPolyline(polylineOptions, null)
-
-        // Assert
-        Assert.assertTrue(polylineManager.getQueue().isNotEmpty())
-        Assert.assertNotNull(polyline)
-    }
-
-    @Test
     fun `onStyleLoaded adds source and layers to style and applies buffered properties for each polyline`() {
         // Arrange
         every { any<MapboxStyleManager>().addSource(any()) } just runs
@@ -159,8 +144,7 @@ class PolylineManagerTest {
         // Assert
         verify(exactly = 1) { style.addSource(any()) }
         verify(exactly = 1) { style.addLayer(any()) }
-        verify(exactly = 1) { polyline.applyBufferedProperties(style) }
-        Assert.assertTrue(polylineManager.getQueue().isEmpty())
+        verify(exactly = 1) { polyline.onStyleLoaded(style) }
     }
 
     @Test
