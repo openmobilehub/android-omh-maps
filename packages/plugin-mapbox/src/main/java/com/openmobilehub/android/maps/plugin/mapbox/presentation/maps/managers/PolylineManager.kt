@@ -61,13 +61,11 @@ class PolylineManager(
         )
     }
 
-    fun maybeHandleClick(type: String, layerId: String): Boolean {
-        if (type === Constants.POLYLINE_LAYER_TYPE) {
-            val omhPolyline = polylines[layerId]
-            if (omhPolyline !== null && omhPolyline.getClickable()) {
-                clickListener?.onPolylineClick(omhPolyline)?.let { eventConsumed ->
-                    return eventConsumed
-                }
+    fun maybeHandleClick(layerId: String): Boolean {
+        val omhPolyline = polylines[layerId]
+        if (omhPolyline !== null && omhPolyline.getClickable()) {
+            clickListener?.onPolylineClick(omhPolyline)?.let { eventConsumed ->
+                return eventConsumed
             }
         }
         return false

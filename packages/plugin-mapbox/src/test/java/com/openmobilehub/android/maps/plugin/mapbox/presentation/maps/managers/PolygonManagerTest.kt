@@ -44,19 +44,6 @@ class PolygonManagerTest {
     }
 
     @Test
-    fun `maybeHandleClick does nothing if type does not match Polygon type`() {
-        // Arrange
-        val clickHandler = mockk<OmhOnPolygonClickListener>(relaxed = true)
-        polygonManager.clickListener = clickHandler
-
-        // Act
-        polygonManager.maybeHandleClick("Polyline", "id")
-
-        // Assert
-        verify(exactly = 0) { clickHandler.onPolygonClick(any<OmhPolygon>()) }
-    }
-
-    @Test
     fun `maybeHandleClick does nothing if Polygon with given id does not exist`() {
         // Arrange
         // We have empty polygons map
@@ -64,7 +51,7 @@ class PolygonManagerTest {
         polygonManager.clickListener = clickHandler
 
         // Act
-        polygonManager.maybeHandleClick("Polygon", "id")
+        polygonManager.maybeHandleClick("id")
 
         // Assert
         verify(exactly = 0) { clickHandler.onPolygonClick(any<OmhPolygon>()) }
@@ -83,7 +70,7 @@ class PolygonManagerTest {
 
         // Act
         polygonManager.addPolygon(polygonOptions, null)
-        polygonManager.maybeHandleClick("Polygon", "polygon-$DEFAULT_UUID")
+        polygonManager.maybeHandleClick("polygon-$DEFAULT_UUID")
 
         // Assert
         verify(exactly = 0) { clickHandler.onPolygonClick(any<OmhPolygon>()) }
@@ -102,7 +89,7 @@ class PolygonManagerTest {
 
         // Act
         polygonManager.addPolygon(polygonOptions, null)
-        polygonManager.maybeHandleClick("Polygon", "polygon-$DEFAULT_UUID")
+        polygonManager.maybeHandleClick("polygon-$DEFAULT_UUID")
 
         // Assert
         verify(exactly = 1) { clickHandler.onPolygonClick(any<OmhPolygon>()) }

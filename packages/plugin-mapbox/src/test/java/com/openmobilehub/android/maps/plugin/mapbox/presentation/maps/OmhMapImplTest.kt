@@ -883,7 +883,7 @@ class OmhMapImplTest {
     }
 
     @Test
-    fun `polylineManager_maybeHandleClick is called when polyline is clicked`() {
+    fun `polylineManager_maybeHandleClick is called when polyline with LineString layer type is clicked`() {
         // Arrange
         val listener = mockk<OmhOnPolylineClickListener>(relaxed = true)
 
@@ -908,7 +908,36 @@ class OmhMapImplTest {
         onMapClickListenerSlot.captured.onMapClick(Point.fromLngLat(0.0, 0.0))
 
         // Assert
-        verify { polylineManager.maybeHandleClick(type, layerId) }
+        verify { polylineManager.maybeHandleClick(layerId) }
+    }
+
+    @Test
+    fun `polylineManager_maybeHandleClick is called when polyline with MultiLineString layer type is clicked`() {
+        // Arrange
+        val listener = mockk<OmhOnPolylineClickListener>(relaxed = true)
+
+        val layerId = "polyline-$DEFAULT_UUID"
+        val type = "MultiLineString"
+
+        mockQueryRenderedFeatures(layerId, type)
+        mockPixelForCoordinate()
+
+        setupLoadStyleCallback()
+
+        val onMapClickListenerSlot = slot<OnMapClickListener>()
+        every { map.gestures.addOnMapClickListener(capture(onMapClickListenerSlot)) } just runs
+
+        mockQueryRenderedFeatures("polyline-$DEFAULT_UUID", Constants.POLYLINE_LAYER_TYPE)
+        mockPixelForCoordinate()
+
+        // Act
+        omhMapImpl = createOmhMapImplInstance()
+
+        omhMapImpl.setOnPolylineClickListener(listener)
+        onMapClickListenerSlot.captured.onMapClick(Point.fromLngLat(0.0, 0.0))
+
+        // Assert
+        verify { polylineManager.maybeHandleClick(layerId) }
     }
 
     @Test
@@ -957,7 +986,7 @@ class OmhMapImplTest {
     }
 
     @Test
-    fun `polygonManager_maybeHandleClick is called when polygon is clicked`() {
+    fun `polygonManager_maybeHandleClick is called when polygon with Polygon layer type is clicked`() {
         // Arrange
         val listener = mockk<OmhOnPolygonClickListener>(relaxed = true)
 
@@ -978,7 +1007,32 @@ class OmhMapImplTest {
         onMapClickListenerSlot.captured.onMapClick(Point.fromLngLat(0.0, 0.0))
 
         // Assert
-        verify { polygonManager.maybeHandleClick(type, layerId) }
+        verify { polygonManager.maybeHandleClick(layerId) }
+    }
+
+    @Test
+    fun `polygonManager_maybeHandleClick is called when polygon with MultiPolygon layer type is clicked`() {
+        // Arrange
+        val listener = mockk<OmhOnPolygonClickListener>(relaxed = true)
+
+        val layerId = "polygon-$DEFAULT_UUID"
+        val type = "MultiPolygon"
+
+        mockQueryRenderedFeatures(layerId, type)
+        mockPixelForCoordinate()
+
+        val onMapClickListenerSlot = slot<OnMapClickListener>()
+        every { map.gestures.addOnMapClickListener(capture(onMapClickListenerSlot)) } just runs
+
+        setupLoadStyleCallback()
+
+        // Act
+        omhMapImpl = createOmhMapImplInstance()
+        omhMapImpl.setOnPolygonClickListener(listener)
+        onMapClickListenerSlot.captured.onMapClick(Point.fromLngLat(0.0, 0.0))
+
+        // Assert
+        verify { polygonManager.maybeHandleClick(layerId) }
     }
 
     companion object {

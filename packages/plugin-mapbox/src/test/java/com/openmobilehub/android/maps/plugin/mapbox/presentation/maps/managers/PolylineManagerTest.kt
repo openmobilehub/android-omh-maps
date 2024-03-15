@@ -44,19 +44,6 @@ class PolylineManagerTest {
     }
 
     @Test
-    fun `maybeHandleClick does nothing if type does not match LineString type`() {
-        // Arrange
-        val clickHandler = mockk<OmhOnPolylineClickListener>(relaxed = true)
-        polylineManager.clickListener = clickHandler
-
-        // Act
-        polylineManager.maybeHandleClick("Polygon", "id")
-
-        // Assert
-        verify(exactly = 0) { clickHandler.onPolylineClick(any<OmhPolyline>()) }
-    }
-
-    @Test
     fun `maybeHandleClick does nothing if LineString with given id does not exist`() {
         // Arrange
         // We have empty polylines map
@@ -64,7 +51,7 @@ class PolylineManagerTest {
         polylineManager.clickListener = clickHandler
 
         // Act
-        polylineManager.maybeHandleClick("LineString", "id")
+        polylineManager.maybeHandleClick("id")
 
         // Assert
         verify(exactly = 0) { clickHandler.onPolylineClick(any<OmhPolyline>()) }
@@ -83,7 +70,7 @@ class PolylineManagerTest {
 
         // Act
         polylineManager.addPolyline(polylineOptions, null)
-        polylineManager.maybeHandleClick("LineString", "polyline-$DEFAULT_UUID")
+        polylineManager.maybeHandleClick("polyline-$DEFAULT_UUID")
 
         // Assert
         verify(exactly = 0) { clickHandler.onPolylineClick(any<OmhPolyline>()) }
@@ -102,7 +89,7 @@ class PolylineManagerTest {
 
         // Act
         polylineManager.addPolyline(polylineOptions, null)
-        polylineManager.maybeHandleClick("LineString", "polyline-$DEFAULT_UUID")
+        polylineManager.maybeHandleClick("polyline-$DEFAULT_UUID")
 
         // Assert
         verify(exactly = 1) { clickHandler.onPolylineClick(any<OmhPolyline>()) }
