@@ -85,9 +85,7 @@ internal class OmhMapImpl(
     private val polylineManager: PolylineManager = PolylineManager(mapView, scaleFactor),
     private val polygonManager: PolygonManager = PolygonManager(mapView, scaleFactor),
     private val logger: Logger = commonLogger,
-) : OmhMap,
-    IMapDragManagerDelegate,
-    IOmhInfoWindowMapViewDelegate {
+) : OmhMap, IMapDragManagerDelegate, IOmhInfoWindowMapViewDelegate {
     /**
      * This flag is used to prevent the onCameraMoveStarted listener from being called multiple times
      */
@@ -148,10 +146,8 @@ internal class OmhMapImpl(
     }
 
     override fun moveCamera(coordinate: OmhCoordinate, zoomLevel: Float) {
-        val cameraPosition = CameraOptions.Builder()
-            .zoom(zoomLevel.toDouble())
-            .center(CoordinateConverter.convertToPoint(coordinate))
-            .build()
+        val cameraPosition = CameraOptions.Builder().zoom(zoomLevel.toDouble())
+            .center(CoordinateConverter.convertToPoint(coordinate)).build()
 
         mapView.mapboxMap.setCamera(cameraPosition)
     }
@@ -255,10 +251,9 @@ internal class OmhMapImpl(
             mapView.context.resources.displayMetrics.heightPixels
         )
         val hitRadius =
-            (minScreenDimension.toDouble() * Constants.MAP_TOUCH_HIT_RADIUS_PERCENT_OF_SCREEN_DIM)
-                .coerceIn(
-                    Constants.MAP_TOUCH_HIT_RADIUS_MIN_PX..Constants.MAP_TOUCH_HIT_RADIUS_MAX_PX
-                )
+            (minScreenDimension.toDouble() * Constants.MAP_TOUCH_HIT_RADIUS_PERCENT_OF_SCREEN_DIM).coerceIn(
+                Constants.MAP_TOUCH_HIT_RADIUS_MIN_PX..Constants.MAP_TOUCH_HIT_RADIUS_MAX_PX
+            )
         val hits = mutableListOf<ITouchInteractable>()
 
         // try if an info window was hit
@@ -268,8 +263,7 @@ internal class OmhMapImpl(
             val markerPositionOnScreen = mapView.mapboxMap.pixelForCoordinate(
                 CoordinateConverter.convertToPoint(infoWindow.omhMarker.getPosition())
             ) + infoWindow.omhMarker.getHandleTopOffset()
-            val centerPositionOnScreen =
-                markerPositionOnScreen + infoWindow.getHandleCenterOffset()
+            val centerPositionOnScreen = markerPositionOnScreen + infoWindow.getHandleCenterOffset()
 
             val iwBoundingBox = BoundingBox2D(
                 centerPoint = centerPositionOnScreen,
@@ -359,15 +353,17 @@ internal class OmhMapImpl(
                     ) { eventConsumed ->
                         if (eventConsumed) mapTouchInteractionManager.resetDragState()
                     }
-                    Constants.POLYLINE_LAYER_TYPE -> polylineManager.maybeHandleClick(
-                        layerType,
+
+                    Constants.POLYLINE_LAYER_TYPE,
+                    Constants.POLYLINE_LAYER_TYPE_ALTERNATIVE -> polylineManager.maybeHandleClick(
                         layerId
                     )
 
-                    Constants.POLYGON_LAYER_TYPE -> polygonManager.maybeHandleClick(
-                        layerType,
-                        layerId
+                    Constants.POLYGON_LAYER_TYPE,
+                    Constants.POLYGON_LAYER_TYPE_ALTERNATIVE -> polygonManager.maybeHandleClick(
+                        layerId,
                     )
+
                     else -> false // Noop
                 }
             }
@@ -440,8 +436,7 @@ internal class OmhMapImpl(
 
     private fun setupMapViewUIControls() {
         // To have parity with Google Maps
-        val iconMargin =
-            ScreenUnitConverter.dpToPx(Constants.MAPBOX_ICON_MARGIN.toFloat(), context)
+        val iconMargin = ScreenUnitConverter.dpToPx(Constants.MAPBOX_ICON_MARGIN.toFloat(), context)
         mapView.compass.marginLeft = iconMargin
         mapView.compass.marginTop = iconMargin
         mapView.compass.position = Gravity.TOP or Gravity.START
@@ -463,12 +458,10 @@ internal class OmhMapImpl(
 
         val followPuckViewportState: FollowPuckViewportState =
             viewportPlugin.makeFollowPuckViewportState(
-                FollowPuckViewportStateOptions.Builder()
-                    .pitch(cameraState.pitch)
+                FollowPuckViewportStateOptions.Builder().pitch(cameraState.pitch)
                     .zoom(cameraState.zoom)
                     .bearing(FollowPuckViewportStateBearing.Constant(cameraState.bearing))
-                    .padding(cameraState.padding)
-                    .build()
+                    .padding(cameraState.padding).build()
             )
 
         viewportPlugin.transitionTo(followPuckViewportState)

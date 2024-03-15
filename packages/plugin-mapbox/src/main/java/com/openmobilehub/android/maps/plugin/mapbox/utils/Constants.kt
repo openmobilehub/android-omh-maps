@@ -71,6 +71,12 @@ internal object Constants {
 
     // Map Elements
     const val POLYLINE_LAYER_TYPE = "LineString"
+
+    /** Depending on the shape, Mapbox SDK can convert LineString to MultiLineString */
+    const val POLYLINE_LAYER_TYPE_ALTERNATIVE = "MultiLineString"
     const val POLYGON_LAYER_TYPE = "Polygon"
+
+    /** Depending on the shape, Mapbox SDK can convert Polygon to MultiPolygon   */
+    const val POLYGON_LAYER_TYPE_ALTERNATIVE = "MultiPolygon"
     const val MARKER_OR_INFO_WINDOW_LAYER_TYPE = "Point"
 }

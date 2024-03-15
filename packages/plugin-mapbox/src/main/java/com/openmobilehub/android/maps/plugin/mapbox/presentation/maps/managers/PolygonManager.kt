@@ -61,13 +61,11 @@ class PolygonManager(
         return layerId.replace(POLYGON_OUTLINE_LAYER_PREFIX, "")
     }
 
-    fun maybeHandleClick(type: String, layerId: String): Boolean {
-        if (type === POLYGON_LAYER_TYPE) {
-            val omhPolygon = polygons[getPolygonId(layerId)]
-            if (omhPolygon !== null && omhPolygon.getClickable()) {
-                clickListener?.onPolygonClick(omhPolygon)?.let { evenConsumed ->
-                    return evenConsumed
-                }
+    fun maybeHandleClick(layerId: String): Boolean {
+        val omhPolygon = polygons[getPolygonId(layerId)]
+        if (omhPolygon !== null && omhPolygon.getClickable()) {
+            clickListener?.onPolygonClick(omhPolygon)?.let { evenConsumed ->
+                return evenConsumed
             }
         }
 
@@ -158,6 +156,5 @@ class PolygonManager(
     companion object {
         private const val POLYGON_LAYER_PREFIX = "polygon-"
         private const val POLYGON_OUTLINE_LAYER_PREFIX = "outline-"
-        private const val POLYGON_LAYER_TYPE = "Polygon"
     }
 }
