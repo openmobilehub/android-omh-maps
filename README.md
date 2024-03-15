@@ -47,56 +47,14 @@ To clone the repository and checkout the `starter-code` branch, use the followin
 git clone --branch starter-code https://github.com/openmobilehub/omh-maps.git
 ```
 
-### Set up your Google Cloud project for applications with Google Services (Google Maps)
+### Provider specific setup
 
-Complete the required Cloud Console setup following the next steps, for more information see:
+There are different setup requirements based on the provider you will be including into your app.
+Please find the specific setup instruction for the providers below:
 
-- [Official Documentation](https://developers.google.com/maps/documentation/android-sdk/cloud-setup)
-- [Google Cloud Console Guide](/packages/plugin-googlemaps/docs/advanced/CLOUD_CONSOLE_SETUP.md)
-
-### Set up the project
-
-1. Add the plugin to the project by following one of the guides:
-
-- [Setup with omh-core plugin](./packages/core/docs/SETUP_WITH_OMH_CORE_PLUGIN.md)
-- [Setup without omh-core plugin](./packages/core/docs/SETUP_WITHOUT_OMH_CORE_PLUGIN.md)
-
-2. Open the `local.properties` in the project level directory, and then add the following code. Replace `YOUR_API_KEY` with your API key.
-
-   ```properties
-   MAPS_API_KEY=YOUR_API_KEY
-   ```
-
-   You should not check your API key into your version control system, so it is recommended
-   storing it in the `local.properties` file, which is located in the root directory of your project.
-   For more information about the `local.properties` file, see [Gradle properties files](https://developer.android.com/studio/build#properties-files).
-
-3. In your app's module level `AndroidManifest.xml`file, under the `application` element add the `meta-data` element as follows:
-
-   ```xml
-   <manifest ...>
-      <application ...>
-         ...
-         <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="${MAPS_API_KEY}" />
-      </application>
-   </manifest>
-   ```
-
-4. In your app's module-level `AndroidManifest.xml` add the required permissions, for more information see [permissions](https://developer.android.com/training/permissions/declaring).
-
-   ```xml
-   <manifest ...>
-      <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-      <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-      <uses-permission android:name="android.permission.INTERNET" />
-      <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-      <application ...>
-         ...
-      </application>
-   </manifest>
-   ```
+- [Google Maps](/packages/plugin-googlemap\s/Readme.md)
+- [OpenStreetMap](/packages/plugin-openstreetmap/Readme.md)
+- [Mapbox](/packages/plugin-mapbox/Readme.md)
 
 ### Add the map into your app
 
@@ -148,9 +106,8 @@ Fragment has to declare `android:name` that sets the class name of the fragment 
 
    </androidx.constraintlayout.widget.ConstraintLayout>
    ```
-
-2. Change the variant to `debugSingleBuild`.
-3. Click `Run` for the app module.
+      
+2. Click `Run` for the app module.
 
 ## Sample App
 
