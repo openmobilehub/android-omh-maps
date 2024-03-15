@@ -17,9 +17,13 @@
 package com.openmobilehub.android.maps.plugin.mapbox.utils
 
 import android.graphics.Color
-import com.mapbox.maps.extension.style.layers.properties.generated.LineCap
+import android.view.MotionEvent
+import androidx.annotation.ColorInt
 
 internal object Constants {
+    @ColorInt
+    const val DEFAULT_MARKER_COLOR: Int = 0xFFEA393F.toInt()
+
     // Common
     const val PROVIDER_NAME = "Mapbox"
 
@@ -32,6 +36,47 @@ internal object Constants {
     const val MAPBOX_ICON_SIZE = 48
     const val MAPBOX_ICON_MARGIN = 8
 
-    val DEFAULT_LINE_CAP = LineCap.BUTT
-    val DEFAULT_POLYLINE_COLOR = Color.BLACK
+    // Map Style
+    const val DEFAULT_POLYGON_FILL_COLOR = Color.TRANSPARENT
+    const val DEFAULT_POLYGON_STROKE_COLOR = Color.BLACK
+
+    /** The list of motion events that are considered "active" (i.e., issued when the user is dragging). */
+    val ACTIVE_MOTION_EVENTS =
+        listOf(MotionEvent.ACTION_POINTER_DOWN, MotionEvent.ACTION_DOWN, MotionEvent.ACTION_MOVE)
+
+    /** 5% of smaller screen dimension for hit radius (clipped from the bottom by MAP_TOUCH_HIT_RADIUS_MIN_PX) */
+    const val MAP_TOUCH_HIT_RADIUS_PERCENT_OF_SCREEN_DIM = 0.065
+
+    /** Absolute minimum value for hit radius */
+    const val MAP_TOUCH_HIT_RADIUS_MIN_PX = 35.0
+
+    /** Absolute maximum value for hit radius */
+    const val MAP_TOUCH_HIT_RADIUS_MAX_PX = 85.0
+
+    /** Time threshold for continuous pointer event in [ACTIVE_MOTION_EVENTS] down to be considered a drag */
+    const val MAP_TOUCH_DRAG_TOUCHDOWN_THRESHOLD_MS = 550L
+
+    /**
+     * The threshold in pixels denoting, how far from the original touch down point can the event happen
+     * to be considered still in the same place.
+     */
+    const val MAP_TOUCH_SAME_COORDINATES_THRESHOLD_PX = 20.0
+
+    /**
+     * Large limits prevents converting line joins to bevel joins for sharp angles.
+     *  It's required to have parity with Google Maps
+     */
+    const val LINE_JOIN_MITER_LIMIT = 1000.0
+    const val LINE_JOINT_ROUND_LIMIT = 1000.0
+
+    // Map Elements
+    const val POLYLINE_LAYER_TYPE = "LineString"
+
+    /** Depending on the shape, Mapbox SDK can convert LineString to MultiLineString */
+    const val POLYLINE_LAYER_TYPE_ALTERNATIVE = "MultiLineString"
+    const val POLYGON_LAYER_TYPE = "Polygon"
+
+    /** Depending on the shape, Mapbox SDK can convert Polygon to MultiPolygon   */
+    const val POLYGON_LAYER_TYPE_ALTERNATIVE = "MultiPolygon"
+    const val MARKER_OR_INFO_WINDOW_LAYER_TYPE = "Point"
 }

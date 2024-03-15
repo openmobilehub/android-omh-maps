@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.openmobilehub.android.maps.plugin.mapbox.presentation.maps
+package com.openmobilehub.android.maps.plugin.mapbox.extensions
 
 import com.mapbox.maps.extension.style.layers.generated.LineLayer
 import com.mapbox.maps.extension.style.layers.properties.generated.Visibility
@@ -24,22 +24,19 @@ import com.openmobilehub.android.maps.plugin.mapbox.utils.CapConverter
 import com.openmobilehub.android.maps.plugin.mapbox.utils.JoinTypeConverter
 import com.openmobilehub.android.maps.plugin.mapbox.utils.polylineLogger
 
-object InitialOptions {
-    fun applyPolylineOptions(
-        layer: LineLayer,
-        options: OmhPolylineOptions,
-        scaleFactor: Float,
-        logger: UnsupportedFeatureLogger = polylineLogger
-    ) {
-        options.color?.let { layer.lineColor(it) }
-        options.width?.let { layer.lineWidth(it.toDouble() / scaleFactor) }
-        options.endCap?.let { logger.logNotSupported("endCap") }
-        options.jointType?.let { layer.lineJoin(JoinTypeConverter.convertToLineJoin(it)) }
-        options.pattern?.let { logger.logNotSupported("pattern") }
-        options.spans?.let { logger.logNotSupported("spans") }
-        options.startCap?.let { logger.logNotSupported("startCap") }
-        options.zIndex?.let { logger.logNotSupported("zIndex") }
-        options.isVisible?.let { layer.visibility(if (it) Visibility.VISIBLE else Visibility.NONE) }
-        options.cap?.let { layer.lineCap?.let { CapConverter.convertToOmhCap(it) } }
-    }
+internal fun OmhPolylineOptions.applyPolylineOptions(
+    lineLayer: LineLayer,
+    scaleFactor: Float,
+    logger: UnsupportedFeatureLogger = polylineLogger
+) {
+    color?.let { lineLayer.lineColor(it) }
+    width?.let { lineLayer.lineWidth(it.toDouble() / scaleFactor) }
+    endCap?.let { logger.logNotSupported("endCap") }
+    jointType?.let { lineLayer.lineJoin(JoinTypeConverter.convertToLineJoin(it)) }
+    pattern?.let { logger.logNotSupported("pattern") }
+    spans?.let { logger.logNotSupported("spans") }
+    startCap?.let { logger.logNotSupported("startCap") }
+    zIndex?.let { logger.logNotSupported("zIndex") }
+    isVisible?.let { lineLayer.visibility(if (it) Visibility.VISIBLE else Visibility.NONE) }
+    cap?.let { lineLayer.lineCap(CapConverter.convertToLineCap(it)) }
 }

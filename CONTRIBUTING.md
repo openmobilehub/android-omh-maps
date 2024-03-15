@@ -136,10 +136,11 @@ Provided a new module is introduced to the project, the documentation needs to b
 
 Each module's (except for `apps/maps-sample`) root `README.md` file will be included by default in Dokka documentation generation automatically and used in its listing page.
 
-The following rules for writing markdown files apply:
+The following rules for writing module-level markdown files apply:
 
 - Images can be included as usual, however they are required to be present in module-level `images/` directory to be picked up by Gradle scripts & copied to the correct location in the generated HTML documentation.
 - All links to advanced markdown documentation need to be absolute, i.e. point to the full URL under which they are served.
+- The root `README.md` files for all projects have to comply with [Dokka file format rules](https://kotlinlang.org/docs/dokka-module-and-package-docs.html#file-format). In case of the OMH project, usually this means that you have to ensure that the first line of a project's top-level readme file is `# Module <project-directory-name>`, e.g. for `packages/plugin-googlemaps/README.md` the first line should be: `# Module plugin-googlemaps`.
 
 ### Markdown advanced documentation
 

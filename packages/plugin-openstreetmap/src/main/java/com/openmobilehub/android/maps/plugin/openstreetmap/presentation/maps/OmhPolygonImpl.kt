@@ -73,7 +73,7 @@ internal class OmhPolygonImpl(
         return null
     }
 
-    override fun setStrokePattern(pattern: List<OmhPatternItem>?) {
+    override fun setStrokePattern(pattern: List<OmhPatternItem>) {
         logger.logSetterNotSupported("strokePattern")
     }
 
@@ -99,7 +99,7 @@ internal class OmhPolygonImpl(
         return polygon.relatedObject
     }
 
-    override fun setTag(tag: Any?) {
+    override fun setTag(tag: Any) {
         polygon.relatedObject = tag
         mapView.postInvalidate()
     }
