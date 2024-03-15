@@ -77,8 +77,8 @@ import com.openmobilehub.android.maps.plugin.mapbox.utils.cartesian.BoundingBox2
 import com.openmobilehub.android.maps.plugin.mapbox.utils.commonLogger
 
 @SuppressWarnings("TooManyFunctions", "LongParameterList")
-internal class OmhMapImpl(
-    private val mapView: MapView,
+class OmhMapImpl(
+    val mapView: MapView,
     private val context: Context,
     private val myLocationIcon: ImageView = MyLocationIcon(context),
     private var scaleFactor: Float = 1.0f,
@@ -135,7 +135,7 @@ internal class OmhMapImpl(
         return polylineManager.addPolyline(options, style)
     }
 
-    override fun addPolygon(options: OmhPolygonOptions): OmhPolygon? {
+    override fun addPolygon(options: OmhPolygonOptions): OmhPolygon {
         return polygonManager.addPolygon(options, style)
     }
 

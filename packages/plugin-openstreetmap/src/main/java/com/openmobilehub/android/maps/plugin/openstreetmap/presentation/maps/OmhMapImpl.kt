@@ -72,12 +72,12 @@ import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 
 @SuppressWarnings("TooManyFunctions")
-internal class OmhMapImpl(
-    private val mapView: MapView,
-    private val mapListenerController: MapListenerController,
+class OmhMapImpl(
+    val mapView: MapView,
     private val logger: UnsupportedFeatureLogger = mapLogger
 ) : OmhMap {
 
+    private val mapListenerController: MapListenerController = MapListenerController()
     private var myLocationNewOverlay: MyLocationNewOverlay? = null
     private var myLocationIconOverlay: MyLocationIconOverlay? = null
     private val gestureOverlay = GestureOverlay()

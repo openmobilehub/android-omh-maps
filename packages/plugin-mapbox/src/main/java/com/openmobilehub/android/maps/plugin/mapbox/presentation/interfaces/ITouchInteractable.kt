@@ -21,7 +21,7 @@ import com.openmobilehub.android.maps.plugin.mapbox.utils.cartesian.Offset2D
 /**
  * Common interface for draggable entities on the map.
  */
-internal interface ITouchInteractable {
+interface ITouchInteractable {
     /**
      * Returns whether the entity is draggable.
      *

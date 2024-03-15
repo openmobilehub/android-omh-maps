@@ -24,7 +24,7 @@ dependencies {
     implementation(Libs.material)
 
     // Mapbox
-    implementation(Libs.mapbox)
+    api(Libs.mapbox)
 
     // Test dependencies
     testImplementation(Libs.junit)

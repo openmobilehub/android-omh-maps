@@ -24,7 +24,6 @@ import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMapVi
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMapReadyCallback
 import com.openmobilehub.android.maps.plugin.openstreetmap.utils.Constants.MAX_ZOOM_LEVEL
 import com.openmobilehub.android.maps.plugin.openstreetmap.utils.Constants.MIN_ZOOM_LEVEL
-import com.openmobilehub.android.maps.plugin.openstreetmap.utils.MapListenerController
 import org.osmdroid.config.Configuration
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.BoundingBox
@@ -60,13 +59,13 @@ internal class OmhMapViewImpl(context: Context) : OmhMapView {
         )
     }
 
-    override fun getView(): View? {
+    override fun getView(): View {
         return mapView
     }
 
     override fun getMapAsync(omhOnMapReadyCallback: OmhOnMapReadyCallback) {
         mapView.let { secureMapView ->
-            val omhMapView = OmhMapImpl(secureMapView, MapListenerController())
+            val omhMapView = OmhMapImpl(secureMapView)
             omhOnMapReadyCallback.onMapReady(omhMapView)
         }
     }
