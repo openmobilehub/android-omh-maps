@@ -5,6 +5,7 @@ fun prefixFilename(prefix: String, file: File): File {
     return File(parentDir, "$prefix$name")
 }
 
+val PREFIX = "advanced-docs"
 val docsOutputDir = rootProject.file("docs")
 val dokkaDocsOutputDir = File(docsOutputDir, "generated")
 val markdownDocsOutputDirBase = File(docsOutputDir, "markdown")
@@ -17,6 +18,28 @@ fun discoverImagesInProject(project: Project): List<File>? {
         }
         ?.walk()
         ?.filter { it.isFile }?.toList()
+}
+
+/**
+ * Sanitize relative links to .md files after the [file] has been copied to the to new files tree
+ * 
+ * @param file The file to be sanitized
+ */
+fun sanitizeLinksInMdFile(file: File) {
+    file.writeText(
+        file.readText()
+            // replace all absolute references to the root README file
+            .replace(Regex("\\(/README.md\\)"), "(/$PREFIX/)")
+            // replace all relative upper-level occurrences of local Md files with new tree relative paths
+            .replace(Regex("\\(\\.{2}/(.*\\.md)\\)"), "(../../$1)")
+            // replace all relative same-level occurrences of local Md files with new tree relative paths
+            .replace(Regex("\\(\\./(.*\\.md)\\)"), "(../$1)")
+            // replace all absolute references to packages with new tree relative paths
+            .replace(Regex("/packages/([^/]*)/(?:docs/)?(.*\\.md)\\)"), "/$PREFIX/$1/$2)")
+            // strip file extension off all non-external links ending with
+            // (Jekyll creates directories with index.html files)
+            .replace(Regex("\\((?!https?)(.*)\\.md\\)"), "($1)")
+    )
 }
 
 val copyMarkdownDocsTask = tasks.register("copyMarkdownDocs") {
@@ -77,18 +100,7 @@ val copyMarkdownDocsTask = tasks.register("copyMarkdownDocs") {
             if (srcReadmeFile.exists() && project != rootProject) {
                 val destReadmeFile = File(projectDocsDestDir, "_README_ORIGINAL.md")
                 srcReadmeFile.copyTo(destReadmeFile, true)
-
-                // sanitize relative links to .md files after copying to new tree
-                destReadmeFile.writeText(
-                    destReadmeFile.readText()
-                        // replace all absolute references to packages with new tree relative paths
-                        .replace(Regex("/packages/(.*)/docs/(.*\\.md)\\)"), "../../$1/$2)")
-                        // replace all absolute occurrences of local docs with relative path
-                        .replace("./docs/", "../")
-                        // strip file extension off all non-external links ending with
-                        // (Jekyll creates directories with index.html files)
-                        .replace(Regex("\\((?!https?)(.*)\\.md\\)"), "($1)")
-                )
+                sanitizeLinksInMdFile(destReadmeFile)
             }
 
             // copy custom markdown docs
@@ -114,7 +126,10 @@ val copyMarkdownDocsTask = tasks.register("copyMarkdownDocs") {
                             srcMdFile.path.length - 1
                         )
                     )
-                    srcMdFile.copyTo(File(projectDocsDestDir, fileRelativePathInProject))
+                    val destMdFile = File(projectDocsDestDir, fileRelativePathInProject)
+
+                    srcMdFile.copyTo(destMdFile, true)
+                    sanitizeLinksInMdFile(destMdFile)
                 }
             }
 
