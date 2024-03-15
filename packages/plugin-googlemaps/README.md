@@ -25,30 +25,9 @@ Complete the required Cloud Console setup following the next steps, for more inf
 - [Setup with omh-core plugin](/packages/core/docs/SETUP_WITH_OMH_CORE_PLUGIN.md)
 - [Setup without omh-core plugin](/packages/core/docs/SETUP_WITHOUT_OMH_CORE_PLUGIN.md)
 
-2. Open the `local.properties` in the project level directory, and then add the following code. Replace `YOUR_API_KEY` with your API key.
+2. Configure API key according to the [Official Documentation](https://developers.google.com/maps/documentation/android-sdk/start#add-key).
 
-   ```properties
-   MAPS_API_KEY=YOUR_API_KEY
-   ```
-
-   You should not check your API key into your version control system, so it is recommended
-   storing it in the `local.properties` file, which is located in the root directory of your project.
-   For more information about the `local.properties` file, see [Gradle properties files](https://developer.android.com/studio/build#properties-files).
-
-3. In your app's module level `AndroidManifest.xml`file, under the `application` element add the `meta-data` element as follows:
-
-   ```xml
-   <manifest ...>
-      <application ...>
-         ...
-         <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="${MAPS_API_KEY}" />
-      </application>
-   </manifest>
-   ```
-
-4. In your app's module-level `AndroidManifest.xml` add the required permissions, for more information see [permissions](https://developer.android.com/training/permissions/declaring).
+3. In your app's module-level `AndroidManifest.xml` add the required permissions, for more information see [permissions](https://developer.android.com/training/permissions/declaring).
 
    ```xml
    <manifest ...>
