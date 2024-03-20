@@ -7,7 +7,8 @@ internal object MapProvidersUtils {
     fun getAvailableMapProviders(context: Context): MutableList<MapProvider> {
         val mapProviders = mutableListOf(
             MapProvider("OpenStreetMap", Constants.OPEN_STREET_MAP_PATH),
-            MapProvider("Mapbox", Constants.MAPBOX_PATH)
+            MapProvider("Mapbox", Constants.MAPBOX_PATH),
+            MapProvider("AzureMaps", Constants.AZURE_MAPS_PATH)
         )
         if (GooglePlayServicesUtil.isGooglePlayServicesAvailable(context)) {
             mapProviders.add(0, MapProvider("Google", Constants.GOOGLE_MAPS_PATH))

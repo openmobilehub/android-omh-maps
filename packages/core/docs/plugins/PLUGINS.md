@@ -6,7 +6,7 @@ has_children: false
 
 # Create a custom Map Implementation/Plugin
 
-The OMH Maps SDK offers developers the flexibility to create custom map implementations or plugins for any map provider. With built-in support for popular providers like Google Maps and OpenStreetMap, developers can easily integrate maps into their applications. Additionally, the OMH Maps community is actively working to expand support for more providers such as MapBox, TomTom, Bing Maps, and others. By leveraging the comprehensive interfaces and utilities provided by OMH Maps, developers can seamlessly integrate their preferred mapping services and customize their mapping experiences to suit their specific needs.
+The OMH Maps SDK offers developers the flexibility to create custom map implementations or plugins for any map provider. With built-in support for popular providers like Google Maps and OpenStreetMap, developers can easily integrate maps into their applications. Additionally, the OMH Maps community is actively working to expand support for more providers such as MapBox, TomTom, Azure Maps, and others. By leveraging the comprehensive interfaces and utilities provided by OMH Maps, developers can seamlessly integrate their preferred mapping services and customize their mapping experiences to suit their specific needs.
 
 1. in your app in the `OmhConfig` add the path of your library:
 
