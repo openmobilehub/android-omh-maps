@@ -62,8 +62,8 @@ import com.openmobilehub.android.maps.plugin.googlemaps.utils.commonLogger
 import com.openmobilehub.android.maps.plugin.googlemaps.utils.markerLogger
 
 @SuppressWarnings("TooManyFunctions")
-internal class OmhMapImpl(
-    private var googleMap: GoogleMap,
+class OmhMapImpl(
+    val googleMap: GoogleMap,
     private val context: Context,
     private val logger: Logger = commonLogger,
     private val markerUnsupportedFeatureLogger: UnsupportedFeatureLogger = markerLogger

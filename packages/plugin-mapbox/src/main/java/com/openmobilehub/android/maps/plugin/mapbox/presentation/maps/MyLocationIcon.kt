@@ -19,17 +19,19 @@ package com.openmobilehub.android.maps.plugin.mapbox.presentation.maps
 import android.content.Context
 import android.view.Gravity
 import android.widget.FrameLayout
+import com.openmobilehub.android.maps.core.utils.ScreenUnitConverter
 import com.openmobilehub.android.maps.plugin.mapbox.R
 import com.openmobilehub.android.maps.plugin.mapbox.utils.Constants
-import com.openmobilehub.android.maps.plugin.mapbox.utils.DimensionConverter
 
 class MyLocationIcon(context: Context) : androidx.appcompat.widget.AppCompatImageView(context) {
 
     init {
         setImageResource(R.drawable.recenter_camera_icon)
 
-        val iconSize = DimensionConverter.pxFromDp(context, Constants.MAPBOX_ICON_SIZE)
-        val iconMargin = DimensionConverter.pxFromDp(context, Constants.MAPBOX_ICON_MARGIN)
+        val iconSize =
+            ScreenUnitConverter.dpToPx(Constants.MAPBOX_ICON_SIZE.toFloat(), context).toInt()
+        val iconMargin =
+            ScreenUnitConverter.dpToPx(Constants.MAPBOX_ICON_MARGIN.toFloat(), context).toInt()
 
         val layoutParams = FrameLayout.LayoutParams(iconSize, iconSize).apply {
             setMargins(0, iconMargin, iconMargin, 0) // left, top, right, bottom

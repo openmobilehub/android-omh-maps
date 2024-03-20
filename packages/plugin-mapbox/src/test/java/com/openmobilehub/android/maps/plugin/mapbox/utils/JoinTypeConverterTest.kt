@@ -1,8 +1,7 @@
-package com.openmobilehub.android.maps.plugin.mapbox.utlis
+package com.openmobilehub.android.maps.plugin.mapbox.utils
 
 import com.mapbox.maps.extension.style.layers.properties.generated.LineJoin
 import com.openmobilehub.android.maps.core.presentation.models.OmhJointType
-import com.openmobilehub.android.maps.plugin.mapbox.utils.JoinTypeConverter
 import org.junit.Assert
 import org.junit.Test
 

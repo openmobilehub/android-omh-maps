@@ -1,8 +1,7 @@
-package com.openmobilehub.android.maps.plugin.mapbox.utlis
+package com.openmobilehub.android.maps.plugin.mapbox.utils
 
 import com.mapbox.geojson.Point
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
-import com.openmobilehub.android.maps.plugin.mapbox.utils.CoordinateConverter
 import org.junit.Assert
 import org.junit.Test
 

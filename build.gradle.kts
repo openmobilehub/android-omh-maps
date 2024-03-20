@@ -93,11 +93,6 @@ subprojects {
     }
 }
 
-downloadLicenses {
-    includeProjectDependencies = true
-    dependencyConfiguration = "debugRuntimeClasspath"
-}
-
 tasks.register("installPrePushHook", Copy::class) {
     from("tools/scripts/pre-push")
     into(".git/hooks")

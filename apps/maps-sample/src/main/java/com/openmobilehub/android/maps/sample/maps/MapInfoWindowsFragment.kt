@@ -19,6 +19,8 @@ package com.openmobilehub.android.maps.sample.maps
 import android.annotation.SuppressLint
 import android.graphics.Typeface
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -46,6 +48,8 @@ import com.openmobilehub.android.maps.sample.customviews.PanelSeekbar
 import com.openmobilehub.android.maps.sample.customviews.PanelSpinner
 import com.openmobilehub.android.maps.sample.databinding.FragmentMapInfoWindowsBinding
 import com.openmobilehub.android.maps.sample.utils.Constants.DEFAULT_ZOOM_LEVEL
+import com.openmobilehub.android.maps.sample.utils.Constants.GOOGLE_PROVIDER
+import com.openmobilehub.android.maps.sample.utils.Constants.OSM_PROVIDER
 import com.openmobilehub.android.maps.sample.utils.Constants.PERMISSIONS
 import com.openmobilehub.android.maps.sample.utils.Constants.PRIME_MERIDIAN
 import java.text.SimpleDateFormat
@@ -72,7 +76,8 @@ open class MapInfoWindowsFragment : Fragment(), OmhOnMapReadyCallback {
     private var disabledAppearancePositions: HashSet<Int>? = null
     private var buttonOpenInfoWindow: Button? = null
     private var buttonHideInfoWindow: Button? = null
-    private var wasLastInfoWindowStateOpen: Boolean = false
+    private var googleMapsIsInfoWindowStateOpen: Boolean = false
+    private val mainHandler = Handler(Looper.getMainLooper())
 
     private var anchorUSeekbar: PanelSeekbar? = null
     private var anchorVSeekbar: PanelSeekbar? = null
@@ -156,34 +161,35 @@ open class MapInfoWindowsFragment : Fragment(), OmhOnMapReadyCallback {
 
         omhMap.setOnMarkerClickListener(OmhOnMarkerClickListener { marker ->
             if (demoShouldToggleWindowOnMarkerClickCheckbox?.isChecked != true) {
-                return@OmhOnMarkerClickListener false
+                // prevent the default behaviour: showing the info window on click by consuming the event
+                return@OmhOnMarkerClickListener true
             }
 
-            val executeToggle = {
-                if (marker.getIsInfoWindowShown()) {
+            val executeToggle: (isInfoWindowShown: Boolean) -> Unit = { isInfoWindowShown ->
+                if (isInfoWindowShown) {
                     marker.hideInfoWindow()
-                    wasLastInfoWindowStateOpen = false
                 } else {
                     marker.showInfoWindow()
-                    wasLastInfoWindowStateOpen = true
                 }
             }
 
-            if (mapProviderName == "GoogleMaps") {
+            if (mapProviderName == GOOGLE_PROVIDER) {
                 // as per https://issuetracker.google.com/issues/35823077, the marker is
                 // automatically closed regardless of click handler return value, thus we
                 // don't want to toggle the info window state if it was already closed
-                if (wasLastInfoWindowStateOpen) {
-                    wasLastInfoWindowStateOpen =
-                        false // the window is now closed as per GMaps behaviour
-                } else {
-                    executeToggle() // open the window manually
-                }
-
+                // since the close status listener is fired before on marker click, we delay
+                // the closing & cancel it here if it was due to a click
                 // GoogleMaps don't support onInfoWindowOpen
-                applyStateToImperativeControls(marker.getIsInfoWindowShown())
+
+                mainHandler.removeCallbacksAndMessages(null)
+
+                executeToggle(googleMapsIsInfoWindowStateOpen)
+
+                googleMapsIsInfoWindowStateOpen = !googleMapsIsInfoWindowStateOpen
+
+                applyStateToImperativeControls(googleMapsIsInfoWindowStateOpen)
             } else {
-                executeToggle()
+                executeToggle(marker.getIsInfoWindowShown())
 
                 applyStateToImperativeControls()
             }
@@ -247,6 +253,12 @@ open class MapInfoWindowsFragment : Fragment(), OmhOnMapReadyCallback {
                 eventsToast.setText(R.string.info_window_closed)
                 eventsToast.show()
 
+                if (mapProviderName == GOOGLE_PROVIDER) {
+                    mainHandler.postDelayed({
+                        googleMapsIsInfoWindowStateOpen = false
+                    }, 200)
+                }
+
                 applyStateToImperativeControls(false) // getIsInfoWindowShown() will not yet be false
             }
         })
@@ -286,7 +298,7 @@ open class MapInfoWindowsFragment : Fragment(), OmhOnMapReadyCallback {
         anchorIWUSeekbar?.setProgress(50)
         anchorIWVSeekbar?.setProgress(0)
 
-        if (mapProviderName == "OpenStreetMap") {
+        if (mapProviderName == OSM_PROVIDER) {
             disabledAppearancePositions =
                 hashSetOf(infoWindowAppearanceTypeNameResourceID.indexOf(R.string.info_window_appearance_type_custom_contents_view))
         }
@@ -298,7 +310,6 @@ open class MapInfoWindowsFragment : Fragment(), OmhOnMapReadyCallback {
 
     @SuppressLint("InflateParams", "SetTextI18n")
     private fun inflateInfoWindowView(isWholeWindow: Boolean, omhMarker: OmhMarker): View {
-
         val view = this.layoutInflater.inflate(
             if (isWholeWindow) R.layout.info_window else R.layout.info_window_contents,
             null
@@ -314,7 +325,7 @@ open class MapInfoWindowsFragment : Fragment(), OmhOnMapReadyCallback {
         titleTv.text = omhMarker.getTitle()
         descriptionTv.text =
             """${snippet ?: "(snippet currently not set)"}
-                |Rendered at: ${
+                 |Rendered at: ${
                 SimpleDateFormat(
                     "HH:mm:ss",
                     Locale.ENGLISH
@@ -322,7 +333,7 @@ open class MapInfoWindowsFragment : Fragment(), OmhOnMapReadyCallback {
                     Date()
                 )
             }
-            """.trimMargin()
+             """.trimMargin()
         if (snippet == null) {
             descriptionTv.setTypeface(null, Typeface.ITALIC)
         }
@@ -408,7 +419,11 @@ open class MapInfoWindowsFragment : Fragment(), OmhOnMapReadyCallback {
         // hasSnippet
         hasSnippetCheckbox = view.findViewById(R.id.checkBox_hasSnippet)
         hasSnippetCheckbox?.setOnCheckedChangeListener { _, isChecked ->
-            demoMarker?.setSnippet(if (isChecked) "A sample snippet with long description" else null)
+            demoMarker?.setSnippet(
+                if (isChecked)
+                    "A sample snippet with long description that should wrap across lines properly."
+                else null
+            )
         }
 
         // anchorU
@@ -459,7 +474,7 @@ open class MapInfoWindowsFragment : Fragment(), OmhOnMapReadyCallback {
         buttonOpenInfoWindow = view.findViewById(R.id.button_openInfoWindow)
         buttonOpenInfoWindow?.setOnClickListener {
             demoMarker?.showInfoWindow()
-            wasLastInfoWindowStateOpen = true
+            googleMapsIsInfoWindowStateOpen = true
             applyStateToImperativeControls(true)
         }
 
@@ -467,7 +482,7 @@ open class MapInfoWindowsFragment : Fragment(), OmhOnMapReadyCallback {
         buttonHideInfoWindow = view.findViewById(R.id.button_hideInfoWindow)
         buttonHideInfoWindow?.setOnClickListener {
             demoMarker?.hideInfoWindow()
-            wasLastInfoWindowStateOpen = false
+            googleMapsIsInfoWindowStateOpen = false
             // applyStateToImperativeControls will be called from the listener
         }
 
@@ -489,3 +504,4 @@ open class MapInfoWindowsFragment : Fragment(), OmhOnMapReadyCallback {
         val LOG_TAG: String = "MapInfoWindowsFragment"
     }
 }
+ 

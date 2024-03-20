@@ -21,7 +21,7 @@ import com.openmobilehub.android.maps.core.presentation.interfaces.location.OmhL
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMapView
 
 /**
- * A Factory to provide any of the interfaces of the OMH Maps Api module.
+ * A Factory to provide any of the interfaces of the OMH Maps API module.
  * This isn't designed to be used directly from the client side, instead use the [OmhMapProvider]
  */
 interface OmhMapFactory {

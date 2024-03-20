@@ -88,7 +88,7 @@ class OmhCoordinate() : Parcelable {
     /**
      * Returns a string representation of the object.
      *
-     * @return a default string representing the latitude and longitude.
+     * @return A default string representing the latitude and longitude.
      */
     override fun toString(): String {
         return "lat/lng: ($latitude,$longitude)"
