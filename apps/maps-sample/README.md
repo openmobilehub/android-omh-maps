@@ -13,7 +13,7 @@ The Sample App showcases the capabilities of the OMH Maps plugins, featuring all
 
 ### Credentials Setup
 
-The app integrates both Google Maps and Mapbox, requiring setup for each.
+The app integrates both Google Maps, Mapbox and Azure Maps requiring setup for each.
 
 #### Google Maps
 
@@ -51,6 +51,20 @@ The app integrates both Google Maps and Mapbox, requiring setup for each.
    Further Reading:
 
    - [Mapbox Installation Guide](https://docs.mapbox.com/android/maps/guides/install#configure-credentials)
+
+#### Azure Maps
+
+1. **Subscription key**: Add your subscription key to the project's `local.properties`:
+
+   ```
+   AZURE_MAPS_SUBSCRIPTION_KEY=YOUR_AZURE_MAPS_SUBSCRIPTION_KEY
+   ```
+
+   Replace `YOUR_AZURE_MAPS_SUBSCRIPTION_KEY` with your Azure Maps subscription key.
+
+   Further Reading:
+
+   - [Quickstart: Create an Android app with Azure Maps](https://learn.microsoft.com/en-us/azure/azure-maps/quick-android-map?pivots=programming-language-kotlin)
 
 ### Dependencies Setup
 

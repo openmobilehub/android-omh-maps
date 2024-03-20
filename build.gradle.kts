@@ -79,6 +79,7 @@ subprojects {
             mavenLocal()
             gradlePluginPortal()
             google()
+            maven("https://atlas.microsoft.com/sdk/android")
             configureMapboxMaven()
         }
     } else {
@@ -86,6 +87,7 @@ subprojects {
             mavenCentral()
             google()
             maven("https://s01.oss.sonatype.org/content/groups/staging/")
+            maven("https://atlas.microsoft.com/sdk/android")
             configureMapboxMaven()
         }
     }
@@ -123,6 +125,8 @@ tasks.register("publishPluginsToMavenLocal") {
         ":packages:plugin-openstreetmap:publishToMavenLocal",
         ":packages:plugin-mapbox:assembleRelease",
         ":packages:plugin-mapbox:publishToMavenLocal",
+        ":packages:plugin-azuremaps:publishToMavenLocal",
+        ":packages:plugin-azuremaps:publishToMavenLocal",
     )
 }
 

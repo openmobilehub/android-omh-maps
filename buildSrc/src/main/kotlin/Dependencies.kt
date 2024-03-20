@@ -38,6 +38,9 @@ object Libs {
     // Mapbox
     val mapbox by lazy { "com.mapbox.maps:android:${Versions.mapbox}" }
 
+    // Azure Maps
+    val azureMaps by lazy { "com.azure.android:azure-maps-control:${Versions.azureMaps}" }
+
     // Testing
     val junit by lazy { "junit:junit:${Versions.junit}" }
     val androidJunit by lazy { "androidx.test.ext:junit:${Versions.androidJunit}" }

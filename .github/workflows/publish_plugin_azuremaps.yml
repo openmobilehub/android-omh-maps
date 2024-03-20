@@ -1,0 +1,12 @@
+name: Publish Azure Maps Plugin
+
+on:
+  workflow_dispatch:
+
+jobs:
+  publish:
+    name: Publish Azure Maps Plugin
+    uses: ./.github/workflows/build_and_publish_to_maven_remotely.yml
+    with:
+      package-name: :packages:plugin-azuremaps
+    secrets: inherit
