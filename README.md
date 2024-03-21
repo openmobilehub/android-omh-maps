@@ -52,9 +52,10 @@ git clone --branch starter-code https://github.com/openmobilehub/omh-maps.git
 There are different setup requirements based on the provider you will be including into your app.
 Please find the specific setup instruction for the providers below:
 
-- [Google Maps](/packages/plugin-googlemap\s/Readme.md)
-- [OpenStreetMap](/packages/plugin-openstreetmap/Readme.md)
-- [Mapbox](/packages/plugin-mapbox/Readme.md)
+- [Google Maps](/packages/plugin-googlemaps/README.md)
+- [OpenStreetMap](/packages/plugin-openstreetmap/README.md)
+- [Mapbox](/packages/plugin-mapbox/README.md)
+- [Azure Maps](/packages/plugin-azuremaps/README.md)
 
 ### Add the map into your app
 
@@ -125,6 +126,7 @@ OMH Maps SDK is open-source, promoting community collaboration and plugin suppor
 - Check out the [Core Package documentation](/packages/core/README.md)
 - Check out the [Google Maps Plugin documentation](/packages/plugin-googlemaps/README.md)
 - Check out the [OpenStreetMap Plugin documentation](/packages/plugin-openstreetmap/README.md)
+- Check out the [Azure Maps Plugin documentation](/packages/plugin-azuremaps/README.md)
 
 ## Contributing
 

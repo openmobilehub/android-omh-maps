@@ -87,7 +87,6 @@ class CameraManager(private val mapView: AzureMap) {
     }
 
     private fun unlockZoomLevel() {
-        CameraOptions.defaults()
         mapView.setCamera(
             CameraOptions.minZoom(Constants.DEFAULT_MIN_ZOOM),
             CameraOptions.maxZoom(Constants.DEFAULT_MAX_ZOOM)
