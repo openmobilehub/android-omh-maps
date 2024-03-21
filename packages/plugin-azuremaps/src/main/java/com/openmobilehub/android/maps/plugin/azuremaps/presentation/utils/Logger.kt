@@ -16,19 +16,6 @@
 
 package com.openmobilehub.android.maps.plugin.azuremaps.presentation.utils
 
-internal object Constants {
-    // Common
-    const val PROVIDER_NAME = "AzureMaps"
+import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
 
-    // Defaults
-    const val DEFAULT_MIN_ZOOM = 1.0
-    const val DEFAULT_MAX_ZOOM = 20.0
-
-    // Camera
-    /**
-     * According to the official documentation, to achieve the same zoom level as in Google Maps,
-     * the zoom level should be decreased by 1.0.
-     * https://learn.microsoft.com/en-us/azure/azure-maps/migrate-from-google-maps-android-app?pivots=programming-language-kotlin#before-google-maps-2
-     */
-    const val ZOOM_LEVEL_SUBTRAHEND = 1.0
-}
+val mapLogger = UnsupportedFeatureLogger(Constants.PROVIDER_NAME, "OmhMap")

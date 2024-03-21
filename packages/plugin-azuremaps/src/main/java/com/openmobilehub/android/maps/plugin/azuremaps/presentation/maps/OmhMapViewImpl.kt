@@ -34,7 +34,7 @@ internal class OmhMapViewImpl(private val context: Context) : OmhMapView {
 
     override fun getMapAsync(omhOnMapReadyCallback: OmhOnMapReadyCallback) {
         mapControl.getMapAsync {
-            val omhMapView = OmhMapImpl(it, context)
+            val omhMapView = OmhMapImpl(it)
 
             omhOnMapReadyCallback.onMapReady(omhMapView)
         }
@@ -45,7 +45,7 @@ internal class OmhMapViewImpl(private val context: Context) : OmhMapView {
     }
 
     override fun onDestroy() {
-        mapControl?.onDestroy()
+        mapControl.onDestroy()
     }
 
     override fun onLowMemory() {

@@ -18,7 +18,6 @@ package com.openmobilehub.android.maps.plugin.azuremaps.presentation.maps
 
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
-import android.content.Context
 import androidx.annotation.RequiresPermission
 import com.azure.android.maps.control.AzureMap
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhInfoWindowViewFactory
@@ -42,12 +41,16 @@ import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolygonOptions
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolylineOptions
+import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
+import com.openmobilehub.android.maps.plugin.azuremaps.presentation.maps.managers.CameraManager
 import com.openmobilehub.android.maps.plugin.azuremaps.presentation.utils.Constants
+import com.openmobilehub.android.maps.plugin.azuremaps.presentation.utils.mapLogger
 
 @SuppressWarnings("TooManyFunctions", "UnusedPrivateMember")
 internal class OmhMapImpl(
     private val mapView: AzureMap,
-    private val context: Context,
+    private val cameraManager: CameraManager = CameraManager(mapView),
+    private val logger: UnsupportedFeatureLogger = mapLogger
 ) : OmhMap {
 
     override val providerName: String
@@ -69,23 +72,23 @@ internal class OmhMapImpl(
     }
 
     override fun getCameraPositionCoordinate(): OmhCoordinate {
-        return OmhCoordinate(0.0, 0.0)
+        return cameraManager.getCameraPositionCoordinate()
     }
 
     override fun moveCamera(coordinate: OmhCoordinate, zoomLevel: Float) {
-        // To be implemented
+        cameraManager.moveCamera(coordinate, zoomLevel)
     }
 
     override fun setZoomGesturesEnabled(enableZoomGestures: Boolean) {
-        // To be implemented
+        cameraManager.setZoomGesturesEnabled(enableZoomGestures)
     }
 
     override fun setRotateGesturesEnabled(enableRotateGestures: Boolean) {
-        // To be implemented
+        logger.logSetterNotSupported("rotateGestures")
     }
 
     override fun snapshot(omhSnapshotReadyCallback: OmhSnapshotReadyCallback) {
-        // To be implemented
+        logger.logNotSupported("snapshot")
     }
 
     @RequiresPermission(anyOf = [ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION])
@@ -105,15 +108,15 @@ internal class OmhMapImpl(
     }
 
     override fun setOnCameraMoveStartedListener(listener: OmhOnCameraMoveStartedListener) {
-        // To be implemented
+        cameraManager.setOnCameraMoveStartedListener(listener)
     }
 
     override fun setOnCameraIdleListener(listener: OmhOnCameraIdleListener) {
-        // To be implemented
+        cameraManager.setOnCameraIdleListener(listener)
     }
 
     override fun setOnMapLoadedCallback(callback: OmhMapLoadedCallback?) {
-        // To be implemented
+        cameraManager.setOnMapLoadedCallback(callback)
     }
 
     override fun setOnMarkerClickListener(listener: OmhOnMarkerClickListener) {
