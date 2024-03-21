@@ -169,7 +169,11 @@ class MapPolylinesFragment : Fragment(), OmhOnMapReadyCallback {
             0 -> OmhButtCap()
             1 -> OmhSquareCap()
             2 -> OmhRoundCap()
-            3 -> OmhCustomCap(BitmapFactory.decodeResource(resources, R.drawable.soccer_ball), 100f)
+            3 -> OmhCustomCap(
+                BitmapFactory.decodeResource(resources, R.drawable.soccer_ball),
+                20f
+            )
+
             else -> null
         }
     }
