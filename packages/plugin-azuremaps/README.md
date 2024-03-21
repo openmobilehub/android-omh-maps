@@ -55,16 +55,16 @@ This plugin provides support for Azure Maps by utilizing the [Azure Maps Android
 | addMarker                               |     ?      |
 | addPolyline                             |     ?      |
 | addPolygon                              |     ?      |
-| getCameraPositionCoordinate             |     ?      |
-| moveCamera                              |     ?      |
-| setZoomGesturesEnabled                  |     ?      |
-| setRotateGesturesEnabled                |     ?      |
+| getCameraPositionCoordinate             |     ✅     |
+| moveCamera                              |     ✅     |
+| setZoomGesturesEnabled                  |     ✅     |
+| setRotateGesturesEnabled                |     ❌     |
 | setMyLocationEnabled                    |     ?      |
 | isMyLocationEnabled                     |     ?      |
 | setMyLocationButtonClickListener        |     ?      |
-| setOnCameraMoveStartedListener          |     ?      |
-| setOnCameraIdleListener                 |     ?      |
-| setOnMapLoadedCallback                  |     ?      |
+| setOnCameraMoveStartedListener          |     ✅     |
+| setOnCameraIdleListener                 |     ✅     |
+| setOnMapLoadedCallback                  |     ✅     |
 | setOnMarkerClickListener                |     ?      |
 | setOnMarkerDragListener                 |     ?      |
 | setOnInfoWindowOpenStatusChangeListener |     ?      |
@@ -72,7 +72,7 @@ This plugin provides support for Azure Maps by utilizing the [Azure Maps Android
 | setOnInfoWindowLongClickListener        |     ?      |
 | setOnPolylineClickListener              |     ?      |
 | setOnPolygonClickListener               |     ?      |
-| snapshot                                |     ?      |
+| snapshot                                |     ❌     |
 | setMapStyle                             |     ?      |
 
 ### Marker
