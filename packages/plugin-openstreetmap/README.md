@@ -15,8 +15,8 @@ This plugin provides support for OpenStreetMap maps by utilizing the [osmdroid](
 
 1. Add the plugin to the project by following one of the guides:
 
-- [Setup with omh-core plugin](./packages/core/docs/SETUP_WITH_OMH_CORE_PLUGIN.md)
-- [Setup without omh-core plugin](./packages/core/docs/SETUP_WITHOUT_OMH_CORE_PLUGIN.md)
+- [Setup with omh-core plugin](/packages/core/docs/SETUP_WITH_OMH_CORE_PLUGIN.md)
+- [Setup without omh-core plugin](/packages/core/docs/SETUP_WITHOUT_OMH_CORE_PLUGIN.md)
 
 2. In your app's module-level `AndroidManifest.xml` add the required permissions, for more information see [permissions](https://developer.android.com/training/permissions/declaring).
 
