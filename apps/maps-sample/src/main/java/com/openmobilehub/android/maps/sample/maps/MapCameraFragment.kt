@@ -36,6 +36,7 @@ import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.utils.NetworkConnectivityChecker
 import com.openmobilehub.android.maps.sample.R
 import com.openmobilehub.android.maps.sample.databinding.FragmentMapCameraBinding
+import com.openmobilehub.android.maps.sample.utils.Constants
 
 class MapCameraFragment : Fragment(), OmhOnMapReadyCallback {
 
@@ -69,8 +70,6 @@ class MapCameraFragment : Fragment(), OmhOnMapReadyCallback {
         val omhMapFragment =
             childFragmentManager.findFragmentById(R.id.fragment_map_container) as? OmhMapFragment
         omhMapFragment?.getMapAsync(this)
-
-        setupUI(view)
     }
 
     override fun onMapReady(omhMap: OmhMap) {
@@ -99,17 +98,28 @@ class MapCameraFragment : Fragment(), OmhOnMapReadyCallback {
         omhMap.setOnCameraIdleListener {
             Toast.makeText(requireContext(), "Camera is idle", Toast.LENGTH_SHORT).show()
         }
+
+        view?.let { setupUI(it) }
+    }
+
+    private fun getSupportedStatus(supportedProviders: List<String>): Boolean {
+        return supportedProviders.contains(omhMap?.providerName)
     }
 
     private fun setupUI(view: View) {
         // Zoom Gestures
         val zoomGesturesCheckbox = view.findViewById<CheckBox>(R.id.checkBox_zoomGesturesEnabled)
+        zoomGesturesCheckbox.isEnabled = getSupportedStatus(Constants.ALL_PROVIDERS)
         zoomGesturesCheckbox?.setOnCheckedChangeListener { _, isChecked ->
             omhMap?.setZoomGesturesEnabled(isChecked)
         }
 
         // Rotate Gestures
-        val rotateGesturesCheckbox = view.findViewById<CheckBox>(R.id.checkBox_rotateGesturesEnabled)
+        val rotateGesturesCheckbox =
+            view.findViewById<CheckBox>(R.id.checkBox_rotateGesturesEnabled)
+        rotateGesturesCheckbox.isEnabled = getSupportedStatus(
+            listOf(Constants.GOOGLE_PROVIDER, Constants.OSM_PROVIDER, Constants.MAPBOX_PROVIDER)
+        )
         rotateGesturesCheckbox?.setOnCheckedChangeListener { _, isChecked ->
             omhMap?.setRotateGesturesEnabled(isChecked)
         }
@@ -117,6 +127,7 @@ class MapCameraFragment : Fragment(), OmhOnMapReadyCallback {
         // Show camera position coordinate
         val showCameraPositionCoordinateButton =
             view.findViewById<Button>(R.id.button_showCameraPositionCoordinate)
+        showCameraPositionCoordinateButton.isEnabled = getSupportedStatus(Constants.ALL_PROVIDERS)
         showCameraPositionCoordinateButton?.setOnClickListener {
             val cameraPositionCoordinate = omhMap?.getCameraPositionCoordinate()
             Toast.makeText(
@@ -128,6 +139,7 @@ class MapCameraFragment : Fragment(), OmhOnMapReadyCallback {
 
         // Move camera
         val moveMapToEverestButton = view.findViewById<Button>(R.id.button_moveMapToEverest)
+        moveMapToEverestButton?.isEnabled = getSupportedStatus(Constants.ALL_PROVIDERS)
         moveMapToEverestButton?.setOnClickListener {
             val everestCoordinate = OmhCoordinate(27.9881, 86.9250)
             omhMap?.moveCamera(
@@ -135,6 +147,7 @@ class MapCameraFragment : Fragment(), OmhOnMapReadyCallback {
             )
         }
         val moveMapToSaharaButton = view.findViewById<Button>(R.id.button_moveMapSahara)
+        moveMapToSaharaButton?.isEnabled = getSupportedStatus(Constants.ALL_PROVIDERS)
         moveMapToSaharaButton?.setOnClickListener {
             val saharaCoordinate = OmhCoordinate(23.4162, 25.6628)
             omhMap?.moveCamera(
@@ -144,6 +157,9 @@ class MapCameraFragment : Fragment(), OmhOnMapReadyCallback {
 
         // Snapshot
         val makeSnapshotButton = view.findViewById<Button>(R.id.button_makeSnapshot)
+        makeSnapshotButton?.isEnabled = getSupportedStatus(
+            listOf(Constants.GOOGLE_PROVIDER, Constants.MAPBOX_PROVIDER)
+        )
         makeSnapshotButton?.setOnClickListener {
             omhMap?.snapshot {
                 if (it !== null) {
