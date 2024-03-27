@@ -23,15 +23,25 @@ import androidx.annotation.RequiresPermission
 import com.openmobilehub.android.maps.core.presentation.interfaces.location.OmhFailureListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.location.OmhLocation
 import com.openmobilehub.android.maps.core.presentation.interfaces.location.OmhSuccessListener
+import com.openmobilehub.android.maps.core.utils.location.NativeLocationService
 
 internal class OmhLocationImpl(context: Context) : OmhLocation {
+
+    private val nativeLocationService = NativeLocationService(context)
 
     @RequiresPermission(anyOf = [ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION])
     override fun getCurrentLocation(
         omhOnSuccessListener: OmhSuccessListener,
         omhOnFailureListener: OmhFailureListener
     ) {
-        // To be implemented
+        nativeLocationService.getCurrentLocation(
+            onSuccess = { location ->
+                omhOnSuccessListener.onSuccess(location)
+            },
+            onFailure = { exception ->
+                omhOnFailureListener.onFailure(exception)
+            }
+        )
     }
 
     @RequiresPermission(anyOf = [ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION])
@@ -39,7 +49,14 @@ internal class OmhLocationImpl(context: Context) : OmhLocation {
         omhOnSuccessListener: OmhSuccessListener,
         omhOnFailureListener: OmhFailureListener
     ) {
-        // To be implemented
+        nativeLocationService.getLastLocation(
+            onSuccess = { location ->
+                omhOnSuccessListener.onSuccess(location)
+            },
+            onFailure = { exception ->
+                omhOnFailureListener.onFailure(exception)
+            }
+        )
     }
 
     internal class Builder : OmhLocation.Builder {

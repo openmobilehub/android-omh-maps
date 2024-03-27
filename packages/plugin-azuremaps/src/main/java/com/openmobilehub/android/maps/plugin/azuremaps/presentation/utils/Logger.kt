@@ -16,6 +16,8 @@
 
 package com.openmobilehub.android.maps.plugin.azuremaps.presentation.utils
 
+import com.openmobilehub.android.maps.core.utils.logging.Logger
 import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
 
 val mapLogger = UnsupportedFeatureLogger(Constants.PROVIDER_NAME, "OmhMap")
+val commonLogger = Logger(Constants.PROVIDER_NAME)
