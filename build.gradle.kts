@@ -163,7 +163,7 @@ fun RepositoryHandler.configureMapboxMaven() {
 }
 
 apply(from = rootProject.file("buildSrc/docs-tasks.gradle.kts")) // registers all tasks related to docs
-val dokkaDocsOutputDir = DocsUtils.getDokkaDocsOutputDir(rootProject)
+val dokkaDocsOutputDir = getDokkaDocsOutputDir()
 
 tasks.register("cleanDokkaDocsOutputDirectory", Delete::class) {
     group = "other"
@@ -183,10 +183,7 @@ tasks.dokkaHtmlMultiModule {
         footerMessage = "(c) 2023 Open Mobile Hub"
         separateInheritedMembers = false
         customAssets = (setOf(rootProject) union subprojects).mapNotNull { project ->
-            DocsUtils.discoverImagesInProject(
-                rootProject,
-                project
-            )
+            project.discoverImagesInProject()
         }.flatten()
     }
 }

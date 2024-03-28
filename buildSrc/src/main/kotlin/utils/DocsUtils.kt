@@ -5,46 +5,6 @@ object DocsUtils {
     private const val ADVANCED_DOCS_PREFIX = "advanced-docs"
 
     /**
-     * Returns the base of output directory for all docs
-     */
-    fun getDocsOutputDirBase(rootProject: Project): File {
-        return rootProject.file("docs")
-    }
-
-    /**
-     * Returns the output directory for Dokka docs
-     */
-    fun getDokkaDocsOutputDir(rootProject: Project): File {
-        return File(this.getDocsOutputDirBase(rootProject), "generated")
-    }
-
-    /**
-     * Returns the output directory for markdown docs
-     */
-    fun getMarkdownDocsOutputDirBase(rootProject: Project): File {
-        return File(this.getDocsOutputDirBase(rootProject), "markdown")
-    }
-
-    /**
-     * Discovers all images in the project's `images/` directory
-     *
-     * @param rootProject The root project
-     * @param project The project to search for images in
-     * @return A list of images in the project's `images/` directory
-     */
-    fun discoverImagesInProject(rootProject: Project, project: Project): List<File>? {
-        val docsOutputDir = rootProject.file("docs")
-
-        return project.file("${project.projectDir}/images")
-            .takeIf {
-                // walk all directories & ensure we are not looping a child of the output directory
-                it.exists() && it.isDirectory && !it.canonicalPath.startsWith(docsOutputDir.canonicalPath)
-            }
-            ?.walk()
-            ?.filter { it.isFile }?.toList()
-    }
-
-    /**
      * Constructs a new [File] that has its name prefixed with the given [prefix]
      *
      * @param prefix The prefix to add to the filename
@@ -82,4 +42,44 @@ object DocsUtils {
                 .replace(Regex("\\((?!https?)(.*)\\.md\\)"), "($1)")
         )
     }
+}
+
+/**
+ * Returns the base of output directory for all docs
+ */
+fun Project.getDocsOutputDirBase(): File {
+    return rootProject.file("docs")
+}
+
+/**
+ * Returns the output directory for Dokka docs
+ */
+fun Project.getDokkaDocsOutputDir(): File {
+    return File(this.getDocsOutputDirBase(), "generated")
+}
+
+/**
+ * Returns the output directory for markdown docs
+ */
+fun Project.getMarkdownDocsOutputDirBase(): File {
+    return File(getDocsOutputDirBase(), "markdown")
+}
+
+/**
+ * Discovers all images in the project's `images/` directory
+ *
+ * @param rootProject The root project
+ * @param project The project to search for images in
+ * @return A list of images in the project's `images/` directory
+ */
+fun Project.discoverImagesInProject(): List<File>? {
+    val docsOutputDir = rootProject.file("docs")
+
+    return project.file("${project.projectDir}/images")
+        .takeIf {
+            // walk all directories & ensure we are not looping a child of the output directory
+            it.exists() && it.isDirectory && !it.canonicalPath.startsWith(docsOutputDir.canonicalPath)
+        }
+        ?.walk()
+        ?.filter { it.isFile }?.toList()
 }

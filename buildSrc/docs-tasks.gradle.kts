@@ -1,8 +1,8 @@
 import java.io.File
 
-val docsOutputDirBase = DocsUtils.getDocsOutputDirBase(rootProject)
-val dokkaDocsOutputDir = DocsUtils.getDokkaDocsOutputDir(rootProject)
-val markdownDocsOutputDirBase = DocsUtils.getMarkdownDocsOutputDirBase(rootProject)
+val docsOutputDirBase = getDocsOutputDirBase()
+val dokkaDocsOutputDir = getDokkaDocsOutputDir()
+val markdownDocsOutputDirBase = getMarkdownDocsOutputDirBase()
 
 val copyMarkdownDocsTask = tasks.register("copyMarkdownDocs") {
     group = "documentation"
@@ -101,7 +101,7 @@ val copyMarkdownDocsTask = tasks.register("copyMarkdownDocs") {
                 imagesDestDir.deleteRecursively()
             }
 
-            val images = DocsUtils.discoverImagesInProject(rootProject, project)
+            val images = discoverImagesInProject()
             if (images?.isNotEmpty() == true) {
                 imagesDestDir.mkdir()
                 images.forEach { srcImageFile ->
