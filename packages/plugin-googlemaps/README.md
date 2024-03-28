@@ -25,30 +25,9 @@ Complete the required Cloud Console setup following the next steps, for more inf
 - [Setup with omh-core plugin](/packages/core/docs/SETUP_WITH_OMH_CORE_PLUGIN.md)
 - [Setup without omh-core plugin](/packages/core/docs/SETUP_WITHOUT_OMH_CORE_PLUGIN.md)
 
-2. Open the `local.properties` in the project level directory, and then add the following code. Replace `YOUR_API_KEY` with your API key.
+2. Configure API key according to the [Official Documentation](https://developers.google.com/maps/documentation/android-sdk/start#add-key).
 
-   ```properties
-   MAPS_API_KEY=YOUR_API_KEY
-   ```
-
-   You should not check your API key into your version control system, so it is recommended
-   storing it in the `local.properties` file, which is located in the root directory of your project.
-   For more information about the `local.properties` file, see [Gradle properties files](https://developer.android.com/studio/build#properties-files).
-
-3. In your app's module level `AndroidManifest.xml`file, under the `application` element add the `meta-data` element as follows:
-
-   ```xml
-   <manifest ...>
-      <application ...>
-         ...
-         <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="${MAPS_API_KEY}" />
-      </application>
-   </manifest>
-   ```
-
-4. In your app's module-level `AndroidManifest.xml` add the required permissions, for more information see [permissions](https://developer.android.com/training/permissions/declaring).
+3. In your app's module-level `AndroidManifest.xml` add the required permissions, for more information see [permissions](https://developer.android.com/training/permissions/declaring).
 
    ```xml
    <manifest ...>
@@ -76,42 +55,55 @@ Legend of support levels:
 
 #### OmhMap
 
-| Method                           | Support level |
-| -------------------------------- | :-----------: |
-| addMarker                        |      ✅       |
-| addPolyline                      |      ✅       |
-| addPolygon                       |      ✅       |
-| getCameraPositionCoordinate      |      ✅       |
-| moveCamera                       |      ✅       |
-| setZoomGesturesEnabled           |      ✅       |
-| setMyLocationEnabled             |      ✅       |
-| isMyLocationEnabled              |      ✅       |
-| setMyLocationButtonClickListener |      ✅       |
-| setOnCameraMoveStartedListener   |      ✅       |
-| setOnCameraIdleListener          |      ✅       |
-| setOnMapLoadedCallback           |      ✅       |
-| setOnPolylineClickListener       |      ✅       |
-| setOnPolygonClickListener        |      ✅       |
-| snapshot                         |      ✅       |
-| setMapStyle                      |      ✅       |
+| Method                                  | Support level |
+| --------------------------------------- | :-----------: |
+| addMarker                               |      ✅       |
+| addPolyline                             |      ✅       |
+| addPolygon                              |      ✅       |
+| getCameraPositionCoordinate             |      ✅       |
+| moveCamera                              |      ✅       |
+| setZoomGesturesEnabled                  |      ✅       |
+| setMyLocationEnabled                    |      ✅       |
+| isMyLocationEnabled                     |      ✅       |
+| setMyLocationButtonClickListener        |      ✅       |
+| setOnCameraMoveStartedListener          |      ✅       |
+| setOnCameraIdleListener                 |      ✅       |
+| setOnMapLoadedCallback                  |      ✅       |
+| setOnMarkerClickListener                |      🟨       |
+| setOnMarkerDragListener                 |      ✅       |
+| setOnInfoWindowOpenStatusChangeListener |      🟨       |
+| setOnInfoWindowClickListener            |      ✅       |
+| setOnInfoWindowLongClickListener        |      ✅       |
+| setOnPolylineClickListener              |      ✅       |
+| setOnPolygonClickListener               |      ✅       |
+| snapshot                                |      ✅       |
+| setMapStyle                             |      ✅       |
+
+Comments for partially supported 🟨 properties:
+
+| Property                                | Comments                                                                                                                                                                                                                                                                                                                  |
+| --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| setOnInfoWindowOpenStatusChangeListener | (1) only the `onInfoWindowClose` event is supported <br/> (2) the listener is invoked **before** `OmhOnMarkerClickListener`, in contrast to other providers, which implies that if the window was already open before a click on the marker, the marker click listener would always be invoked after the window is closed |
+| setOnMarkerClickListener                | (1) the default behaviour of the on click listener (or when a custom handler returns `false`) is to center the map on the clicked marker <br/> (2) there is a non-overrideable behaviour of the Google Maps plugin, which hides (closes) an open info window when the map is tapped elsewhere                             |
 
 ### Marker
 
 #### OmhMarkerOptions
 
-| Property        | Support level |
-| --------------- | :-----------: |
-| position        |      ✅       |
-| title           |      ✅       |
-| draggable       |      ✅       |
-| anchor          |      ✅       |
-| alpha           |      ✅       |
-| snippet         |      ✅       |
-| isVisible       |      ✅       |
-| isFlat          |      ✅       |
-| rotation        |      ✅       |
-| backgroundColor |      🟨       |
-| clickable       |      ✅       |
+| Property         | Support level |
+| ---------------- | :-----------: |
+| position         |      ✅       |
+| title            |      ✅       |
+| draggable        |      ✅       |
+| anchor           |      ✅       |
+| infoWindowAnchor |      ✅       |
+| alpha            |      ✅       |
+| snippet          |      ✅       |
+| isVisible        |      ✅       |
+| isFlat           |      ✅       |
+| rotation         |      ✅       |
+| backgroundColor  |      🟨       |
+| clickable        |      ✅       |
 
 Comments for partially supported 🟨 properties:
 
@@ -121,30 +113,42 @@ Comments for partially supported 🟨 properties:
 
 #### OmhMarker
 
-| Method             | Support level |
-| ------------------ | :-----------: |
-| getPosition        |      ✅       |
-| setPosition        |      ✅       |
-| getTitle           |      ✅       |
-| setTitle           |      ✅       |
-| getClickable       |      ✅       |
-| setClickable       |      ✅       |
-| getDraggable       |      ✅       |
-| setDraggable       |      ✅       |
-| setAnchor          |      ✅       |
-| getAlpha           |      ✅       |
-| setAlpha           |      ✅       |
-| getSnippet         |      ✅       |
-| setSnippet         |      ✅       |
-| setIcon            |      ✅       |
-| getIsVisible       |      ✅       |
-| setIsVisible       |      ✅       |
-| getIsFlat          |      ✅       |
-| setIsFlat          |      ✅       |
-| getRotation        |      ✅       |
-| setRotation        |      ✅       |
-| getBackgroundColor |      ❌       |
-| setBackgroundColor |      🟨       |
+| Method               | Support level |
+| -------------------- | :-----------: |
+| getPosition          |      ✅       |
+| setPosition          |      ✅       |
+| getTitle             |      ✅       |
+| setTitle             |      ✅       |
+| getClickable         |      ✅       |
+| setClickable         |      ✅       |
+| getDraggable         |      ✅       |
+| setDraggable         |      ✅       |
+| setAnchor            |      ✅       |
+| setInfoWindowAnchor  |      🟨       |
+| getAlpha             |      ✅       |
+| setAlpha             |      ✅       |
+| getSnippet           |      ✅       |
+| setSnippet           |      ✅       |
+| setIcon              |      ✅       |
+| getIsVisible         |      ✅       |
+| setIsVisible         |      ✅       |
+| getIsFlat            |      ✅       |
+| setIsFlat            |      ✅       |
+| getRotation          |      ✅       |
+| setRotation          |      ✅       |
+| getBackgroundColor   |      ❌       |
+| setBackgroundColor   |      🟨       |
+| showInfoWindow       |      ✅       |
+| hideInfoWindow       |      ✅       |
+| getIsInfoWindowShown |      🟨       |
+
+Comments for partially supported 🟨 properties:
+
+| Property             | Comments                                                                                                                                                                                 |
+| -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| setInfoWindowAnchor  | as per [this issue](https://issuetracker.google.com/issues/298082161), sometimes the info window is anchored to the marker's lat/lng instead of the set anchor - the issue is still open |
+| setBackgroundColor   | only hue (H) component of HSV color representation is controllable, alpha channel is unsupported                                                                                         |
+| getIsInfoWindowShown | calling `getIsInfoWindowShown()` from on click handler will always return `false` as per this [wontfix GoogleMaps issue](https://issuetracker.google.com/issues/35823077)                |
 
 ### Polyline
 
@@ -160,6 +164,7 @@ Comments for partially supported 🟨 properties:
 | zIndex    |      ✅       |
 | jointType |      ✅       |
 | pattern   |      ✅       |
+| cap       |      ✅       |
 | startCap  |      ✅       |
 | endCap    |      ✅       |
 | spans     |      ✅       |
@@ -168,11 +173,13 @@ Comments for partially supported 🟨 properties:
 
 | Method       | Support level |
 | ------------ | :-----------: |
+| getCap       |      ❌       |
+| setCap       |      ✅       |
 | isClickable  |      ✅       |
 | setClickable |      ✅       |
 | getColor     |      ✅       |
 | setColor     |      ✅       |
-| getEndCap    |      ✅       |
+| getEndCap    |      ❌       |
 | setEndCap    |      ✅       |
 | getJoinType  |      ✅       |
 | setJoinType  |      ✅       |
@@ -180,9 +187,9 @@ Comments for partially supported 🟨 properties:
 | setPattern   |      ✅       |
 | getPoints    |      ✅       |
 | setPoints    |      ✅       |
-| getSpans     |      ✅       |
+| getSpans     |      ❌       |
 | setSpans     |      ✅       |
-| getStartCap  |      ✅       |
+| getStartCap  |      ❌       |
 | setStartCap  |      ✅       |
 | getTag       |      ✅       |
 | setTag       |      ✅       |

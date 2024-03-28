@@ -29,12 +29,13 @@ internal fun OmhMarkerOptions.toMarkerOptions(logger: UnsupportedFeatureLogger =
         .title(title)
         .draggable(draggable)
 
-    anchor.let { mappedOptions.anchor(anchor.first, anchor.second) }
-    alpha.let { mappedOptions.alpha(alpha) }
+    mappedOptions.anchor(anchor.first, anchor.second)
+    mappedOptions.infoWindowAnchor(infoWindowAnchor.first, infoWindowAnchor.second)
+    mappedOptions.alpha(alpha)
     snippet?.let { mappedOptions.snippet(snippet) }
-    isVisible.let { mappedOptions.visible(isVisible) }
-    isFlat.let { mappedOptions.flat(isFlat) }
-    rotation.let { mappedOptions.rotation(rotation) }
+    mappedOptions.visible(isVisible)
+    mappedOptions.flat(isFlat)
+    mappedOptions.rotation(rotation)
 
     if (icon != null) {
         mappedOptions.icon(

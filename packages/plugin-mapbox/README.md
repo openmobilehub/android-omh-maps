@@ -40,25 +40,30 @@ This plugin provides support for Mapbox by utilizing the [Mapbox Android SDK](ht
 
 #### OmhMap
 
-| Method                           | Supported? |
-| -------------------------------- | :--------: |
-| addMarker                        |     ?      |
-| addPolyline                      |     ?      |
-| addPolygon                       |     ?      |
-| getCameraPositionCoordinate      |     ✅     |
-| moveCamera                       |     ✅     |
-| setZoomGesturesEnabled           |     ✅     |
-| setRotateGesturesEnabled         |     ✅     |
-| setMyLocationEnabled             |     ✅     |
-| isMyLocationEnabled              |     ✅     |
-| setMyLocationButtonClickListener |     ✅     |
-| setOnCameraMoveStartedListener   |     🟨     |
-| setOnCameraIdleListener          |     ✅     |
-| setOnMapLoadedCallback           |     ✅     |
-| setOnPolylineClickListener       |     ?      |
-| setOnPolygonClickListener        |     ?      |
-| snapshot                         |     ✅     |
-| setMapStyle                      |     ✅     |
+| Method                                  | Supported? |
+| --------------------------------------- | :--------: |
+| addMarker                               |     ?      |
+| addPolyline                             |     ✅      |
+| addPolygon                              |     ✅     |
+| getCameraPositionCoordinate             |     ✅     |
+| moveCamera                              |     ✅     |
+| setZoomGesturesEnabled                  |     ✅     |
+| setRotateGesturesEnabled                |     ✅     |
+| setMyLocationEnabled                    |     ✅     |
+| isMyLocationEnabled                     |     ✅     |
+| setMyLocationButtonClickListener        |     ✅     |
+| setOnCameraMoveStartedListener          |     🟨     |
+| setOnCameraIdleListener                 |     ✅     |
+| setOnMapLoadedCallback                  |     ✅     |
+| setOnMarkerClickListener                |     ✅     |
+| setOnMarkerDragListener                 |     ✅     |
+| setOnInfoWindowOpenStatusChangeListener |     ✅     |
+| setOnInfoWindowClickListener            |     ✅     |
+| setOnInfoWindowLongClickListener        |     ✅     |
+| setOnPolylineClickListener              |     ✅     |
+| setOnPolygonClickListener               |     ✅      |
+| snapshot                                |     ✅     |
+| setMapStyle                             |     ✅     |
 
 Comments for partially supported 🟨 properties:
 
@@ -70,19 +75,63 @@ Comments for partially supported 🟨 properties:
 
 #### OmhMarkerOptions
 
-| Property | Supported? |
-| -------- | :--------: |
-| position |     ?      |
-| title    |     ?      |
+| Property         | Support level |
+| ---------------- | :-----------: |
+| position         |      ✅       |
+| title            |      ✅       |
+| draggable        |      ✅       |
+| anchor           |      🟨       |
+| infoWindowAnchor |      ✅       |
+| alpha            |      ✅       |
+| snippet          |      ✅       |
+| isVisible        |      ✅       |
+| isFlat           |      ✅       |
+| rotation         |      ✅       |
+| backgroundColor  |      ✅       |
+| clickable        |      ✅       |
+
+Comments for partially supported 🟨 properties:
+
+| Property | Comments                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| anchor   | Mapbox provider only supports [enumerated (discrete) values](https://docs.mapbox.com/android/maps/api/10.0.0/mapbox-maps-android/com.mapbox.maps.extension.style.layers.properties.generated/-icon-anchor/), opposed to continuous (`Float`) values in OMH; this property is mapped for each axis such that ranges: <br/>&bull; `<0; 0.25>` is mapped to left or top <br/>&bull; `<0.75; 0.1>` is mapped to right or bottom <br/>&bull; `(0.25; 0.75)` is mapped to center <br/> Also taking into account combinations, e.g. `Pair(0.1f, 0.9f)` would be mapped to `BOTTOM_LEFT` |
 
 #### OmhMarker
 
-| Method      | Supported? |
-| ----------- | :--------: |
-| getPosition |     ?      |
-| setPosition |     ?      |
-| getTitle    |     ?      |
-| setTitle    |     ?      |
+| Method               | Support level |
+| -------------------- | :-----------: |
+| getPosition          |      ✅       |
+| setPosition          |      ✅       |
+| getTitle             |      ✅       |
+| setTitle             |      ✅       |
+| getClickable         |      ✅       |
+| setClickable         |      ✅       |
+| getDraggable         |      ✅       |
+| setDraggable         |      ✅       |
+| setAnchor            |      🟨       |
+| setInfoWindowAnchor  |      ✅       |
+| getAlpha             |      ✅       |
+| setAlpha             |      ✅       |
+| getSnippet           |      ✅       |
+| setSnippet           |      ✅       |
+| setIcon              |      ✅       |
+| getIsVisible         |      ✅       |
+| setIsVisible         |      ✅       |
+| getIsFlat            |      ✅       |
+| setIsFlat            |      ✅       |
+| getRotation          |      ✅       |
+| setRotation          |      ✅       |
+| getBackgroundColor   |      ✅       |
+| setBackgroundColor   |      ✅       |
+| showInfoWindow       |      ✅       |
+| hideInfoWindow       |      ✅       |
+| getIsInfoWindowShown |      ✅       |
+
+Comments for partially supported 🟨 properties:
+
+| Property | Comments                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| anchor   | Mapbox provider only supports [enumerated (discrete) values](https://docs.mapbox.com/android/maps/api/10.0.0/mapbox-maps-android/com.mapbox.maps.extension.style.layers.properties.generated/-icon-anchor/), opposed to continuous (`Float`) values in OMH; this property is mapped for each axis such that ranges: <br/>&bull; `<0; 0.25>` is mapped to left or top <br/>&bull; `<0.75; 0.1>` is mapped to right or bottom <br/>&bull; `(0.25; 0.75)` is mapped to center <br/> Also taking into account combinations, e.g. `Pair(0.1f, 0.9f)` would be mapped to `BOTTOM_LEFT` |
 
 ### Polyline
 
@@ -90,46 +139,49 @@ Comments for partially supported 🟨 properties:
 
 | Property  | Supported? |
 | --------- | :--------: |
-| points    |     ?      |
-| clickable |     ?      |
-| color     |     ?      |
-| width     |     ?      |
-| isVisible |     ?      |
-| zIndex    |     ?      |
-| jointType |     ?      |
-| pattern   |     ?      |
-| startCap  |     ?      |
-| endCap    |     ?      |
-| spans     |     ?      |
+| points    |     ✅     |
+| clickable |     ✅     |
+| color     |     ✅     |
+| width     |     ✅     |
+| isVisible |     ✅     |
+| zIndex    |     ❌     |
+| jointType |     ✅     |
+| pattern   |     ❌     |
+| cap       |     ✅     |
+| startCap  |     ❌     |
+| endCap    |     ❌     |
+| spans     |     ❌     |
 
 #### OmhPolyline
 
 | Method       | Supported? |
 | ------------ | :--------: |
-| isClickable  |     ?      |
-| setClickable |     ?      |
-| getColor     |     ?      |
-| setColor     |     ?      |
-| getEndCap    |     ?      |
-| setEndCap    |     ?      |
-| getJoinType  |     ?      |
-| setJoinType  |     ?      |
-| getPattern   |     ?      |
-| setPattern   |     ?      |
-| getPoints    |     ?      |
-| setPoints    |     ?      |
-| getSpans     |     ?      |
-| setSpans     |     ?      |
-| getStartCap  |     ?      |
-| setStartCap  |     ?      |
-| getTag       |     ?      |
-| setTag       |     ?      |
-| getWidth     |     ?      |
-| setWidth     |     ?      |
-| getZIndex    |     ?      |
-| setZIndex    |     ?      |
-| isVisible    |     ?      |
-| setVisible   |     ?      |
+| getCap       |     ✅     |
+| setCap       |     ✅     |
+| isClickable  |     ✅     |
+| setClickable |     ✅     |
+| getColor     |     ✅     |
+| setColor     |     ✅     |
+| getEndCap    |     ❌     |
+| setEndCap    |     ❌     |
+| getJoinType  |     ✅     |
+| setJoinType  |     ✅     |
+| getPattern   |     ❌     |
+| setPattern   |     ❌     |
+| getPoints    |     ✅     |
+| setPoints    |     ✅     |
+| getSpans     |     ❌     |
+| setSpans     |     ❌     |
+| getStartCap  |     ❌     |
+| setStartCap  |     ❌     |
+| getTag       |     ✅     |
+| setTag       |     ✅     |
+| getWidth     |     ✅     |
+| setWidth     |     ✅     |
+| getZIndex    |     ❌     |
+| setZIndex    |     ❌     |
+| isVisible    |     ✅     |
+| setVisible   |     ✅     |
 
 ### Polygon
 
@@ -137,43 +189,43 @@ Comments for partially supported 🟨 properties:
 
 | Property        | Supported? |
 | --------------- | :--------: |
-| outline         |     ?      |
-| clickable       |     ?      |
-| fillColor       |     ?      |
-| holes           |     ?      |
-| isVisible       |     ?      |
-| strokeColor     |     ?      |
-| strokeJointType |     ?      |
-| strokePattern   |     ?      |
-| strokeWidth     |     ?      |
-| zIndex          |     ?      |
+| outline         |     ✅     |
+| clickable       |     ✅     |
+| fillColor       |     ✅     |
+| holes           |     ✅     |
+| isVisible       |     ✅     |
+| strokeColor     |     ✅     |
+| strokeJointType |     ✅     |
+| strokePattern   |     ❌     |
+| strokeWidth     |     ✅     |
+| zIndex          |     ❌     |
 
 #### OmhPolygon
 
 | Method             | Supported? |
 | ------------------ | :--------: |
-| getClickable       |     ?      |
-| setClickable       |     ?      |
-| getStrokeColor     |     ?      |
-| setStrokeColor     |     ?      |
-| getFillColor       |     ?      |
-| setFillColor       |     ?      |
-| getStrokeJointType |     ?      |
-| setStrokeJointType |     ?      |
-| getStrokePattern   |     ?      |
-| setStrokePattern   |     ?      |
-| getOutline         |     ?      |
-| setOutline         |     ?      |
-| getHoles           |     ?      |
-| setHoles           |     ?      |
-| getTag             |     ?      |
-| setTag             |     ?      |
-| getStrokeWidth     |     ?      |
-| setStrokeWidth     |     ?      |
-| getZIndex          |     ?      |
-| setZIndex          |     ?      |
-| isVisible          |     ?      |
-| setVisible         |     ?      |
+| getClickable       |     ✅     |
+| setClickable       |     ✅     |
+| getStrokeColor     |     ✅     |
+| setStrokeColor     |     ✅     |
+| getFillColor       |     ✅     |
+| setFillColor       |     ✅     |
+| getStrokeJointType |     ✅     |
+| setStrokeJointType |     ✅     |
+| getStrokePattern   |     ❌     |
+| setStrokePattern   |     ❌     |
+| getOutline         |     ✅     |
+| setOutline         |     ✅     |
+| getHoles           |     ✅     |
+| setHoles           |     ✅     |
+| getTag             |     ✅     |
+| setTag             |     ✅     |
+| getStrokeWidth     |     ✅     |
+| setStrokeWidth     |     ✅     |
+| getZIndex          |     ❌     |
+| setZIndex          |     ❌     |
+| isVisible          |     ✅     |
+| setVisible         |     ✅     |
 
 ## Documentation
 

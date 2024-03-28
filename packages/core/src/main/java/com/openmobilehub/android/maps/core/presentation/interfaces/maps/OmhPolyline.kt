@@ -27,6 +27,18 @@ import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 interface OmhPolyline {
 
     /**
+     * Gets the cap of the polyline.
+     * @return An [OmhCap] object representing the cap of the polyline.
+     */
+    fun getCap(): OmhCap?
+
+    /**
+     * Sets the cap of the polyline for both ends.
+     * @param cap An [OmhCap] object representing the cap of the polyline.
+     */
+    fun setCap(cap: OmhCap)
+
+    /**
      * Checks if the polyline is clickable.
      * @return A boolean indicating whether the polyline is clickable.
      */
@@ -42,7 +54,7 @@ interface OmhPolyline {
      * Gets the color of the polyline.
      * @return An integer representing the color of the polyline.
      */
-    fun getColor(): Int
+    fun getColor(): Int?
 
     /**
      * Sets the color of the polyline.
@@ -60,13 +72,13 @@ interface OmhPolyline {
      * Sets the end cap of the polyline.
      * @param endCap An [OmhCap] object representing the end cap of the polyline.
      */
-    fun setEndCap(endCap: OmhCap?)
+    fun setEndCap(endCap: OmhCap)
 
     /**
      * Gets the joint type of the polyline.
      * @return An integer representing the joint type of the polyline.
      */
-    fun getJointType(): Int
+    fun getJointType(): Int?
 
     /**
      * Sets the joint type of the polyline.
@@ -84,13 +96,13 @@ interface OmhPolyline {
      * Sets the pattern of the polyline.
      * @param pattern A list of [OmhPatternItem] objects representing the pattern of the polyline.
      */
-    fun setPattern(pattern: List<OmhPatternItem>?)
+    fun setPattern(pattern: List<OmhPatternItem>)
 
     /**
      * Gets the points that make up the polyline.
      * @return An array of [OmhCoordinate] objects specifying the polyline's points.
      */
-    fun getPoints(): List<OmhCoordinate>
+    fun getPoints(): List<OmhCoordinate>?
 
     /**
      * Sets the points that make up the polyline.
@@ -108,7 +120,7 @@ interface OmhPolyline {
      * Sets the spans of the polyline.
      * @param spans A list of [OmhStyleSpan] objects representing the spans of the polyline.
      */
-    fun setSpans(spans: List<OmhStyleSpan>?)
+    fun setSpans(spans: List<OmhStyleSpan>)
 
     /**
      * Gets the start cap of the polyline.
@@ -120,7 +132,7 @@ interface OmhPolyline {
      * Sets the start cap of the polyline.
      * @param startCap An [OmhCap] object representing the start cap of the polyline.
      */
-    fun setStartCap(startCap: OmhCap?)
+    fun setStartCap(startCap: OmhCap)
 
     /**
      * Retrieves the tag associated with the polyline.
@@ -132,7 +144,7 @@ interface OmhPolyline {
      * Sets the tag associated with the polyline.
      * @param tag The tag to be set for the polyline.
      */
-    fun setTag(tag: Any?)
+    fun setTag(tag: Any)
 
     /**
      * Gets the visibility of the polyline.
@@ -150,7 +162,7 @@ interface OmhPolyline {
      * Gets the width of the polyline.
      * @return A float representing the width of the polyline.
      */
-    fun getWidth(): Float
+    fun getWidth(): Float?
 
     /**
      * Sets the width of the polyline.
@@ -162,7 +174,7 @@ interface OmhPolyline {
      * Gets the z-index of the polyline.
      * @return A float representing the z-index of the polyline.
      */
-    fun getZIndex(): Float
+    fun getZIndex(): Float?
 
     /**
      * Sets the z-index of the polyline.

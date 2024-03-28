@@ -22,6 +22,7 @@ import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhPolyl
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhStyleSpan
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
+import com.openmobilehub.android.maps.plugin.openstreetmap.utils.CapConverter
 import com.openmobilehub.android.maps.plugin.openstreetmap.utils.ConverterUtils
 import com.openmobilehub.android.maps.plugin.openstreetmap.utils.polylineLogger
 import org.osmdroid.views.MapView
@@ -31,17 +32,16 @@ import org.osmdroid.views.overlay.Polyline
 internal class OmhPolylineImpl(
     private val polyline: Polyline,
     private val mapView: MapView,
-    initiallyClickable: Boolean,
+    private var clickable: Boolean,
     private val logger: UnsupportedFeatureLogger = polylineLogger
 ) : OmhPolyline {
-    private var isClickable = initiallyClickable
 
     override fun getClickable(): Boolean {
-        return isClickable
+        return clickable
     }
 
     override fun setClickable(clickable: Boolean) {
-        isClickable = clickable
+        this.clickable = clickable
     }
 
     override fun getColor(): Int {
@@ -58,14 +58,14 @@ internal class OmhPolylineImpl(
         return null
     }
 
-    override fun setEndCap(endCap: OmhCap?) {
+    override fun setEndCap(endCap: OmhCap) {
         logger.logSetterNotSupported("endCap")
         mapView.postInvalidate()
     }
 
-    override fun getJointType(): Int {
+    override fun getJointType(): Int? {
         logger.logGetterNotSupported("jointType")
-        return DEFAULT_JOINT_TYPE
+        return null
     }
 
     override fun setJointType(jointType: Int) {
@@ -77,7 +77,7 @@ internal class OmhPolylineImpl(
         return null
     }
 
-    override fun setPattern(pattern: List<OmhPatternItem>?) {
+    override fun setPattern(pattern: List<OmhPatternItem>) {
         logger.logSetterNotSupported("pattern")
     }
 
@@ -87,6 +87,7 @@ internal class OmhPolylineImpl(
 
     override fun setPoints(omhCoordinates: List<OmhCoordinate>) {
         polyline.setPoints(omhCoordinates.map { ConverterUtils.convertToGeoPoint(it) })
+        mapView.postInvalidate()
     }
 
     override fun getSpans(): List<OmhStyleSpan>? {
@@ -94,7 +95,7 @@ internal class OmhPolylineImpl(
         return null
     }
 
-    override fun setSpans(spans: List<OmhStyleSpan>?) {
+    override fun setSpans(spans: List<OmhStyleSpan>) {
         logger.logSetterNotSupported("spans")
     }
 
@@ -103,7 +104,7 @@ internal class OmhPolylineImpl(
         return null
     }
 
-    override fun setStartCap(startCap: OmhCap?) {
+    override fun setStartCap(startCap: OmhCap) {
         logger.logSetterNotSupported("startCap")
     }
 
@@ -111,7 +112,7 @@ internal class OmhPolylineImpl(
         return polyline.relatedObject
     }
 
-    override fun setTag(tag: Any?) {
+    override fun setTag(tag: Any) {
         polyline.relatedObject = tag
         mapView.postInvalidate()
     }
@@ -125,13 +126,23 @@ internal class OmhPolylineImpl(
         mapView.postInvalidate()
     }
 
-    override fun getZIndex(): Float {
+    override fun getZIndex(): Float? {
         logger.logGetterNotSupported("zIndex")
-        return DEFAULT_Z_INDEX
+        return null
     }
 
     override fun setZIndex(zIndex: Float) {
         logger.logSetterNotSupported("zIndex")
+    }
+
+    override fun setCap(cap: OmhCap) {
+        polyline.outlinePaint.strokeCap = CapConverter.convertToPaintCap(cap)
+        mapView.postInvalidate()
+    }
+
+    override fun getCap(): OmhCap? {
+        polyline.outlinePaint.strokeCap?.let { return CapConverter.convertToOmhCap(it) }
+            ?: return null
     }
 
     override fun isVisible(): Boolean {
@@ -141,10 +152,5 @@ internal class OmhPolylineImpl(
     override fun setVisible(visible: Boolean) {
         polyline.isVisible = visible
         mapView.postInvalidate()
-    }
-
-    companion object {
-        private const val DEFAULT_JOINT_TYPE = 0
-        private const val DEFAULT_Z_INDEX = 0f
     }
 }

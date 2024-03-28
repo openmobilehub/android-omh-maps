@@ -29,6 +29,9 @@ object Versions {
     // Mapbox
     const val mapbox = "11.1.0"
 
+    // Azure Maps
+    const val azureMaps = "1.3.2"
+
     // Testing
     const val junit = "4.13.2"
     const val androidJunit = "1.1.5"

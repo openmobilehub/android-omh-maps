@@ -5,6 +5,7 @@ import android.util.AttributeSet
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.LinearLayout
@@ -12,12 +13,14 @@ import android.widget.Spinner
 import android.widget.TextView
 import com.openmobilehub.android.maps.sample.R
 
+
 class PanelSpinner @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : LinearLayout(context, attrs, defStyleAttr) {
 
     var titleTextView: TextView
     var spinner: Spinner
+    private var disabledPositions: HashSet<Int>? = null
 
     init {
         orientation = HORIZONTAL
@@ -51,11 +54,31 @@ class PanelSpinner @JvmOverloads constructor(
         return strings
     }
 
+    private fun positionEnabled(position: Int): Boolean {
+        return !(disabledPositions?.contains(position) ?: false)
+    }
+
     fun setValues(context: Context, values: IntArray) {
-        spinner.adapter = ArrayAdapter(
+        spinner.adapter = object : ArrayAdapter<String>(
             context, android.R.layout.simple_spinner_item,
             getResourceStrings(values)
-        )
+        ) {
+            override fun isEnabled(position: Int): Boolean {
+                return positionEnabled(position)
+            }
+
+            override fun getDropDownView(
+                position: Int,
+                convertView: View?,
+                parent: ViewGroup
+            ): View? {
+                val textView = super.getDropDownView(position, convertView, parent) as TextView
+
+                textView.isEnabled = positionEnabled(position)
+
+                return textView
+            }
+        }
     }
 
     fun setOnItemSelectedCallback(callback: (position: Int) -> Unit) {
@@ -73,5 +96,15 @@ class PanelSpinner @JvmOverloads constructor(
                 // Another interface callback
             }
         }
+    }
+
+    override fun setEnabled(enabled: Boolean) {
+        super.setEnabled(enabled)
+        spinner.isEnabled = enabled
+        titleTextView.alpha = if (enabled) 1.0f else 0.5f
+    }
+    
+    fun setDisabledPositions(disabledPositions: HashSet<Int>?) {
+        this.disabledPositions = disabledPositions
     }
 }

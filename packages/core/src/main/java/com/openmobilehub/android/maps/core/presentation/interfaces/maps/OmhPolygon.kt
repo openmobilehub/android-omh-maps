@@ -42,7 +42,7 @@ interface OmhPolygon {
      * Gets the color of the polygon.
      * @return An integer representing the color of the polygon.
      */
-    fun getFillColor(): Int
+    fun getFillColor(): Int?
 
     /**
      * Sets the fill color of the polygon.
@@ -54,7 +54,7 @@ interface OmhPolygon {
      * Gets the holes in the polygon.
      * @return A list of lists of [OmhCoordinate] objects specifying the holes in the polygon.
      */
-    fun getHoles(): List<List<OmhCoordinate>>
+    fun getHoles(): List<List<OmhCoordinate>>?
 
     /**
      * Sets the holes in the polygon.
@@ -66,7 +66,7 @@ interface OmhPolygon {
      * Gets the points that make up the polygon.
      * @return A list of [OmhCoordinate] objects specifying the polygon's points.
      */
-    fun getOutline(): List<OmhCoordinate>
+    fun getOutline(): List<OmhCoordinate>?
 
     /**
      * Sets the points that make up the polygon.
@@ -84,13 +84,13 @@ interface OmhPolygon {
      * Sets the tag associated with the polygon.
      * @param tag The tag to be set for the polygon.
      */
-    fun setTag(tag: Any?)
+    fun setTag(tag: Any)
 
     /**
      * Gets the color of the polygon's stroke.
      * @return An integer representing the color of the polygon's stroke.
      */
-    fun getStrokeColor(): Int
+    fun getStrokeColor(): Int?
 
     /**
      * Sets the color of the polygon's stroke.
@@ -102,7 +102,7 @@ interface OmhPolygon {
      * Gets the joint type of the polygon's stroke.
      * @return An integer representing the joint type of the polygon's stroke.
      */
-    fun getStrokeJointType(): Int
+    fun getStrokeJointType(): Int?
 
     /**
      * Sets the joint type of the polygon's stroke.
@@ -120,13 +120,13 @@ interface OmhPolygon {
      * Sets the pattern of the polygon's stroke.
      * @param pattern A list of [OmhPatternItem] objects representing the pattern of the polygon's stroke.
      */
-    fun setStrokePattern(pattern: List<OmhPatternItem>?)
+    fun setStrokePattern(pattern: List<OmhPatternItem>)
 
     /**
      * Gets the width of the polygon's stroke.
      * @return A float representing the width of the polygon's stroke.
      */
-    fun getStrokeWidth(): Float
+    fun getStrokeWidth(): Float?
 
     /**
      * Sets the width of the polygon's stroke.
@@ -150,7 +150,7 @@ interface OmhPolygon {
      * Gets the z-index of the polygon.
      * @return A float representing the z-index of the polygon.
      */
-    fun getZIndex(): Float
+    fun getZIndex(): Float?
 
     /**
      * Sets the z-index of the polygon.

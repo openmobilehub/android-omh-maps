@@ -2,7 +2,7 @@
 title: Polylines
 layout: default
 has_children: false
-parent: Core module
+parent: Advanced features
 ---
 
 # Polylines

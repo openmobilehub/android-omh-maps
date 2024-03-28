@@ -13,7 +13,7 @@ android {
 val useLocalProjects = project.rootProject.extra["useLocalProjects"] as Boolean
 
 dependencies {
-    if(useLocalProjects) {
+    if (useLocalProjects) {
         api(project(":packages:core"))
     } else {
         api("com.openmobilehub.android.maps:core:${Versions.omhMapsCore}")
@@ -28,8 +28,8 @@ dependencies {
     implementation(Libs.material)
 
     // Play services
-    implementation(Libs.playServicesMaps)
-    implementation(Libs.playServicesLocation)
+    api(Libs.playServicesMaps)
+    api(Libs.playServicesLocation)
 
     // Test dependencies
     testImplementation(Libs.junit)

@@ -16,6 +16,7 @@
 
 package com.openmobilehub.android.maps.sample.maps
 
+import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
@@ -33,6 +34,7 @@ import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMarke
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMapReadyCallback
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMarkerClickListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMarkerDragListener
+import com.openmobilehub.android.maps.core.presentation.models.Constants
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
 import com.openmobilehub.android.maps.core.utils.NetworkConnectivityChecker
@@ -66,8 +68,9 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
     private var appearanceSpinner: PanelSpinner? = null
     private var colorSeekbar: PanelColorSeekbar? = null
     private var rotationSeekbar: PanelSeekbar? = null
-    private var customizableMarkerAnchor: Pair<Float, Float> = Pair(0.5f, 0.5f)
-    private var customBackgroundColor: Int = 0
+    private var customizableMarkerAnchor: Pair<Float, Float> =
+        Pair(Constants.ANCHOR_CENTER, Constants.ANCHOR_CENTER)
+    private var customBackgroundColor: Int = Color.parseColor("#FFEA393F")
     private var currentAppearancePosition: Int = 0
     private var mapProviderName: String? = null
     private var disabledAppearancePositions: HashSet<Int>? = null
@@ -124,7 +127,7 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
             title = "Static icon marker (non-draggable)"
             position = OmhCoordinate().apply {
                 latitude = PRIME_MERIDIAN.latitude + 0.0016
-                longitude = PRIME_MERIDIAN.longitude + 0.0008
+                longitude = PRIME_MERIDIAN.longitude + 0.002
             }
             icon = ResourcesCompat.getDrawable(resources, R.drawable.ic_map_marker, null)
         })
@@ -132,18 +135,24 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
         omhMap.addMarker(OmhMarkerOptions().apply {
             title = "Static colored marker (draggable)"
             position = OmhCoordinate().apply {
-                latitude = PRIME_MERIDIAN.latitude
-                longitude = PRIME_MERIDIAN.longitude - 0.0008
+                latitude = PRIME_MERIDIAN.latitude + 0.0016
+                longitude = PRIME_MERIDIAN.longitude - 0.002
             }
-            backgroundColor = 0x00FF12 // green-ish
+            backgroundColor = 0xFF005918.toInt() // green-ish
             draggable = true
         })
+
+        val eventsToast = Toast.makeText(
+            context,
+            "",
+            Toast.LENGTH_SHORT
+        )
 
         customizableMarker = omhMap.addMarker(OmhMarkerOptions().apply {
             title = "Configurable test marker"
             position = OmhCoordinate().apply {
-                latitude = PRIME_MERIDIAN.latitude
-                longitude = PRIME_MERIDIAN.longitude + 0.0008
+                latitude = PRIME_MERIDIAN.latitude - 0.001
+                longitude = PRIME_MERIDIAN.longitude
             }
             draggable = true
         })
@@ -151,14 +160,11 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
         omhMap.setOnMarkerClickListener(OmhOnMarkerClickListener { marker ->
             Log.d(
                 LOG_TAG,
-                "User clicked marker '${marker.getTitle()}' at ${marker.getPosition().toString()}"
+                "User clicked marker '${marker.getTitle()}' at ${marker.getPosition()}"
             )
 
-            Toast.makeText(
-                context,
-                "Marker '${marker.getTitle()}' has been clicked",
-                Toast.LENGTH_SHORT
-            ).show()
+            eventsToast.setText("Marker '${marker.getTitle()}' has been clicked")
+            eventsToast.show()
 
             false
         })
@@ -181,11 +187,8 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
                     }"
                 )
 
-                Toast.makeText(
-                    context,
-                    "Marker '${marker.getTitle()}' has just ended being dragged",
-                    Toast.LENGTH_SHORT
-                ).show()
+                eventsToast.setText("Marker '${marker.getTitle()}' has just ended being dragged")
+                eventsToast.show()
             }
 
             override fun onMarkerDragStart(marker: OmhMarker) {
@@ -196,13 +199,14 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
                     }"
                 )
 
-                Toast.makeText(
-                    context,
-                    "Marker '${marker.getTitle()}' is being dragged",
-                    Toast.LENGTH_SHORT
-                ).show()
+                eventsToast.setText("Marker '${marker.getTitle()}' started being dragged")
+                eventsToast.show()
             }
         })
+
+        omhMap.setOnInfoWindowClickListener {
+            it.hideInfoWindow()
+        }
 
         isVisibleCheckbox?.isChecked = customizableMarker?.getIsVisible() ?: true
         isFlatCheckbox?.isChecked = customizableMarker?.getIsFlat() ?: false
@@ -217,6 +221,8 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
             disabledAppearancePositions =
                 hashSetOf(markerAppearanceTypeNameResourceID.indexOf(R.string.marker_appearance_type_custom_color))
         }
+
+        appearanceSpinner?.setDisabledPositions(disabledAppearancePositions)
     }
 
     private fun applyCustomizableMarkerAnchor() {
@@ -227,7 +233,9 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
     }
 
     private fun applyCustomizableMarkerAppearance() {
-        when (markerAppearanceTypeNameResourceID[currentAppearancePosition]) {
+        val appearance = markerAppearanceTypeNameResourceID[currentAppearancePosition]
+
+        when (appearance) {
             R.string.marker_appearance_type_default -> customizableMarker?.setIcon(null)
 
             R.string.marker_appearance_type_custom_color -> customizableMarker?.setBackgroundColor(
@@ -238,6 +246,8 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
                 ResourcesCompat.getDrawable(resources, R.drawable.soccer_ball, null)
             )
         }
+
+        colorSeekbar?.isEnabled = appearance == R.string.marker_appearance_type_custom_color
     }
 
     private fun setupUI(view: View) {
@@ -312,23 +322,9 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
             requireContext(), markerAppearanceTypeNameResourceID
         )
         appearanceSpinner?.setOnItemSelectedCallback { position: Int ->
-            if (disabledAppearancePositions?.contains(position) == true) {
-                Toast.makeText(
-                    context,
-                    context?.getString(R.string.option_unavailable_for_provider),
-                    Toast.LENGTH_SHORT
-                ).show()
-
-                appearanceSpinner?.spinner?.setSelection(currentAppearancePosition)
-            } else {
-                currentAppearancePosition = position
-                applyCustomizableMarkerAppearance()
-            }
+            currentAppearancePosition = position
+            applyCustomizableMarkerAppearance()
         }
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
     }
 
     override fun onResume() {

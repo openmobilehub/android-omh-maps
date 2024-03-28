@@ -23,6 +23,7 @@ fun interface OmhOnPolygonClickListener {
     /**
      * Called when a polygon on the map is clicked.
      * @param polygon The polygon that was clicked.
+     * @return true if the default behavior should be suppressed; false otherwise
      */
-    fun onPolygonClick(polygon: OmhPolygon)
+    fun onPolygonClick(polygon: OmhPolygon): Boolean
 }

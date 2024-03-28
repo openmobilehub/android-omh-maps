@@ -2,7 +2,10 @@ package com.openmobilehub.android.maps.plugin.mapbox.presentation.maps
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.util.DisplayMetrics
+import android.view.MotionEvent
 import android.view.View
+import com.mapbox.bindgen.Expected
 import com.mapbox.common.Cancelable
 import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraChanged
@@ -14,9 +17,20 @@ import com.mapbox.maps.MapLoaded
 import com.mapbox.maps.MapLoadedCallback
 import com.mapbox.maps.MapView
 import com.mapbox.maps.MapboxMap
+import com.mapbox.maps.QueriedFeature
+import com.mapbox.maps.QueriedRenderedFeature
+import com.mapbox.maps.QueryRenderedFeaturesCallback
+import com.mapbox.maps.RenderedQueryGeometry
+import com.mapbox.maps.ScreenCoordinate
 import com.mapbox.maps.Style
 import com.mapbox.maps.plugin.Plugin
+import com.mapbox.maps.plugin.animation.CameraAnimationsPlugin
+import com.mapbox.maps.plugin.annotation.AnnotationPlugin
+import com.mapbox.maps.plugin.annotation.AnnotationType
+import com.mapbox.maps.plugin.annotation.generated.PointAnnotationManager
 import com.mapbox.maps.plugin.compass.CompassPlugin
+import com.mapbox.maps.plugin.gestures.GesturesPlugin
+import com.mapbox.maps.plugin.gestures.OnMapClickListener
 import com.mapbox.maps.plugin.gestures.gestures
 import com.mapbox.maps.plugin.locationcomponent.location
 import com.mapbox.maps.plugin.scalebar.ScaleBarPlugin
@@ -25,44 +39,269 @@ import com.mapbox.maps.plugin.viewport.state.FollowPuckViewportState
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMapLoadedCallback
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnCameraIdleListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnCameraMoveStartedListener
+import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMarkerClickListener
+import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMarkerDragListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMyLocationButtonClickListener
+import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnPolygonClickListener
+import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnPolylineClickListener
+import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhPolygon
+import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhPolyline
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhSnapshotReadyCallback
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
+import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
+import com.openmobilehub.android.maps.core.presentation.models.OmhPolygonOptions
+import com.openmobilehub.android.maps.core.presentation.models.OmhPolylineOptions
 import com.openmobilehub.android.maps.core.utils.logging.Logger
+import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.ITouchInteractable
+import com.openmobilehub.android.maps.plugin.mapbox.presentation.maps.managers.PolygonManager
+import com.openmobilehub.android.maps.plugin.mapbox.presentation.maps.managers.PolylineManager
 import com.openmobilehub.android.maps.plugin.mapbox.utils.Constants
+import com.openmobilehub.android.maps.plugin.mapbox.utils.CoordinateConverter
 import com.openmobilehub.android.maps.plugin.mapbox.utils.JSONUtil
+import com.openmobilehub.android.maps.plugin.mapbox.utils.TimestampHelper
+import com.openmobilehub.android.maps.plugin.mapbox.utils.uuid.UUIDGenerator
+import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.mockkObject
+import io.mockk.mockkStatic
 import io.mockk.runs
 import io.mockk.slot
+import io.mockk.spyk
 import io.mockk.verify
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
+import java.util.UUID
 
+@SuppressWarnings("LargeClass")
 class OmhMapImplTest {
-
     private lateinit var omhMapImpl: OmhMapImpl
     private val map = mockk<MapView>()
+    private val gesturesPlugin = mockk<GesturesPlugin>(relaxed = true)
     private val scaleBarPlugin = mockk<ScaleBarPlugin>(relaxed = true)
     private val compassPlugin = mockk<CompassPlugin>(relaxed = true)
     private val viewportPlugin = mockk<ViewportPlugin>(relaxed = true)
+    private val annotationPlugin = mockk<AnnotationPlugin>(relaxed = true)
+    private val cameraAnimationsPlugin = mockk<CameraAnimationsPlugin>(relaxed = true)
+    private val pointAnnotationManager = mockk<PointAnnotationManager>(relaxed = true)
     private val context = mockk<Context>(relaxed = true)
     private val myLocationIcon = mockk<MyLocationIcon>(relaxed = true)
+    private val polylineManager = mockk<PolylineManager>(relaxed = true)
+    private val polygonManager = mockk<PolygonManager>(relaxed = true)
     private val logger = mockk<Logger>(relaxed = true)
+    private val onMapTouchListenerSlot = slot<View.OnTouchListener>()
+    private val onMapClickListenerSlot = slot<OnMapClickListener>()
+
+    private fun mockMotionEvent(
+        action: Int,
+        x: Float,
+        y: Float,
+    ): MotionEvent {
+        val event = mockk<MotionEvent>()
+        every { event.x } returns x
+        every { event.y } returns y
+        every { event.pointerCount } returns 1
+        every { event.actionMasked } returns action
+
+        return event
+    }
+
+    private fun mockPointAt(
+        screenX: Float,
+        screenY: Float,
+        pointX: Double,
+        pointY: Double
+    ): Point {
+        val mockedPoint = Point.fromLngLat(pointX, pointY)
+
+        val screenCoordinate = ScreenCoordinate(screenX.toDouble(), screenY.toDouble())
+
+        every { map.mapboxMap.coordinateForPixel(screenCoordinate) } returns mockedPoint
+        every { map.mapboxMap.pixelForCoordinate(mockedPoint) } returns screenCoordinate
+
+        return mockedPoint
+    }
+
+    private val uuidGenerator = mockk<UUIDGenerator>()
+
+    private fun mockQueryRenderedFeatures(layerID: String, type: String) {
+        val mockValue = mockk<Expected<String, List<QueriedRenderedFeature>>>(relaxed = true)
+
+        val mockQueriedRenderedFeature = mockk<QueriedRenderedFeature>(relaxed = true)
+        every { mockQueriedRenderedFeature.queriedFeature.feature.geometry()?.type() } returns type
+        every { mockQueriedRenderedFeature.layers } returns listOf(layerID)
+
+        every { mockValue.value } returns listOf(mockQueriedRenderedFeature)
+
+        val queryRenderedFeaturesCallbackSlot = slot<QueryRenderedFeaturesCallback>()
+        every {
+            map.mapboxMap.queryRenderedFeatures(
+                any(),
+                any(),
+                capture(queryRenderedFeaturesCallbackSlot)
+            )
+        } answers {
+            queryRenderedFeaturesCallbackSlot.captured.run(mockValue)
+            mockk<Cancelable>()
+        }
+    }
+
+    /**
+     * Mocks `map.mapboxMap.queryRenderedFeatures` to return the layer ID of the entity that is
+     * under the real screen coordinates where requested, depending on the specified filter.
+     *
+     * @param filterDraggable Whether to filter only [ITouchInteractable] entities that return
+     * `true` from `getDraggable()`.
+     * @param filterClickable Whether to filter only [ITouchInteractable] entities that return
+     * `true` from `getClickable()`.
+     * @param filterLongClickable Whether to filter only [ITouchInteractable] entities that return
+     * `true` from `getLongClickable()`.
+     *
+     * @return A [Cancelable] mock that is returned from the `queryRenderedFeatures` call.
+     */
+    private fun advancedMockQueryRenderedFeatures(
+        filterDraggable: Boolean,
+        filterClickable: Boolean,
+        filterLongClickable: Boolean
+    ) {
+        every {
+            map.mapboxMap.queryRenderedFeatures(any(), any(), any())
+        } answers {
+            val renderedQueryGeometry = it.invocation.args[0] as RenderedQueryGeometry
+            val callback = it.invocation.args[2] as QueryRenderedFeaturesCallback
+
+            val mockedExpectedArg = mockk<Expected<String, List<QueriedRenderedFeature>>>()
+            val mockedRenderedFeature = mockk<QueriedRenderedFeature>()
+
+            val interactableEntity =
+                omhMapImpl.findInteractableEntities(
+                    renderedQueryGeometry.screenCoordinate
+                ) { predicate ->
+                    var ok = true
+
+                    if (filterClickable) {
+                        ok = ok && predicate.getClickable()
+                    }
+
+                    if (filterDraggable) {
+                        ok = ok && predicate.getDraggable()
+                    }
+
+                    if (filterLongClickable) {
+                        ok = ok && predicate.getLongClickable()
+                    }
+
+                    ok
+                }.getOrNull(0)
+
+            val (layers, layerType) = when (interactableEntity) {
+                is OmhMarkerImpl -> listOf<String?>(
+                    OmhMarkerImpl.getSymbolLayerID(
+                        interactableEntity.markerUUID
+                    )
+                ) to Constants.MARKER_OR_INFO_WINDOW_LAYER_TYPE
+
+                is OmhInfoWindow -> Pair(
+                    listOf<String?>(interactableEntity.getSymbolLayerID()),
+                    Constants.MARKER_OR_INFO_WINDOW_LAYER_TYPE
+                )
+
+                else -> listOf<String?>() to ""
+            }
+
+            every { mockedRenderedFeature.layers } returns layers
+            every { mockedRenderedFeature.queriedFeature } answers {
+                val queriedFeature = mockk<QueriedFeature>()
+
+                every { queriedFeature.feature.geometry()?.type() } returns layerType
+
+                queriedFeature
+            }
+            every { mockedExpectedArg.isValue } returns true
+            every { mockedExpectedArg.value } returns listOf(mockedRenderedFeature)
+
+            callback.run(mockedExpectedArg)
+
+            mockk<Cancelable>(relaxed = true)
+        }
+    }
+
+    private fun mockPixelForCoordinate() {
+        every { map.mapboxMap.pixelForCoordinate(any()) } returns mockk<ScreenCoordinate>()
+    }
+
+    private fun createOmhMapImplInstance(): OmhMapImpl {
+        return spyk(
+            OmhMapImpl(
+                map,
+                context,
+                myLocationIcon,
+                1.0f,
+                polylineManager,
+                polygonManager,
+                logger
+            )
+        )
+    }
+
+    private fun setupLoadStyleCallback(style: Style = mockk<Style>()) {
+        val slot = slot<Style.OnStyleLoaded>()
+        every { map.mapboxMap.loadStyle(any<String>(), capture(slot)) } answers {
+            slot.captured.onStyleLoaded(style)
+        }
+    }
 
     @Before
     fun setUp() {
+        clearAllMocks()
+        // mocks for map click listener
+        every { gesturesPlugin.addOnMapClickListener(capture(onMapClickListenerSlot)) } just runs
+        every { gesturesPlugin.onTouchEvent(any()) } answers mock@{
+            val event = it.invocation.args[0] as MotionEvent
+
+            if (event.actionMasked == MotionEvent.ACTION_UP) {
+                return@mock onMapClickListenerSlot.captured.onMapClick(
+                    map.mapboxMap.coordinateForPixel(
+                        ScreenCoordinate(event.x.toDouble(), event.y.toDouble())
+                    )
+                )
+            }
+
+            return@mock false
+        }
+
+        // all other map mocks
+        every { map.getPlugin<GesturesPlugin>(Plugin.MAPBOX_GESTURES_PLUGIN_ID) } returns gesturesPlugin
         every { map.getPlugin<ScaleBarPlugin>(Plugin.MAPBOX_SCALEBAR_PLUGIN_ID) } returns scaleBarPlugin
         every { map.getPlugin<CompassPlugin>(Plugin.MAPBOX_COMPASS_PLUGIN_ID) } returns compassPlugin
         every { map.getPlugin<ViewportPlugin>(Plugin.MAPBOX_VIEWPORT_PLUGIN_ID) } returns viewportPlugin
+        every { map.getPlugin<CameraAnimationsPlugin>(Plugin.MAPBOX_CAMERA_PLUGIN_ID) } returns cameraAnimationsPlugin
+        every {
+            annotationPlugin.createAnnotationManager(
+                AnnotationType.PointAnnotation,
+                any()
+            )
+        } returns pointAnnotationManager
+        every { map.getPlugin<AnnotationPlugin>(Plugin.MAPBOX_ANNOTATION_PLUGIN_ID) } returns annotationPlugin
         every { map.mapboxMap } returns mockk<MapboxMap>(relaxed = true)
+        every { map.setOnTouchListener(capture(onMapTouchListenerSlot)) } just runs
+
+        // DisplayMetrics mock
+        every { map.context } returns context
+        every { context.resources.displayMetrics } returns DisplayMetrics().apply {
+            densityDpi = 400
+            widthPixels = 1080
+            heightPixels = 720
+        }
+        every { uuidGenerator.generate() } returns UUID.fromString(DEFAULT_UUID)
 
         mockkObject(JSONUtil)
+        // Required for style.getSource
+        mockkStatic("com.mapbox.maps.extension.style.sources.SourceUtils")
 
-        omhMapImpl = OmhMapImpl(map, context, myLocationIcon, logger)
+        omhMapImpl = createOmhMapImplInstance()
     }
 
     @Test
@@ -359,10 +598,7 @@ class OmhMapImplTest {
         val style = mockk<Style>(relaxed = true)
         every { style.isValid() } returns true
 
-        val slot = slot<Style.OnStyleLoaded>()
-        every { map.mapboxMap.loadStyle(any<String>(), capture(slot)) } answers {
-            slot.captured.onStyleLoaded(style)
-        }
+        setupLoadStyleCallback(style)
 
         // Act
         omhMapImpl.setMapStyle(jsonStyleResId)
@@ -407,10 +643,7 @@ class OmhMapImplTest {
         val style = mockk<Style>(relaxed = true)
         every { style.isValid() } returns false
 
-        val slot = slot<Style.OnStyleLoaded>()
-        every { map.mapboxMap.loadStyle(any<String>(), capture(slot)) } answers {
-            slot.captured.onStyleLoaded(style)
-        }
+        setupLoadStyleCallback(style)
 
         // Act
         omhMapImpl.setMapStyle(jsonStyleResId)
@@ -429,5 +662,380 @@ class OmhMapImplTest {
 
         // Assert
         verify { map.mapboxMap.loadStyle(Style.STANDARD) }
+    }
+
+    @Test
+    fun `click listener gets triggered when marker is clicked`() {
+        // Arrange
+        val listener = mockk<OmhOnMarkerClickListener>(relaxed = true)
+
+        omhMapImpl.setOnMarkerClickListener(listener)
+        val point = mockPointAt(0f, 0f, 10.0, 15.0)
+        val omhMarker = omhMapImpl.addMarker(
+            OmhMarkerOptions().apply {
+                clickable = true
+                position = CoordinateConverter.convertToOmhCoordinate(point)
+            }
+        )
+        val someOtherPoint = mockPointAt(75f, 219f, 80.0, 175.0)
+
+        every {
+            map.mapboxMap.coordinateForPixel(
+                ScreenCoordinate(
+                    70.0,
+                    90.0
+                )
+            )
+        } returns someOtherPoint
+        advancedMockQueryRenderedFeatures(
+            filterDraggable = false,
+            filterClickable = true,
+            filterLongClickable = false
+        )
+
+        // Act - click somewhere empty on the map
+        onMapTouchListenerSlot.captured.onTouch(
+            map,
+            // touch down
+            mockMotionEvent(MotionEvent.ACTION_DOWN, 70f, 90f)
+        )
+        onMapTouchListenerSlot.captured.onTouch(
+            map,
+            // touch up
+            mockMotionEvent(MotionEvent.ACTION_UP, 70f, 90f)
+        )
+
+        // Assert that the listener was not triggered
+        verify(exactly = 0) { listener.onMarkerClick(any()) }
+
+        // Act - click on the marker
+        // pointer down
+        onMapTouchListenerSlot.captured.onTouch(
+            map,
+            // touch down
+            mockMotionEvent(MotionEvent.ACTION_DOWN, 0f, 0f)
+        )
+
+        // Assert that the listener was triggered
+        verify(exactly = 0) { listener.onMarkerClick(omhMarker) }
+
+        // pointer up
+        onMapTouchListenerSlot.captured.onTouch(
+            map,
+            // touch up
+            mockMotionEvent(MotionEvent.ACTION_UP, 0f, 0f)
+        )
+
+        // Assert that the listener was triggered; give some more time for callback to fire for sure
+        verify(exactly = 1) { listener.onMarkerClick(omhMarker) }
+    }
+
+    @Test
+    @SuppressWarnings("LongMethod")
+    fun `drag listeners are triggered when marker is dragged`() = mockkObject(TimestampHelper) {
+        // Arrange
+        val listener = mockk<OmhOnMarkerDragListener>(relaxed = true)
+
+        omhMapImpl.setOnMarkerDragListener(listener)
+        val point = mockPointAt(0f, 0f, 10.0, 15.0)
+        val omhMarker = omhMapImpl.addMarker(
+            OmhMarkerOptions().apply {
+                clickable = true
+                draggable = true
+                position = CoordinateConverter.convertToOmhCoordinate(point)
+            }
+        )
+        mockPointAt(70f, 90f, 80.0, 175.0) // someOtherPoint1
+        mockPointAt(800f, 1000f, 80.0, 175.0) // someOtherPoint2
+
+        advancedMockQueryRenderedFeatures(
+            filterDraggable = true,
+            filterClickable = false,
+            filterLongClickable = false
+        )
+
+        // Act - drag somewhere empty on the map: someOtherPoint1 -> someOtherPoint2
+        // Long press on someOtherPoint1
+        every { TimestampHelper.getNow() } returns 0L
+        onMapTouchListenerSlot.captured.onTouch(
+            map,
+            // touch down
+            mockMotionEvent(MotionEvent.ACTION_DOWN, 70f, 90f)
+        )
+        every { TimestampHelper.getNow() } returns 1000L
+        onMapTouchListenerSlot.captured.onTouch(
+            map,
+            // touch move
+            mockMotionEvent(MotionEvent.ACTION_MOVE, 70f, 90f)
+        )
+
+        // Assert that the start listener was not triggered
+        verify(exactly = 0) { listener.onMarkerDragStart(any()) }
+
+        every { TimestampHelper.getNow() } returns 2000L
+        onMapTouchListenerSlot.captured.onTouch(
+            map,
+            // touch move
+            mockMotionEvent(MotionEvent.ACTION_MOVE, 70f, 90f)
+        )
+        every { TimestampHelper.getNow() } returns 3000L
+
+        // Move to someOtherPoint2
+        onMapTouchListenerSlot.captured.onTouch(
+            map,
+            // touch move
+            mockMotionEvent(MotionEvent.ACTION_MOVE, 800f, 1000f)
+        )
+
+        // Assert that the drag listener was not triggered
+        verify(exactly = 0) { listener.onMarkerDrag(any()) }
+
+        onMapTouchListenerSlot.captured.onTouch(
+            map,
+            // touch up
+            mockMotionEvent(MotionEvent.ACTION_UP, 800f, 1000f)
+        )
+
+        // Assert that the drag end listener was not triggered
+        verify(exactly = 0) { listener.onMarkerDragEnd(any()) }
+
+        // Act - drag from point to someOtherPoint1
+        // Long press on someOtherPoint1
+        every { TimestampHelper.getNow() } returns 0L
+        onMapTouchListenerSlot.captured.onTouch(
+            map,
+            // touch down
+            mockMotionEvent(MotionEvent.ACTION_DOWN, 0f, 0f)
+        )
+        every { TimestampHelper.getNow() } returns 1000L
+        onMapTouchListenerSlot.captured.onTouch(
+            map,
+            // touch move
+            mockMotionEvent(MotionEvent.ACTION_MOVE, 0f, 0f)
+        )
+        every { TimestampHelper.getNow() } returns 2000L
+
+        // Assert that the start listener was triggered
+        verify(exactly = 1) { listener.onMarkerDragStart(omhMarker) }
+
+        // Move to someOtherPoint1
+        onMapTouchListenerSlot.captured.onTouch(
+            map,
+            // touch move
+            mockMotionEvent(MotionEvent.ACTION_MOVE, 70f, 90f)
+        )
+
+        // Assert that the drag listener was not triggered
+        verify { listener.onMarkerDrag(omhMarker) }
+
+        onMapTouchListenerSlot.captured.onTouch(
+            map,
+            // touch up
+            mockMotionEvent(MotionEvent.ACTION_UP, 70f, 90f)
+        )
+
+        // Assert that the drag end listener was not triggered
+        verify(exactly = 1) { listener.onMarkerDragEnd(omhMarker) }
+    }
+
+    @Test
+    fun `addPolyline adds polyline to map and returns OmhPolyline`() {
+        // Arrange
+        val omhPolyline = mockk<OmhPolyline>()
+        every { polylineManager.addPolyline(any(), any()) } returns omhPolyline
+        val omhPolylineOptions = OmhPolylineOptions()
+
+        // Act
+        val addedPolyline = omhMapImpl.addPolyline(omhPolylineOptions)
+
+        // Assert
+        Assert.assertEquals(omhPolyline, addedPolyline)
+        verify { polylineManager.addPolyline(omhPolylineOptions, null) }
+    }
+
+    @Test
+    fun `polylineManager_onStyleLoaded is called on map init`() {
+        // Arrange
+        setupLoadStyleCallback()
+
+        // Act
+        omhMapImpl = createOmhMapImplInstance()
+
+        // Assert
+        verify { polylineManager.onStyleLoaded(any()) }
+    }
+
+    @Test
+    fun `setOnPolylineClickListener sets listener on polylineManager`() {
+        // Arrange
+        val listener = mockk<OmhOnPolylineClickListener>(relaxed = true)
+
+        mockQueryRenderedFeatures("polyline-$DEFAULT_UUID", "LineString")
+        mockPixelForCoordinate()
+
+        every { map.gestures.addOnMapClickListener(any()) } just runs
+
+        // Act
+        omhMapImpl.setOnPolylineClickListener(listener)
+
+        // Assert
+        verify { polylineManager.clickListener = listener }
+    }
+
+    @Test
+    fun `polylineManager_maybeHandleClick is called when polyline with LineString layer type is clicked`() {
+        // Arrange
+        val listener = mockk<OmhOnPolylineClickListener>(relaxed = true)
+
+        val layerId = "polyline-$DEFAULT_UUID"
+        val type = "LineString"
+
+        mockQueryRenderedFeatures(layerId, type)
+        mockPixelForCoordinate()
+
+        setupLoadStyleCallback()
+
+        val onMapClickListenerSlot = slot<OnMapClickListener>()
+        every { map.gestures.addOnMapClickListener(capture(onMapClickListenerSlot)) } just runs
+
+        mockQueryRenderedFeatures("polyline-$DEFAULT_UUID", Constants.POLYLINE_LAYER_TYPE)
+        mockPixelForCoordinate()
+
+        // Act
+        omhMapImpl = createOmhMapImplInstance()
+
+        omhMapImpl.setOnPolylineClickListener(listener)
+        onMapClickListenerSlot.captured.onMapClick(Point.fromLngLat(0.0, 0.0))
+
+        // Assert
+        verify { polylineManager.maybeHandleClick(layerId) }
+    }
+
+    @Test
+    fun `polylineManager_maybeHandleClick is called when polyline with MultiLineString layer type is clicked`() {
+        // Arrange
+        val listener = mockk<OmhOnPolylineClickListener>(relaxed = true)
+
+        val layerId = "polyline-$DEFAULT_UUID"
+        val type = "MultiLineString"
+
+        mockQueryRenderedFeatures(layerId, type)
+        mockPixelForCoordinate()
+
+        setupLoadStyleCallback()
+
+        val onMapClickListenerSlot = slot<OnMapClickListener>()
+        every { map.gestures.addOnMapClickListener(capture(onMapClickListenerSlot)) } just runs
+
+        mockQueryRenderedFeatures("polyline-$DEFAULT_UUID", Constants.POLYLINE_LAYER_TYPE)
+        mockPixelForCoordinate()
+
+        // Act
+        omhMapImpl = createOmhMapImplInstance()
+
+        omhMapImpl.setOnPolylineClickListener(listener)
+        onMapClickListenerSlot.captured.onMapClick(Point.fromLngLat(0.0, 0.0))
+
+        // Assert
+        verify { polylineManager.maybeHandleClick(layerId) }
+    }
+
+    @Test
+    fun `addPolygon calls polygonManager_addPolygon`() {
+        // Arrange
+        val omhPolygon = mockk<OmhPolygon>()
+        every { polygonManager.addPolygon(any(), any()) } returns omhPolygon
+        val omhPolygonOptions = OmhPolygonOptions()
+
+        // Act
+        val addedPolygon = omhMapImpl.addPolygon(omhPolygonOptions)
+
+        // Assert
+        Assert.assertEquals(omhPolygon, addedPolygon)
+        verify { polygonManager.addPolygon(omhPolygonOptions, null) }
+    }
+
+    @Test
+    fun `setOnPolygonClickListener sets listener on polygonManager`() {
+        // Arrange
+        val listener = mockk<OmhOnPolygonClickListener>(relaxed = true)
+
+        mockQueryRenderedFeatures("polygon-$DEFAULT_UUID", "Polygon")
+        mockPixelForCoordinate()
+
+        every { map.gestures.addOnMapClickListener(any()) } just runs
+
+        // Act
+        omhMapImpl.setOnPolygonClickListener(listener)
+
+        // Assert
+        verify { polygonManager.clickListener = listener }
+    }
+
+    @Test
+    fun `polygonManager_onStyleLoaded is called on map init`() {
+        // Arrange
+        val slot = slot<Style.OnStyleLoaded>()
+        setupLoadStyleCallback()
+
+        // Act
+        omhMapImpl = createOmhMapImplInstance()
+
+        // Assert
+        verify { polygonManager.onStyleLoaded(any()) }
+    }
+
+    @Test
+    fun `polygonManager_maybeHandleClick is called when polygon with Polygon layer type is clicked`() {
+        // Arrange
+        val listener = mockk<OmhOnPolygonClickListener>(relaxed = true)
+
+        val layerId = "polygon-$DEFAULT_UUID"
+        val type = "Polygon"
+
+        mockQueryRenderedFeatures(layerId, type)
+        mockPixelForCoordinate()
+
+        val onMapClickListenerSlot = slot<OnMapClickListener>()
+        every { map.gestures.addOnMapClickListener(capture(onMapClickListenerSlot)) } just runs
+
+        setupLoadStyleCallback()
+
+        // Act
+        omhMapImpl = createOmhMapImplInstance()
+        omhMapImpl.setOnPolygonClickListener(listener)
+        onMapClickListenerSlot.captured.onMapClick(Point.fromLngLat(0.0, 0.0))
+
+        // Assert
+        verify { polygonManager.maybeHandleClick(layerId) }
+    }
+
+    @Test
+    fun `polygonManager_maybeHandleClick is called when polygon with MultiPolygon layer type is clicked`() {
+        // Arrange
+        val listener = mockk<OmhOnPolygonClickListener>(relaxed = true)
+
+        val layerId = "polygon-$DEFAULT_UUID"
+        val type = "MultiPolygon"
+
+        mockQueryRenderedFeatures(layerId, type)
+        mockPixelForCoordinate()
+
+        val onMapClickListenerSlot = slot<OnMapClickListener>()
+        every { map.gestures.addOnMapClickListener(capture(onMapClickListenerSlot)) } just runs
+
+        setupLoadStyleCallback()
+
+        // Act
+        omhMapImpl = createOmhMapImplInstance()
+        omhMapImpl.setOnPolygonClickListener(listener)
+        onMapClickListenerSlot.captured.onMapClick(Point.fromLngLat(0.0, 0.0))
+
+        // Assert
+        verify { polygonManager.maybeHandleClick(layerId) }
+    }
+
+    companion object {
+        private const val DEFAULT_UUID = "00000000-0000-0000-0000-000000000000"
     }
 }

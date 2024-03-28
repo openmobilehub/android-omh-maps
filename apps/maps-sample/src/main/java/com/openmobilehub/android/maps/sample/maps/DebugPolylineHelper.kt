@@ -32,8 +32,8 @@ object DebugPolylineHelper {
     fun addReferencePolyline(omhMap: OmhMap): OmhPolyline? {
         val basicPolylineOptions = OmhPolylineOptions().apply {
             points = listOf(
-                OmhCoordinate(30.0, 25.0),
-                OmhCoordinate(10.0, 25.0),
+                OmhCoordinate(50.0, 25.0),
+                OmhCoordinate(-50.0, 25.0),
             )
             color = Color.LTGRAY
             clickable = true
@@ -45,5 +45,17 @@ object DebugPolylineHelper {
         basicPolyline?.setTag("Reference Polyline pressed")
 
         return basicPolyline
+    }
+
+    fun getRandomizedPoints(): List<OmhCoordinate> {
+        return Array(8) {
+            val baseLongitude = it * 5
+            val minLongitude = baseLongitude - 5
+            val maxLongitude = baseLongitude + 5
+            OmhCoordinate(
+                (-30..30).random().toDouble(),
+                (minLongitude..maxLongitude).random().toDouble(),
+            )
+        }.toList()
     }
 }

@@ -29,17 +29,16 @@ import org.osmdroid.views.overlay.Polygon
 internal class OmhPolygonImpl(
     private val polygon: Polygon,
     private val mapView: MapView,
-    initiallyClickable: Boolean,
+    private var clickable: Boolean,
     private val logger: UnsupportedFeatureLogger = polylineLogger
 ) : OmhPolygon {
-    private var isClickable = initiallyClickable
 
     override fun getClickable(): Boolean {
-        return isClickable
+        return clickable
     }
 
     override fun setClickable(clickable: Boolean) {
-        isClickable = clickable
+        this.clickable = clickable
     }
 
     override fun getStrokeColor(): Int {
@@ -74,7 +73,7 @@ internal class OmhPolygonImpl(
         return null
     }
 
-    override fun setStrokePattern(pattern: List<OmhPatternItem>?) {
+    override fun setStrokePattern(pattern: List<OmhPatternItem>) {
         logger.logSetterNotSupported("strokePattern")
     }
 
@@ -100,7 +99,7 @@ internal class OmhPolygonImpl(
         return polygon.relatedObject
     }
 
-    override fun setTag(tag: Any?) {
+    override fun setTag(tag: Any) {
         polygon.relatedObject = tag
         mapView.postInvalidate()
     }

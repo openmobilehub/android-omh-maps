@@ -9,7 +9,7 @@ android {
 val useLocalProjects = project.rootProject.extra["useLocalProjects"] as Boolean
 
 dependencies {
-    if(useLocalProjects) {
+    if (useLocalProjects) {
         api(project(":packages:core"))
     } else {
         api("com.openmobilehub.android.maps:core:${Versions.omhMapsCore}")
@@ -25,7 +25,7 @@ dependencies {
     implementation(Libs.preference)
 
     // Open Street Map
-    implementation(Libs.osmdroid)
+    api(Libs.osmdroid)
 
     // Test dependencies
     testImplementation(Libs.junit)

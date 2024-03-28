@@ -18,8 +18,8 @@ package com.openmobilehub.android.maps.plugin.googlemaps.presentation.extensions
 
 import android.graphics.drawable.Drawable
 import com.google.android.gms.maps.model.BitmapDescriptor
+import com.openmobilehub.android.maps.core.presentation.models.Constants.ANCHOR_CENTER
 import com.openmobilehub.android.maps.core.presentation.models.Constants.DEFAULT_ALPHA
-import com.openmobilehub.android.maps.core.presentation.models.Constants.DEFAULT_ANCHOR
 import com.openmobilehub.android.maps.core.presentation.models.Constants.DEFAULT_ROTATION
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
@@ -153,7 +153,7 @@ internal class OmhMarkerOptionsTest {
         val defaultOmhMarkerOptions = OmhMarkerOptions()
 
         assertEquals(defaultOmhMarkerOptions.draggable, false)
-        assertEquals(defaultOmhMarkerOptions.anchor, Pair(DEFAULT_ANCHOR, DEFAULT_ANCHOR))
+        assertEquals(defaultOmhMarkerOptions.anchor, Pair(ANCHOR_CENTER, ANCHOR_CENTER))
         assertEquals(defaultOmhMarkerOptions.alpha, DEFAULT_ALPHA)
         assertEquals(defaultOmhMarkerOptions.snippet, null)
         assertEquals(defaultOmhMarkerOptions.isVisible, true)

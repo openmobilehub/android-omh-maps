@@ -35,6 +35,17 @@ internal class OmhPolylineImpl(
     private val logger: UnsupportedFeatureLogger = polylineLogger
 ) : OmhPolyline {
 
+    override fun getCap(): OmhCap? {
+        logger.logGetterNotSupported("cap")
+        return null
+    }
+
+    override fun setCap(cap: OmhCap) {
+        val updatedCap = CapConverter.convertToCap(cap)
+        polyline.startCap = updatedCap
+        polyline.endCap = updatedCap
+    }
+
     override fun getClickable(): Boolean {
         return polyline.isClickable
     }
@@ -56,14 +67,8 @@ internal class OmhPolylineImpl(
         return null
     }
 
-    override fun setEndCap(endCap: OmhCap?) {
-        if (endCap == null) {
-            return
-        }
-
-        CapConverter.convertToCap(endCap)?.let {
-            polyline.endCap = it
-        }
+    override fun setEndCap(endCap: OmhCap) {
+        polyline.endCap = CapConverter.convertToCap(endCap)
     }
 
     override fun getJointType(): Int {
@@ -80,8 +85,8 @@ internal class OmhPolylineImpl(
         }
     }
 
-    override fun setPattern(pattern: List<OmhPatternItem>?) {
-        polyline.pattern = pattern?.map { patternItem ->
+    override fun setPattern(pattern: List<OmhPatternItem>) {
+        polyline.pattern = pattern.map { patternItem ->
             PatternConverter.convertToPatternItem(patternItem)
         }
     }
@@ -99,10 +104,8 @@ internal class OmhPolylineImpl(
         return null
     }
 
-    override fun setSpans(spans: List<OmhStyleSpan>?) {
-        spans?.let {
-            polyline.spans = spans.map { span -> SpanConverter.convertToStyleSpan(span) }
-        }
+    override fun setSpans(spans: List<OmhStyleSpan>) {
+        polyline.spans = spans.map { span -> SpanConverter.convertToStyleSpan(span) }
     }
 
     override fun getStartCap(): OmhCap? {
@@ -110,21 +113,15 @@ internal class OmhPolylineImpl(
         return null
     }
 
-    override fun setStartCap(startCap: OmhCap?) {
-        if (startCap == null) {
-            return
-        }
-
-        CapConverter.convertToCap(startCap)?.let {
-            polyline.startCap = it
-        }
+    override fun setStartCap(startCap: OmhCap) {
+        polyline.startCap = CapConverter.convertToCap(startCap)
     }
 
     override fun getTag(): Any? {
         return polyline.tag
     }
 
-    override fun setTag(tag: Any?) {
+    override fun setTag(tag: Any) {
         polyline.tag = tag
     }
 

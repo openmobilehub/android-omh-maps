@@ -25,6 +25,10 @@ collections:
     permalink: "/:collection/:path/"
     output: true
 
+  plugin-azuremaps:
+    permalink: "/:collection/:path/"
+    output: true
+
 just_the_docs:
   collections:
     core:
@@ -46,3 +50,8 @@ just_the_docs:
       name: Plugin Mapbox
       nav_fold: false
       nav_order: 4
+    
+    plugin-azuremaps:
+      name: Plugin AzureMaps
+      nav_fold: false
+      nav_order: 5

@@ -2,7 +2,7 @@
 title: Camera Features
 layout: default
 has_children: false
-parent: Core module
+parent: Advanced features
 ---
 
 # Camera Features

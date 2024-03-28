@@ -1,3 +1,19 @@
+<!--
+  ~ Copyright 2023 Open Mobile Hub
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      https://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
 <resources>
     <string name="app_name">OMH Maps demo</string>
     <string name="title_activity_main">MainActivity</string>
@@ -47,12 +63,12 @@
     <string name="marker_appearance_type_default">Default</string>
     <string name="marker_appearance_type_custom_icon">Custom icon</string>
     <string name="marker_appearance_type_custom_color">Custom color</string>
-    <string name="option_unavailable_for_provider">Option unavailable for this provider</string>
     <string name="span">Span</string>
     <string name="gradient">Gradient</string>
     <string name="span_pattern">Span Pattern</string>
     <string name="width">Width</string>
     <string name="color">Color</string>
+    <string name="cap">Cap</string>
     <string name="start_cap">Start Cap</string>
     <string name="end_cap">End Cap</string>
     <string name="join_type">Join Type</string>
@@ -82,5 +98,27 @@
     <string name="close">Close</string>
     <string name="map_snapshot">Map Snapshot</string>
     <string name="rotate_gestures">Rotate Gestures</string>
+    <string name="map_info_windows_fragment_text">Info Windows Fragment</string>
+    <string name="label_imperative_usage">Imperative usage</string>
+    <string name="label_demo_behaviour">Demo behaviour</string>
+    <string name="open_info_window">Open Info Window</string>
+    <string name="hide_info_window">Close Info Window</string>
+    <string name="info_window_appearance_type_default">Default</string>
+    <string name="info_window_appearance_type_custom_window_view">Custom window view</string>
+    <string name="info_window_appearance_type_custom_contents_view">Custom contents view</string>
+    <string name="custom_image">Custom image</string>
+    <string name="window_should_rerender_on_drag">Re-render info window when dragging</string>
+    <string name="label_info_window_properties">Info window properties</string>
+    <string name="info_window_opened">Info window opened (listener)</string>
+    <string name="info_window_closed">Info window closed (listener)</string>
     <string name="my_location_enabled">My Location Enabled</string>
+    <string name="randomize_points">Randomize points</string>
+    <string name="info_window_clicked">Info window clicked</string>
+    <string name="info_window_long_clicked">Info window long-clicked</string>
+    <string name="anchorIWU">Info window anchor U</string>
+    <string name="anchorIWV">Info window anchor V</string>
+    <string name="label_marker_properties">Marker properties</string>
+    <string name="window_should_toggle_on_marker_click">Info win. toggles on marker click</string>
+    <string name="window_should_hide_on_click">Info win. hides on click</string>
+    <string name="randomize_outline">Randomize outline</string>
 </resources>
