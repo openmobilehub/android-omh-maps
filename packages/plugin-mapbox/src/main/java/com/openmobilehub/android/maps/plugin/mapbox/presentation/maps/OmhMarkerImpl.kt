@@ -206,13 +206,16 @@ internal class OmhMarkerImpl(
     }
 
     private fun applyBufferedProperties() {
-        setIcon(bufferedIcon)
         setAlpha(bufferedAlpha)
         setIsVisible(bufferedIsVisible)
         setIsFlat(bufferedIsFlat)
         setRotation(bufferedRotation)
         setAnchor(bufferedAnchor.first, bufferedAnchor.second)
-        setBackgroundColor(backgroundColor)
+        if (backgroundColor == null) {
+            setIcon(bufferedIcon)
+        } else {
+            setBackgroundColor(backgroundColor)
+        }
 
         // one call to updatePosition will happen in omhInfoWindow.applyBufferedProperties(),
         // yet after buffered properties were applied, a re-invalidation is needed
