@@ -11,7 +11,8 @@ import com.openmobilehub.android.maps.core.presentation.models.OmhMapStatusCodes
 
 class CurrentLocationService(
     private val locationManager: LocationManager,
-    private val providers: List<String>
+    private val providers: List<String>,
+    private val options: LocationServiceOptions
 ) {
     private var locationListener: LocationListener? = null
     private val currentLocationsList = mutableListOf<Location>()
@@ -57,8 +58,8 @@ class CurrentLocationService(
         val requestTime = System.currentTimeMillis()
         val requestTimeDelta = System.currentTimeMillis() - requestTime
 
-        val isTimeout = requestTimeDelta > TIMEOUT
-        val isGoodAccuracy = location.accuracy < GOOD_ACCURACY
+        val isTimeout = requestTimeDelta > options.currentLocationTimeout
+        val isGoodAccuracy = location.accuracy < options.currentLocationAccuracy
 
         if (isGoodAccuracy) {
             return onLocationUpdateSuccess(
@@ -138,10 +139,5 @@ class CurrentLocationService(
         if (locationListener != null) {
             locationManager.removeUpdates(locationListener!!)
         }
-    }
-
-    companion object {
-        private const val TIMEOUT = 1000 * 10 // 10 seconds
-        private const val GOOD_ACCURACY = 20 // 20 meters
     }
 }

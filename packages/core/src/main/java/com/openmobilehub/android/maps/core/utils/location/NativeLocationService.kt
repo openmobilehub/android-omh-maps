@@ -6,7 +6,10 @@ import android.location.LocationManager
 import androidx.annotation.RequiresPermission
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 
-class NativeLocationService(context: Context) : ILocationService {
+class NativeLocationService(
+    context: Context,
+    options: LocationServiceOptions = LocationServiceOptions()
+) : ILocationService {
     private var locationManager: LocationManager =
         context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
@@ -14,10 +17,11 @@ class NativeLocationService(context: Context) : ILocationService {
 
     private val currentLocationService = CurrentLocationService(
         locationManager,
-        providers
+        providers,
+        options
     )
 
-    private val continousLocationService = ContinousLocationService(
+    private val continuousLocationService = ContinuousLocationService(
         locationManager,
         providers
     )
@@ -48,7 +52,7 @@ class NativeLocationService(context: Context) : ILocationService {
         onLocationUpdateSuccess: (OmhCoordinate) -> Unit,
         onLocationUpdateFailure: (Exception) -> Unit
     ) {
-        continousLocationService.startLocationUpdates(
+        continuousLocationService.startLocationUpdates(
             onLocationUpdateSuccess,
             onLocationUpdateFailure
         )
@@ -56,6 +60,6 @@ class NativeLocationService(context: Context) : ILocationService {
 
     @RequiresPermission(anyOf = [Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION])
     override fun stopLocationUpdates() {
-        continousLocationService.stopLocationUpdates()
+        continuousLocationService.stopLocationUpdates()
     }
 }

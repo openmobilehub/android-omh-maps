@@ -9,7 +9,7 @@ import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhMapException
 import com.openmobilehub.android.maps.core.presentation.models.OmhMapStatusCodes
 
-class ContinousLocationService(
+class ContinuousLocationService(
     private val locationManager: LocationManager,
     private val providers: List<String>
 ) {
