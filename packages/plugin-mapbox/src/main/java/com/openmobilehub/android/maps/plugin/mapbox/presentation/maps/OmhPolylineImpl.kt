@@ -121,7 +121,8 @@ internal class OmhPolylineImpl(
 
     override fun setJointType(jointType: Int) {
         if (isStyleReady()) {
-            lineLayer.lineJoin(JoinTypeConverter.convertToLineJoin(jointType))
+            val join = JoinTypeConverter.convertToLineJoin(jointType)
+            lineLayer.lineJoin(join)
         } else {
             bufferedJointType = jointType
         }
