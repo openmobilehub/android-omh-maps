@@ -26,7 +26,6 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.LinearLayout
-import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.openmobilehub.android.maps.core.presentation.fragments.OmhMapFragment
@@ -51,6 +50,7 @@ import com.openmobilehub.android.maps.sample.customviews.PanelColorSeekbar
 import com.openmobilehub.android.maps.sample.customviews.PanelSeekbar
 import com.openmobilehub.android.maps.sample.customviews.PanelSpinner
 import com.openmobilehub.android.maps.sample.databinding.FragmentMapPolylinesBinding
+import com.openmobilehub.android.maps.sample.model.InfoDisplay
 import com.openmobilehub.android.maps.sample.utils.Constants
 
 class MapPolylinesFragment : Fragment(), OmhOnMapReadyCallback {
@@ -111,6 +111,10 @@ class MapPolylinesFragment : Fragment(), OmhOnMapReadyCallback {
     private var spanGradientToColorSeekbar: PanelColorSeekbar? = null
     private var withSpanPatternCheckbox: CheckBox? = null
 
+    private val infoDisplay by lazy {
+        InfoDisplay(requireView())
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -124,11 +128,7 @@ class MapPolylinesFragment : Fragment(), OmhOnMapReadyCallback {
 
         networkConnectivityChecker = NetworkConnectivityChecker(requireContext()).apply {
             startListeningForConnectivityChanges {
-                Toast.makeText(
-                    requireContext(),
-                    R.string.lost_internet_connection,
-                    Toast.LENGTH_LONG
-                ).show()
+                infoDisplay.showMessage(R.string.lost_internet_connection)
             }
         }
 
@@ -140,8 +140,7 @@ class MapPolylinesFragment : Fragment(), OmhOnMapReadyCallback {
     override fun onMapReady(omhMap: OmhMap) {
         this.omhMap = omhMap
         if (networkConnectivityChecker?.isNetworkAvailable() != true) {
-            Toast.makeText(requireContext(), R.string.no_internet_connection, Toast.LENGTH_LONG)
-                .show()
+            infoDisplay.showMessage(R.string.lost_internet_connection)
         }
 
         omhMap.setScaleFactor(if (omhMap.providerName === Constants.MAPBOX_PROVIDER) 3.0f else 1.0f)

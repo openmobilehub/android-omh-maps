@@ -67,7 +67,7 @@ internal object Constants {
      *  It's required to have parity with Google Maps
      */
     const val LINE_JOIN_MITER_LIMIT = 1000.0
-    const val LINE_JOINT_ROUND_LIMIT = 1000.0
+    const val LINE_JOINT_ROUND_LIMIT = 0.0
 
     // Map Elements
     const val POLYLINE_LAYER_TYPE = "LineString"

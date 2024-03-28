@@ -60,7 +60,6 @@ import com.openmobilehub.android.maps.plugin.openstreetmap.utils.MapListenerCont
 import com.openmobilehub.android.maps.plugin.openstreetmap.utils.MapTouchListener
 import com.openmobilehub.android.maps.plugin.openstreetmap.utils.mapLogger
 import org.osmdroid.api.IGeoPoint
-import org.osmdroid.views.CustomZoomButtonsController
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.Polygon
@@ -86,9 +85,6 @@ class OmhMapImpl(
     private var markerClickListener: OmhOnMarkerClickListener? = null
     private var markerDragListener: OmhOnMarkerDragListener? = null
 
-    private var enableZoomGestures: Boolean = false
-    private var enableRotateGestures: Boolean = false
-
     private val polylines = mutableMapOf<Polyline, OmhPolyline>()
     private val polygons = mutableMapOf<Polygon, OmhPolygon>()
     internal val markers = mutableMapOf<Marker, OmhMarker>()
@@ -100,6 +96,8 @@ class OmhMapImpl(
         null
     private var onInfoWindowClickListener: OmhOnInfoWindowClickListener? = null
     private var onInfoWindowLongClickListener: OmhOnInfoWindowLongClickListener? = null
+
+    private val rotationGestureOverlay = RotationGestureOverlay(mapView)
 
     init {
         mapView.addMapListener(mapListenerController)
@@ -234,29 +232,19 @@ class OmhMapImpl(
         mapView.postInvalidate()
     }
 
-    private fun updateMultiTouchControlsSetting() {
-        mapView.setMultiTouchControls(enableZoomGestures || enableRotateGestures)
-    }
-
     override fun setZoomGesturesEnabled(enableZoomGestures: Boolean) {
-        this.enableZoomGestures = enableZoomGestures
-
         gestureOverlay.setEnableZoomGestures(enableZoomGestures)
-        if (!enableZoomGestures) {
-            mapView.zoomController.setVisibility(CustomZoomButtonsController.Visibility.NEVER)
-        }
-
-        updateMultiTouchControlsSetting()
+        mapView.setMultiTouchControls(enableZoomGestures)
+        mapView.zoomController.setZoomInEnabled(enableZoomGestures)
+        mapView.zoomController.setZoomOutEnabled(enableZoomGestures)
     }
 
     override fun setRotateGesturesEnabled(enableRotateGestures: Boolean) {
-        this.enableRotateGestures = enableRotateGestures
-
-        val rotationGestureOverlay = RotationGestureOverlay(mapView)
-        rotationGestureOverlay.isEnabled = true
-        mapView.overlayManager.add(rotationGestureOverlay)
-
-        updateMultiTouchControlsSetting()
+        if (enableRotateGestures) {
+            mapView.overlayManager.add(rotationGestureOverlay)
+        } else {
+            mapView.overlayManager.remove(rotationGestureOverlay)
+        }
     }
 
     override fun snapshot(omhSnapshotReadyCallback: OmhSnapshotReadyCallback) {
