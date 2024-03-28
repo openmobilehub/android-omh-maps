@@ -121,4 +121,5 @@
     <string name="window_should_toggle_on_marker_click">Info win. toggles on marker click</string>
     <string name="window_should_hide_on_click">Info win. hides on click</string>
     <string name="randomize_outline">Randomize outline</string>
+    <string name="mapbox_access_token_value">Placeholder - will be set programmatically on app startup via MapboxOptions.accessToken</string>
 </resources>

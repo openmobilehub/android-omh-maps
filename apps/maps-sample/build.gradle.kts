@@ -13,18 +13,8 @@ android {
     namespace = "com.openmobilehub.android.maps.sample"
 
     defaultConfig {
-        val mapboxPublicToken = getRequiredValueFromEnvOrProperties(
-            "MAPBOX_PUBLIC_TOKEN",
-            rootProject.file("local.properties")
-        )
-
         versionCode = 1
         versionName = "1.0"
-        resValue(
-            "string",
-            "mapbox_access_token_value",
-            mapboxPublicToken
-        )
     }
 
     signingConfigs {
