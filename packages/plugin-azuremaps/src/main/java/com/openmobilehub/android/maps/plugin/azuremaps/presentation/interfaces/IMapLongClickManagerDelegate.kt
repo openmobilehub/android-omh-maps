@@ -14,10 +14,20 @@
  * limitations under the License.
  */
 
-package com.openmobilehub.android.maps.plugin.azuremaps.presentation.utils
+package com.openmobilehub.android.maps.plugin.azuremaps.presentation.interfaces
 
-import com.openmobilehub.android.maps.core.utils.logging.Logger
-import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
+/**
+ * Delegate interface having capabilities to handle long click events on the map.
+ */
+internal interface IMapLongClickManagerDelegate {
 
-val mapLogger = UnsupportedFeatureLogger(Constants.PROVIDER_NAME, "OmhMap")
-val commonLogger = Logger(Constants.PROVIDER_NAME)
+    /**
+     * Callback invoked when long click event is detected.
+     *
+     * @param longClickedEntity The [ITouchInteractable] entity that has been long clicked
+     * and returns `true` from `getLongClickable()`.
+     *
+     * @return `true` if the event has been consumed, `false` otherwise.
+     */
+    fun handleLongClick(longClickedEntity: ITouchInteractable): Boolean
+}

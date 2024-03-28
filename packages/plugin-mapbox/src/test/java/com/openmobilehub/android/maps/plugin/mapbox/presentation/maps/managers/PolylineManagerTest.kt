@@ -12,8 +12,8 @@ import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnPol
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhPolyline
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolylineOptions
+import com.openmobilehub.android.maps.core.utils.uuid.UUIDGenerator
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.maps.OmhPolylineImpl
-import com.openmobilehub.android.maps.plugin.mapbox.utils.uuid.UUIDGenerator
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk

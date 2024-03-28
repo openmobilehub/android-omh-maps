@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
-package com.openmobilehub.android.maps.plugin.mapbox.extensions
+package com.openmobilehub.android.maps.plugin.azuremaps.utils
 
-import com.mapbox.maps.ScreenCoordinate
-import com.openmobilehub.android.maps.core.utils.cartesian.Point2D
+import com.mapbox.geojson.Point
+import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 
-fun ScreenCoordinate.toPoint2D(): Point2D<Double> {
-    return Point2D(x, y)
-}
+internal object CoordinateConverter {
+    fun convertToOmhCoordinate(point: Point): OmhCoordinate {
+        return OmhCoordinate(point.latitude(), point.longitude())
+    }
 
-fun Point2D<Double>.toScreenCoordinate(): ScreenCoordinate {
-    return ScreenCoordinate(x, y)
+    fun convertToPoint(coordinate: OmhCoordinate): Point {
+        return Point.fromLngLat(coordinate.longitude, coordinate.latitude)
+    }
 }

@@ -61,8 +61,10 @@ import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolygonOptions
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolylineOptions
 import com.openmobilehub.android.maps.core.utils.ScreenUnitConverter
+import com.openmobilehub.android.maps.core.utils.cartesian.BoundingBox2D
+import com.openmobilehub.android.maps.core.utils.cartesian.plus
 import com.openmobilehub.android.maps.core.utils.logging.Logger
-import com.openmobilehub.android.maps.plugin.mapbox.extensions.plus
+import com.openmobilehub.android.maps.plugin.mapbox.extensions.toPoint2D
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IMapDragManagerDelegate
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IOmhInfoWindowMapViewDelegate
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.ITouchInteractable
@@ -73,7 +75,6 @@ import com.openmobilehub.android.maps.plugin.mapbox.presentation.maps.managers.P
 import com.openmobilehub.android.maps.plugin.mapbox.utils.Constants
 import com.openmobilehub.android.maps.plugin.mapbox.utils.CoordinateConverter
 import com.openmobilehub.android.maps.plugin.mapbox.utils.JSONUtil
-import com.openmobilehub.android.maps.plugin.mapbox.utils.cartesian.BoundingBox2D
 import com.openmobilehub.android.maps.plugin.mapbox.utils.commonLogger
 
 @SuppressWarnings("TooManyFunctions", "LongParameterList")
@@ -247,6 +248,7 @@ class OmhMapImpl(
         screenCoordinate: ScreenCoordinate,
         validator: ((predicate: ITouchInteractable) -> Boolean)?
     ): List<ITouchInteractable> {
+        val screenCoordinatePoint2D = screenCoordinate.toPoint2D()
         val minScreenDimension = mapView.context.resources.displayMetrics.widthPixels.coerceAtMost(
             mapView.context.resources.displayMetrics.heightPixels
         )
@@ -262,7 +264,7 @@ class OmhMapImpl(
 
             val markerPositionOnScreen = mapView.mapboxMap.pixelForCoordinate(
                 CoordinateConverter.convertToPoint(infoWindow.omhMarker.getPosition())
-            ) + infoWindow.omhMarker.getHandleTopOffset()
+            ).toPoint2D() + infoWindow.omhMarker.getHandleTopOffset()
             val centerPositionOnScreen = markerPositionOnScreen + infoWindow.getHandleCenterOffset()
 
             val iwBoundingBox = BoundingBox2D(
@@ -272,7 +274,7 @@ class OmhMapImpl(
                 hitBorder = hitRadius
             )
 
-            if (iwBoundingBox.contains(screenCoordinate)) {
+            if (iwBoundingBox.contains(screenCoordinatePoint2D)) {
                 hits.add(infoWindow)
             }
         }
@@ -283,7 +285,7 @@ class OmhMapImpl(
 
             val markerCenterPositionOnScreen = mapView.mapboxMap.pixelForCoordinate(
                 CoordinateConverter.convertToPoint(marker.getPosition())
-            ) + marker.getHandleCenterOffset()
+            ).toPoint2D() + marker.getHandleCenterOffset()
 
             val markerBoundingBox = BoundingBox2D(
                 centerPoint = markerCenterPositionOnScreen,
@@ -292,7 +294,7 @@ class OmhMapImpl(
                 hitBorder = hitRadius
             )
 
-            if (markerBoundingBox.contains(screenCoordinate)) {
+            if (markerBoundingBox.contains(screenCoordinatePoint2D)) {
                 hits.add(marker)
             }
         }

@@ -14,27 +14,27 @@
  * limitations under the License.
  */
 
-package com.openmobilehub.android.maps.plugin.mapbox.utils
+package com.openmobilehub.android.maps.plugin.azuremaps.utils
 
-import com.mapbox.maps.extension.style.layers.properties.generated.IconAnchor
+import com.azure.android.maps.control.options.AnchorType
 import com.openmobilehub.android.maps.core.utils.DiscreteAnchor
 import com.openmobilehub.android.maps.core.utils.AnchorConverter as CoreAnchorConverter
 
 internal object AnchorConverter {
     /**
-     * Converts a continuous anchor to an [IconAnchor].
+     * Converts a continuous anchor to an [String] constant defined in Azure Maps' [AnchorType].
      */
-    fun convertContinuousToDiscreteIconAnchor(anchorContinuous: Pair<Float, Float>): IconAnchor {
+    fun convertContinuousToDiscreteAnchorType(anchorContinuous: Pair<Float, Float>): String {
         return when (CoreAnchorConverter.genericConvertContinuousToDiscreteAnchor(anchorContinuous)) {
-            DiscreteAnchor.CENTER -> IconAnchor.CENTER
-            DiscreteAnchor.LEFT -> IconAnchor.LEFT
-            DiscreteAnchor.RIGHT -> IconAnchor.RIGHT
-            DiscreteAnchor.TOP -> IconAnchor.TOP
-            DiscreteAnchor.BOTTOM -> IconAnchor.BOTTOM
-            DiscreteAnchor.TOP_LEFT -> IconAnchor.TOP_LEFT
-            DiscreteAnchor.TOP_RIGHT -> IconAnchor.TOP_RIGHT
-            DiscreteAnchor.BOTTOM_LEFT -> IconAnchor.BOTTOM_LEFT
-            DiscreteAnchor.BOTTOM_RIGHT -> IconAnchor.BOTTOM_RIGHT
+            DiscreteAnchor.CENTER -> AnchorType.CENTER
+            DiscreteAnchor.LEFT -> AnchorType.LEFT
+            DiscreteAnchor.RIGHT -> AnchorType.RIGHT
+            DiscreteAnchor.TOP -> AnchorType.TOP
+            DiscreteAnchor.BOTTOM -> AnchorType.BOTTOM
+            DiscreteAnchor.TOP_LEFT -> AnchorType.TOP_LEFT
+            DiscreteAnchor.TOP_RIGHT -> AnchorType.TOP_RIGHT
+            DiscreteAnchor.BOTTOM_LEFT -> AnchorType.BOTTOM_LEFT
+            DiscreteAnchor.BOTTOM_RIGHT -> AnchorType.BOTTOM_RIGHT
         }
     }
 }

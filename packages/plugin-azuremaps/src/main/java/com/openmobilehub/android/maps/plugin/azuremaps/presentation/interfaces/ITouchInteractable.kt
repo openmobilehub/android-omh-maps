@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces
+package com.openmobilehub.android.maps.plugin.azuremaps.presentation.interfaces
 
 import com.openmobilehub.android.maps.core.utils.cartesian.Offset2D
 

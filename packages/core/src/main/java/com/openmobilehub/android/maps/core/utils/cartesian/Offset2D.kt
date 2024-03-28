@@ -14,9 +14,15 @@
  * limitations under the License.
  */
 
-package com.openmobilehub.android.maps.plugin.mapbox.utils.cartesian
+package com.openmobilehub.android.maps.core.utils.cartesian
 
+/**
+ * A 2D offset.
+ *
+ * @constructor Creates a new absolute 2D offset.
+ */
 data class Offset2D<T : Number>(val x: T, val y: T) {
+    @Suppress("Unchecked_cast")
     operator fun plus(other: Offset2D<T>): Offset2D<T> {
         return when (x) {
             is Int -> Offset2D(

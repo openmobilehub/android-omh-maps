@@ -1,4 +1,4 @@
-package com.openmobilehub.android.maps.plugin.mapbox.utils
+package com.openmobilehub.android.maps.core.utils
 
 import org.junit.Assert
 import org.junit.Test
@@ -11,10 +11,19 @@ internal class AnchorConverterTest(
     private val data: Pair<Pair<Float, Float>, DiscreteAnchor>
 ) {
 
+    @Test
+    fun `genericConvertContinuousToDiscreteAnchor returns correct DiscreteAnchor for various continuous anchors`() {
+        // Act
+        val result = AnchorConverter.genericConvertContinuousToDiscreteAnchor(data.first)
+
+        // Assert
+        Assert.assertEquals(data.second, result)
+    }
+
     companion object {
         @JvmStatic
         @Parameters
-        internal fun data() = listOf(
+        fun data() = listOf(
             Pair(Pair(0.5f, 0.5f), DiscreteAnchor.CENTER),
             Pair(Pair(0.7f, 0.3f), DiscreteAnchor.CENTER),
             Pair(Pair(0.3f, 0.7f), DiscreteAnchor.CENTER),
@@ -37,26 +46,5 @@ internal class AnchorConverterTest(
             Pair(Pair(0.9f, 0.9f), DiscreteAnchor.BOTTOM_RIGHT),
             Pair(Pair(0.75f, 0.75f), DiscreteAnchor.BOTTOM_RIGHT),
         )
-    }
-
-    @Test
-    fun `genericConvertContinuousToDiscreteAnchor returns correct DiscreteAnchor for various continuous anchors`() {
-        // Act
-        val result = AnchorConverter.genericConvertContinuousToDiscreteAnchor(data.first)
-
-        // Assert
-        Assert.assertEquals(data.second, result)
-    }
-
-    @Test
-    fun `convertContinuousToDiscreteIconAnchor returns correct IconAnchor for various continuous anchors`() {
-        // Act
-        val result = AnchorConverter.convertContinuousToDiscreteIconAnchor(data.first)
-
-        // Assert
-        Assert.assertEquals(
-            data.second.name.lowercase().replace("-", "_"),
-            result.value.lowercase().replace("-", "_")
-        ) // comparing different enums by labels here
     }
 }

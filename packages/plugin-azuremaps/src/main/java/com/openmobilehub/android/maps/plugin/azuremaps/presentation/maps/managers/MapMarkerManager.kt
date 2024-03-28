@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package com.openmobilehub.android.maps.plugin.mapbox.presentation.maps.managers
+package com.openmobilehub.android.maps.plugin.azuremaps.presentation.maps.managers
 
 import android.content.Context
+import android.graphics.Bitmap
+import com.azure.android.maps.control.AzureMap
+import com.azure.android.maps.control.layer.SymbolLayer
+import com.azure.android.maps.control.source.DataSource
 import com.mapbox.geojson.Feature
-import com.mapbox.maps.Style
-import com.mapbox.maps.extension.style.layers.generated.symbolLayer
-import com.mapbox.maps.extension.style.sources.generated.geoJsonSource
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhInfoWindowViewFactory
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMarker
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnInfoWindowClickListener
@@ -32,20 +33,19 @@ import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
 import com.openmobilehub.android.maps.core.utils.uuid.DefaultUUIDGenerator
 import com.openmobilehub.android.maps.core.utils.uuid.UUIDGenerator
-import com.openmobilehub.android.maps.plugin.mapbox.extensions.applyMarkerOptions
-import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IMapInfoWindowManagerDelegate
-import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IMapLongClickManagerDelegate
-import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IOmhInfoWindowMapViewDelegate
-import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.ITouchInteractable
-import com.openmobilehub.android.maps.plugin.mapbox.presentation.maps.OmhInfoWindow
-import com.openmobilehub.android.maps.plugin.mapbox.presentation.maps.OmhMarkerImpl
-import com.openmobilehub.android.maps.plugin.mapbox.utils.CoordinateConverter
+import com.openmobilehub.android.maps.plugin.azuremaps.extensions.toSymbolLayerOptionsList
+import com.openmobilehub.android.maps.plugin.azuremaps.presentation.interfaces.IMapLongClickManagerDelegate
+import com.openmobilehub.android.maps.plugin.azuremaps.presentation.interfaces.IMapViewDelegate
+import com.openmobilehub.android.maps.plugin.azuremaps.presentation.interfaces.ITouchInteractable
+import com.openmobilehub.android.maps.plugin.azuremaps.presentation.maps.OmhInfoWindow
+import com.openmobilehub.android.maps.plugin.azuremaps.presentation.maps.OmhMarkerImpl
+import com.openmobilehub.android.maps.plugin.azuremaps.utils.CoordinateConverter
 
 @SuppressWarnings("TooManyFunctions")
 internal class MapMarkerManager(
     private val context: Context,
-    private val infoWindowMapViewDelegate: IOmhInfoWindowMapViewDelegate,
-) : IMapInfoWindowManagerDelegate, IMapLongClickManagerDelegate {
+    private val map: AzureMap,
+) : IMapViewDelegate, IMapLongClickManagerDelegate {
     private var markerClickListener: OmhOnMarkerClickListener? = null
     private var markerDragListener: OmhOnMarkerDragListener? = null
     private var infoWindowOpenStatusChangeListener: OmhOnInfoWindowOpenStatusChangeListener? = null
@@ -60,20 +60,25 @@ internal class MapMarkerManager(
 
     fun addMarker(
         options: OmhMarkerOptions,
-        style: Style?,
         uuidGenerator: UUIDGenerator = DefaultUUIDGenerator()
     ): OmhMarkerImpl {
         val markerUUID = uuidGenerator.generate()
-        val markerGeoJsonSourceID = OmhMarkerImpl.getGeoJsonSourceID(markerUUID)
-
         val pointOnMap = CoordinateConverter.convertToPoint(options.position)
 
-        val markerLayer =
-            symbolLayer(OmhMarkerImpl.getSymbolLayerID(markerUUID), markerGeoJsonSourceID) {}
+        val markerDataSource = DataSource(OmhMarkerImpl.getSourceID(markerUUID))
+        map.sources.add(markerDataSource)
+        markerDataSource.add(Feature.fromGeometry(pointOnMap))
 
-        options.applyMarkerOptions(markerLayer)
+        val markerLayer = SymbolLayer(
+            markerDataSource,
+            OmhMarkerImpl.getSymbolLayerID(markerUUID)
+        )
+        for (option in options.toSymbolLayerOptionsList()) {
+            markerLayer.setOptions(option)
+        }
 
         val omhMarker = OmhMarkerImpl(
+            source = markerDataSource,
             markerUUID = markerUUID,
             context = context,
             markerSymbolLayer = markerLayer,
@@ -85,41 +90,26 @@ internal class MapMarkerManager(
             clickable = options.clickable,
             backgroundColor = options.backgroundColor,
             initialIcon = options.icon,
-            bufferedAlpha = options.alpha,
-            bufferedIsVisible = options.isVisible,
-            bufferedAnchor = options.anchor,
-            bufferedIsFlat = options.isFlat,
-            bufferedRotation = options.rotation,
-            infoWindowManagerDelegate = this,
-            infoWindowMapViewDelegate = infoWindowMapViewDelegate
+            alpha = options.alpha,
+            isVisible = options.isVisible,
+            anchor = options.anchor,
+            isFlat = options.isFlat,
+            rotation = options.rotation,
+            mapViewDelegate = this,
         )
 
-        val markerGeoJsonSource = geoJsonSource(markerGeoJsonSourceID) {
-            feature(Feature.fromGeometry(pointOnMap))
-        }
-        omhMarker.setGeoJsonSource(markerGeoJsonSource)
+        val infoWindowDataSource = DataSource(omhMarker.omhInfoWindow.getSourceID())
+        infoWindowDataSource.add(Feature.fromGeometry(pointOnMap))
 
-        val infoWindowGeoJsonSourceID = omhMarker.omhInfoWindow.getGeoJsonSourceID()
-        val infoWindowGeoJsonSource = geoJsonSource(infoWindowGeoJsonSourceID) {
-            feature(Feature.fromGeometry(pointOnMap))
-        }
-        omhMarker.omhInfoWindow.setGeoJsonSource(infoWindowGeoJsonSource)
+        omhMarker.omhInfoWindow.setDataSource(infoWindowDataSource)
 
-        markers[markerLayer.layerId] = omhMarker
+        map.layers.add(markerLayer)
+        map.layers.add(omhMarker.omhInfoWindow.infoWindowSymbolLayer)
+
+        markers[markerLayer.id] = omhMarker
         infoWindows[omhMarker.omhInfoWindow.getSymbolLayerID()] = omhMarker.omhInfoWindow
 
-        style?.let { safeStyle ->
-            omhMarker.onStyleLoaded(safeStyle)
-        }
-
         return omhMarker
-    }
-
-    fun onStyleLoaded(style: Style) {
-        markers.values.forEach { omhMarker ->
-            // re-apply the icons now, since they can be added to the map for real
-            omhMarker.onStyleLoaded(style)
-        }
     }
 
     fun setMarkerClickListener(listener: OmhOnMarkerClickListener) {
@@ -216,6 +206,28 @@ internal class MapMarkerManager(
         } else {
             infoWindowOpenStatusChangeListener?.onInfoWindowClose(omhMarkerImpl)
         }
+    }
+
+    override fun removeImage(imageId: String) {
+        map.images.remove(imageId)
+    }
+
+    override fun addImage(imageId: String, image: Bitmap) {
+        if (image.density == 0) {
+            // required for AzureMaps, since thy use an old version of Mapbox SDK
+            // for Android underneath, which requires the density to be != 0
+            image.density = context.resources.displayMetrics.densityDpi
+        }
+
+        map.images.add(imageId, image)
+    }
+
+    override fun getMapWidth(): Int {
+        return map.ui.a.width // a is the FrameLayout containing the map
+    }
+
+    override fun getMapHeight(): Int {
+        return map.ui.a.height // a is the FrameLayout containing the map
     }
 
     override fun handleLongClick(longClickedEntity: ITouchInteractable): Boolean {

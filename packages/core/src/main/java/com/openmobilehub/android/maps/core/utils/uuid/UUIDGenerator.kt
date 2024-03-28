@@ -14,15 +14,10 @@
  * limitations under the License.
  */
 
-package com.openmobilehub.android.maps.plugin.mapbox.extensions
+package com.openmobilehub.android.maps.core.utils.uuid
 
-import com.mapbox.maps.ScreenCoordinate
-import com.openmobilehub.android.maps.core.utils.cartesian.Point2D
+import java.util.UUID
 
-fun ScreenCoordinate.toPoint2D(): Point2D<Double> {
-    return Point2D(x, y)
-}
-
-fun Point2D<Double>.toScreenCoordinate(): ScreenCoordinate {
-    return ScreenCoordinate(x, y)
+interface UUIDGenerator {
+    fun generate(): UUID
 }

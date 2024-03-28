@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.openmobilehub.android.maps.plugin.mapbox.presentation.maps
+package com.openmobilehub.android.maps.plugin.azuremaps.presentation.maps
 
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
@@ -26,46 +26,33 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.view.drawToBitmap
 import androidx.core.view.setPadding
-import com.mapbox.geojson.Feature
-import com.mapbox.maps.Style
-import com.mapbox.maps.extension.style.layers.addLayer
-import com.mapbox.maps.extension.style.layers.generated.SymbolLayer
-import com.mapbox.maps.extension.style.layers.generated.symbolLayer
-import com.mapbox.maps.extension.style.layers.properties.generated.IconAnchor
-import com.mapbox.maps.extension.style.layers.properties.generated.Visibility
-import com.mapbox.maps.extension.style.sources.addSource
-import com.mapbox.maps.extension.style.sources.generated.GeoJsonSource
+import com.azure.android.maps.control.layer.SymbolLayer
+import com.azure.android.maps.control.options.AnchorType
+import com.azure.android.maps.control.options.SymbolLayerOptions
+import com.azure.android.maps.control.source.DataSource
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhInfoWindowViewFactory
 import com.openmobilehub.android.maps.core.utils.ScreenUnitConverter
 import com.openmobilehub.android.maps.core.utils.cartesian.Offset2D
-import com.openmobilehub.android.maps.core.utils.cartesian.plus
 import com.openmobilehub.android.maps.core.utils.uuid.DefaultUUIDGenerator
 import com.openmobilehub.android.maps.core.utils.uuid.UUIDGenerator
-import com.openmobilehub.android.maps.plugin.mapbox.R
-import com.openmobilehub.android.maps.plugin.mapbox.extensions.toPoint2D
-import com.openmobilehub.android.maps.plugin.mapbox.extensions.toScreenCoordinate
-import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IMapInfoWindowManagerDelegate
-import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IOmhInfoWindowMapViewDelegate
-import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.ITouchInteractable
-import com.openmobilehub.android.maps.plugin.mapbox.utils.CoordinateConverter
+import com.openmobilehub.android.maps.plugin.azuremaps.R
+import com.openmobilehub.android.maps.plugin.azuremaps.presentation.interfaces.IMapViewDelegate
+import com.openmobilehub.android.maps.plugin.azuremaps.presentation.interfaces.ITouchInteractable
 import java.util.concurrent.Executors
 
 @SuppressWarnings("TooManyFunctions", "LongParameterList")
 internal class OmhInfoWindow(
     private var title: String?,
     private var snippet: String?,
-    iwAnchor: Pair<Float, Float>,
-    private val infoWindowManagerDelegate: IMapInfoWindowManagerDelegate,
+    private var infoWindowAnchor: Pair<Float, Float>,
+    private val mapViewDelegate: IMapViewDelegate,
     internal val omhMarker: OmhMarkerImpl,
-    private val uuidGenerator: UUIDGenerator = DefaultUUIDGenerator(),
-    private val mapViewDelegate: IOmhInfoWindowMapViewDelegate
+    private val uuidGenerator: UUIDGenerator = DefaultUUIDGenerator()
 ) : ITouchInteractable {
-    private lateinit var style: Style
-    private lateinit var geoJsonSource: GeoJsonSource
     internal var infoWindowSymbolLayer: SymbolLayer
+    internal lateinit var dataSource: DataSource
 
-    private var bufferedInfoWindowIsVisible: Boolean = false
-    internal var bufferedInfoWindowAnchor: Pair<Float, Float>
+    private var infoWindowIsVisible: Boolean = false
 
     private var customInfoWindowViewFactory: OmhInfoWindowViewFactory? = null
     private var infoWindowContentsViewFactory: OmhInfoWindowViewFactory? = null
@@ -81,62 +68,32 @@ internal class OmhInfoWindow(
     private val mainThreadHandler = Handler(Looper.getMainLooper())
 
     init {
-        bufferedInfoWindowAnchor = iwAnchor
-
-        infoWindowSymbolLayer =
-            symbolLayer(getSymbolLayerID(), getGeoJsonSourceID()) {
-                iconSize(1.0) // icon scale
-                iconImage(generateInfoWindowIconID())
-                iconAnchor(IconAnchor.CENTER)
-                iconAllowOverlap(true)
-                iconIgnorePlacement(true)
-                visibility(Visibility.NONE)
-            }
-    }
-
-    fun setGeoJsonSource(geoJsonSource: GeoJsonSource) {
-        this.geoJsonSource = geoJsonSource
-    }
-
-    fun applyBufferedProperties() {
-        setInfoWindowAnchor(
-            bufferedInfoWindowAnchor.first,
-            bufferedInfoWindowAnchor.second
+        infoWindowSymbolLayer = SymbolLayer(
+            getSymbolLayerID(),
+            getSourceID(),
+            SymbolLayerOptions.iconSize(1.0f), // icon scale
+            SymbolLayerOptions.iconImage(generateInfoWindowIconID()),
+            SymbolLayerOptions.iconAnchor(AnchorType.CENTER),
+            SymbolLayerOptions.iconAllowOverlap(true),
+            SymbolLayerOptions.iconIgnorePlacement(true),
+            SymbolLayerOptions.iconOpacity(0f)
         )
     }
 
-    private fun isStyleReady(): Boolean {
-        return this::style.isInitialized && this.style.isStyleLoaded()
-    }
-
-    private fun addSourceAndLayerToStyle() {
-        this.style.addLayer(infoWindowSymbolLayer)
-        this.style.addSource(geoJsonSource)
-    }
-
-    fun onStyleLoaded(safeStyle: Style) {
-        check(!isStyleReady()) { "Buffered properties have already been applied" }
-
-        synchronized(this) {
-            this.style = safeStyle
-
-            addSourceAndLayerToStyle()
-            applyBufferedProperties()
-        }
+    fun getIsInfoWindowShown(): Boolean {
+        return infoWindowIsVisible
     }
 
     fun setInfoWindowVisibility(visible: Boolean) {
         val wasInfoWindowShown = getIsInfoWindowShown()
-        if (this::style.isInitialized) {
-            infoWindowSymbolLayer.visibility(OmhMarkerImpl.getIconsVisibility(visible))
-        } else {
-            // if the layer was not added to the map yet, buffer the icon value to apply it later
-            bufferedInfoWindowIsVisible = visible
-        }
+
+        infoWindowSymbolLayer.setOptions(
+            SymbolLayerOptions.iconOpacity(if (visible) 1f else 0f)
+        )
 
         if (wasInfoWindowShown != visible) {
             // visibility changed
-            infoWindowManagerDelegate.onInfoWindowOpenStatusChange(omhMarker, visible)
+            mapViewDelegate.onInfoWindowOpenStatusChange(omhMarker, visible)
             invalidateInfoWindow()
 
             if (!visible) {
@@ -148,14 +105,6 @@ internal class OmhInfoWindow(
             // visibility did not change, the info window was and is visible
             // for parity with other providers: re-render the window in such case
             invalidateInfoWindow()
-        }
-    }
-
-    fun getIsInfoWindowShown(): Boolean {
-        return if (this::style.isInitialized) {
-            infoWindowSymbolLayer.visibility == OmhMarkerImpl.getIconsVisibility(true)
-        } else {
-            bufferedInfoWindowIsVisible
         }
     }
 
@@ -174,7 +123,7 @@ internal class OmhInfoWindow(
     }
 
     fun setInfoWindowAnchor(iwAnchorU: Float, iwAnchorV: Float) {
-        bufferedInfoWindowAnchor = iwAnchorU to iwAnchorV
+        infoWindowAnchor = iwAnchorU to iwAnchorV
 
         updatePosition()
     }
@@ -187,52 +136,43 @@ internal class OmhInfoWindow(
      */
     @SuppressWarnings("MagicNumber")
     private fun getInfoWindowIconOffset(): Offset2D<Double> {
-        // we want to mitigate the scaling-by-icon-size behaviour
-        // described in the docs: https://docs.mapbox.com/android/maps/api/10.2.0/mapbox-maps-android/com.mapbox.maps.plugin.annotation.generated/-point-annotation/icon-offset.html
-        val iconSize = if (this::style.isInitialized) {
-            infoWindowSymbolLayer.iconSize ?: SymbolLayer.defaultIconSize
-        } else {
-            null
-        } ?: 1.0
-
         return Offset2D(
             0.0,
             // since the default (reference) anchor for the IW icon is being bottom-edge-to-marker-icon's-center,
             // we want to offset it up by half the marker icon's height
-            -omhMarker.iconHeight.toDouble() / (2.0 * iconSize)
+            -omhMarker.iconHeight.toDouble() / 2.0
         )
     }
 
     internal fun updatePosition() {
-        if (!::geoJsonSource.isInitialized) return
-
-        val markerPoint = CoordinateConverter.convertToPoint(omhMarker.getPosition())
-        val markerScreenPoint2D =
-            mapViewDelegate.pixelForCoordinate(markerPoint).toPoint2D()
-        val screenCoordinate =
-            markerScreenPoint2D + omhMarker.getHandleTopOffset() + getHandleCenterOffset()
-
-        geoJsonSource.feature(
-            Feature.fromGeometry(
-                mapViewDelegate.coordinateForPixel(
-                    screenCoordinate.toScreenCoordinate()
-                )
-            )
-        )
+        // TODO implement this
+//        val markerPoint = CoordinateConverter.convertToPoint(omhMarker.getPosition())
+//        val screenCoordinate =
+//            mapViewDelegate.pixelForCoordinate(markerPoint) + omhMarker.getHandleTopOffset() + getHandleCenterOffset()
+//
+//        dataSource.setShapes(
+//            Feature.fromGeometry(
+//                mapViewDelegate.coordinateForPixel(
+//                    screenCoordinate
+//                )
+//            )
+//        )
     }
 
-    internal fun getGeoJsonSourceID(): String {
-        return "${omhMarker.markerUUID}-omh-marker-info-window-geojson-source"
+    fun setDataSource(dataSource: DataSource) {
+        this.dataSource = dataSource
     }
 
     internal fun getSymbolLayerID(): String {
         return "${omhMarker.markerUUID}-omh-marker-info-window-layer"
     }
 
+    internal fun getSourceID(): String {
+        return "${omhMarker.markerUUID}-omh-marker-info-window-source"
+    }
+
     @SuppressWarnings("MagicNumber")
     private fun invalidateInfoWindow() {
-        if (!this::style.isInitialized) return
-
         backgroundThreadExecutor.execute {
             // this scope runs on a background thread
             val windowView: View = if (customInfoWindowViewFactory != null) {
@@ -272,7 +212,9 @@ internal class OmhInfoWindow(
                 // only the main (UI) thread can access the Mapbox map as per their rules
 
                 val infoWindowIconID = addOrUpdateMarkerIconImage(bitmap)
-                infoWindowSymbolLayer.iconImage(infoWindowIconID)
+                infoWindowSymbolLayer.setOptions(
+                    SymbolLayerOptions.iconImage(infoWindowIconID)
+                )
 
                 updatePosition()
             }
@@ -285,7 +227,7 @@ internal class OmhInfoWindow(
      */
     private fun removeCurrentStyleImage() {
         lastInfoWindowIconID?.let {
-            style.removeStyleImage(it)
+            mapViewDelegate.removeImage(it)
 
             lastInfoWindowIconID = null
         }
@@ -310,14 +252,10 @@ internal class OmhInfoWindow(
         iwBitmapWidth = bitmap.width
         iwBitmapHeight = bitmap.height
 
-        val addImageResult = style.addImage(
+        mapViewDelegate.addImage(
             infoWindowIconID,
             bitmap
         )
-
-        addImageResult.error?.let { error ->
-            throw IllegalStateException("Failed to add image to map: $error")
-        }
 
         return infoWindowIconID
     }
@@ -391,8 +329,8 @@ internal class OmhInfoWindow(
     @SuppressWarnings("MagicNumber")
     override fun getHandleCenterOffset(): Offset2D<Double> {
         val offset = getInfoWindowIconOffset()
-        val anchorOffsetX = (bufferedInfoWindowAnchor.first - 0.5) * omhMarker.iconWidth / 2.0
-        val anchorOffsetY = bufferedInfoWindowAnchor.second * omhMarker.iconHeight
+        val anchorOffsetX = (infoWindowAnchor.first - 0.5) * omhMarker.iconWidth / 2.0
+        val anchorOffsetY = infoWindowAnchor.second * omhMarker.iconHeight
 
         return Offset2D(
             offset.x + anchorOffsetX,

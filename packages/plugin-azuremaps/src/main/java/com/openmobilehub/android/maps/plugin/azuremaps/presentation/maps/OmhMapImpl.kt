@@ -45,9 +45,10 @@ import com.openmobilehub.android.maps.core.presentation.models.OmhPolygonOptions
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolylineOptions
 import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
 import com.openmobilehub.android.maps.plugin.azuremaps.presentation.maps.managers.CameraManager
+import com.openmobilehub.android.maps.plugin.azuremaps.presentation.maps.managers.MapMarkerManager
 import com.openmobilehub.android.maps.plugin.azuremaps.presentation.maps.managers.MyLocationManager
-import com.openmobilehub.android.maps.plugin.azuremaps.presentation.utils.Constants
-import com.openmobilehub.android.maps.plugin.azuremaps.presentation.utils.mapLogger
+import com.openmobilehub.android.maps.plugin.azuremaps.utils.Constants
+import com.openmobilehub.android.maps.plugin.azuremaps.utils.mapLogger
 
 @SuppressWarnings("TooManyFunctions", "UnusedPrivateMember")
 internal class OmhMapImpl(
@@ -55,16 +56,21 @@ internal class OmhMapImpl(
     private val mapControl: MapControl,
     private val mapView: AzureMap,
     private val cameraManager: CameraManager = CameraManager(mapView),
-    private val myLocationManager: MyLocationManager = MyLocationManager(context, mapControl, mapView),
+    private val myLocationManager: MyLocationManager = MyLocationManager(
+        context,
+        mapControl,
+        mapView
+    ),
     private val logger: UnsupportedFeatureLogger = mapLogger
 ) : OmhMap {
+
+    internal val mapMarkerManager = MapMarkerManager(context, mapView)
 
     override val providerName: String
         get() = Constants.PROVIDER_NAME
 
-    override fun addMarker(options: OmhMarkerOptions): OmhMarker? {
-        // To be implemented
-        return null
+    override fun addMarker(options: OmhMarkerOptions): OmhMarker {
+        return mapMarkerManager.addMarker(options)
     }
 
     override fun addPolyline(options: OmhPolylineOptions): OmhPolyline? {

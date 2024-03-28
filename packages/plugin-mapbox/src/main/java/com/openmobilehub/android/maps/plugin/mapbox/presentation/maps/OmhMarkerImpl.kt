@@ -32,6 +32,7 @@ import com.mapbox.maps.extension.style.sources.generated.GeoJsonSource
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMarker
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.utils.DrawableConverter
+import com.openmobilehub.android.maps.core.utils.cartesian.Offset2D
 import com.openmobilehub.android.maps.plugin.mapbox.R
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IMapInfoWindowManagerDelegate
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IOmhInfoWindowMapViewDelegate
@@ -39,7 +40,6 @@ import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.ITou
 import com.openmobilehub.android.maps.plugin.mapbox.utils.AnchorConverter
 import com.openmobilehub.android.maps.plugin.mapbox.utils.Constants
 import com.openmobilehub.android.maps.plugin.mapbox.utils.CoordinateConverter
-import com.openmobilehub.android.maps.plugin.mapbox.utils.cartesian.Offset2D
 import java.util.UUID
 import kotlin.math.cos
 import kotlin.math.sin
@@ -131,7 +131,7 @@ internal class OmhMarkerImpl(
     @SuppressWarnings("MagicNumber")
     internal fun getHandleTranslation(): Offset2D<Double> {
         val discreteAnchor = AnchorConverter.convertContinuousToDiscreteIconAnchor(bufferedAnchor)
-        var (offsetCoeffX, offsetCoeffY) = when (discreteAnchor) {
+        val (offsetCoeffX, offsetCoeffY) = when (discreteAnchor) {
             IconAnchor.CENTER -> 0.0 to 0.0
             IconAnchor.LEFT -> -0.5 to 0.0
             IconAnchor.RIGHT -> 0.5 to 0.0
