@@ -22,6 +22,8 @@ import android.content.Context
 import androidx.annotation.RequiresPermission
 import com.azure.android.maps.control.AzureMap
 import com.azure.android.maps.control.MapControl
+import com.azure.android.maps.control.events.OnFeatureClick
+import com.mapbox.geojson.Feature
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhInfoWindowViewFactory
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMap
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMapLoadedCallback
@@ -50,7 +52,7 @@ import com.openmobilehub.android.maps.plugin.azuremaps.presentation.maps.manager
 import com.openmobilehub.android.maps.plugin.azuremaps.utils.Constants
 import com.openmobilehub.android.maps.plugin.azuremaps.utils.mapLogger
 
-@SuppressWarnings("TooManyFunctions", "UnusedPrivateMember")
+@SuppressWarnings("TooManyFunctions", "UnusedPrivateMember", "LongParameterList")
 internal class OmhMapImpl(
     private val context: Context,
     private val mapControl: MapControl,
@@ -61,13 +63,40 @@ internal class OmhMapImpl(
         mapControl,
         mapView
     ),
-    private val logger: UnsupportedFeatureLogger = mapLogger
+    private val logger: UnsupportedFeatureLogger = mapLogger,
+    private val bRunningInTest: Boolean = false
 ) : OmhMap {
 
     internal val mapMarkerManager = MapMarkerManager(context, mapView)
 
     override val providerName: String
         get() = Constants.PROVIDER_NAME
+
+    init {
+        if (!bRunningInTest) {
+            setupTouchInteractionListeners()
+        }
+    }
+
+    private fun setupTouchInteractionListeners() {
+        mapView.events.add(object : OnFeatureClick {
+            override fun onFeatureClick(features: MutableList<Feature>?): Boolean {
+                for (feature in features ?: listOf()) {
+                    if (feature.hasProperty(Constants.MARKER_FEATURE_UUID_BINDING)) {
+                        val markerId =
+                            feature.getStringProperty(Constants.MARKER_FEATURE_UUID_BINDING)
+                        val marker = mapMarkerManager.markers[markerId]
+
+                        if (marker != null && marker.getClickable()) {
+                            return mapMarkerManager.maybeHandleClick(marker)
+                        }
+                    }
+                }
+
+                return false
+            }
+        })
+    }
 
     override fun addMarker(options: OmhMarkerOptions): OmhMarker {
         return mapMarkerManager.addMarker(options)
@@ -131,23 +160,23 @@ internal class OmhMapImpl(
     }
 
     override fun setOnMarkerClickListener(listener: OmhOnMarkerClickListener) {
-        // To be implemented
+        mapMarkerManager.setMarkerClickListener(listener)
     }
 
     override fun setOnMarkerDragListener(listener: OmhOnMarkerDragListener) {
-        // To be implemented
+        mapMarkerManager.setMarkerDragListener(listener)
     }
 
     override fun setOnInfoWindowOpenStatusChangeListener(listener: OmhOnInfoWindowOpenStatusChangeListener) {
-        // To be implemented
+        mapMarkerManager.setInfoWindowOpenStatusChangeListener(listener)
     }
 
     override fun setOnInfoWindowClickListener(listener: OmhOnInfoWindowClickListener) {
-        // To be implemented
+        mapMarkerManager.setOnInfoWindowClickListener(listener)
     }
 
     override fun setOnInfoWindowLongClickListener(listener: OmhOnInfoWindowLongClickListener) {
-        // To be implemented
+        mapMarkerManager.setOnInfoWindowLongClickListener(listener)
     }
 
     override fun setOnPolylineClickListener(listener: OmhOnPolylineClickListener) {

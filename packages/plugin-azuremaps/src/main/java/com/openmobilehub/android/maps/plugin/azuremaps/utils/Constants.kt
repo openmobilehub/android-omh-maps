@@ -30,6 +30,9 @@ internal object Constants {
     const val DEFAULT_MIN_ZOOM = 1.0
     const val DEFAULT_MAX_ZOOM = 20.0
 
+    // Map interaction
+    const val MARKER_FEATURE_UUID_BINDING = "omh-marker-id-binding"
+
     // Camera
     /**
      * According to the official documentation, to achieve the same zoom level as in Google Maps,

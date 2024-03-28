@@ -70,7 +70,7 @@ internal class OmhInfoWindow(
     init {
         infoWindowSymbolLayer = SymbolLayer(
             getSymbolLayerID(),
-            getSourceID(),
+            OmhMarkerImpl.getSourceID(omhMarker.markerUUID),
             SymbolLayerOptions.iconSize(1.0f), // icon scale
             SymbolLayerOptions.iconImage(generateInfoWindowIconID()),
             SymbolLayerOptions.iconAnchor(AnchorType.CENTER),
@@ -165,10 +165,6 @@ internal class OmhInfoWindow(
 
     internal fun getSymbolLayerID(): String {
         return "${omhMarker.markerUUID}-omh-marker-info-window-layer"
-    }
-
-    internal fun getSourceID(): String {
-        return "${omhMarker.markerUUID}-omh-marker-info-window-source"
     }
 
     @SuppressWarnings("MagicNumber")
