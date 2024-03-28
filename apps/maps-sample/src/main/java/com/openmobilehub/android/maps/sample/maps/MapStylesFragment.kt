@@ -21,7 +21,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.RadioGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.openmobilehub.android.maps.core.presentation.fragments.OmhMapFragment
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMap
@@ -29,6 +28,7 @@ import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMap
 import com.openmobilehub.android.maps.core.utils.NetworkConnectivityChecker
 import com.openmobilehub.android.maps.sample.R
 import com.openmobilehub.android.maps.sample.databinding.FragmentMapStylesBinding
+import com.openmobilehub.android.maps.sample.model.InfoDisplay
 
 interface MapStyle {
     val dark: Int
@@ -43,7 +43,6 @@ class MapStylesFragment : Fragment(), OmhOnMapReadyCallback {
     private var networkConnectivityChecker: NetworkConnectivityChecker? = null
 
     private var omhMap: OmhMap? = null
-
 
     private val mapStyles: Map<String, MapStyle> = mapOf(
         "GoogleMaps" to object : MapStyle {
@@ -60,6 +59,10 @@ class MapStylesFragment : Fragment(), OmhOnMapReadyCallback {
 
     private var stylesRadioGroup: RadioGroup? = null
 
+    private val infoDisplay by lazy {
+        InfoDisplay(requireView())
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -73,11 +76,7 @@ class MapStylesFragment : Fragment(), OmhOnMapReadyCallback {
 
         networkConnectivityChecker = NetworkConnectivityChecker(requireContext()).apply {
             startListeningForConnectivityChanges {
-                Toast.makeText(
-                    requireContext(),
-                    R.string.lost_internet_connection,
-                    Toast.LENGTH_LONG
-                ).show()
+                infoDisplay.showMessage(R.string.lost_internet_connection)
             }
         }
 
@@ -91,8 +90,7 @@ class MapStylesFragment : Fragment(), OmhOnMapReadyCallback {
     override fun onMapReady(omhMap: OmhMap) {
         this.omhMap = omhMap
         if (networkConnectivityChecker?.isNetworkAvailable() != true) {
-            Toast.makeText(requireContext(), R.string.no_internet_connection, Toast.LENGTH_LONG)
-                .show()
+            infoDisplay.showMessage(R.string.lost_internet_connection)
         }
 
         omhMap.setZoomGesturesEnabled(true)

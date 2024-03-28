@@ -24,7 +24,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
@@ -43,6 +42,7 @@ import com.openmobilehub.android.maps.sample.customviews.PanelColorSeekbar
 import com.openmobilehub.android.maps.sample.customviews.PanelSeekbar
 import com.openmobilehub.android.maps.sample.customviews.PanelSpinner
 import com.openmobilehub.android.maps.sample.databinding.FragmentMapMarkersBinding
+import com.openmobilehub.android.maps.sample.model.InfoDisplay
 import com.openmobilehub.android.maps.sample.utils.Constants.DEFAULT_ZOOM_LEVEL
 import com.openmobilehub.android.maps.sample.utils.Constants.PERMISSIONS
 import com.openmobilehub.android.maps.sample.utils.Constants.PRIME_MERIDIAN
@@ -81,6 +81,10 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
         R.string.marker_appearance_type_custom_color
     )
 
+    private val infoDisplay by lazy {
+        InfoDisplay(requireView())
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -94,11 +98,7 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
 
         networkConnectivityChecker = NetworkConnectivityChecker(requireContext()).apply {
             startListeningForConnectivityChanges {
-                Toast.makeText(
-                    requireContext(),
-                    R.string.lost_internet_connection,
-                    Toast.LENGTH_LONG
-                ).show()
+                infoDisplay.showMessage(R.string.lost_internet_connection)
             }
         }
 
@@ -116,8 +116,7 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
         mapProviderName = omhMap.providerName
 
         if (networkConnectivityChecker?.isNetworkAvailable() != true) {
-            Toast.makeText(requireContext(), R.string.no_internet_connection, Toast.LENGTH_LONG)
-                .show()
+            infoDisplay.showMessage(R.string.no_internet_connection)
         }
         omhMap.setZoomGesturesEnabled(true)
 
@@ -142,12 +141,6 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
             draggable = true
         })
 
-        val eventsToast = Toast.makeText(
-            context,
-            "",
-            Toast.LENGTH_SHORT
-        )
-
         customizableMarker = omhMap.addMarker(OmhMarkerOptions().apply {
             title = "Configurable test marker"
             position = OmhCoordinate().apply {
@@ -163,8 +156,7 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
                 "User clicked marker '${marker.getTitle()}' at ${marker.getPosition()}"
             )
 
-            eventsToast.setText("Marker '${marker.getTitle()}' has been clicked")
-            eventsToast.show()
+            infoDisplay.showMessage("Marker '${marker.getTitle()}' has been clicked")
 
             false
         })
@@ -187,8 +179,7 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
                     }"
                 )
 
-                eventsToast.setText("Marker '${marker.getTitle()}' has just ended being dragged")
-                eventsToast.show()
+                infoDisplay.showMessage("Marker '${marker.getTitle()}' has just ended being dragged")
             }
 
             override fun onMarkerDragStart(marker: OmhMarker) {
@@ -199,8 +190,7 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
                     }"
                 )
 
-                eventsToast.setText("Marker '${marker.getTitle()}' started being dragged")
-                eventsToast.show()
+                infoDisplay.showMessage("Marker '${marker.getTitle()}' started being dragged")
             }
         })
 
