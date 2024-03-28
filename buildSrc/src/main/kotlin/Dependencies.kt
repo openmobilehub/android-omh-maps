@@ -4,7 +4,6 @@ object BuildPlugins {
     val detekt by lazy { "io.gitlab.arturbosch.detekt:detekt-gradle-plugin:${Versions.detekt}" }
     val jacoco by lazy { "org.jacoco:org.jacoco.core:${Versions.jacoco}" }
     val dokka by lazy { "org.jetbrains.dokka:org.jetbrains.dokka.gradle.plugin:${Versions.dokka}" }
-    val omhCore by lazy { "com.openmobilehub.android:omh-core:${Versions.omhCore}" }
 }
 
 object Libs {

@@ -1,19 +1,8 @@
-import org.gradle.internal.Cast.uncheckedCast
-
-apply("../plugin/propertiesHelpers.gradle.kts")
-val getBooleanFromProperties =
-    uncheckedCast<(name: String, propertiesFile: File?) -> Boolean>(extra["getBooleanFromProperties"])!!
-
-var useMavenLocal = getBooleanFromProperties("useMavenLocal", null)
-
 plugins {
     `kotlin-dsl`
 }
 
 repositories {
-    if (useMavenLocal) {
-        mavenLocal()
-    }
     mavenCentral()
     google()
     gradlePluginPortal()

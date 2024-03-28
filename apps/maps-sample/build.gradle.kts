@@ -1,7 +1,5 @@
 @file:Suppress("UnstableApiUsage")
 
-import org.gradle.internal.Cast.uncheckedCast
-
 val useLocalProjects = project.rootProject.extra["useLocalProjects"] as Boolean
 
 plugins {
@@ -10,12 +8,6 @@ plugins {
     id("androidx.navigation.safeargs.kotlin") version "2.5.3" apply true
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
 }
-
-apply("../../plugin/propertiesHelpers.gradle.kts")
-val getValueFromEnvOrProperties =
-    uncheckedCast<(name: String, propertiesFile: File?) -> String?>(extra["getValueFromEnvOrProperties"])!!
-val getRequiredValueFromEnvOrProperties =
-    uncheckedCast<(name: String, propertiesFile: File?) -> String>(extra["getRequiredValueFromEnvOrProperties"])!!
 
 android {
     namespace = "com.openmobilehub.android.maps.sample"

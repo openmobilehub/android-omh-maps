@@ -203,4 +203,4 @@ To include a new module's custom markdown docs residing in its module-level `doc
 
 Each `.md` file in each module directory from `packages/{module_name}` will be copied to `docs/markdown/_{module_name}`, optionally with trailing directory structure (if present).
 
-For implementation of the helpers backing documentation generation tasks, see [`plugin/docsTasks.gradle.kts`](plugin/docsTasks.gradle.kts).
+For implementation of the helpers backing documentation generation tasks, see [`buildSrc/docs-tasks.gradle.kts`](buildSrc/docs-tasks.gradle.kts).

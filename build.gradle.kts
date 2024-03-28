@@ -1,17 +1,8 @@
-import org.gradle.internal.Cast.uncheckedCast
 import org.jetbrains.dokka.DokkaConfiguration
 import org.jetbrains.dokka.base.DokkaBase
 import org.jetbrains.dokka.base.DokkaBaseConfiguration
 import org.jetbrains.dokka.gradle.DokkaTaskPartial
 import java.net.URL
-
-apply("./plugin/propertiesHelpers.gradle.kts")
-val getValueFromEnvOrProperties =
-    uncheckedCast<(name: String, propertiesFile: File?) -> String?>(extra["getValueFromEnvOrProperties"])!!
-val getRequiredValueFromEnvOrProperties =
-    uncheckedCast<(name: String, propertiesFile: File?) -> String>(extra["getRequiredValueFromEnvOrProperties"])!!
-val getBooleanFromProperties =
-    uncheckedCast<(name: String, propertiesFile: File?) -> Boolean>(extra["getBooleanFromProperties"])!!
 
 val useMavenLocal by extra(getBooleanFromProperties("useMavenLocal", null))
 val useLocalProjects by extra(getBooleanFromProperties("useLocalProjects", null))
@@ -161,7 +152,8 @@ if (!useMavenLocal) {
 
 fun RepositoryHandler.configureMapboxMaven() {
     maven {
-        val mapboxDownloadToken = getRequiredValueFromEnvOrProperties("MAPBOX_DOWNLOADS_TOKEN", null)
+        val mapboxDownloadToken =
+            getRequiredValueFromEnvOrProperties("MAPBOX_DOWNLOADS_TOKEN", null)
 
         url = uri("https://api.mapbox.com/downloads/v2/releases/maven")
         credentials.username = "mapbox"
@@ -170,11 +162,8 @@ fun RepositoryHandler.configureMapboxMaven() {
     }
 }
 
-apply("./plugin/docsTasks.gradle.kts") // applies all tasks related to docs
-val discoverImagesInProject =
-    uncheckedCast<(project: Project) -> (List<File>?)>(extra["discoverImagesInProject"])
-val dokkaDocsOutputDir = uncheckedCast<File>(extra["dokkaDocsOutputDir"])
-val copyMarkdownDocsTask = uncheckedCast<TaskProvider<Task>>(extra["copyMarkdownDocsTask"])
+apply(from = rootProject.file("buildSrc/docs-tasks.gradle.kts")) // registers all tasks related to docs
+val dokkaDocsOutputDir = DocsUtils.getDokkaDocsOutputDir(rootProject)
 
 tasks.register("cleanDokkaDocsOutputDirectory", Delete::class) {
     group = "other"
@@ -194,7 +183,10 @@ tasks.dokkaHtmlMultiModule {
         footerMessage = "(c) 2023 Open Mobile Hub"
         separateInheritedMembers = false
         customAssets = (setOf(rootProject) union subprojects).mapNotNull { project ->
-            discoverImagesInProject!!(project)
+            DocsUtils.discoverImagesInProject(
+                rootProject,
+                project
+            )
         }.flatten()
     }
 }

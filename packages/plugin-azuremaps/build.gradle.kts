@@ -3,17 +3,13 @@ plugins {
 }
 
 android {
-    namespace = "com.openmobilehub.android.maps.plugin.googlemaps"
-
-    viewBinding {
-        enable = true
-    }
+    namespace = "com.openmobilehub.android.maps.plugin.azuremaps"
 }
 
 val useLocalProjects = project.rootProject.extra["useLocalProjects"] as Boolean
 
 dependencies {
-    if(useLocalProjects) {
+    if (useLocalProjects) {
         api(project(":packages:core"))
     } else {
         api("com.openmobilehub.android.maps:core:${Versions.omhMapsCore}")
@@ -27,9 +23,8 @@ dependencies {
     implementation(Libs.androidAppCompat)
     implementation(Libs.material)
 
-    // Play services
-    implementation(Libs.playServicesMaps)
-    implementation(Libs.playServicesLocation)
+    // Azure Maps
+    api(Libs.azureMaps)
 
     // Test dependencies
     testImplementation(Libs.junit)

@@ -1,23 +1,8 @@
-fun prefixFilename(prefix: String, file: File): File {
-    val parentDir = file.parent
-    val name = file.name
+import java.io.File
 
-    return File(parentDir, "$prefix$name")
-}
-
-val docsOutputDir = rootProject.file("docs")
-val dokkaDocsOutputDir = File(docsOutputDir, "generated")
-val markdownDocsOutputDirBase = File(docsOutputDir, "markdown")
-
-fun discoverImagesInProject(project: Project): List<File>? {
-    return file("${project.projectDir}/images")
-        .takeIf {
-            // walk all directories & ensure we are not looping a child of the output directory
-            it.exists() && it.isDirectory && !it.canonicalPath.startsWith(docsOutputDir.canonicalPath)
-        }
-        ?.walk()
-        ?.filter { it.isFile }?.toList()
-}
+val docsOutputDirBase = DocsUtils.getDocsOutputDirBase(rootProject)
+val dokkaDocsOutputDir = DocsUtils.getDokkaDocsOutputDir(rootProject)
+val markdownDocsOutputDirBase = DocsUtils.getMarkdownDocsOutputDirBase(rootProject)
 
 val copyMarkdownDocsTask = tasks.register("copyMarkdownDocs") {
     group = "documentation"
@@ -56,7 +41,7 @@ val copyMarkdownDocsTask = tasks.register("copyMarkdownDocs") {
                     return@ProjectDocsDestDir markdownDocsOutputDirBase
                 } else {
                     // this is not the root project
-                    val dir = prefixFilename(
+                    val dir = DocsUtils.prefixFilename(
                         "_",
                         File(
                             markdownDocsOutputDirBase,
@@ -77,18 +62,7 @@ val copyMarkdownDocsTask = tasks.register("copyMarkdownDocs") {
             if (srcReadmeFile.exists() && project != rootProject) {
                 val destReadmeFile = File(projectDocsDestDir, "_README_ORIGINAL.md")
                 srcReadmeFile.copyTo(destReadmeFile, true)
-
-                // sanitize relative links to .md files after copying to new tree
-                destReadmeFile.writeText(
-                    destReadmeFile.readText()
-                        // replace all absolute references to packages with new tree relative paths
-                        .replace(Regex("/packages/(.*)/docs/(.*\\.md)\\)"), "../../$1/$2)")
-                        // replace all absolute occurrences of local docs with relative path
-                        .replace("./docs/", "../")
-                        // strip file extension off all non-external links ending with
-                        // (Jekyll creates directories with index.html files)
-                        .replace(Regex("\\((?!https?)(.*)\\.md\\)"), "($1)")
-                )
+                DocsUtils.sanitizeLinksInMdFile(destReadmeFile)
             }
 
             // copy custom markdown docs
@@ -98,7 +72,7 @@ val copyMarkdownDocsTask = tasks.register("copyMarkdownDocs") {
                     // walk only Markdown files
                     it.isFile && it.extension.equals("md", ignoreCase = true)
                             // ensure we are not looping a child of the output directory
-                            && !it.canonicalPath.startsWith(docsOutputDir.canonicalPath)
+                            && !it.canonicalPath.startsWith(docsOutputDirBase.canonicalPath)
                 }.toList()
 
             if (allMdFiles.isNotEmpty()) {
@@ -114,7 +88,10 @@ val copyMarkdownDocsTask = tasks.register("copyMarkdownDocs") {
                             srcMdFile.path.length - 1
                         )
                     )
-                    srcMdFile.copyTo(File(projectDocsDestDir, fileRelativePathInProject))
+                    val destMdFile = File(projectDocsDestDir, fileRelativePathInProject)
+
+                    srcMdFile.copyTo(destMdFile, true)
+                    DocsUtils.sanitizeLinksInMdFile(destMdFile)
                 }
             }
 
@@ -124,7 +101,7 @@ val copyMarkdownDocsTask = tasks.register("copyMarkdownDocs") {
                 imagesDestDir.deleteRecursively()
             }
 
-            val images = discoverImagesInProject(project)
+            val images = DocsUtils.discoverImagesInProject(rootProject, project)
             if (images?.isNotEmpty() == true) {
                 imagesDestDir.mkdir()
                 images.forEach { srcImageFile ->
@@ -143,8 +120,3 @@ val buildDocsTask = tasks.register("buildDocs") {
         copyMarkdownDocsTask
     )
 }
-
-extra["dokkaDocsOutputDir"] = dokkaDocsOutputDir
-extra["discoverImagesInProject"] = { project: Project -> discoverImagesInProject(project) }
-extra["copyMarkdownDocsTask"] = copyMarkdownDocsTask
-extra["buildDocsTask"] = buildDocsTask
