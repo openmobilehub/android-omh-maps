@@ -21,14 +21,11 @@ import com.openmobilehub.android.maps.plugin.openstreetmap.Constants.LATITUDE
 import com.openmobilehub.android.maps.plugin.openstreetmap.Constants.LONGITUDE
 import com.openmobilehub.android.maps.plugin.openstreetmap.Constants.OTHER_LATITUDE
 import com.openmobilehub.android.maps.plugin.openstreetmap.Constants.OTHER_LONGITUDE
-import com.openmobilehub.android.maps.plugin.openstreetmap.extensions.isMoreAccurateThan
 import com.openmobilehub.android.maps.plugin.openstreetmap.extensions.toOmhCoordinate
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotEquals
-import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
@@ -61,51 +58,5 @@ internal class LocationTest {
 
         assertNotEquals(otherLocation.latitude, omhCoordinate.latitude, 0.0)
         assertNotEquals(otherLocation.longitude, omhCoordinate.longitude, 0.0)
-    }
-
-    @Test
-    fun `given a Location, when isMoreAccurateThan with a null Location, then returns true`() {
-        assertTrue(location.isMoreAccurateThan(null))
-    }
-
-    @Test
-    fun `given a Location, when isMoreAccurateThan with a less accurate Location, then returns true`() {
-        val otherLocation = mockk<Location>()
-        every { otherLocation.accuracy } returns 20.0f
-
-        assertTrue(location.isMoreAccurateThan(otherLocation))
-    }
-
-    @Test
-    fun `given a Location, when isMoreAccurateThan with a more accurate Location, then returns false`() {
-        val otherLocation = mockk<Location>()
-        every { otherLocation.accuracy } returns 5.0f
-
-        assertFalse(location.isMoreAccurateThan(otherLocation))
-    }
-
-    @Test
-    fun `given a Location, when isMoreAccurateThan with an equal accurate Location, then returns false`() {
-        val otherLocation = mockk<Location>()
-        every { otherLocation.accuracy } returns 10.0f
-
-        assertFalse(location.isMoreAccurateThan(otherLocation))
-    }
-
-    @Test
-    fun `given a null Location, when isMoreAccurateThan with a non null Location, then returns false`() {
-        val nullLocation: Location? = null
-        val otherLocation = mockk<Location>()
-        every { otherLocation.accuracy } returns 10.0f
-
-        assertFalse(nullLocation.isMoreAccurateThan(otherLocation))
-    }
-
-    @Test
-    fun `given a null Location, when isMoreAccurateThan with a null Location, then returns false`() {
-        val nullLocation: Location? = null
-        val otherLocation: Location? = null
-
-        assertFalse(nullLocation.isMoreAccurateThan(otherLocation))
     }
 }

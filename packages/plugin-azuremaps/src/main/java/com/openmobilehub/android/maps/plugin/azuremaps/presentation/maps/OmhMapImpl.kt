@@ -18,8 +18,10 @@ package com.openmobilehub.android.maps.plugin.azuremaps.presentation.maps
 
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
+import android.content.Context
 import androidx.annotation.RequiresPermission
 import com.azure.android.maps.control.AzureMap
+import com.azure.android.maps.control.MapControl
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhInfoWindowViewFactory
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMap
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMapLoadedCallback
@@ -43,13 +45,17 @@ import com.openmobilehub.android.maps.core.presentation.models.OmhPolygonOptions
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolylineOptions
 import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
 import com.openmobilehub.android.maps.plugin.azuremaps.presentation.maps.managers.CameraManager
+import com.openmobilehub.android.maps.plugin.azuremaps.presentation.maps.managers.MyLocationManager
 import com.openmobilehub.android.maps.plugin.azuremaps.presentation.utils.Constants
 import com.openmobilehub.android.maps.plugin.azuremaps.presentation.utils.mapLogger
 
 @SuppressWarnings("TooManyFunctions", "UnusedPrivateMember")
 internal class OmhMapImpl(
+    private val context: Context,
+    private val mapControl: MapControl,
     private val mapView: AzureMap,
     private val cameraManager: CameraManager = CameraManager(mapView),
+    private val myLocationManager: MyLocationManager = MyLocationManager(context, mapControl, mapView),
     private val logger: UnsupportedFeatureLogger = mapLogger
 ) : OmhMap {
 
@@ -93,18 +99,17 @@ internal class OmhMapImpl(
 
     @RequiresPermission(anyOf = [ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION])
     override fun setMyLocationEnabled(enable: Boolean) {
-        // To be implemented
+        myLocationManager.setMyLocationEnabled(enable)
     }
 
     override fun isMyLocationEnabled(): Boolean {
-        // To be implemented
-        return false
+        return myLocationManager.isMyLocationEnabled()
     }
 
     override fun setMyLocationButtonClickListener(
         omhOnMyLocationButtonClickListener: OmhOnMyLocationButtonClickListener
     ) {
-        // To be implemented
+        myLocationManager.setMyLocationButtonClickListener(omhOnMyLocationButtonClickListener)
     }
 
     override fun setOnCameraMoveStartedListener(listener: OmhOnCameraMoveStartedListener) {

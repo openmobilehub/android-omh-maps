@@ -24,7 +24,7 @@ import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMapVi
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMapReadyCallback
 
 @Suppress("TooManyFunctions") // Suppress issue since interface has more than 12 functions.
-internal class OmhMapViewImpl(context: Context) : OmhMapView {
+internal class OmhMapViewImpl(private val context: Context) : OmhMapView {
 
     private var mapControl: MapControl = MapControl(context)
 
@@ -34,7 +34,7 @@ internal class OmhMapViewImpl(context: Context) : OmhMapView {
 
     override fun getMapAsync(omhOnMapReadyCallback: OmhOnMapReadyCallback) {
         mapControl.getMapAsync {
-            val omhMapView = OmhMapImpl(it)
+            val omhMapView = OmhMapImpl(context, mapControl, it)
 
             omhOnMapReadyCallback.onMapReady(omhMapView)
         }
