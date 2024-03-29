@@ -11,17 +11,32 @@ import com.openmobilehub.android.maps.core.presentation.models.OmhMapStatusCodes
 
 class ContinuousLocationService(
     private val locationManager: LocationManager,
-    private val providers: List<String>
+    private val providers: List<String>,
 ) {
     private var locationListener: LocationListener? = null
     private var currentBestLocation: Location? = null
 
-    @SuppressWarnings("TooGenericExceptionCaught")
+    @SuppressWarnings("TooGenericExceptionCaught", "LongMethod")
     @RequiresPermission(anyOf = [Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION])
     fun startLocationUpdates(
         onLocationUpdateSuccess: (OmhCoordinate) -> Unit,
         onLocationUpdateFailure: (Exception) -> Unit
     ) {
+        // Get the last location first to improve UX
+        val lastLocations =
+            providers.map { provider -> locationManager.getLastKnownLocation(provider) }
+        val bestLocation = LocationUtil.getMostAccurateLocation(lastLocations)
+
+        if (bestLocation != null) {
+            currentBestLocation = bestLocation
+            onLocationUpdateSuccess(
+                OmhCoordinate(
+                    bestLocation.latitude,
+                    bestLocation.longitude
+                )
+            )
+        }
+
         locationListener =
             LocationListener { location: Location? ->
                 if (location != null) {

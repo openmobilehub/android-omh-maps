@@ -47,7 +47,7 @@ class MapCameraFragment : Fragment(), OmhOnMapReadyCallback {
     private var omhMap: OmhMap? = null
 
     private val infoDisplay by lazy {
-        InfoDisplay(requireView())
+        InfoDisplay(this)
     }
 
     override fun onCreateView(

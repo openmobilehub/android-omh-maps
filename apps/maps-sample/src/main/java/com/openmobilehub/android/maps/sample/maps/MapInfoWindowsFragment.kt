@@ -98,7 +98,7 @@ open class MapInfoWindowsFragment : Fragment(), OmhOnMapReadyCallback {
 
 
     private val infoDisplay by lazy {
-        InfoDisplay(requireView())
+        InfoDisplay(this)
     }
 
     override fun onCreateView(
