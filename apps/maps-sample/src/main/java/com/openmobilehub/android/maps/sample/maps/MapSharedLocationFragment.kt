@@ -41,7 +41,7 @@ class MapSharedLocationFragment : Fragment(), OmhOnMapReadyCallback {
     private val args: MapSharedLocationFragmentArgs by navArgs()
 
     private val infoDisplay by lazy {
-        InfoDisplay(requireView())
+        InfoDisplay(this)
     }
 
     override fun onCreateView(

@@ -63,7 +63,7 @@ class MapLocationPickerFragment : Fragment(), OmhOnMapReadyCallback {
     private var myLocationEnabled = true
 
     private val infoDisplay by lazy {
-        InfoDisplay(requireView())
+        InfoDisplay(this)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

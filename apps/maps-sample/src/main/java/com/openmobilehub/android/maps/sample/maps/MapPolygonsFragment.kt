@@ -76,7 +76,7 @@ class MapPolygonsFragment : Fragment(), OmhOnMapReadyCallback {
     private var zIndexSeekbar: PanelSeekbar? = null
 
     private val infoDisplay by lazy {
-        InfoDisplay(requireView())
+        InfoDisplay(this)
     }
 
     override fun onCreateView(
