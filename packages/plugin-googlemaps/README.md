@@ -78,6 +78,8 @@ Legend of support levels:
 | setOnPolygonClickListener               |      ✅       |
 | snapshot                                |      ✅       |
 | setMapStyle                             |      ✅       |
+| setCustomInfoWindowContentsViewFactory  |      ✅       |
+| setCustomInfoWindowViewFactory          |      ✅       |
 
 Comments for partially supported 🟨 properties:
 

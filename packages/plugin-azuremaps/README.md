@@ -33,6 +33,7 @@ This plugin provides support for Azure Maps by utilizing the [Azure Maps Android
       </application>
    </manifest>
    ```
+
 4. (Optional - only when using the `plugin-mapbox` in the single application). Exclude the `android-sdk-geojson` module from the `plugin-azuremaps` dependency to avoid conflicts with the `plugin-mapbox` dependency.
 
    ```kotlin
@@ -65,15 +66,23 @@ This plugin provides support for Azure Maps by utilizing the [Azure Maps Android
 | setOnCameraMoveStartedListener          |     ✅     |
 | setOnCameraIdleListener                 |     ✅     |
 | setOnMapLoadedCallback                  |     ✅     |
-| setOnMarkerClickListener                |     ?      |
-| setOnMarkerDragListener                 |     ?      |
-| setOnInfoWindowOpenStatusChangeListener |     ?      |
-| setOnInfoWindowClickListener            |     ?      |
-| setOnInfoWindowLongClickListener        |     ?      |
+| setOnMarkerClickListener                |     ✅     |
+| setOnMarkerDragListener                 |     ❌     |
+| setOnInfoWindowOpenStatusChangeListener |     ✅     |
+| setOnInfoWindowClickListener            |     ✅     |
+| setOnInfoWindowLongClickListener        |     ✅     |
 | setOnPolylineClickListener              |     ?      |
 | setOnPolygonClickListener               |     ?      |
 | snapshot                                |     ❌     |
 | setMapStyle                             |     ?      |
+| setCustomInfoWindowContentsViewFactory  |     ✅     |
+| setCustomInfoWindowViewFactory          |     🟨     |
+
+Comments for partially supported 🟨 properties:
+
+| Property                       | Comments                                                                                                                                                                                                                                                                                                                                           |
+| ------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| setCustomInfoWindowViewFactory | The provider supports this method in full, however since the view is rendered "live" (i.e., the view is mounted instead of being rendered to a bitmap), attaching interaction listeners to the root view returned by the factory is forbidden. Please consult the [advanced documentation](https://todo.todo) of this plugin for more information. |
 
 ### Marker
 
@@ -81,49 +90,61 @@ This plugin provides support for Azure Maps by utilizing the [Azure Maps Android
 
 | Property         | Support level |
 | ---------------- | :-----------: |
-| position         |       ?       |
-| title            |       ?       |
-| draggable        |       ?       |
-| anchor           |       ?       |
-| infoWindowAnchor |       ?       |
-| alpha            |       ?       |
-| snippet          |       ?       |
-| isVisible        |       ?       |
-| isFlat           |       ?       |
-| rotation         |       ?       |
-| backgroundColor  |       ?       |
-| clickable        |       ?       |
+| position         |      ✅       |
+| title            |      ✅       |
+| draggable        |      ❌       |
+| anchor           |      🟨       |
+| infoWindowAnchor |      ✅       |
+| alpha            |      ✅       |
+| snippet          |      ✅       |
+| isVisible        |      ✅       |
+| isFlat           |      ✅       |
+| rotation         |      ✅       |
+| backgroundColor  |      ✅       |
+| clickable        |      ✅       |
+
+Comments for partially supported 🟨 properties:
+
+| Property | Comments                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| anchor   | Mapbox provider only supports [enumerated (discrete) values](https://docs.mapbox.com/android/maps/api/10.0.0/mapbox-maps-android/com.mapbox.maps.extension.style.layers.properties.generated/-icon-anchor/), opposed to continuous (`Float`) values in OMH; this property is mapped for each axis such that ranges: <br/>&bull; `<0; 0.25>` is mapped to left or top <br/>&bull; `<0.75; 0.1>` is mapped to right or bottom <br/>&bull; `(0.25; 0.75)` is mapped to center <br/> Also taking into account combinations, e.g. `Pair(0.1f, 0.9f)` would be mapped to `BOTTOM_LEFT` |
 
 #### OmhMarker
 
 | Method               | Support level |
 | -------------------- | :-----------: |
-| getPosition          |       ?       |
-| setPosition          |       ?       |
-| getTitle             |       ?       |
-| setTitle             |       ?       |
-| getClickable         |       ?       |
-| setClickable         |       ?       |
-| getDraggable         |       ?       |
-| setDraggable         |       ?       |
-| setAnchor            |       ?       |
-| setInfoWindowAnchor  |       ?       |
-| getAlpha             |       ?       |
-| setAlpha             |       ?       |
-| getSnippet           |       ?       |
-| setSnippet           |       ?       |
-| setIcon              |       ?       |
-| getIsVisible         |       ?       |
-| setIsVisible         |       ?       |
-| getIsFlat            |       ?       |
-| setIsFlat            |       ?       |
-| getRotation          |       ?       |
-| setRotation          |       ?       |
-| getBackgroundColor   |       ?       |
-| setBackgroundColor   |       ?       |
-| showInfoWindow       |       ?       |
-| hideInfoWindow       |       ?       |
-| getIsInfoWindowShown |       ?       |
+| getPosition          |      ✅       |
+| setPosition          |      ✅       |
+| getTitle             |      ✅       |
+| setTitle             |      ✅       |
+| getClickable         |      ✅       |
+| setClickable         |      ✅       |
+| getDraggable         |      ❌       |
+| setDraggable         |      ❌       |
+| setAnchor            |      🟨       |
+| setInfoWindowAnchor  |      ✅       |
+| getAlpha             |      ✅       |
+| setAlpha             |      ✅       |
+| getSnippet           |      ✅       |
+| setSnippet           |      ✅       |
+| setIcon              |      ✅       |
+| getIsVisible         |      ✅       |
+| setIsVisible         |      ✅       |
+| getIsFlat            |      ✅       |
+| setIsFlat            |      ✅       |
+| getRotation          |      ✅       |
+| setRotation          |      ✅       |
+| getBackgroundColor   |      ✅       |
+| setBackgroundColor   |      ✅       |
+| showInfoWindow       |      ✅       |
+| hideInfoWindow       |      ✅       |
+| getIsInfoWindowShown |      ✅       |
+
+Comments for partially supported 🟨 properties:
+
+| Property | Comments                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| anchor   | Mapbox provider only supports [enumerated (discrete) values](https://docs.mapbox.com/android/maps/api/10.0.0/mapbox-maps-android/com.mapbox.maps.extension.style.layers.properties.generated/-icon-anchor/), opposed to continuous (`Float`) values in OMH; this property is mapped for each axis such that ranges: <br/>&bull; `<0; 0.25>` is mapped to left or top <br/>&bull; `<0.75; 0.1>` is mapped to right or bottom <br/>&bull; `(0.25; 0.75)` is mapped to center <br/> Also taking into account combinations, e.g. `Pair(0.1f, 0.9f)` would be mapped to `BOTTOM_LEFT` |
 
 ### Polyline
 

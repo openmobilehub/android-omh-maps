@@ -33,6 +33,7 @@ import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMarke
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.utils.DrawableConverter
 import com.openmobilehub.android.maps.core.utils.cartesian.Offset2D
+import com.openmobilehub.android.maps.core.utils.cartesian.rotateOffset
 import com.openmobilehub.android.maps.plugin.mapbox.R
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IMapInfoWindowManagerDelegate
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IOmhInfoWindowMapViewDelegate
@@ -41,8 +42,6 @@ import com.openmobilehub.android.maps.plugin.mapbox.utils.AnchorConverter
 import com.openmobilehub.android.maps.plugin.mapbox.utils.Constants
 import com.openmobilehub.android.maps.plugin.mapbox.utils.CoordinateConverter
 import java.util.UUID
-import kotlin.math.cos
-import kotlin.math.sin
 import com.openmobilehub.android.maps.core.presentation.models.Constants as OmhConstants
 
 @SuppressWarnings("TooManyFunctions", "LongParameterList")
@@ -150,20 +149,10 @@ internal class OmhMarkerImpl(
         return Offset2D(offsetX, offsetY)
     }
 
-    private fun rotateOffset(translation: Offset2D<Double>): Offset2D<Double> {
-        // rotation angle
-        val theta = Math.toRadians(getRotation().toDouble())
-
-        return Offset2D(
-            -(cos(theta) * translation.x - sin(theta) * translation.y),
-            -(sin(theta) * translation.x + cos(theta) * translation.y)
-        )
-    }
-
     override fun getHandleCenterOffset(): Offset2D<Double> {
         val translation = getHandleTranslation()
 
-        return rotateOffset(translation)
+        return translation.rotateOffset(getRotation().toDouble())
     }
 
     /**
@@ -173,11 +162,14 @@ internal class OmhMarkerImpl(
      * using `pixelForCoordinate(...)` to the center horizontally & **top edge vertically**.
      */
     fun getHandleTopOffset(): Offset2D<Double> {
-        val translation = getHandleTranslation()
+        val translation = getHandleTranslation() + Offset2D(
+            0.0,
+            iconHeight / 2.0
+        )
 
         // since we are already at the center of the marker, we want to move just by 1/4 of the IW's height
         // to get to just-above-the-top-edge of the marker
-        return rotateOffset(translation + Offset2D(0.0, iconHeight / 2.0))
+        return translation.rotateOffset(getRotation().toDouble())
     }
 
     override fun getLongClickable(): Boolean {

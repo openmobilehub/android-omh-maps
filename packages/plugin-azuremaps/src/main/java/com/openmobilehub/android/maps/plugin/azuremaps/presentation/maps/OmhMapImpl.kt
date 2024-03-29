@@ -55,8 +55,8 @@ import com.openmobilehub.android.maps.plugin.azuremaps.utils.mapLogger
 @SuppressWarnings("TooManyFunctions", "UnusedPrivateMember", "LongParameterList")
 internal class OmhMapImpl(
     private val context: Context,
-    private val mapControl: MapControl,
-    private val mapView: AzureMap,
+    val mapControl: MapControl,
+    val mapView: AzureMap,
     private val cameraManager: CameraManager = CameraManager(mapView),
     private val myLocationManager: MyLocationManager = MyLocationManager(
         context,
@@ -64,7 +64,7 @@ internal class OmhMapImpl(
         mapView
     ),
     private val logger: UnsupportedFeatureLogger = mapLogger,
-    private val bRunningInTest: Boolean = false
+    bRunningInTest: Boolean = false
 ) : OmhMap {
 
     internal val mapMarkerManager = MapMarkerManager(context, mapView)
@@ -196,10 +196,10 @@ internal class OmhMapImpl(
     }
 
     override fun setCustomInfoWindowViewFactory(factory: OmhInfoWindowViewFactory?) {
-        // To be implemented
+        mapMarkerManager.setCustomInfoWindowViewFactory(factory)
     }
 
     override fun setCustomInfoWindowContentsViewFactory(factory: OmhInfoWindowViewFactory?) {
-        // To be implemented
+        mapMarkerManager.setCustomInfoWindowContentsViewFactory(factory)
     }
 }

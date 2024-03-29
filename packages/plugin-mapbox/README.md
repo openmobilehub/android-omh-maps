@@ -43,7 +43,7 @@ This plugin provides support for Mapbox by utilizing the [Mapbox Android SDK](ht
 | Method                                  | Supported? |
 | --------------------------------------- | :--------: |
 | addMarker                               |     ?      |
-| addPolyline                             |     ✅      |
+| addPolyline                             |     ✅     |
 | addPolygon                              |     ✅     |
 | getCameraPositionCoordinate             |     ✅     |
 | moveCamera                              |     ✅     |
@@ -61,9 +61,11 @@ This plugin provides support for Mapbox by utilizing the [Mapbox Android SDK](ht
 | setOnInfoWindowClickListener            |     ✅     |
 | setOnInfoWindowLongClickListener        |     ✅     |
 | setOnPolylineClickListener              |     ✅     |
-| setOnPolygonClickListener               |     ✅      |
+| setOnPolygonClickListener               |     ✅     |
 | snapshot                                |     ✅     |
 | setMapStyle                             |     ✅     |
+| setCustomInfoWindowContentsViewFactory  |     ✅     |
+| setCustomInfoWindowViewFactory          |     ✅     |
 
 Comments for partially supported 🟨 properties:
 

@@ -19,6 +19,7 @@ package com.openmobilehub.android.maps.plugin.azuremaps.presentation.maps.manage
 import android.content.Context
 import android.graphics.Bitmap
 import com.azure.android.maps.control.AzureMap
+import com.azure.android.maps.control.Popup
 import com.azure.android.maps.control.layer.SymbolLayer
 import com.azure.android.maps.control.source.DataSource
 import com.google.gson.JsonObject
@@ -44,17 +45,13 @@ internal class MapMarkerManager(
     private val context: Context,
     private val map: AzureMap,
 ) : IMapViewDelegate {
-    private var markerClickListener: OmhOnMarkerClickListener? = null
-    private var markerDragListener: OmhOnMarkerDragListener? = null
-    private var infoWindowOpenStatusChangeListener: OmhOnInfoWindowOpenStatusChangeListener? = null
-    private var infoWindowClickListener: OmhOnInfoWindowClickListener? = null
-    private var infoWindowLongClickListener: OmhOnInfoWindowLongClickListener? = null
+    internal var markerClickListener: OmhOnMarkerClickListener? = null
+    internal var markerDragListener: OmhOnMarkerDragListener? = null
+    internal var infoWindowOpenStatusChangeListener: OmhOnInfoWindowOpenStatusChangeListener? = null
+    internal var infoWindowClickListener: OmhOnInfoWindowClickListener? = null
+    internal var infoWindowLongClickListener: OmhOnInfoWindowLongClickListener? = null
     internal val markers = mutableMapOf<String, OmhMarkerImpl>()
     internal val infoWindows = mutableMapOf<String, OmhInfoWindow>()
-
-    fun updateAllInfoWindowsPositions() {
-        infoWindows.values.forEach { it.updatePosition() }
-    }
 
     fun addMarker(
         options: OmhMarkerOptions,
@@ -78,6 +75,10 @@ internal class MapMarkerManager(
         for (option in options.toSymbolLayerOptionsList()) {
             markerLayer.setOptions(option)
         }
+        map.layers.add(markerLayer)
+
+        val infoWindowPopup = Popup()
+        map.popups.add(infoWindowPopup)
 
         val omhMarker = OmhMarkerImpl(
             source = markerDataSource,
@@ -97,16 +98,13 @@ internal class MapMarkerManager(
             anchor = options.anchor,
             isFlat = options.isFlat,
             rotation = options.rotation,
+            infoWindowPopup = infoWindowPopup,
             mapViewDelegate = this,
         )
 
-        omhMarker.omhInfoWindow.setDataSource(markerDataSource)
-
-        map.layers.add(markerLayer)
-        map.layers.add(omhMarker.omhInfoWindow.infoWindowSymbolLayer)
-
-        markers[omhMarker.markerUUID.toString()] = omhMarker
-        infoWindows[omhMarker.omhInfoWindow.getSymbolLayerID()] = omhMarker.omhInfoWindow
+        val omhMarkerUUIDStr = omhMarker.markerUUID.toString()
+        markers[omhMarkerUUIDStr] = omhMarker
+        infoWindows[omhMarkerUUIDStr] = omhMarker.omhInfoWindow
 
         return omhMarker
     }
@@ -151,6 +149,15 @@ internal class MapMarkerManager(
         infoWindowClickListener?.onInfoWindowClick(omhMarkerImpl)
     }
 
+    override fun onInfoWindowLongClick(omhMarkerImpl: OmhMarkerImpl): Boolean {
+        return if (infoWindowLongClickListener === null) {
+            false
+        } else {
+            infoWindowLongClickListener!!.onInfoWindowLongClick(omhMarkerImpl)
+            true
+        }
+    }
+
     override fun onInfoWindowOpenStatusChange(omhMarkerImpl: OmhMarkerImpl, isOpen: Boolean) {
         if (isOpen) {
             infoWindowOpenStatusChangeListener?.onInfoWindowOpen(omhMarkerImpl)
@@ -179,6 +186,10 @@ internal class MapMarkerManager(
 
     override fun getMapHeight(): Int {
         return map.ui.a.height // a is the FrameLayout containing the map
+    }
+
+    override fun getContext(): Context {
+        return context
     }
 
     fun setCustomInfoWindowViewFactory(factory: OmhInfoWindowViewFactory?) {

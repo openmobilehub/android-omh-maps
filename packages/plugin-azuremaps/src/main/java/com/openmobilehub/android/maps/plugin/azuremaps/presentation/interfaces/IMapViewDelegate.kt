@@ -16,6 +16,7 @@
 
 package com.openmobilehub.android.maps.plugin.azuremaps.presentation.interfaces
 
+import android.content.Context
 import android.graphics.Bitmap
 import com.openmobilehub.android.maps.plugin.azuremaps.presentation.maps.OmhMarkerImpl
 
@@ -29,6 +30,16 @@ internal interface IMapViewDelegate {
      * @param omhMarkerImpl The marker whose info window has been clicked.
      */
     fun onInfoWindowClick(omhMarkerImpl: OmhMarkerImpl)
+
+    /**
+     * Callback invoked when the info window of the marker is long clicked.
+     *
+     * @param omhMarkerImpl The marker whose info window has been long clicked.
+     *
+     * @return `true` if the listener was registered & has been called (note: it does not return
+     * any boolean value), `false` otherwise.
+     */
+    fun onInfoWindowLongClick(omhMarkerImpl: OmhMarkerImpl): Boolean
 
     /**
      * Callback invoked when the info window of a marker is opened or closed.
@@ -64,4 +75,11 @@ internal interface IMapViewDelegate {
      * Returns the height of the map in pixels.
      */
     fun getMapHeight(): Int
+
+    /**
+     * Returns the [Context] of the map.
+     *
+     * @return The context of the map.
+     */
+    fun getContext(): Context
 }

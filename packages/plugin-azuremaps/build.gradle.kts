@@ -9,7 +9,7 @@ android {
 val useLocalProjects = project.rootProject.extra["useLocalProjects"] as Boolean
 
 dependencies {
-    if(useLocalProjects) {
+    if (useLocalProjects) {
         api(project(":packages:core"))
     } else {
         api("com.openmobilehub.android.maps:core:2.0.0-beta")
@@ -30,4 +30,5 @@ dependencies {
     testImplementation(Libs.junit)
     androidTestImplementation(Libs.androidJunit)
     testImplementation(Libs.mockk)
+    testImplementation("com.squareup.okhttp3:okhttp:4.12.0")
 }

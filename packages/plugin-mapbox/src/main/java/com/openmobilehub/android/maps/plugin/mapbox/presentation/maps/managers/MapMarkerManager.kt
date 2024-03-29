@@ -46,11 +46,11 @@ internal class MapMarkerManager(
     private val context: Context,
     private val infoWindowMapViewDelegate: IOmhInfoWindowMapViewDelegate,
 ) : IMapInfoWindowManagerDelegate, IMapLongClickManagerDelegate {
-    private var markerClickListener: OmhOnMarkerClickListener? = null
-    private var markerDragListener: OmhOnMarkerDragListener? = null
-    private var infoWindowOpenStatusChangeListener: OmhOnInfoWindowOpenStatusChangeListener? = null
-    private var infoWindowClickListener: OmhOnInfoWindowClickListener? = null
-    private var infoWindowLongClickListener: OmhOnInfoWindowLongClickListener? = null
+    internal var markerClickListener: OmhOnMarkerClickListener? = null
+    internal var markerDragListener: OmhOnMarkerDragListener? = null
+    internal var infoWindowOpenStatusChangeListener: OmhOnInfoWindowOpenStatusChangeListener? = null
+    internal var infoWindowClickListener: OmhOnInfoWindowClickListener? = null
+    internal var infoWindowLongClickListener: OmhOnInfoWindowLongClickListener? = null
     internal val markers = mutableMapOf<String, OmhMarkerImpl>()
     internal val infoWindows = mutableMapOf<String, OmhInfoWindow>()
 

@@ -17,28 +17,25 @@
 package com.openmobilehub.android.maps.plugin.azuremaps.presentation.maps
 
 import android.annotation.SuppressLint
-import android.graphics.Bitmap
-import android.os.Handler
-import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.core.view.drawToBitmap
 import androidx.core.view.setPadding
+import com.azure.android.maps.control.MapMath
+import com.azure.android.maps.control.Popup
+import com.azure.android.maps.control.data.Pixel
 import com.azure.android.maps.control.layer.SymbolLayer
 import com.azure.android.maps.control.options.AnchorType
-import com.azure.android.maps.control.options.SymbolLayerOptions
-import com.azure.android.maps.control.source.DataSource
+import com.azure.android.maps.control.options.Option
+import com.azure.android.maps.control.options.PopupOptions
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhInfoWindowViewFactory
 import com.openmobilehub.android.maps.core.utils.ScreenUnitConverter
 import com.openmobilehub.android.maps.core.utils.cartesian.Offset2D
-import com.openmobilehub.android.maps.core.utils.uuid.DefaultUUIDGenerator
-import com.openmobilehub.android.maps.core.utils.uuid.UUIDGenerator
 import com.openmobilehub.android.maps.plugin.azuremaps.R
 import com.openmobilehub.android.maps.plugin.azuremaps.presentation.interfaces.IMapViewDelegate
 import com.openmobilehub.android.maps.plugin.azuremaps.presentation.interfaces.ITouchInteractable
-import java.util.concurrent.Executors
+import com.openmobilehub.android.maps.plugin.azuremaps.utils.CoordinateConverter
 
 @SuppressWarnings("TooManyFunctions", "LongParameterList")
 internal class OmhInfoWindow(
@@ -47,37 +44,28 @@ internal class OmhInfoWindow(
     private var infoWindowAnchor: Pair<Float, Float>,
     private val mapViewDelegate: IMapViewDelegate,
     internal val omhMarker: OmhMarkerImpl,
-    private val uuidGenerator: UUIDGenerator = DefaultUUIDGenerator()
+    private val popup: Popup,
 ) : ITouchInteractable {
-    internal var infoWindowSymbolLayer: SymbolLayer
-    internal lateinit var dataSource: DataSource
-
     private var infoWindowIsVisible: Boolean = false
 
     private var customInfoWindowViewFactory: OmhInfoWindowViewFactory? = null
     private var infoWindowContentsViewFactory: OmhInfoWindowViewFactory? = null
 
-    internal var lastInfoWindowIconID: String? = null
-    internal var iwBitmapWidth: Int = 0
-    internal var iwBitmapHeight: Int = 0
+    internal var windowViewWidth: Int = 0
+    internal var windowViewHeight: Int = 0
 
-    /** Executor used for rendering views that won't be mounted in the UI, but rendered to a [Bitmap] */
-    internal var backgroundThreadExecutor = Executors.newSingleThreadExecutor()
-
-    /** Handler used to post tasks to the main (UI) thread */
-    private val mainThreadHandler = Handler(Looper.getMainLooper())
+    // stored the view ref since it is needed for closing the IW, which by default triggers an a11y event on it
+    internal var windowView: View? = null
 
     init {
-        infoWindowSymbolLayer = SymbolLayer(
-            getSymbolLayerID(),
-            OmhMarkerImpl.getSourceID(omhMarker.markerUUID),
-            SymbolLayerOptions.iconSize(1.0f), // icon scale
-            SymbolLayerOptions.iconImage(generateInfoWindowIconID()),
-            SymbolLayerOptions.iconAnchor(AnchorType.CENTER),
-            SymbolLayerOptions.iconAllowOverlap(true),
-            SymbolLayerOptions.iconIgnorePlacement(true),
-            SymbolLayerOptions.iconOpacity(0f)
+        popup.setOptions(
+            PopupOptions.anchor(AnchorType.CENTER),
+
+            // hide the close button
+            PopupOptions.closeButton(false),
+            Option(PopupOptions.VISIBLE, false)
         )
+        popup.close(View(mapViewDelegate.getContext()))
     }
 
     fun getIsInfoWindowShown(): Boolean {
@@ -87,19 +75,18 @@ internal class OmhInfoWindow(
     fun setInfoWindowVisibility(visible: Boolean) {
         val wasInfoWindowShown = getIsInfoWindowShown()
 
-        infoWindowSymbolLayer.setOptions(
-            SymbolLayerOptions.iconOpacity(if (visible) 1f else 0f)
-        )
+        infoWindowIsVisible = visible
 
         if (wasInfoWindowShown != visible) {
             // visibility changed
             mapViewDelegate.onInfoWindowOpenStatusChange(omhMarker, visible)
             invalidateInfoWindow()
 
-            if (!visible) {
-                // if now invisible, spare the memory from the view's image - after the IW
-                // is shown again, it will immediately invalidate itself & re-render
-                removeCurrentStyleImage()
+            if (visible) {
+                popup.open()
+            } else {
+                popup.close(windowView)
+                windowView = null // clear the view ref now that it's closed
             }
         } else if (visible) {
             // visibility did not change, the info window was and is visible
@@ -145,115 +132,61 @@ internal class OmhInfoWindow(
     }
 
     internal fun updatePosition() {
-        // TODO implement this
-//        val markerPoint = CoordinateConverter.convertToPoint(omhMarker.getPosition())
-//        val screenCoordinate =
-//            mapViewDelegate.pixelForCoordinate(markerPoint) + omhMarker.getHandleTopOffset() + getHandleCenterOffset()
-//
-//        dataSource.setShapes(
-//            Feature.fromGeometry(
-//                mapViewDelegate.coordinateForPixel(
-//                    screenCoordinate
-//                )
-//            )
-//        )
-    }
+        val markerPoint = CoordinateConverter.convertToPoint(omhMarker.getPosition())
 
-    fun setDataSource(dataSource: DataSource) {
-        this.dataSource = dataSource
-    }
-
-    internal fun getSymbolLayerID(): String {
-        return "${omhMarker.markerUUID}-omh-marker-info-window-layer"
+        val screenOffset = omhMarker.getHandleTopOffset() + getHandleCenterOffset()
+        popup.setOptions(
+            PopupOptions.position(MapMath.getPosition(markerPoint)),
+            PopupOptions.pixelOffset(
+                Pixel(
+                    screenOffset.x.toLong(),
+                    screenOffset.y.toLong()
+                )
+            )
+        )
     }
 
     @SuppressWarnings("MagicNumber")
     private fun invalidateInfoWindow() {
-        backgroundThreadExecutor.execute {
-            // this scope runs on a background thread
-            val windowView: View = if (customInfoWindowViewFactory != null) {
-                customInfoWindowViewFactory!!.createInfoWindowView(omhMarker)
-            } else {
-                renderDefaultInfoWindowView(
-                    infoWindowContentsViewFactory?.createInfoWindowView(
-                        omhMarker
-                    )
-                )
-            }
-
-            // obtain the view's desired dimensions, also limiting to 90% of screen width & height
-            windowView.measure(
-                View.MeasureSpec.makeMeasureSpec(
-                    (0.9 * mapViewDelegate.getMapWidth()).toInt(),
-                    View.MeasureSpec.AT_MOST
-                ),
-                View.MeasureSpec.makeMeasureSpec(
-                    (0.9 * mapViewDelegate.getMapHeight()).toInt(),
-                    View.MeasureSpec.AT_MOST
+        windowView = if (customInfoWindowViewFactory != null) {
+            customInfoWindowViewFactory!!.createInfoWindowView(omhMarker)
+        } else {
+            renderDefaultInfoWindowView(
+                infoWindowContentsViewFactory?.createInfoWindowView(
+                    omhMarker
                 )
             )
-
-            // make sure the view is laid out (otherwise, drawToBitmap will throw an exception)
-            windowView.layout(
-                windowView.left,
-                windowView.top,
-                windowView.measuredWidth,
-                windowView.measuredHeight
-            )
-
-            val bitmap = windowView.drawToBitmap(Bitmap.Config.ARGB_8888)
-
-            mainThreadHandler.post {
-                // this scope runs on the UI thread;
-                // only the main (UI) thread can access the Mapbox map as per their rules
-
-                val infoWindowIconID = addOrUpdateMarkerIconImage(bitmap)
-                infoWindowSymbolLayer.setOptions(
-                    SymbolLayerOptions.iconImage(infoWindowIconID)
-                )
-
-                updatePosition()
-            }
         }
-    }
 
-    /**
-     * Ensures the current icon is removed before changing it so as not to cause a memory leak;
-     * also used just to clear the memory when the IW is hidden.
-     */
-    private fun removeCurrentStyleImage() {
-        lastInfoWindowIconID?.let {
-            mapViewDelegate.removeImage(it)
-
-            lastInfoWindowIconID = null
+        windowView!!.setOnClickListener {
+            mapViewDelegate.onInfoWindowClick(omhMarker)
         }
-    }
 
-    /**
-     * Adds or updates the info window icon image on the map.
-     *
-     * @param bitmap the icon [Bitmap] for the info window.
-     *
-     * @return the ID of the added or updated info window icon image
-     */
-    internal fun addOrUpdateMarkerIconImage(
-        bitmap: Bitmap
-    ): String {
-        // ensure the other icon is removed before change so as not to cause a memory leak
-        removeCurrentStyleImage()
+        windowView!!.setOnLongClickListener {
+            mapViewDelegate.onInfoWindowLongClick(omhMarker)
+        }
 
-        val infoWindowIconID = generateInfoWindowIconID()
-        lastInfoWindowIconID = infoWindowIconID
+        val markerPoint = CoordinateConverter.convertToPoint(omhMarker.getPosition())
 
-        iwBitmapWidth = bitmap.width
-        iwBitmapHeight = bitmap.height
-
-        mapViewDelegate.addImage(
-            infoWindowIconID,
-            bitmap
+        popup.setOptions(
+            PopupOptions.content(windowView!!),
+            PopupOptions.position(MapMath.getPosition(markerPoint)),
+            Option(PopupOptions.VISIBLE, infoWindowIsVisible)
         )
 
-        return infoWindowIconID
+        windowView!!.getViewTreeObserver()
+            .addOnGlobalLayoutListener {
+                if (windowView !== null) {
+                    synchronized(windowView!!) {
+                        windowViewWidth = windowView!!.width
+                        windowViewHeight = windowView!!.height
+
+                        updatePosition()
+                    }
+                }
+            }
+
+        updatePosition()
     }
 
     /**
@@ -312,12 +245,6 @@ internal class OmhInfoWindow(
         return windowLinearLayout
     }
 
-    private fun generateInfoWindowIconID(): String {
-        // the random UUID suffix below is to cause an invalidation of the map
-        // when the info window is re-rendered (invalidated)
-        return "${omhMarker.markerUUID}-omh-marker-icon-info-window-${uuidGenerator.generate()}"
-    }
-
     override fun getDraggable(): Boolean {
         return false
     }
@@ -330,8 +257,8 @@ internal class OmhInfoWindow(
 
         return Offset2D(
             offset.x + anchorOffsetX,
-            // also, translate up (-) by the IW's height to ensure it always fits above the marker
-            offset.y + anchorOffsetY + omhMarker.iconHeight / 2.0 - iwBitmapHeight / 2.0
+            // also, translate up (-) by the IW's height to ensure it always fits above the marker & add a slight margin
+            offset.y + anchorOffsetY + omhMarker.iconHeight / 2.0 - windowViewHeight / 2.0 - omhMarker.iconHeight * 0.1
         )
     }
 
