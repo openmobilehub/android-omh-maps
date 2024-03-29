@@ -35,13 +35,12 @@ import com.mapbox.maps.extension.style.layers.properties.generated.IconAnchor
 import com.mapbox.maps.extension.style.layers.properties.generated.Visibility
 import com.mapbox.maps.extension.style.sources.addSource
 import com.mapbox.maps.extension.style.sources.generated.GeoJsonSource
+import com.openmobilehub.android.maps.core.R
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhInfoWindowViewFactory
 import com.openmobilehub.android.maps.core.utils.ScreenUnitConverter
 import com.openmobilehub.android.maps.core.utils.cartesian.Offset2D
-import com.openmobilehub.android.maps.core.utils.cartesian.plus
 import com.openmobilehub.android.maps.core.utils.uuid.DefaultUUIDGenerator
 import com.openmobilehub.android.maps.core.utils.uuid.UUIDGenerator
-import com.openmobilehub.android.maps.plugin.mapbox.R
 import com.openmobilehub.android.maps.plugin.mapbox.extensions.toPoint2D
 import com.openmobilehub.android.maps.plugin.mapbox.extensions.toScreenCoordinate
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IMapInfoWindowManagerDelegate

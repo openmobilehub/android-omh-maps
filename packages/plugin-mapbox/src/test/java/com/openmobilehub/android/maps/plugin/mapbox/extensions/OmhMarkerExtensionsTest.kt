@@ -37,11 +37,11 @@ import com.mapbox.maps.extension.style.layers.properties.generated.Visibility
 import com.mapbox.maps.extension.style.sources.addSource
 import com.mapbox.maps.extension.style.sources.generated.GeoJsonSource
 import com.mapbox.maps.extension.style.sources.generated.geoJsonSource
+import com.openmobilehub.android.maps.core.R
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
 import com.openmobilehub.android.maps.core.utils.DrawableConverter
 import com.openmobilehub.android.maps.core.utils.uuid.DefaultUUIDGenerator
-import com.openmobilehub.android.maps.plugin.mapbox.R
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.maps.OmhMapImpl
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.maps.OmhMarkerImpl
 import com.openmobilehub.android.maps.plugin.mapbox.utils.CoordinateConverter

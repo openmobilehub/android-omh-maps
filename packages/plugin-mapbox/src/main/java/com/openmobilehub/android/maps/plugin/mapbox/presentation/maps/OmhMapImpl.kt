@@ -62,7 +62,6 @@ import com.openmobilehub.android.maps.core.presentation.models.OmhPolygonOptions
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolylineOptions
 import com.openmobilehub.android.maps.core.utils.ScreenUnitConverter
 import com.openmobilehub.android.maps.core.utils.cartesian.BoundingBox2D
-import com.openmobilehub.android.maps.core.utils.cartesian.plus
 import com.openmobilehub.android.maps.core.utils.logging.Logger
 import com.openmobilehub.android.maps.plugin.mapbox.extensions.toPoint2D
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IMapDragManagerDelegate

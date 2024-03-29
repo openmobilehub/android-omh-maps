@@ -30,12 +30,11 @@ import com.azure.android.maps.control.options.IconRotationAlignment
 import com.azure.android.maps.control.options.SymbolLayerOptions
 import com.azure.android.maps.control.source.DataSource
 import com.mapbox.geojson.Feature
+import com.openmobilehub.android.maps.core.R
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMarker
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.utils.DrawableConverter
 import com.openmobilehub.android.maps.core.utils.cartesian.Offset2D
-import com.openmobilehub.android.maps.core.utils.cartesian.rotateOffset
-import com.openmobilehub.android.maps.plugin.azuremaps.R
 import com.openmobilehub.android.maps.plugin.azuremaps.presentation.interfaces.IMapViewDelegate
 import com.openmobilehub.android.maps.plugin.azuremaps.presentation.interfaces.ITouchInteractable
 import com.openmobilehub.android.maps.plugin.azuremaps.utils.AnchorConverter

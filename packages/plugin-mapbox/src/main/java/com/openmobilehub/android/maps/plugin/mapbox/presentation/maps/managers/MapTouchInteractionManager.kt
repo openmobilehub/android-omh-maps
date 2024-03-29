@@ -18,7 +18,6 @@ package com.openmobilehub.android.maps.plugin.mapbox.presentation.maps.managers
 
 import com.mapbox.geojson.Point
 import com.mapbox.maps.ScreenCoordinate
-import com.openmobilehub.android.maps.core.utils.cartesian.distanceTo
 import com.openmobilehub.android.maps.plugin.mapbox.extensions.toPoint2D
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IMapDragManagerDelegate
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IMapLongClickManagerDelegate

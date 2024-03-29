@@ -46,19 +46,19 @@ data class Offset2D<T : Number>(val x: T, val y: T) {
             else -> throw IllegalArgumentException("Unsupported type passed to Offset2D")
         } as Offset2D<T>
     }
-}
 
-/**
- * Rotates this offset by the given angle [thetaDeg].
- *
- * @param thetaDeg The angle in degrees.
- * @return The rotated offset.
- */
-fun Offset2D<Double>.rotateOffset(thetaDeg: Double): Offset2D<Double> {
-    val thetaRad = Math.toRadians(thetaDeg) // convert from degrees to radians
+    /**
+     * Rotates this offset by the given angle [thetaDeg].
+     *
+     * @param thetaDeg The angle in degrees.
+     * @return The rotated offset.
+     */
+    fun rotateOffset(thetaDeg: Double): Offset2D<Double> {
+        val thetaRad = Math.toRadians(thetaDeg) // convert from degrees to radians
 
-    return Offset2D(
-        -(cos(thetaRad) * this.x - sin(thetaRad) * this.y),
-        -(sin(thetaRad) * this.x + cos(thetaRad) * this.y)
-    )
+        return Offset2D(
+            -(cos(thetaRad) * this.x.toDouble() - sin(thetaRad) * this.y.toDouble()),
+            -(sin(thetaRad) * this.x.toDouble() + cos(thetaRad) * this.y.toDouble())
+        )
+    }
 }
