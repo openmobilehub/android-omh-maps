@@ -30,5 +30,4 @@ dependencies {
     testImplementation(Libs.junit)
     androidTestImplementation(Libs.androidJunit)
     testImplementation(Libs.mockk)
-    testImplementation("com.squareup.okhttp3:okhttp:4.12.0")
 }
