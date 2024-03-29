@@ -124,7 +124,7 @@ internal class OmhInfoWindow(
     @SuppressWarnings("MagicNumber")
     private fun getInfoWindowIconOffset(): Offset2D<Double> {
         return Offset2D(
-            0.0,
+            -omhMarker.iconWidth / 4.0 + omhMarker.iconWidth / 8.0,
             // since the default (reference) anchor for the IW icon is being bottom-edge-to-marker-icon's-center,
             // we want to offset it up by half the marker icon's height
             -omhMarker.iconHeight.toDouble() / 2.0
@@ -252,7 +252,7 @@ internal class OmhInfoWindow(
     @SuppressWarnings("MagicNumber")
     override fun getHandleCenterOffset(): Offset2D<Double> {
         val offset = getInfoWindowIconOffset()
-        val anchorOffsetX = (infoWindowAnchor.first - 0.5) * omhMarker.iconWidth / 2.0
+        val anchorOffsetX = (infoWindowAnchor.first - 0.5) * omhMarker.iconWidth / 4.0
         val anchorOffsetY = infoWindowAnchor.second * omhMarker.iconHeight
 
         return Offset2D(
@@ -274,9 +274,11 @@ internal class OmhInfoWindow(
 
     fun setCustomInfoWindowViewFactory(factory: OmhInfoWindowViewFactory?) {
         customInfoWindowViewFactory = factory
+        invalidateInfoWindow()
     }
 
     fun setCustomInfoWindowContentsViewFactory(factory: OmhInfoWindowViewFactory?) {
         infoWindowContentsViewFactory = factory
+        invalidateInfoWindow()
     }
 }

@@ -47,6 +47,7 @@ import com.openmobilehub.android.maps.sample.customviews.PanelSeekbar
 import com.openmobilehub.android.maps.sample.customviews.PanelSpinner
 import com.openmobilehub.android.maps.sample.databinding.FragmentMapInfoWindowsBinding
 import com.openmobilehub.android.maps.sample.model.InfoDisplay
+import com.openmobilehub.android.maps.sample.utils.Constants.AZURE_PROVIDER
 import com.openmobilehub.android.maps.sample.utils.Constants.DEFAULT_ZOOM_LEVEL
 import com.openmobilehub.android.maps.sample.utils.Constants.GOOGLE_PROVIDER
 import com.openmobilehub.android.maps.sample.utils.Constants.OSM_PROVIDER
@@ -291,6 +292,11 @@ open class MapInfoWindowsFragment : Fragment(), OmhOnMapReadyCallback {
         if (mapProviderName == OSM_PROVIDER) {
             disabledAppearancePositions =
                 hashSetOf(infoWindowAppearanceTypeNameResourceID.indexOf(R.string.info_window_appearance_type_custom_contents_view))
+        }
+
+        if (mapProviderName == AZURE_PROVIDER) {
+            demoShouldReRenderInfoWindowOnDraggingCheckbox?.isChecked = false
+            demoShouldReRenderInfoWindowOnDraggingCheckbox?.isEnabled = false
         }
 
         appearanceSpinner?.setDisabledPositions(disabledAppearancePositions)
