@@ -49,6 +49,7 @@ import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogge
 import com.openmobilehub.android.maps.plugin.azuremaps.presentation.maps.managers.CameraManager
 import com.openmobilehub.android.maps.plugin.azuremaps.presentation.maps.managers.MapMarkerManager
 import com.openmobilehub.android.maps.plugin.azuremaps.presentation.maps.managers.MyLocationManager
+import com.openmobilehub.android.maps.plugin.azuremaps.presentation.maps.managers.PolylineManager
 import com.openmobilehub.android.maps.plugin.azuremaps.utils.Constants
 import com.openmobilehub.android.maps.plugin.azuremaps.utils.mapLogger
 
@@ -63,11 +64,11 @@ internal class OmhMapImpl(
         mapControl,
         mapView
     ),
+    private val mapMarkerManager: MapMarkerManager = MapMarkerManager(context, mapView),
+    private val polylineManager: PolylineManager = PolylineManager(mapView),
     private val logger: UnsupportedFeatureLogger = mapLogger,
     bRunningInTest: Boolean = false
 ) : OmhMap {
-
-    internal val mapMarkerManager = MapMarkerManager(context, mapView)
 
     override val providerName: String
         get() = Constants.PROVIDER_NAME
@@ -77,34 +78,38 @@ internal class OmhMapImpl(
             setupTouchInteractionListeners()
         }
     }
-
     private fun setupTouchInteractionListeners() {
         mapView.events.add(object : OnFeatureClick {
             override fun onFeatureClick(features: MutableList<Feature>?): Boolean {
                 for (feature in features ?: listOf()) {
-                    if (feature.hasProperty(Constants.MARKER_FEATURE_UUID_BINDING)) {
-                        val markerId =
-                            feature.getStringProperty(Constants.MARKER_FEATURE_UUID_BINDING)
-                        val marker = mapMarkerManager.markers[markerId]
-
-                        if (marker != null && marker.getClickable()) {
-                            return mapMarkerManager.maybeHandleClick(marker)
-                        }
+                    if (featureHandleClick(feature)) {
+                        return true
                     }
                 }
-
                 return false
             }
         })
+    }
+
+    @SuppressWarnings("ReturnCount")
+    private fun featureHandleClick(feature: Feature): Boolean {
+        if (feature.hasProperty(Constants.MARKER_FEATURE_UUID_BINDING)) {
+            val markerId = feature.getStringProperty(Constants.MARKER_FEATURE_UUID_BINDING)
+            return mapMarkerManager.maybeHandleClick(markerId)
+        } else if (feature.hasProperty(Constants.POLYLINE_FEATURE_UUID_BINDING)) {
+            val polylineId = feature.getStringProperty(Constants.POLYLINE_FEATURE_UUID_BINDING)
+            return polylineManager.maybeHandleClick(polylineId)
+        }
+
+        return false
     }
 
     override fun addMarker(options: OmhMarkerOptions): OmhMarker {
         return mapMarkerManager.addMarker(options)
     }
 
-    override fun addPolyline(options: OmhPolylineOptions): OmhPolyline? {
-        // To be implemented
-        return null
+    override fun addPolyline(options: OmhPolylineOptions): OmhPolyline {
+        return polylineManager.addPolyline(options)
     }
 
     override fun addPolygon(options: OmhPolygonOptions): OmhPolygon? {
@@ -180,7 +185,7 @@ internal class OmhMapImpl(
     }
 
     override fun setOnPolylineClickListener(listener: OmhOnPolylineClickListener) {
-        // To be implemented
+        polylineManager.clickListener = listener
     }
 
     override fun setOnPolygonClickListener(listener: OmhOnPolygonClickListener) {
