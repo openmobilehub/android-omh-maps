@@ -32,7 +32,8 @@ enum class DiscreteAnchor {
 
 object AnchorConverter {
     /**
-     * Converts a continuous anchor to a [DiscreteAnchor], such that ranges are mapped as follows:
+     * Converts a continuous anchor in the form of `(x, y)` coordinates to a [DiscreteAnchor],
+     * such that ranges are mapped as follows:
      * - `<0; 0.25>` is mapped to left or top
      * - `<0.75; 0.1>` is mapped to right or bottom
      * - `(0.25; 0.75)` is mapped to center

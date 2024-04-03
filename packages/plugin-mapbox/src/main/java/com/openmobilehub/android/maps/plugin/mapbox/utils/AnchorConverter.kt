@@ -22,7 +22,7 @@ import com.openmobilehub.android.maps.core.utils.AnchorConverter as CoreAnchorCo
 
 internal object AnchorConverter {
     /**
-     * Converts a continuous anchor to an [IconAnchor].
+     * Converts a continuous anchor in the form of `(x, y)` coordinates to an [IconAnchor].
      */
     fun convertContinuousToDiscreteIconAnchor(anchorContinuous: Pair<Float, Float>): IconAnchor {
         return when (CoreAnchorConverter.genericConvertContinuousToDiscreteAnchor(anchorContinuous)) {

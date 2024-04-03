@@ -22,7 +22,8 @@ import com.openmobilehub.android.maps.core.utils.AnchorConverter as CoreAnchorCo
 
 internal object AnchorConverter {
     /**
-     * Converts a continuous anchor to an [String] constant defined in Azure Maps' [AnchorType].
+     * Converts a continuous anchor in the form of `(x, y)` coordinates
+     * to a [String] constant defined in Azure Maps' [AnchorType].
      */
     fun convertContinuousToDiscreteAnchorType(anchorContinuous: Pair<Float, Float>): String {
         return when (CoreAnchorConverter.genericConvertContinuousToDiscreteAnchor(anchorContinuous)) {
