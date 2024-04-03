@@ -34,12 +34,14 @@ import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMarke
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.utils.DrawableConverter
 import com.openmobilehub.android.maps.core.utils.cartesian.Offset2D
+import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IMapInfoWindowManagerDelegate
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IOmhInfoWindowMapViewDelegate
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.ITouchInteractable
 import com.openmobilehub.android.maps.plugin.mapbox.utils.AnchorConverter
 import com.openmobilehub.android.maps.plugin.mapbox.utils.Constants
 import com.openmobilehub.android.maps.plugin.mapbox.utils.CoordinateConverter
+import com.openmobilehub.android.maps.plugin.mapbox.utils.markerLogger
 import java.util.UUID
 import com.openmobilehub.android.maps.core.presentation.models.Constants as OmhConstants
 
@@ -62,7 +64,8 @@ internal class OmhMarkerImpl(
     initialInfoWindowAnchor: Pair<Float, Float> = OmhConstants.ANCHOR_CENTER to OmhConstants.ANCHOR_TOP,
     initialIcon: Drawable?,
     infoWindowManagerDelegate: IMapInfoWindowManagerDelegate,
-    infoWindowMapViewDelegate: IOmhInfoWindowMapViewDelegate
+    infoWindowMapViewDelegate: IOmhInfoWindowMapViewDelegate,
+    private val logger: UnsupportedFeatureLogger = markerLogger
 ) : OmhMarker, ITouchInteractable {
 
     private lateinit var geoJsonSource: GeoJsonSource
@@ -180,6 +183,11 @@ internal class OmhMarkerImpl(
     }
 
     override fun setAnchor(anchorU: Float, anchorV: Float) {
+        logger.logFeatureSetterPartiallySupported(
+            "anchor",
+            "only discrete anchor types are supported, continuous values are converted to discrete ones"
+        )
+
         bufferedAnchor = anchorU to anchorV
         markerSymbolLayer.iconAnchor(
             AnchorConverter.convertContinuousToDiscreteIconAnchor(bufferedAnchor)

@@ -48,8 +48,8 @@ internal class OmhInfoWindow(
 ) : ITouchInteractable {
     private var infoWindowIsVisible: Boolean = false
 
-    private var customInfoWindowViewFactory: OmhInfoWindowViewFactory? = null
-    private var infoWindowContentsViewFactory: OmhInfoWindowViewFactory? = null
+    internal var customInfoWindowViewFactory: OmhInfoWindowViewFactory? = null
+    internal var infoWindowContentsViewFactory: OmhInfoWindowViewFactory? = null
 
     internal var windowViewWidth: Int = 0
     internal var windowViewHeight: Int = 0

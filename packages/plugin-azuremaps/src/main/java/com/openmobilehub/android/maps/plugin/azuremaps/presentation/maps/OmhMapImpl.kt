@@ -16,12 +16,17 @@
 
 package com.openmobilehub.android.maps.plugin.azuremaps.presentation.maps
 
+import a.a.a.a.a.m
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.content.Context
 import androidx.annotation.RequiresPermission
 import com.azure.android.maps.control.AzureMap
+import com.azure.android.maps.control.ImageManager
+import com.azure.android.maps.control.LayerManager
 import com.azure.android.maps.control.MapControl
+import com.azure.android.maps.control.PopupManager
+import com.azure.android.maps.control.SourceManager
 import com.azure.android.maps.control.events.OnFeatureClick
 import com.mapbox.geojson.Feature
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhInfoWindowViewFactory
@@ -46,6 +51,7 @@ import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolygonOptions
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolylineOptions
 import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
+import com.openmobilehub.android.maps.plugin.azuremaps.presentation.interfaces.AzureMapInterface
 import com.openmobilehub.android.maps.plugin.azuremaps.presentation.maps.managers.CameraManager
 import com.openmobilehub.android.maps.plugin.azuremaps.presentation.maps.managers.MapMarkerManager
 import com.openmobilehub.android.maps.plugin.azuremaps.presentation.maps.managers.MyLocationManager
@@ -55,7 +61,7 @@ import com.openmobilehub.android.maps.plugin.azuremaps.utils.mapLogger
 @SuppressWarnings("TooManyFunctions", "UnusedPrivateMember", "LongParameterList")
 internal class OmhMapImpl(
     private val context: Context,
-    val mapControl: MapControl,
+    private val mapControl: MapControl,
     val mapView: AzureMap,
     private val cameraManager: CameraManager = CameraManager(mapView),
     private val myLocationManager: MyLocationManager = MyLocationManager(
@@ -67,7 +73,21 @@ internal class OmhMapImpl(
     bRunningInTest: Boolean = false
 ) : OmhMap {
 
-    internal val mapMarkerManager = MapMarkerManager(context, mapView)
+    internal val mapMarkerManager = MapMarkerManager(
+        context,
+        object : AzureMapInterface {
+            override val ui: m
+                get() = mapView.ui
+            override val sources: SourceManager
+                get() = mapView.sources
+            override val layers: LayerManager
+                get() = mapView.layers
+            override val images: ImageManager
+                get() = mapView.images
+            override val popups: PopupManager
+                get() = mapView.popups
+        }
+    )
 
     override val providerName: String
         get() = Constants.PROVIDER_NAME
@@ -164,7 +184,7 @@ internal class OmhMapImpl(
     }
 
     override fun setOnMarkerDragListener(listener: OmhOnMarkerDragListener) {
-        mapMarkerManager.setMarkerDragListener(listener)
+        logger.logSetterNotSupported("markerDragListener")
     }
 
     override fun setOnInfoWindowOpenStatusChangeListener(listener: OmhOnInfoWindowOpenStatusChangeListener) {

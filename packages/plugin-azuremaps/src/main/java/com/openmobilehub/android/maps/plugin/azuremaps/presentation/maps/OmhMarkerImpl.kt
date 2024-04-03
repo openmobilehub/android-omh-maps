@@ -35,11 +35,13 @@ import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMarke
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.utils.DrawableConverter
 import com.openmobilehub.android.maps.core.utils.cartesian.Offset2D
+import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
 import com.openmobilehub.android.maps.plugin.azuremaps.presentation.interfaces.IMapViewDelegate
 import com.openmobilehub.android.maps.plugin.azuremaps.presentation.interfaces.ITouchInteractable
 import com.openmobilehub.android.maps.plugin.azuremaps.utils.AnchorConverter
 import com.openmobilehub.android.maps.plugin.azuremaps.utils.Constants
 import com.openmobilehub.android.maps.plugin.azuremaps.utils.CoordinateConverter
+import com.openmobilehub.android.maps.plugin.azuremaps.utils.markerLogger
 import java.util.UUID
 import com.openmobilehub.android.maps.core.presentation.models.Constants as OmhConstants
 
@@ -53,7 +55,6 @@ internal class OmhMarkerImpl(
     initialTitle: String?,
     initialSnippet: String?,
     infoWindowPopup: Popup,
-    private var draggable: Boolean,
     private var clickable: Boolean,
     private var backgroundColor: Int?,
     private var alpha: Float = OmhConstants.DEFAULT_ALPHA,
@@ -64,6 +65,7 @@ internal class OmhMarkerImpl(
     initialInfoWindowAnchor: Pair<Float, Float> = OmhConstants.ANCHOR_CENTER to OmhConstants.ANCHOR_TOP,
     initialIcon: Drawable?,
     private val mapViewDelegate: IMapViewDelegate,
+    private val logger: UnsupportedFeatureLogger = markerLogger
 ) : OmhMarker, ITouchInteractable {
 
     internal var omhInfoWindow: OmhInfoWindow
@@ -117,7 +119,9 @@ internal class OmhMarkerImpl(
     }
 
     override fun getDraggable(): Boolean {
-        return isVisible && draggable
+        logger.logGetterNotSupported("draggable")
+
+        return false
     }
 
     @SuppressWarnings("MagicNumber")
@@ -170,10 +174,15 @@ internal class OmhMarkerImpl(
     }
 
     override fun setDraggable(draggable: Boolean) {
-        this.draggable = draggable
+        logger.logSetterNotSupported("draggable")
     }
 
     override fun setAnchor(anchorU: Float, anchorV: Float) {
+        logger.logFeatureSetterPartiallySupported(
+            "anchor",
+            "only discrete anchor types are supported, continuous values are converted to discrete ones"
+        )
+
         anchor = anchorU to anchorV
         markerSymbolLayer.setOptions(
             SymbolLayerOptions.iconAnchor(

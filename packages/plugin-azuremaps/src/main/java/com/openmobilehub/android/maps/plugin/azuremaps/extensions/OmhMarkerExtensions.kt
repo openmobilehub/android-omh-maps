@@ -19,10 +19,19 @@ package com.openmobilehub.android.maps.plugin.azuremaps.extensions
 import com.azure.android.maps.control.options.Option
 import com.azure.android.maps.control.options.SymbolLayerOptions
 import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
+import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
 import com.openmobilehub.android.maps.plugin.azuremaps.presentation.maps.OmhMarkerImpl
 import com.openmobilehub.android.maps.plugin.azuremaps.utils.AnchorConverter
+import com.openmobilehub.android.maps.plugin.azuremaps.utils.markerLogger
 
-internal fun OmhMarkerOptions.toSymbolLayerOptionsList(): List<Option<*>> {
+@Suppress("MaxLineLength")
+internal fun OmhMarkerOptions.toSymbolLayerOptionsList(
+    logger: UnsupportedFeatureLogger = markerLogger
+): List<Option<*>> {
+    draggable.let {
+        logger.logNotSupported("draggable")
+    }
+
     return listOf<Option<*>>(
         // icon
         SymbolLayerOptions.iconSize(1f), // icon scale
