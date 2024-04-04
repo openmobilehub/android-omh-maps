@@ -18,6 +18,7 @@ package com.openmobilehub.android.maps.plugin.azuremaps.presentation.maps
 
 import android.graphics.Color
 import com.azure.android.maps.control.layer.LineLayer
+import com.azure.android.maps.control.options.LayerOptions
 import com.azure.android.maps.control.options.LineLayerOptions
 import com.azure.android.maps.control.source.DataSource
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhCap
@@ -25,9 +26,13 @@ import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhPatte
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhPolyline
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhStyleSpan
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
+import com.openmobilehub.android.maps.core.presentation.models.OmhJointType
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolylineOptions
+import com.openmobilehub.android.maps.core.presentation.models.OmhRoundCap
 import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
 import com.openmobilehub.android.maps.plugin.azuremaps.presentation.interfaces.IPolylineDelegate
+import com.openmobilehub.android.maps.plugin.azuremaps.utils.CapConverter
+import com.openmobilehub.android.maps.plugin.azuremaps.utils.JointTypeConverter
 import com.openmobilehub.android.maps.plugin.azuremaps.utils.polylineLogger
 import java.util.UUID
 
@@ -58,37 +63,44 @@ internal class OmhPolylineImpl(
     private var _isVisible: Boolean = true
         set(value) {
             field = value
-            applyAlpha()
+            applyIsVisible()
+        }
+
+    private var _cap: OmhCap = OmhRoundCap()
+        set(value) {
+            field = value
+            applyCap()
+        }
+
+    private var _jointType: Int = OmhJointType.ROUND
+        set(value) {
+            field = value
+            applyJoin()
         }
 
     init {
-        _clickable = options.clickable ?: false
         _points = options.points
-        options.isVisible?.let { _isVisible = it }
+        _clickable = options.clickable ?: false
         options.color?.let { _color = it }
         options.width?.let { _width = it }
+        options.isVisible?.let { _isVisible = it }
+        options.jointType?.let { _jointType = it }
+        options.cap?.let { _cap = it }
     }
 
-    override fun getCap(): OmhCap? {
-        logger.logGetterNotSupported("cap")
-        return null
-    }
+    override fun getCap(): OmhCap = _cap
 
     override fun setCap(cap: OmhCap) {
-        logger.logSetterNotSupported("cap")
+        _cap = cap
     }
 
-    override fun getClickable(): Boolean {
-        return _clickable
-    }
+    override fun getClickable(): Boolean = _clickable
 
     override fun setClickable(clickable: Boolean) {
         _clickable = clickable
     }
 
-    override fun getColor(): Int {
-        return _color
-    }
+    override fun getColor(): Int = _color
 
     override fun setColor(color: Int) {
         _color = color
@@ -103,13 +115,10 @@ internal class OmhPolylineImpl(
         logger.logSetterNotSupported("endCap")
     }
 
-    override fun getJointType(): Int? {
-        logger.logGetterNotSupported("jointType")
-        return null
-    }
+    override fun getJointType(): Int = _jointType
 
     override fun setJointType(jointType: Int) {
-        logger.logSetterNotSupported("jointType")
+        _jointType = jointType
     }
 
     override fun getPattern(): List<OmhPatternItem>? {
@@ -121,9 +130,7 @@ internal class OmhPolylineImpl(
         logger.logSetterNotSupported("pattern")
     }
 
-    override fun getPoints(): List<OmhCoordinate> {
-        return _points
-    }
+    override fun getPoints(): List<OmhCoordinate> = _points
 
     override fun setPoints(omhCoordinates: List<OmhCoordinate>) {
         _points = omhCoordinates
@@ -148,25 +155,19 @@ internal class OmhPolylineImpl(
         logger.logSetterNotSupported("startCap")
     }
 
-    override fun getTag(): Any? {
-        return _tag
-    }
+    override fun getTag(): Any? = _tag
 
     override fun setTag(tag: Any) {
         _tag = tag
     }
 
-    override fun isVisible(): Boolean {
-        return _isVisible
-    }
+    override fun isVisible(): Boolean = _isVisible
 
     override fun setVisible(visible: Boolean) {
         _isVisible = visible
     }
 
-    override fun getWidth(): Float {
-        return _width
-    }
+    override fun getWidth(): Float = _width
 
     override fun setWidth(width: Float) {
         _width = width
@@ -181,9 +182,9 @@ internal class OmhPolylineImpl(
         logger.logSetterNotSupported("zIndex")
     }
 
-    private fun applyAlpha() {
+    private fun applyIsVisible() {
         lineLayer.setOptions(
-            LineLayerOptions.strokeOpacity(if (_isVisible) 1.0f else 0f),
+            LayerOptions.visible(_isVisible),
         )
     }
 
@@ -196,6 +197,18 @@ internal class OmhPolylineImpl(
     private fun applyWidth() {
         lineLayer.setOptions(
             LineLayerOptions.strokeWidth(_width)
+        )
+    }
+
+    private fun applyCap() {
+        lineLayer.setOptions(
+            LineLayerOptions.lineCap(CapConverter.convertToAzureMapsLineCap(_cap))
+        )
+    }
+
+    private fun applyJoin() {
+        lineLayer.setOptions(
+            LineLayerOptions.lineJoin(JointTypeConverter.convertToAzureMapsLineJoin(_jointType))
         )
     }
 
