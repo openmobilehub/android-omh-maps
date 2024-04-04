@@ -29,6 +29,7 @@ import androidx.core.content.ContextCompat
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhInfoWindowViewFactory
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMap
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMapLoadedCallback
+import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMapView
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMarker
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnCameraIdleListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnCameraMoveStartedListener
@@ -73,12 +74,12 @@ import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 @SuppressWarnings("TooManyFunctions")
 class OmhMapImpl(
     val mapView: MapView,
+    private val omhMapView: OmhMapView,
     private val logger: UnsupportedFeatureLogger = mapLogger
 ) : OmhMap {
 
     private val mapListenerController: MapListenerController = MapListenerController()
     private var myLocationNewOverlay: MyLocationNewOverlay? = null
-    private var myLocationIconOverlay: MyLocationIconOverlay? = null
     private val gestureOverlay = GestureOverlay()
     private var polylineClickListener: OmhOnPolylineClickListener? = null
     private var polygonClickListener: OmhOnPolygonClickListener? = null
@@ -271,17 +272,15 @@ class OmhMapImpl(
             enableMyLocation()
         } else {
             myLocationNewOverlay?.disableMyLocation()
-            mapView.overlayManager.remove(myLocationIconOverlay)
             mapView.overlayManager.remove(myLocationNewOverlay)
+            (omhMapView as OmhMapViewImpl).setCenterLocationButtonEnabled(false)
         }
     }
 
     @RequiresPermission(anyOf = [ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION])
     private fun enableMyLocation() {
         if (myLocationNewOverlay?.isMyLocationEnabled != true) {
-            myLocationIconOverlay = MyLocationIconOverlay(mapView.context).apply {
-                setCenterLocation { setMyLocationEnabled(true) }
-            }
+            (omhMapView as OmhMapViewImpl).setCenterLocation { setMyLocationEnabled(true) }
             val gpsMyLocationProvider = GpsMyLocationProvider(mapView.context).apply {
                 addLocationSource(FUSED_PROVIDER)
             }
@@ -289,7 +288,7 @@ class OmhMapImpl(
                 enableMyLocation()
             }
             mapView.overlayManager.add(myLocationNewOverlay)
-            mapView.overlayManager.add(myLocationIconOverlay)
+            omhMapView.setCenterLocationButtonEnabled(true)
         }
         myLocationNewOverlay?.myLocation?.let { geoPoint ->
             with(mapView.controller) {
@@ -307,7 +306,7 @@ class OmhMapImpl(
     override fun setMyLocationButtonClickListener(
         omhOnMyLocationButtonClickListener: OmhOnMyLocationButtonClickListener
     ) {
-        myLocationIconOverlay?.setOnClickListener {
+        (omhMapView as OmhMapViewImpl).setOnCenterLocationButtonClickListener {
             omhOnMyLocationButtonClickListener.onMyLocationButtonClick()
         }
     }

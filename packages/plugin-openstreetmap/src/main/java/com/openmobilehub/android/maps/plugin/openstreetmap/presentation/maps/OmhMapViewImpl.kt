@@ -18,12 +18,15 @@ package com.openmobilehub.android.maps.plugin.openstreetmap.presentation.maps
 
 import android.content.Context
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.View.OnClickListener
+import android.widget.ImageButton
 import androidx.preference.PreferenceManager
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMapView
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMapReadyCallback
-import com.openmobilehub.android.maps.plugin.openstreetmap.utils.Constants.MAX_ZOOM_LEVEL
-import com.openmobilehub.android.maps.plugin.openstreetmap.utils.Constants.MIN_ZOOM_LEVEL
+import com.openmobilehub.android.maps.plugin.openstreetmap.R
+import com.openmobilehub.android.maps.plugin.openstreetmap.utils.Constants
 import org.osmdroid.config.Configuration
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.BoundingBox
@@ -32,19 +35,43 @@ import org.osmdroid.views.MapView
 @Suppress("TooManyFunctions") // Suppress issue since interface has more than 12 functions.
 internal class OmhMapViewImpl(context: Context) : OmhMapView {
 
+    private var containerView: View
     private var mapView: MapView
+    private var centerMyLocationButton: ImageButton
+    private var centerLocation: (() -> Unit)? = null
 
     init {
         Configuration.getInstance()
             .load(context, PreferenceManager.getDefaultSharedPreferences(context))
-        mapView = MapView(context).apply {
-            minZoomLevel = MIN_ZOOM_LEVEL
-            maxZoomLevel = MAX_ZOOM_LEVEL
+
+        containerView = LayoutInflater.from(context).inflate(R.layout.map_view, null)
+        mapView = containerView.findViewById<MapView>(R.id.omh_osmdroid_map_view).apply {
+            minZoomLevel = Constants.MIN_ZOOM_LEVEL
+            maxZoomLevel = Constants.MAX_ZOOM_LEVEL
             isHorizontalMapRepetitionEnabled = false
             isVerticalMapRepetitionEnabled = false
             limitScrollArea()
             postInvalidate()
         }
+        centerMyLocationButton =
+            containerView.findViewById(R.id.omh_osmdroid_map_view_button_center_mylocation)
+
+        centerMyLocationButton.visibility = View.GONE
+    }
+
+    fun setOnCenterLocationButtonClickListener(onClick: OnClickListener) {
+        centerMyLocationButton.setOnClickListener {
+            onClick.onClick(centerMyLocationButton)
+            centerLocation?.invoke()
+        }
+    }
+
+    fun setCenterLocation(centerLocation: () -> Unit) {
+        this.centerLocation = centerLocation
+    }
+
+    fun setCenterLocationButtonEnabled(isEnabled: Boolean) {
+        centerMyLocationButton.visibility = if (isEnabled) View.VISIBLE else View.GONE
     }
 
     private fun MapView.limitScrollArea() {
@@ -60,12 +87,12 @@ internal class OmhMapViewImpl(context: Context) : OmhMapView {
     }
 
     override fun getView(): View {
-        return mapView
+        return containerView
     }
 
     override fun getMapAsync(omhOnMapReadyCallback: OmhOnMapReadyCallback) {
         mapView.let { secureMapView ->
-            val omhMapView = OmhMapImpl(secureMapView)
+            val omhMapView = OmhMapImpl(secureMapView, this)
             omhOnMapReadyCallback.onMapReady(omhMapView)
         }
     }
