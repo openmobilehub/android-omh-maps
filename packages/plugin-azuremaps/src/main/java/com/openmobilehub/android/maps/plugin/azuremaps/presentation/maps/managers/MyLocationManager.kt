@@ -16,7 +16,7 @@ import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.utils.location.NativeLocationService
 import com.openmobilehub.android.maps.core.utils.logging.Logger
 import com.openmobilehub.android.maps.plugin.azuremaps.presentation.maps.MyLocationControl
-import com.openmobilehub.android.maps.plugin.azuremaps.presentation.utils.commonLogger
+import com.openmobilehub.android.maps.plugin.azuremaps.utils.commonLogger
 
 class MyLocationManager(
     context: Context,

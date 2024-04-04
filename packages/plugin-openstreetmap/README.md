@@ -69,12 +69,15 @@ Legend of support levels:
 | setOnPolygonClickListener               |     ✅     |
 | snapshot                                |     ✅     |
 | setMapStyle                             |     ❌     |
+| setCustomInfoWindowContentsViewFactory  |     ✅     |
+| setCustomInfoWindowViewFactory          |     🟨     |
 
 Comments for partially supported 🟨 properties:
 
-| Property                       | Comments                                            |
-| ------------------------------ | --------------------------------------------------- |
-| setOnCameraMoveStartedListener | The reason of the camera changed started is unknown |
+| Property                       | Comments                                                                                                                                                                                                                                                                                                                                           |
+| ------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| setOnCameraMoveStartedListener | The reason of the camera changed started is unknown                                                                                                                                                                                                                                                                                                |
+| setCustomInfoWindowViewFactory | The provider supports this method in full, however since the view is rendered "live" (i.e., the view is mounted instead of being rendered to a bitmap), attaching interaction listeners to the root view returned by the factory is forbidden. Please consult the [advanced documentation](https://todo.todo) of this plugin for more information. |
 
 ### Marker
 

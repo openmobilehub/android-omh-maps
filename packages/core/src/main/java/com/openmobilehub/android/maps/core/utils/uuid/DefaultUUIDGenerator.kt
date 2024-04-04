@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.openmobilehub.android.maps.plugin.mapbox.utils.uuid
+package com.openmobilehub.android.maps.core.utils.uuid
 
 import java.util.UUID
 

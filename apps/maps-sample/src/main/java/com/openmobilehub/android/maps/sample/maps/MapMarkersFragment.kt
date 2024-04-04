@@ -44,6 +44,7 @@ import com.openmobilehub.android.maps.sample.customviews.PanelSpinner
 import com.openmobilehub.android.maps.sample.databinding.FragmentMapMarkersBinding
 import com.openmobilehub.android.maps.sample.model.InfoDisplay
 import com.openmobilehub.android.maps.sample.utils.Constants.DEFAULT_ZOOM_LEVEL
+import com.openmobilehub.android.maps.sample.utils.Constants.OSM_PROVIDER
 import com.openmobilehub.android.maps.sample.utils.Constants.PERMISSIONS
 import com.openmobilehub.android.maps.sample.utils.Constants.PRIME_MERIDIAN
 import com.openmobilehub.android.maps.sample.utils.Constants.SHOW_MESSAGE_TIME
@@ -207,9 +208,14 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
         anchorVSeekbar?.setProgress(50)
         alphaSeekbar?.setProgress(100)
 
-        if (mapProviderName == "OpenStreetMap") {
+        if (mapProviderName == OSM_PROVIDER) {
             disabledAppearancePositions =
                 hashSetOf(markerAppearanceTypeNameResourceID.indexOf(R.string.marker_appearance_type_custom_color))
+        }
+
+        if (mapProviderName == com.openmobilehub.android.maps.sample.utils.Constants.AZURE_PROVIDER) {
+            isDraggableCheckbox?.isChecked = false
+            isDraggableCheckbox?.isEnabled = false
         }
 
         appearanceSpinner?.setDisabledPositions(disabledAppearancePositions)

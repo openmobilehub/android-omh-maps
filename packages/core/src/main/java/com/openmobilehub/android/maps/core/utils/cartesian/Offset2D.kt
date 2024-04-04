@@ -14,9 +14,18 @@
  * limitations under the License.
  */
 
-package com.openmobilehub.android.maps.plugin.mapbox.utils.cartesian
+package com.openmobilehub.android.maps.core.utils.cartesian
 
+import kotlin.math.cos
+import kotlin.math.sin
+
+/**
+ * A 2D offset.
+ *
+ * @constructor Creates a new absolute 2D offset.
+ */
 data class Offset2D<T : Number>(val x: T, val y: T) {
+    @Suppress("Unchecked_cast")
     operator fun plus(other: Offset2D<T>): Offset2D<T> {
         return when (x) {
             is Int -> Offset2D(
@@ -36,5 +45,20 @@ data class Offset2D<T : Number>(val x: T, val y: T) {
 
             else -> throw IllegalArgumentException("Unsupported type passed to Offset2D")
         } as Offset2D<T>
+    }
+
+    /**
+     * Rotates this offset by the given angle [thetaDeg].
+     *
+     * @param thetaDeg The angle in degrees.
+     * @return The rotated offset.
+     */
+    fun rotateOffset(thetaDeg: Double): Offset2D<Double> {
+        val thetaRad = Math.toRadians(thetaDeg) // convert from degrees to radians
+
+        return Offset2D(
+            -(cos(thetaRad) * this.x.toDouble() - sin(thetaRad) * this.y.toDouble()),
+            -(sin(thetaRad) * this.x.toDouble() + cos(thetaRad) * this.y.toDouble())
+        )
     }
 }

@@ -14,10 +14,18 @@
  * limitations under the License.
  */
 
-package com.openmobilehub.android.maps.plugin.azuremaps.presentation.utils
+package com.openmobilehub.android.maps.plugin.azuremaps.presentation.interfaces
 
-import com.openmobilehub.android.maps.core.utils.logging.Logger
-import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
+import a.a.a.a.a.m
+import com.azure.android.maps.control.ImageManager
+import com.azure.android.maps.control.LayerManager
+import com.azure.android.maps.control.PopupManager
+import com.azure.android.maps.control.SourceManager
 
-val mapLogger = UnsupportedFeatureLogger(Constants.PROVIDER_NAME, "OmhMap")
-val commonLogger = Logger(Constants.PROVIDER_NAME)
+interface AzureMapInterface {
+    val ui: m
+    val sources: SourceManager
+    val layers: LayerManager
+    val images: ImageManager
+    val popups: PopupManager
+}

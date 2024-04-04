@@ -21,6 +21,7 @@ import android.view.MotionEvent
 import androidx.annotation.ColorInt
 
 internal object Constants {
+    // Marker style
     @ColorInt
     const val DEFAULT_MARKER_COLOR: Int = 0xFFEA393F.toInt()
 
@@ -40,6 +41,7 @@ internal object Constants {
     const val DEFAULT_POLYGON_FILL_COLOR = Color.TRANSPARENT
     const val DEFAULT_POLYGON_STROKE_COLOR = Color.BLACK
 
+    // Map interaction
     /** The list of motion events that are considered "active" (i.e., issued when the user is dragging). */
     val ACTIVE_MOTION_EVENTS =
         listOf(MotionEvent.ACTION_POINTER_DOWN, MotionEvent.ACTION_DOWN, MotionEvent.ACTION_MOVE)

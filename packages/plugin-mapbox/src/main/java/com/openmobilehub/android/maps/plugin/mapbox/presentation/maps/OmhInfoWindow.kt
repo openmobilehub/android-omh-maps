@@ -16,6 +16,7 @@
 
 package com.openmobilehub.android.maps.plugin.mapbox.presentation.maps
 
+import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.os.Handler
 import android.os.Looper
@@ -34,17 +35,18 @@ import com.mapbox.maps.extension.style.layers.properties.generated.IconAnchor
 import com.mapbox.maps.extension.style.layers.properties.generated.Visibility
 import com.mapbox.maps.extension.style.sources.addSource
 import com.mapbox.maps.extension.style.sources.generated.GeoJsonSource
+import com.openmobilehub.android.maps.core.R
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhInfoWindowViewFactory
 import com.openmobilehub.android.maps.core.utils.ScreenUnitConverter
-import com.openmobilehub.android.maps.plugin.mapbox.R
-import com.openmobilehub.android.maps.plugin.mapbox.extensions.plus
+import com.openmobilehub.android.maps.core.utils.cartesian.Offset2D
+import com.openmobilehub.android.maps.core.utils.uuid.DefaultUUIDGenerator
+import com.openmobilehub.android.maps.core.utils.uuid.UUIDGenerator
+import com.openmobilehub.android.maps.plugin.mapbox.extensions.toPoint2D
+import com.openmobilehub.android.maps.plugin.mapbox.extensions.toScreenCoordinate
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IMapInfoWindowManagerDelegate
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IOmhInfoWindowMapViewDelegate
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.ITouchInteractable
 import com.openmobilehub.android.maps.plugin.mapbox.utils.CoordinateConverter
-import com.openmobilehub.android.maps.plugin.mapbox.utils.cartesian.Offset2D
-import com.openmobilehub.android.maps.plugin.mapbox.utils.uuid.DefaultUUIDGenerator
-import com.openmobilehub.android.maps.plugin.mapbox.utils.uuid.UUIDGenerator
 import java.util.concurrent.Executors
 
 @SuppressWarnings("TooManyFunctions", "LongParameterList")
@@ -204,13 +206,15 @@ internal class OmhInfoWindow(
         if (!::geoJsonSource.isInitialized) return
 
         val markerPoint = CoordinateConverter.convertToPoint(omhMarker.getPosition())
+        val markerScreenPoint2D =
+            mapViewDelegate.pixelForCoordinate(markerPoint).toPoint2D()
         val screenCoordinate =
-            mapViewDelegate.pixelForCoordinate(markerPoint) + omhMarker.getHandleTopOffset() + getHandleCenterOffset()
+            markerScreenPoint2D + omhMarker.getHandleTopOffset() + getHandleCenterOffset()
 
         geoJsonSource.feature(
             Feature.fromGeometry(
                 mapViewDelegate.coordinateForPixel(
-                    screenCoordinate
+                    screenCoordinate.toScreenCoordinate()
                 )
             )
         )
@@ -325,6 +329,7 @@ internal class OmhInfoWindow(
      *
      * @return The rendered default info window view.
      */
+    @SuppressLint("InflateParams")
     @SuppressWarnings("MagicNumber")
     private fun renderDefaultInfoWindowView(customContents: View?): View {
         val defaultWindowView = LayoutInflater.from(omhMarker.context).inflate(

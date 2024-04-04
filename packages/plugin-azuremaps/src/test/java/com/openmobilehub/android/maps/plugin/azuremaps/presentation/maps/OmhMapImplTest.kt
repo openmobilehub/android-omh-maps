@@ -32,7 +32,16 @@ class OmhMapImplTest {
 
     @Before
     fun setUp() {
-        omhMapImpl = OmhMapImpl(context, mapControl, mapView, cameraManager, myLocationManager, logger)
+        omhMapImpl =
+            OmhMapImpl(
+                context,
+                mapControl,
+                mapView,
+                cameraManager,
+                myLocationManager,
+                logger,
+                bRunningInTest = true
+            )
     }
 
     @Test
@@ -41,7 +50,10 @@ class OmhMapImplTest {
         val latitude = 10.0
         val longitude = 15.0
 
-        every { cameraManager.getCameraPositionCoordinate() } returns OmhCoordinate(latitude, longitude)
+        every { cameraManager.getCameraPositionCoordinate() } returns OmhCoordinate(
+            latitude,
+            longitude
+        )
 
         // Act
         val result = omhMapImpl.getCameraPositionCoordinate()
