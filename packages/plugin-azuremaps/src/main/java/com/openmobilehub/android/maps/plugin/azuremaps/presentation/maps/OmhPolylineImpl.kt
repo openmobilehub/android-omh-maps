@@ -33,6 +33,7 @@ import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogge
 import com.openmobilehub.android.maps.plugin.azuremaps.presentation.interfaces.IPolylineDelegate
 import com.openmobilehub.android.maps.plugin.azuremaps.utils.CapConverter
 import com.openmobilehub.android.maps.plugin.azuremaps.utils.JointTypeConverter
+import com.openmobilehub.android.maps.plugin.azuremaps.utils.PatternConverter
 import com.openmobilehub.android.maps.plugin.azuremaps.utils.polylineLogger
 import java.util.UUID
 
@@ -78,6 +79,12 @@ internal class OmhPolylineImpl(
             applyJoin()
         }
 
+    private var _pattern: List<OmhPatternItem>? = null
+        set(value) {
+            field = value
+            applyPatter()
+        }
+
     init {
         _points = options.points
         _clickable = options.clickable ?: false
@@ -86,6 +93,7 @@ internal class OmhPolylineImpl(
         options.isVisible?.let { _isVisible = it }
         options.jointType?.let { _jointType = it }
         options.cap?.let { _cap = it }
+        options.pattern?.let { _pattern = it }
     }
 
     override fun getCap(): OmhCap = _cap
@@ -121,13 +129,10 @@ internal class OmhPolylineImpl(
         _jointType = jointType
     }
 
-    override fun getPattern(): List<OmhPatternItem>? {
-        logger.logGetterNotSupported("pattern")
-        return null
-    }
+    override fun getPattern(): List<OmhPatternItem>? = _pattern
 
     override fun setPattern(pattern: List<OmhPatternItem>) {
-        logger.logSetterNotSupported("pattern")
+        _pattern = pattern
     }
 
     override fun getPoints(): List<OmhCoordinate> = _points
@@ -210,6 +215,17 @@ internal class OmhPolylineImpl(
         lineLayer.setOptions(
             LineLayerOptions.lineJoin(JointTypeConverter.convertToAzureMapsLineJoin(_jointType))
         )
+    }
+
+    private fun applyPatter() {
+        _pattern?.let { pattern ->
+            lineLayer.setOptions(
+                LineLayerOptions.strokeDashArray(
+                    PatternConverter.convertToAzureMapsPattern(pattern, logger).map { it / _width }
+                        .toTypedArray()
+                )
+            )
+        }
     }
 
     companion object {

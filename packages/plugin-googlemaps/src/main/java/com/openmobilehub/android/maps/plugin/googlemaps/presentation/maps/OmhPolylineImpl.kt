@@ -88,7 +88,7 @@ internal class OmhPolylineImpl(
     override fun setPattern(pattern: List<OmhPatternItem>) {
         polyline.pattern = pattern.map { patternItem ->
             PatternConverter.convertToPatternItem(patternItem)
-        }
+        }.ifEmpty { null }
     }
 
     override fun getPoints(): List<OmhCoordinate> {
