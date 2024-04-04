@@ -18,7 +18,6 @@ package com.openmobilehub.android.maps.plugin.azuremaps.presentation.maps.manage
 
 import android.content.Context
 import android.graphics.Bitmap
-import com.azure.android.maps.control.AzureMap
 import com.azure.android.maps.control.Popup
 import com.azure.android.maps.control.layer.SymbolLayer
 import com.azure.android.maps.control.source.DataSource
@@ -29,11 +28,11 @@ import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnInf
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnInfoWindowLongClickListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnInfoWindowOpenStatusChangeListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMarkerClickListener
-import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMarkerDragListener
 import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
 import com.openmobilehub.android.maps.core.utils.uuid.DefaultUUIDGenerator
 import com.openmobilehub.android.maps.core.utils.uuid.UUIDGenerator
 import com.openmobilehub.android.maps.plugin.azuremaps.extensions.toSymbolLayerOptionsList
+import com.openmobilehub.android.maps.plugin.azuremaps.presentation.interfaces.AzureMapInterface
 import com.openmobilehub.android.maps.plugin.azuremaps.presentation.interfaces.IMapViewDelegate
 import com.openmobilehub.android.maps.plugin.azuremaps.presentation.maps.OmhInfoWindow
 import com.openmobilehub.android.maps.plugin.azuremaps.presentation.maps.OmhMarkerImpl
@@ -43,10 +42,9 @@ import com.openmobilehub.android.maps.plugin.azuremaps.utils.CoordinateConverter
 @SuppressWarnings("TooManyFunctions")
 internal class MapMarkerManager(
     private val context: Context,
-    private val map: AzureMap,
+    private val map: AzureMapInterface,
 ) : IMapViewDelegate {
     internal var markerClickListener: OmhOnMarkerClickListener? = null
-    internal var markerDragListener: OmhOnMarkerDragListener? = null
     internal var infoWindowOpenStatusChangeListener: OmhOnInfoWindowOpenStatusChangeListener? = null
     internal var infoWindowClickListener: OmhOnInfoWindowClickListener? = null
     internal var infoWindowLongClickListener: OmhOnInfoWindowLongClickListener? = null
@@ -89,7 +87,6 @@ internal class MapMarkerManager(
             initialTitle = options.title,
             initialSnippet = options.snippet,
             initialInfoWindowAnchor = options.infoWindowAnchor,
-            draggable = options.draggable,
             clickable = options.clickable,
             backgroundColor = options.backgroundColor,
             initialIcon = options.icon,
@@ -111,10 +108,6 @@ internal class MapMarkerManager(
 
     fun setMarkerClickListener(listener: OmhOnMarkerClickListener) {
         markerClickListener = listener
-    }
-
-    fun setMarkerDragListener(listener: OmhOnMarkerDragListener) {
-        markerDragListener = listener
     }
 
     fun setInfoWindowOpenStatusChangeListener(listener: OmhOnInfoWindowOpenStatusChangeListener) {

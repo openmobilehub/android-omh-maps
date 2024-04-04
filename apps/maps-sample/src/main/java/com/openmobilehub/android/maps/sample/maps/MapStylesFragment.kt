@@ -60,7 +60,7 @@ class MapStylesFragment : Fragment(), OmhOnMapReadyCallback {
     private var stylesRadioGroup: RadioGroup? = null
 
     private val infoDisplay by lazy {
-        InfoDisplay(requireView())
+        InfoDisplay(this)
     }
 
     override fun onCreateView(

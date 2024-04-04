@@ -13,7 +13,10 @@ class NativeLocationService(
     private var locationManager: LocationManager =
         context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
-    private val providers = listOf(LocationManager.GPS_PROVIDER, LocationManager.NETWORK_PROVIDER)
+    private val providers =
+        listOf(LocationManager.GPS_PROVIDER, LocationManager.NETWORK_PROVIDER).filter { provider ->
+            locationManager.isProviderEnabled(provider)
+        }
 
     private val currentLocationService = CurrentLocationService(
         locationManager,

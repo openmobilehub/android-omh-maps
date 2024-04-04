@@ -112,7 +112,7 @@ class MapPolylinesFragment : Fragment(), OmhOnMapReadyCallback {
     private var withSpanPatternCheckbox: CheckBox? = null
 
     private val infoDisplay by lazy {
-        InfoDisplay(requireView())
+        InfoDisplay(this)
     }
 
     override fun onCreateView(
