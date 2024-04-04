@@ -23,6 +23,8 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.Drawable
 import android.location.LocationManager.FUSED_PROVIDER
+import android.location.LocationManager.GPS_PROVIDER
+import android.os.Build
 import android.view.View
 import androidx.annotation.RequiresPermission
 import androidx.core.content.ContextCompat
@@ -282,7 +284,11 @@ class OmhMapImpl(
         if (myLocationNewOverlay?.isMyLocationEnabled != true) {
             (omhMapView as OmhMapViewImpl).setCenterLocation { setMyLocationEnabled(true) }
             val gpsMyLocationProvider = GpsMyLocationProvider(mapView.context).apply {
-                addLocationSource(FUSED_PROVIDER)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    addLocationSource(FUSED_PROVIDER)
+                } else {
+                    addLocationSource(GPS_PROVIDER)
+                }
             }
             myLocationNewOverlay = MyLocationNewOverlay(gpsMyLocationProvider, mapView).apply {
                 enableMyLocation()
