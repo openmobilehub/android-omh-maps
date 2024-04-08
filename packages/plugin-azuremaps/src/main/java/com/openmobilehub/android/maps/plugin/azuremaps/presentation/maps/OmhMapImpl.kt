@@ -71,25 +71,23 @@ internal class OmhMapImpl(
         mapView
     ),
     private val logger: UnsupportedFeatureLogger = mapLogger,
-    private val polylineManager: PolylineManager = PolylineManager(mapView),
     bRunningInTest: Boolean = false
 ) : OmhMap {
 
-    internal val mapMarkerManager = MapMarkerManager(
-        context,
-        object : AzureMapInterface {
-            override val ui: m
-                get() = mapView.ui
-            override val sources: SourceManager
-                get() = mapView.sources
-            override val layers: LayerManager
-                get() = mapView.layers
-            override val images: ImageManager
-                get() = mapView.images
-            override val popups: PopupManager
-                get() = mapView.popups
-        }
-    )
+    private val azureMapInterface = object : AzureMapInterface {
+        override val ui: m
+            get() = mapView.ui
+        override val sources: SourceManager
+            get() = mapView.sources
+        override val layers: LayerManager
+            get() = mapView.layers
+        override val images: ImageManager
+            get() = mapView.images
+        override val popups: PopupManager
+            get() = mapView.popups
+    }
+    private val polylineManager = PolylineManager(azureMapInterface)
+    private val mapMarkerManager = MapMarkerManager(context, azureMapInterface)
 
     override val providerName: String
         get() = Constants.PROVIDER_NAME

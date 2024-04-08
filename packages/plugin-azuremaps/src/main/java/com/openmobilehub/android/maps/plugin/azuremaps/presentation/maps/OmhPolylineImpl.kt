@@ -39,7 +39,7 @@ import java.util.UUID
 
 @SuppressWarnings("TooManyFunctions")
 internal class OmhPolylineImpl(
-    private val id: UUID,
+    val id: UUID,
     private val source: DataSource,
     private val lineLayer: LineLayer,
     private val delegate: IPolylineDelegate,

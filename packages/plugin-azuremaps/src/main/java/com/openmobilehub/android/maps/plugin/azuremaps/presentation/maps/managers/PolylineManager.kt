@@ -16,18 +16,17 @@
 
 package com.openmobilehub.android.maps.plugin.azuremaps.presentation.maps.managers
 
-import com.azure.android.maps.control.AzureMap
 import com.azure.android.maps.control.layer.LineLayer
 import com.azure.android.maps.control.source.DataSource
 import com.google.gson.JsonObject
 import com.mapbox.geojson.Feature
 import com.mapbox.geojson.LineString
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnPolylineClickListener
-import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhPolyline
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolylineOptions
 import com.openmobilehub.android.maps.core.utils.uuid.DefaultUUIDGenerator
 import com.openmobilehub.android.maps.core.utils.uuid.UUIDGenerator
+import com.openmobilehub.android.maps.plugin.azuremaps.presentation.interfaces.AzureMapInterface
 import com.openmobilehub.android.maps.plugin.azuremaps.presentation.interfaces.IPolylineDelegate
 import com.openmobilehub.android.maps.plugin.azuremaps.presentation.maps.OmhPolylineImpl
 import com.openmobilehub.android.maps.plugin.azuremaps.utils.Constants
@@ -35,15 +34,15 @@ import com.openmobilehub.android.maps.plugin.azuremaps.utils.CoordinateConverter
 import java.util.UUID
 
 internal class PolylineManager(
-    private val map: AzureMap,
+    private val map: AzureMapInterface,
     private val uuidGenerator: UUIDGenerator = DefaultUUIDGenerator()
 ) : IPolylineDelegate {
 
     internal var clickListener: OmhOnPolylineClickListener? = null
+    private val _polylines = mutableMapOf<String, OmhPolylineImpl>()
+    internal val polylines: Map<String, OmhPolylineImpl> = _polylines
 
-    private var polylines = mutableMapOf<String, OmhPolylineImpl>()
-
-    fun addPolyline(options: OmhPolylineOptions): OmhPolyline {
+    fun addPolyline(options: OmhPolylineOptions): OmhPolylineImpl {
         val polylineId = uuidGenerator.generate()
 
         val source = DataSource(OmhPolylineImpl.getSourceID(polylineId))
@@ -61,7 +60,7 @@ internal class PolylineManager(
 
         map.layers.add(layer)
 
-        polylines[polylineId.toString()] = omhPolyline
+        _polylines[polylineId.toString()] = omhPolyline
 
         return omhPolyline
     }
@@ -92,7 +91,7 @@ internal class PolylineManager(
     }
 
     fun maybeHandleClick(polylineId: String): Boolean {
-        val polyline = polylines[polylineId]
+        val polyline = _polylines[polylineId]
 
         if (polyline == null || !polyline.getClickable() || !polyline.isVisible()) {
             return false

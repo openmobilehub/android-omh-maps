@@ -18,55 +18,53 @@ package com.openmobilehub.android.maps.plugin.azuremaps.utils
 
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhPatternItem
 import com.openmobilehub.android.maps.core.presentation.models.OmhDash
-import com.openmobilehub.android.maps.core.presentation.models.OmhDot
 import com.openmobilehub.android.maps.core.presentation.models.OmhGap
 import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
 
 object PatternConverter {
+
+    /**
+     * Converts list of OmhPatternItem into list of the alternating dashes and gaps lengths.
+     * Only OmhDash and OmhGap items are supported. If same consecutive items types are provided,
+     * a additional item is inserted with value 0 as AzureMapsPattern expects alternating dashes and gaps.
+     *
+     * @return The lengths of the alternating dashes and gaps that form the dash pattern.
+     */
     fun convertToAzureMapsPattern(
         omhPatternItems: List<OmhPatternItem>,
-        logger: UnsupportedFeatureLogger
+        logger: UnsupportedFeatureLogger? = null
     ): List<Float> {
-        return omhPatternItems.mapIndexedNotNull { index, omhPatternItem ->
+        return omhPatternItems.flatMapIndexed { index, omhPatternItem ->
             val shouldBeDash = index % 2 == 0
 
-            convertToAzureMapsPattern(omhPatternItem, shouldBeDash, logger)
+            convertNextOmhPatternItem(omhPatternItem, shouldBeDash, logger)
         }
     }
 
     @SuppressWarnings("ReturnCount")
-    private fun convertToAzureMapsPattern(
+    private fun convertNextOmhPatternItem(
         omhPatternItem: OmhPatternItem,
         shouldBeDash: Boolean,
-        logger: UnsupportedFeatureLogger
-    ): Float? {
+        logger: UnsupportedFeatureLogger? = null
+    ): List<Float> {
         return when (omhPatternItem) {
-            is OmhDot -> {
-                logger.logFeatureSetterPartiallySupported("pattern", "Dot item is not supported")
-                null
-            }
-
             is OmhDash -> {
                 if (shouldBeDash) {
-                    return omhPatternItem.length
+                    return listOf(omhPatternItem.length)
                 }
 
-                logger.logFeatureSetterPartiallySupported("pattern", "unsupported pattern order")
-                return null
+                listOf(0.0f, omhPatternItem.length)
             }
-
             is OmhGap -> {
                 if (!shouldBeDash) {
-                    return omhPatternItem.length
+                    return listOf(omhPatternItem.length)
                 }
 
-                logger.logFeatureSetterPartiallySupported("pattern", "unsupported pattern order")
-                return null
+                listOf(0.0f, omhPatternItem.length)
             }
-
             else -> {
-                logger.logFeatureSetterPartiallySupported("pattern", "unsupported patter item")
-                return null
+                logger?.logFeatureSetterPartiallySupported("pattern", "unsupported patter item")
+                return listOf(0.0f)
             }
         }
     }
