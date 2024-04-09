@@ -48,11 +48,11 @@ internal class OmhInfoWindow(
 ) : ITouchInteractable {
     private var infoWindowIsVisible: Boolean = false
 
-    internal var customInfoWindowViewFactory: OmhInfoWindowViewFactory? = null
-    internal var infoWindowContentsViewFactory: OmhInfoWindowViewFactory? = null
+    private var customInfoWindowViewFactory: OmhInfoWindowViewFactory? = null
+    private var infoWindowContentsViewFactory: OmhInfoWindowViewFactory? = null
 
-    internal var windowViewWidth: Int = 0
-    internal var windowViewHeight: Int = 0
+    private var windowViewWidth: Int = 0
+    private var windowViewHeight: Int = 0
 
     // stored the view ref since it is needed for closing the IW, which by default triggers an a11y event on it
     internal var windowView: View? = null
