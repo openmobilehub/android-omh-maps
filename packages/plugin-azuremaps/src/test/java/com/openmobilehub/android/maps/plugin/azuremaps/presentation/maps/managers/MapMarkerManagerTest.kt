@@ -1,6 +1,5 @@
 package com.openmobilehub.android.maps.plugin.azuremaps.presentation.maps.managers
 
-import a.a.a.a.a.m
 import android.content.Context
 import android.content.res.Resources
 import android.graphics.Bitmap
@@ -38,7 +37,6 @@ import java.util.concurrent.Executors
 class MapMarkerManagerTest {
     private val context = mockk<Context>(relaxed = true)
     private lateinit var mapMarkerManager: MapMarkerManager
-    private val uiMock = mockk<m>(relaxed = true)
     private val sourcesMock = mockk<SourceManager>(relaxed = true)
     private val layersMock = mockk<LayerManager>(relaxed = true)
     private val imagesMock = mockk<ImageManager>(relaxed = true)
@@ -75,8 +73,6 @@ class MapMarkerManagerTest {
         mapMarkerManager = MapMarkerManager(
             context,
             object : AzureMapInterface {
-                override val ui: m
-                    get() = uiMock
                 override val sources: SourceManager
                     get() = sourcesMock
                 override val layers: LayerManager
@@ -106,7 +102,7 @@ class MapMarkerManagerTest {
         mapMarkerManager.setMarkerClickListener(omhOnMarkerClickListener)
 
         // Act
-        mapMarkerManager.maybeHandleClick(marker)
+        mapMarkerManager.maybeHandleClick(marker.markerUUID.toString())
 
         // Assert
         verify { omhOnMarkerClickListener.onMarkerClick(marker) }

@@ -53,8 +53,8 @@ This plugin provides support for Azure Maps by utilizing the [Azure Maps Android
 
 | Method                                  | Supported? |
 | --------------------------------------- | :--------: |
-| addMarker                               |     ?      |
-| addPolyline                             |     ?      |
+| addMarker                               |     ✅      |
+| addPolyline                             |     ✅      |
 | addPolygon                              |     ?      |
 | getCameraPositionCoordinate             |     ✅     |
 | moveCamera                              |     ✅     |
@@ -71,7 +71,7 @@ This plugin provides support for Azure Maps by utilizing the [Azure Maps Android
 | setOnInfoWindowOpenStatusChangeListener |     ✅     |
 | setOnInfoWindowClickListener            |     ✅     |
 | setOnInfoWindowLongClickListener        |     ✅     |
-| setOnPolylineClickListener              |     ?      |
+| setOnPolylineClickListener              |     ✅      |
 | setOnPolygonClickListener               |     ?      |
 | snapshot                                |     ❌     |
 | setMapStyle                             |     ?      |
@@ -152,49 +152,63 @@ Comments for partially supported 🟨 properties:
 
 | Property  | Supported? |
 | --------- | :--------: |
-| points    |     ?      |
-| clickable |     ?      |
-| color     |     ?      |
-| width     |     ?      |
-| isVisible |     ?      |
-| zIndex    |     ?      |
-| jointType |     ?      |
-| pattern   |     ?      |
-| cap       |     ?      |
-| startCap  |     ?      |
-| endCap    |     ?      |
+| points    |     ✅      |
+| clickable |     ✅      |
+| color     |     ✅      |
+| width     |     ✅      |
+| isVisible |     ✅      |
+| zIndex    |     ❌      |
+| jointType |     ✅      |
+| pattern   |     🟨      |
+| cap       |     🟨      |
+| startCap  |     ❌      |
+| endCap    |     ❌      |
 | spans     |     ?      |
+
+Comments for partially supported 🟨 properties:
+
+| Property  | Comments                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| pattern | Azure Maps SDK only supports alternating dashes and gaps that form the dash pattern. |
+| cap | Azure Maps SDK supports BUTT, SQUARE and ROUND caps. Defaults to ROUND when other value is provided. |
 
 #### OmhPolyline
 
 | Method       | Supported? |
 | ------------ | :--------: |
-| getCap       |     ?      |
-| setCap       |     ?      |
-| isClickable  |     ?      |
-| setClickable |     ?      |
-| getColor     |     ?      |
-| setColor     |     ?      |
-| getEndCap    |     ?      |
-| setEndCap    |     ?      |
-| getJoinType  |     ?      |
-| setJoinType  |     ?      |
-| getPattern   |     ?      |
-| setPattern   |     ?      |
-| getPoints    |     ?      |
-| setPoints    |     ?      |
+| getCap       |     ✅      |
+| setCap       |     🟨      |
+| isClickable  |     ✅      |
+| setClickable |     ✅      |
+| getColor     |     ✅      |
+| setColor     |     ✅      |
+| getEndCap    |     ❌      |
+| setEndCap    |     ❌      |
+| getJoinType  |     ✅      |
+| setJoinType  |     ✅      |
+| getPattern   |     ✅      |
+| setPattern   |     🟨      |
+| getPoints    |     ✅      |
+| setPoints    |     ✅      |
 | getSpans     |     ?      |
 | setSpans     |     ?      |
-| getStartCap  |     ?      |
-| setStartCap  |     ?      |
-| getTag       |     ?      |
-| setTag       |     ?      |
-| getWidth     |     ?      |
-| setWidth     |     ?      |
-| getZIndex    |     ?      |
-| setZIndex    |     ?      |
-| isVisible    |     ?      |
-| setVisible   |     ?      |
+| getStartCap  |     ❌      |
+| setStartCap  |     ❌      |
+| getTag       |     ✅      |
+| setTag       |     ✅      |
+| getWidth     |     ✅      |
+| setWidth     |     ✅      |
+| getZIndex    |     ❌      |
+| setZIndex    |     ❌      |
+| isVisible    |     ✅      |
+| setVisible   |     ✅      |
+
+Comments for partially supported 🟨 properties:
+
+| Property  | Comments                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| setPattern | Azure Maps SDK only supports alternating dashes and gaps that form the dash pattern. |
+| setCap | Azure Maps SDK supports BUTT, SQUARE and ROUND caps. Defaults to ROUND when other value is provided. |
 
 ### Polygon
 

@@ -218,6 +218,17 @@ class MapPolylinesFragment : Fragment(), OmhOnMapReadyCallback {
         return hashSetOf(capTypeNameResourceID.indexOf(R.string.cap_type_custom))
     }
 
+    private fun getDisabledPatternSpinnerPositions(): HashSet<Int> {
+        if (omhMap?.providerName === Constants.AZURE_PROVIDER) {
+            return hashSetOf(
+                patternTypeNameResourceID.indexOf(R.string.pattern_type_dotted),
+                patternTypeNameResourceID.indexOf(R.string.pattern_type_custom)
+            )
+        }
+
+        return hashSetOf()
+    }
+
     private fun setupUI(view: View) {
         spanProperties = view.findViewById(R.id.spanProperties)
         spanGradientProperties = view.findViewById(R.id.spanGradientProperties)
@@ -297,13 +308,17 @@ class MapPolylinesFragment : Fragment(), OmhOnMapReadyCallback {
         }
         // pattern
         patternSpinner = view.findViewById(R.id.panelSpinner_pattern)
-        patternSpinner?.isEnabled = getSupportedStatus(listOf(Constants.GOOGLE_PROVIDER))
+        patternSpinner?.isEnabled = getSupportedStatus(
+            listOf(
+                Constants.GOOGLE_PROVIDER,
+                Constants.AZURE_PROVIDER
+            )
+        )
+        patternSpinner?.setDisabledPositions(getDisabledPatternSpinnerPositions())
         patternSpinner?.setValues(requireContext(), patternTypeNameResourceID)
         patternSpinner?.setOnItemSelectedCallback { position: Int ->
             val pattern = mapSpinnerPositionToOmhPattern(position)
-            if (pattern != null) {
-                customizablePolyline?.setPattern(pattern)
-            }
+            customizablePolyline?.setPattern(pattern ?: emptyList())
         }
         // zIndex
         zIndexSeekbar = view.findViewById(R.id.panelSeekbar_zIndex)

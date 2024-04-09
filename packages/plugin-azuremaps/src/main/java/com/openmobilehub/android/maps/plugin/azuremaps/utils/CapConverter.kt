@@ -16,10 +16,17 @@
 
 package com.openmobilehub.android.maps.plugin.azuremaps.utils
 
-import com.openmobilehub.android.maps.core.utils.logging.Logger
-import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
+import com.azure.android.maps.control.options.LineCap
+import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhCap
+import com.openmobilehub.android.maps.core.presentation.models.OmhButtCap
+import com.openmobilehub.android.maps.core.presentation.models.OmhSquareCap
 
-val mapLogger = UnsupportedFeatureLogger(Constants.PROVIDER_NAME, "OmhMap")
-val markerLogger = UnsupportedFeatureLogger(Constants.PROVIDER_NAME, "OmhMarker")
-val polylineLogger = UnsupportedFeatureLogger(Constants.PROVIDER_NAME, "OmhPolyline")
-val commonLogger = Logger(Constants.PROVIDER_NAME)
+object CapConverter {
+    fun convertToAzureMapsLineCap(omhCap: OmhCap): String {
+        return when (omhCap) {
+            is OmhButtCap -> LineCap.BUTT
+            is OmhSquareCap -> LineCap.SQUARE
+            else -> LineCap.ROUND
+        }
+    }
+}
