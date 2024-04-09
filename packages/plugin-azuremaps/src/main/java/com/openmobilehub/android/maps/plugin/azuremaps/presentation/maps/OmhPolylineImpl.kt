@@ -47,7 +47,7 @@ internal class OmhPolylineImpl(
     private val logger: UnsupportedFeatureLogger = polylineLogger
 ) : OmhPolyline {
 
-    private var _clickable: Boolean
+    private var _clickable: Boolean = false
     private var _tag: Any? = null
     private var _points: List<OmhCoordinate>
     private var _color: Int = Color.BLUE
@@ -87,7 +87,7 @@ internal class OmhPolylineImpl(
 
     init {
         _points = options.points
-        _clickable = options.clickable ?: false
+        options.clickable?.let { _clickable = it }
         options.color?.let { _color = it }
         options.width?.let { _width = it }
         options.isVisible?.let { _isVisible = it }

@@ -63,7 +63,7 @@ object PatternConverter {
                 listOf(0.0f, omhPatternItem.length)
             }
             else -> {
-                logger?.logFeatureSetterPartiallySupported("pattern", "unsupported patter item")
+                logger?.logFeatureSetterPartiallySupported("pattern", "unsupported pattern item")
                 return listOf(0.0f)
             }
         }
