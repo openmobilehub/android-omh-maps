@@ -67,16 +67,6 @@ internal interface IMapViewDelegate {
     fun addImage(imageId: String, image: Bitmap)
 
     /**
-     * Returns the width of the map in pixels.
-     */
-    fun getMapWidth(): Int
-
-    /**
-     * Returns the height of the map in pixels.
-     */
-    fun getMapHeight(): Int
-
-    /**
      * Returns the [Context] of the map.
      *
      * @return The context of the map.

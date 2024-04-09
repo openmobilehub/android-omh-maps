@@ -16,10 +16,15 @@
 
 package com.openmobilehub.android.maps.plugin.azuremaps.utils
 
-import com.openmobilehub.android.maps.core.utils.logging.Logger
-import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
+import com.azure.android.maps.control.options.LineJoin
+import com.openmobilehub.android.maps.core.presentation.models.OmhJointType
 
-val mapLogger = UnsupportedFeatureLogger(Constants.PROVIDER_NAME, "OmhMap")
-val markerLogger = UnsupportedFeatureLogger(Constants.PROVIDER_NAME, "OmhMarker")
-val polylineLogger = UnsupportedFeatureLogger(Constants.PROVIDER_NAME, "OmhPolyline")
-val commonLogger = Logger(Constants.PROVIDER_NAME)
+object JointTypeConverter {
+    fun convertToAzureMapsLineJoin(joinType: Int): String {
+        return when (joinType) {
+            OmhJointType.BEVEL -> LineJoin.BEVEL
+            OmhJointType.ROUND -> LineJoin.ROUND
+            else -> LineJoin.MITER
+        }
+    }
+}

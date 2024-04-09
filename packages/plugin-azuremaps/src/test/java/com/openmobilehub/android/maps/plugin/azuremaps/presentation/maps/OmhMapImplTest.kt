@@ -39,7 +39,7 @@ class OmhMapImplTest {
                 mapView,
                 cameraManager,
                 myLocationManager,
-                logger,
+                logger = logger,
                 bRunningInTest = true
             )
     }

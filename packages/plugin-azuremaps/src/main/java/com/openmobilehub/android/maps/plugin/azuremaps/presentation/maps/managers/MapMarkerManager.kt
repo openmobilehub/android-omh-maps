@@ -48,8 +48,8 @@ internal class MapMarkerManager(
     internal var infoWindowOpenStatusChangeListener: OmhOnInfoWindowOpenStatusChangeListener? = null
     internal var infoWindowClickListener: OmhOnInfoWindowClickListener? = null
     internal var infoWindowLongClickListener: OmhOnInfoWindowLongClickListener? = null
-    internal val markers = mutableMapOf<String, OmhMarkerImpl>()
-    internal val infoWindows = mutableMapOf<String, OmhInfoWindow>()
+    private val markers = mutableMapOf<String, OmhMarkerImpl>()
+    private val infoWindows = mutableMapOf<String, OmhInfoWindow>()
 
     fun addMarker(
         options: OmhMarkerOptions,
@@ -122,15 +122,20 @@ internal class MapMarkerManager(
         infoWindowLongClickListener = listener
     }
 
-    @SuppressWarnings("ReturnCount")
     fun maybeHandleClick(
-        omhMarker: OmhMarkerImpl
+        markerId: String
     ): Boolean {
-        return markerClickListener?.onMarkerClick(omhMarker)?.let { eventConsumed ->
+        val marker = markers[markerId]
+
+        if (marker == null || !marker.getClickable()) {
+            return false
+        }
+
+        return markerClickListener?.onMarkerClick(marker)?.let { eventConsumed ->
             if (!eventConsumed) {
                 // to achieve feature parity with GoogleMaps, the info window should be opened on click
-                if (!omhMarker.getIsInfoWindowShown()) {
-                    omhMarker.showInfoWindow()
+                if (!marker.getIsInfoWindowShown()) {
+                    marker.showInfoWindow()
                 }
             }
 
@@ -171,14 +176,6 @@ internal class MapMarkerManager(
         }
 
         map.images.add(imageId, image)
-    }
-
-    override fun getMapWidth(): Int {
-        return map.ui.a.width // a is the FrameLayout containing the map
-    }
-
-    override fun getMapHeight(): Int {
-        return map.ui.a.height // a is the FrameLayout containing the map
     }
 
     override fun getContext(): Context {

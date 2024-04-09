@@ -16,14 +16,12 @@
 
 package com.openmobilehub.android.maps.plugin.azuremaps.presentation.interfaces
 
-import a.a.a.a.a.m
 import com.azure.android.maps.control.ImageManager
 import com.azure.android.maps.control.LayerManager
 import com.azure.android.maps.control.PopupManager
 import com.azure.android.maps.control.SourceManager
 
 interface AzureMapInterface {
-    val ui: m
     val sources: SourceManager
     val layers: LayerManager
     val images: ImageManager
