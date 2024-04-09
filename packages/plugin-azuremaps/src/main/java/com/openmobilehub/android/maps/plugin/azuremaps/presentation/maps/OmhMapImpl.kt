@@ -16,7 +16,6 @@
 
 package com.openmobilehub.android.maps.plugin.azuremaps.presentation.maps
 
-import a.a.a.a.a.m
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.content.Context
@@ -75,8 +74,6 @@ internal class OmhMapImpl(
 ) : OmhMap {
 
     private val azureMapInterface = object : AzureMapInterface {
-        override val ui: m
-            get() = mapView.ui
         override val sources: SourceManager
             get() = mapView.sources
         override val layers: LayerManager

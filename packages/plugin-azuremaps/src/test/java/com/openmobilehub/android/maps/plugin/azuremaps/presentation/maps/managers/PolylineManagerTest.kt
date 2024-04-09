@@ -16,7 +16,6 @@
 
 package com.openmobilehub.android.maps.plugin.azuremaps.presentation.maps.managers
 
-import a.a.a.a.a.m
 import com.azure.android.maps.control.ImageManager
 import com.azure.android.maps.control.LayerManager
 import com.azure.android.maps.control.PopupManager
@@ -37,7 +36,6 @@ import java.util.UUID
 
 class PolylineManagerTest {
 
-    private val uiMock = mockk<m>(relaxed = true)
     private val sourcesMock = mockk<SourceManager>(relaxed = true)
     private val layersMock = mockk<LayerManager>(relaxed = true)
     private val imagesMock = mockk<ImageManager>(relaxed = true)
@@ -51,8 +49,6 @@ class PolylineManagerTest {
     fun setUp() {
         polylineManager = PolylineManager(
             object : AzureMapInterface {
-                override val ui: m
-                    get() = uiMock
                 override val sources: SourceManager
                     get() = sourcesMock
                 override val layers: LayerManager

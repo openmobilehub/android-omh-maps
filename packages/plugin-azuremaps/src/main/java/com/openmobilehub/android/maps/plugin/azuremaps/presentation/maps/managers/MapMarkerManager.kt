@@ -178,14 +178,6 @@ internal class MapMarkerManager(
         map.images.add(imageId, image)
     }
 
-    override fun getMapWidth(): Int {
-        return map.ui.a.width // a is the FrameLayout containing the map
-    }
-
-    override fun getMapHeight(): Int {
-        return map.ui.a.height // a is the FrameLayout containing the map
-    }
-
     override fun getContext(): Context {
         return context
     }
