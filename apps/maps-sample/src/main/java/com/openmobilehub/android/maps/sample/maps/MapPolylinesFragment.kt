@@ -169,7 +169,7 @@ class MapPolylinesFragment : Fragment(), OmhOnMapReadyCallback {
                 3.0f
             }
             Constants.AZURE_PROVIDER -> {
-                0.75f
+                0.5f
             }
             else -> {
                 1.0f
