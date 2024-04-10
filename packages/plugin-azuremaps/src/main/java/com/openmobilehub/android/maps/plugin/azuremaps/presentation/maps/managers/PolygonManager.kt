@@ -16,6 +16,7 @@
 
 package com.openmobilehub.android.maps.plugin.azuremaps.presentation.maps.managers
 
+import androidx.annotation.VisibleForTesting
 import com.azure.android.maps.control.layer.LineLayer
 import com.azure.android.maps.control.layer.PolygonLayer
 import com.azure.android.maps.control.source.DataSource
@@ -39,9 +40,12 @@ internal class PolygonManager(
     private val map: AzureMapInterface,
     private val uuidGenerator: UUIDGenerator = DefaultUUIDGenerator()
 ) : IPolygonDelegate {
-    internal var clickListener: OmhOnPolygonClickListener? = null
+
     private val _polygons = mutableMapOf<String, OmhPolygonImpl>()
+
+    @VisibleForTesting
     internal val polygons: Map<String, OmhPolygonImpl> = _polygons
+    internal var clickListener: OmhOnPolygonClickListener? = null
 
     fun addPolygon(options: OmhPolygonOptions): OmhPolygonImpl {
         val polygonId = uuidGenerator.generate()
