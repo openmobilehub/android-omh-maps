@@ -216,43 +216,56 @@ Comments for partially supported 🟨 properties:
 
 | Property        | Supported? |
 | --------------- | :--------: |
-| outline         |     ?      |
-| clickable       |     ?      |
-| fillColor       |     ?      |
-| holes           |     ?      |
-| isVisible       |     ?      |
-| strokeColor     |     ?      |
-| strokeJointType |     ?      |
-| strokePattern   |     ?      |
-| strokeWidth     |     ?      |
-| zIndex          |     ?      |
+| outline         |     ✅      |
+| clickable       |     ✅      |
+| fillColor       |     ✅      |
+| holes           |     ✅      |
+| isVisible       |     ✅      |
+| strokeColor     |     ✅      |
+| strokeJointType |     ✅      |
+| strokePattern   |     🟨      |
+| strokeWidth     |     ✅      |
+| zIndex          |     ❌      |
+
+Comments for partially supported 🟨 properties:
+
+| Property  | Comments                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| strokePattern | Azure Maps SDK only supports alternating dashes and gaps that form the dash pattern. |
 
 #### OmhPolygon
 
 | Method             | Supported? |
 | ------------------ | :--------: |
-| getClickable       |     ?      |
-| setClickable       |     ?      |
-| getStrokeColor     |     ?      |
-| setStrokeColor     |     ?      |
-| getFillColor       |     ?      |
-| setFillColor       |     ?      |
-| getStrokeJointType |     ?      |
-| setStrokeJointType |     ?      |
-| getStrokePattern   |     ?      |
-| setStrokePattern   |     ?      |
-| getOutline         |     ?      |
-| setOutline         |     ?      |
-| getHoles           |     ?      |
-| setHoles           |     ?      |
-| getTag             |     ?      |
-| setTag             |     ?      |
-| getStrokeWidth     |     ?      |
-| setStrokeWidth     |     ?      |
-| getZIndex          |     ?      |
-| setZIndex          |     ?      |
-| isVisible          |     ?      |
-| setVisible         |     ?      |
+| getClickable       |     ✅      |
+| setClickable       |     ✅      |
+| getStrokeColor     |     ✅      |
+| setStrokeColor     |     ✅      |
+| getFillColor       |     ✅      |
+| setFillColor       |     ✅      |
+| getStrokeJointType |     ✅      |
+| setStrokeJointType |     ✅      |
+| getStrokePattern   |     ✅      |
+| setStrokePattern   |     🟨      |
+| getOutline         |     ✅      |
+| setOutline         |     ✅      |
+| getHoles           |     ✅      |
+| setHoles           |     ✅      |
+| getTag             |     ✅      |
+| setTag             |     ✅      |
+| getStrokeWidth     |     ✅      |
+| setStrokeWidth     |     ✅      |
+| getZIndex          |     ❌      |
+| setZIndex          |     ❌      |
+| isVisible          |     ✅      |
+| setVisible         |     ✅      |
+
+Comments for partially supported 🟨 properties:
+
+| Property  | Comments                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| setStrokePattern | Azure Maps SDK only supports alternating dashes and gaps that form the dash pattern. |
+
 
 ## Known issues
 
