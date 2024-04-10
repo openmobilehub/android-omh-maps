@@ -214,7 +214,7 @@ internal class OmhMapImpl(
     }
 
     override fun setMapStyle(json: Int?) {
-        // To be implemented
+        logger.logSetterNotSupported("mapStyle")
     }
 
     override fun setScaleFactor(scaleFactor: Float) {
