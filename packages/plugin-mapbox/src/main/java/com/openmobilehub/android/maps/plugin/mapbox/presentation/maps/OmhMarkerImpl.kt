@@ -67,6 +67,7 @@ internal class OmhMarkerImpl(
     infoWindowMapViewDelegate: IOmhInfoWindowMapViewDelegate,
     private val logger: UnsupportedFeatureLogger = markerLogger
 ) : OmhMarker, ITouchInteractable {
+    internal var isRemoved: Boolean = false
 
     private lateinit var geoJsonSource: GeoJsonSource
     private lateinit var style: Style
@@ -421,6 +422,8 @@ internal class OmhMarkerImpl(
     }
 
     override fun remove() {
+        isRemoved = true
+
         val removeLayerResult = style.removeStyleLayer(getSymbolLayerID(markerUUID))
         removeLayerResult.error?.let { error ->
             throw IllegalStateException("Failed to remove SymbolLayer from map: $error")

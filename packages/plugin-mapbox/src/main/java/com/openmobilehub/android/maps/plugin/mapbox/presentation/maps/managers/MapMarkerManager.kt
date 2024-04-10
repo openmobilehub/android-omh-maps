@@ -177,7 +177,7 @@ internal class MapMarkerManager(
                 markerClickListener?.onMarkerClick(omhMarker)?.let { eventConsumed ->
                     if (!eventConsumed) {
                         // to achieve feature parity with GoogleMaps, the info window should be opened on click
-                        if (!omhMarker.getIsInfoWindowShown()) {
+                        if (!omhMarker.getIsInfoWindowShown() && !omhMarker.isRemoved) {
                             omhMarker.showInfoWindow()
                         }
                     }
