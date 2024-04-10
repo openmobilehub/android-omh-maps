@@ -128,6 +128,7 @@ Comments for partially supported 🟨 properties:
 | showInfoWindow       |      ✅       |
 | hideInfoWindow       |      ✅       |
 | getIsInfoWindowShown |      ✅       |
+| remove               |      ✅       |
 
 ### Polyline
 
