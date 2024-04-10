@@ -277,4 +277,16 @@ class OmhMarkerImplTest {
         // Assert
         verify { marker.rotation = expected }
     }
+
+    @Test
+    fun `remove removes the marker and closes info window`() {
+        // Act
+        omhMarker.remove()
+
+        // Assert
+        verify(exactly = 1) {
+            marker.remove()
+        }
+        assertEquals(marker.isInfoWindowShown, false)
+    }
 }

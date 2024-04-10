@@ -266,4 +266,22 @@ class OmhMarkerImplTest {
             marker.rotation = -expected // rotation is counter-clockwise in OSM
         }
     }
+
+    @Test
+    fun `remove removes the marker and closes info window`() {
+        // Arrange
+        every { marker.closeInfoWindow() } just runs
+
+        // Act
+        omhMarker.remove()
+
+        // Assert
+        assertEquals(omhMarker.isRemoved, true)
+        verify(exactly = 1) {
+            marker.closeInfoWindow()
+            marker.remove(mockMapView)
+            mockMapView.invalidate()
+        }
+        assertEquals(marker.isInfoWindowShown, false)
+    }
 }
