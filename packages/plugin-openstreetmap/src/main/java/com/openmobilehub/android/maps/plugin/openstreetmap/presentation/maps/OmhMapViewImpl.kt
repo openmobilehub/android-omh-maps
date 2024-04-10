@@ -26,6 +26,7 @@ import androidx.preference.PreferenceManager
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMapView
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMapReadyCallback
 import com.openmobilehub.android.maps.plugin.openstreetmap.R
+import com.openmobilehub.android.maps.plugin.openstreetmap.presentation.interfaces.CenterMapViewDelegate
 import com.openmobilehub.android.maps.plugin.openstreetmap.utils.Constants
 import org.osmdroid.config.Configuration
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
@@ -33,12 +34,12 @@ import org.osmdroid.util.BoundingBox
 import org.osmdroid.views.MapView
 
 @Suppress("TooManyFunctions") // Suppress issue since interface has more than 12 functions.
-internal class OmhMapViewImpl(context: Context) : OmhMapView {
+internal class OmhMapViewImpl(context: Context) : OmhMapView, CenterMapViewDelegate {
 
     private var containerView: View
     private var mapView: MapView
     private var centerMyLocationButton: ImageButton
-    private var centerLocation: (() -> Unit)? = null
+    private var onCenterLocation: (() -> Unit)? = null
 
     init {
         Configuration.getInstance()
@@ -59,18 +60,18 @@ internal class OmhMapViewImpl(context: Context) : OmhMapView {
         centerMyLocationButton.visibility = View.GONE
     }
 
-    fun setOnCenterLocationButtonClickListener(onClick: OnClickListener) {
+    override fun setOnCenterLocationButtonClickListener(onClick: OnClickListener) {
         centerMyLocationButton.setOnClickListener {
             onClick.onClick(centerMyLocationButton)
-            centerLocation?.invoke()
+            onCenterLocation?.invoke()
         }
     }
 
-    fun setCenterLocation(centerLocation: () -> Unit) {
-        this.centerLocation = centerLocation
+    override fun setCenterLocation(onCenterLocation: () -> Unit) {
+        this.onCenterLocation = onCenterLocation
     }
 
-    fun setCenterLocationButtonEnabled(isEnabled: Boolean) {
+    override fun setCenterLocationButtonEnabled(isEnabled: Boolean) {
         centerMyLocationButton.visibility = if (isEnabled) View.VISIBLE else View.GONE
     }
 
