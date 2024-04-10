@@ -33,6 +33,7 @@ internal object Constants {
     // Map interaction
     const val MARKER_FEATURE_UUID_BINDING = "omh-marker-id-binding"
     const val POLYLINE_FEATURE_UUID_BINDING = "omh-polyline-id-binding"
+    const val POLYGON_FEATURE_UUID_BINDING = "omh-polygon-id-binding"
 
     // Camera
     /**

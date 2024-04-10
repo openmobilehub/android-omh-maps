@@ -14,13 +14,17 @@
  * limitations under the License.
  */
 
-package com.openmobilehub.android.maps.plugin.azuremaps.utils
+package com.openmobilehub.android.maps.plugin.azuremaps.presentation.interfaces
 
-import com.openmobilehub.android.maps.core.utils.logging.Logger
-import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
+import com.azure.android.maps.control.source.DataSource
+import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
+import java.util.UUID
 
-val mapLogger = UnsupportedFeatureLogger(Constants.PROVIDER_NAME, "OmhMap")
-val markerLogger = UnsupportedFeatureLogger(Constants.PROVIDER_NAME, "OmhMarker")
-val polylineLogger = UnsupportedFeatureLogger(Constants.PROVIDER_NAME, "OmhPolyline")
-val polygonLogger = UnsupportedFeatureLogger(Constants.PROVIDER_NAME, "OmhPolygon")
-val commonLogger = Logger(Constants.PROVIDER_NAME)
+internal interface IPolygonDelegate {
+    fun updatePolygonSourceWithOutline(
+        polygonId: UUID,
+        source: DataSource,
+        outline: List<OmhCoordinate>,
+        holes: List<List<OmhCoordinate>>?
+    )
+}
