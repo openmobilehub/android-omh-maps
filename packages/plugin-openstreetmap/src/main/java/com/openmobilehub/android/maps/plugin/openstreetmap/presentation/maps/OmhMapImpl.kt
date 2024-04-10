@@ -87,7 +87,7 @@ class OmhMapImpl(
 
     private val polylines = mutableMapOf<Polyline, OmhPolyline>()
     private val polygons = mutableMapOf<Polygon, OmhPolygon>()
-    internal val markers = mutableMapOf<Marker, OmhMarker>()
+    internal val markers = mutableMapOf<Marker, OmhMarkerImpl>()
     internal val ignoreInfoWindowOpenCloseEvents = mutableMapOf<OmhMarker, Boolean>()
     private val lastInfoWindowOpenState = mutableMapOf<OmhMarker, Boolean>()
 
@@ -113,14 +113,14 @@ class OmhMapImpl(
     override val providerName: String
         get() = Constants.PROVIDER_NAME
 
-    private fun applyOnMarkerClickListener(marker: Marker, omhMarker: OmhMarker) {
+    private fun applyOnMarkerClickListener(marker: Marker, omhMarker: OmhMarkerImpl) {
         marker.setOnMarkerClickListener ClickHandler@{ _, _ ->
             if (omhMarker.getIsVisible() && omhMarker.getClickable()) {
                 val retVal = markerClickListener?.onMarkerClick(omhMarker) ?: false
 
                 if (!retVal) {
                     // to achieve feature parity with GoogleMaps, the info window should be opened on click
-                    if (!marker.isInfoWindowOpen) {
+                    if (!marker.isInfoWindowOpen && !omhMarker.isRemoved) {
                         marker.showInfoWindow()
                     }
                 }

@@ -32,6 +32,7 @@ internal class OmhMarkerImpl(
     private var clickable: Boolean = true,
     private val logger: UnsupportedFeatureLogger = markerLogger
 ) : OmhMarker {
+    internal var isRemoved: Boolean = false
 
     override fun getPosition(): OmhCoordinate {
         return marker.position.toOmhCoordinate()
@@ -180,6 +181,9 @@ internal class OmhMarkerImpl(
     }
 
     override fun remove() {
+        isRemoved = true
+        marker.closeInfoWindow()
         marker.remove(mapView)
+        mapView.invalidate()
     }
 }
