@@ -349,6 +349,15 @@ internal class OmhMarkerImpl(
         return markerImageID
     }
 
+    override fun remove() {
+        mapViewDelegate.removeSymbolLayer(markerSymbolLayer)
+        mapViewDelegate.removeDataSource(source)
+
+        mapViewDelegate.removeImage(getMarkerIconID(isCustomIconSet))
+
+        omhInfoWindow.remove()
+    }
+
     internal companion object {
         internal fun getIconsRotationAlignment(isFlat: Boolean): String {
             return if (isFlat) {

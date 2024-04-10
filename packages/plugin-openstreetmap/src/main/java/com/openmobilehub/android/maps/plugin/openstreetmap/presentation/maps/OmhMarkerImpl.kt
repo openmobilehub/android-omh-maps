@@ -178,4 +178,8 @@ internal class OmhMarkerImpl(
             marker.showInfoWindow() // open or close-and-reopen to apply the new contents
         }
     }
+
+    override fun remove() {
+        marker.remove(mapView)
+    }
 }

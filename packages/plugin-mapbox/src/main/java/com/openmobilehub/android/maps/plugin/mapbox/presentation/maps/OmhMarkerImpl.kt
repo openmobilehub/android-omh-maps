@@ -420,6 +420,25 @@ internal class OmhMarkerImpl(
         return markerImageID
     }
 
+    override fun remove() {
+        val removeLayerResult = style.removeStyleLayer(getSymbolLayerID(markerUUID))
+        removeLayerResult.error?.let { error ->
+            throw IllegalStateException("Failed to remove SymbolLayer from map: $error")
+        }
+
+        val removeSourceResult = style.removeStyleSource(getGeoJsonSourceID(markerUUID))
+        removeSourceResult.error?.let { error ->
+            throw IllegalStateException("Failed to remove GeoJsonSource from map: $error")
+        }
+
+        val removeImageResult = style.removeStyleImage(getMarkerIconID(isCustomIconSet))
+        removeImageResult.error?.let { error ->
+            throw IllegalStateException("Failed to remove image from map: $error")
+        }
+
+        omhInfoWindow.remove()
+    }
+
     internal companion object {
         internal fun getIconsPitchAlignment(isFlat: Boolean): IconPitchAlignment {
             return if (isFlat) {

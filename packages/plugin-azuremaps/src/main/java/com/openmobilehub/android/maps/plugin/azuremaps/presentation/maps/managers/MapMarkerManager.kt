@@ -182,6 +182,18 @@ internal class MapMarkerManager(
         return context
     }
 
+    override fun removeSymbolLayer(symbolLayer: SymbolLayer) {
+        map.layers.remove(symbolLayer)
+    }
+
+    override fun removeDataSource(dataSource: DataSource) {
+        map.sources.remove(dataSource)
+    }
+
+    override fun removePopup(popup: Popup) {
+        map.popups.remove(popup)
+    }
+
     fun setCustomInfoWindowViewFactory(factory: OmhInfoWindowViewFactory?) {
         infoWindows.values.forEach {
             it.setCustomInfoWindowViewFactory(factory)
