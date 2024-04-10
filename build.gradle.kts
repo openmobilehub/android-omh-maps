@@ -141,15 +141,26 @@ if (!useMavenLocal) {
     val signingKey by extra(getValueFromEnvOrProperties("SIGNING_KEY"))
 
     // Set up Sonatype repository
-    nexusPublishing {
-        repositories {
-            sonatype {
-                stagingProfileId.set(mStagingProfileId.toString())
-                username.set(ossrhUsername.toString())
-                password.set(ossrhPassword.toString())
-                // Add these lines if using new Sonatype infra
-                nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
-                snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
+    afterEvaluate {
+        nexusPublishing {
+            // fix for nexus publishing plugin not picking up the correct version of the published
+            // subproject, since this is happening in the root project;
+            // see https://github.com/gradle-nexus/publish-plugin/issues/105
+            useStaging.set(provider {
+                subprojects.all { project ->
+                    !project.version.toString().endsWith("-SNAPSHOT")
+                }
+            })
+
+            repositories {
+                sonatype {
+                    stagingProfileId.set(mStagingProfileId.toString())
+                    username.set(ossrhUsername.toString())
+                    password.set(ossrhPassword.toString())
+                    // Add these lines if using new Sonatype infra
+                    nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
+                    snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
+                }
             }
         }
     }

@@ -99,8 +99,8 @@ dependencies {
     } else {
         implementation("com.openmobilehub.android.maps:plugin-googlemaps:2.0.0-SNAPSHOT")
         implementation("com.openmobilehub.android.maps:plugin-openstreetmap:2.0.0-SNAPSHOT")
-        implementation("com.openmobilehub.android.maps:plugin-mapbox:1.0.0-beta")
-        implementation("com.openmobilehub.android.maps:plugin-azuremaps:1.0.0-beta") {
+        implementation("com.openmobilehub.android.maps:plugin-mapbox:2.0.0-SNAPSHOT")
+        implementation("com.openmobilehub.android.maps:plugin-azuremaps:2.0.0-SNAPSHOT") {
             exclude(group = "org.maplibre.gl", module = "android-sdk-geojson")
         }
     }
