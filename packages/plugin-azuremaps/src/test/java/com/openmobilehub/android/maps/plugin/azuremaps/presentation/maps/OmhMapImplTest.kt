@@ -183,4 +183,16 @@ class OmhMapImplTest {
         // Assert
         verify { myLocationManager.setMyLocationButtonClickListener(listener) }
     }
+
+    @Test
+    fun `setMapStyle calls logger logSetterNotSupported`() {
+        // Arrange
+        val mapStyle = 0
+
+        // Act
+        omhMapImpl.setMapStyle(mapStyle)
+
+        // Assert
+        verify { logger.logSetterNotSupported("mapStyle") }
+    }
 }
