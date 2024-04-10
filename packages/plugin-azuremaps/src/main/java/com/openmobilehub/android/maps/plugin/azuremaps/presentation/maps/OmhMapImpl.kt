@@ -54,6 +54,7 @@ import com.openmobilehub.android.maps.plugin.azuremaps.presentation.interfaces.A
 import com.openmobilehub.android.maps.plugin.azuremaps.presentation.maps.managers.CameraManager
 import com.openmobilehub.android.maps.plugin.azuremaps.presentation.maps.managers.MapMarkerManager
 import com.openmobilehub.android.maps.plugin.azuremaps.presentation.maps.managers.MyLocationManager
+import com.openmobilehub.android.maps.plugin.azuremaps.presentation.maps.managers.PolygonManager
 import com.openmobilehub.android.maps.plugin.azuremaps.presentation.maps.managers.PolylineManager
 import com.openmobilehub.android.maps.plugin.azuremaps.utils.Constants
 import com.openmobilehub.android.maps.plugin.azuremaps.utils.mapLogger
@@ -84,6 +85,7 @@ internal class OmhMapImpl(
             get() = mapView.popups
     }
     private val polylineManager = PolylineManager(azureMapInterface)
+    private val polygonManager = PolygonManager(azureMapInterface)
     private val mapMarkerManager = MapMarkerManager(context, azureMapInterface)
 
     override val providerName: String
@@ -116,6 +118,9 @@ internal class OmhMapImpl(
         } else if (feature.hasProperty(Constants.POLYLINE_FEATURE_UUID_BINDING)) {
             val polylineId = feature.getStringProperty(Constants.POLYLINE_FEATURE_UUID_BINDING)
             return polylineManager.maybeHandleClick(polylineId)
+        } else if (feature.hasProperty(Constants.POLYGON_FEATURE_UUID_BINDING)) {
+            val polygonId = feature.getStringProperty(Constants.POLYGON_FEATURE_UUID_BINDING)
+            return polygonManager.maybeHandleClick(polygonId)
         }
 
         return false
@@ -129,9 +134,8 @@ internal class OmhMapImpl(
         return polylineManager.addPolyline(options)
     }
 
-    override fun addPolygon(options: OmhPolygonOptions): OmhPolygon? {
-        // To be implemented
-        return null
+    override fun addPolygon(options: OmhPolygonOptions): OmhPolygon {
+        return polygonManager.addPolygon(options)
     }
 
     override fun getCameraPositionCoordinate(): OmhCoordinate {
@@ -206,7 +210,7 @@ internal class OmhMapImpl(
     }
 
     override fun setOnPolygonClickListener(listener: OmhOnPolygonClickListener) {
-        // To be implemented
+        polygonManager.clickListener = listener
     }
 
     override fun setMapStyle(json: Int?) {
