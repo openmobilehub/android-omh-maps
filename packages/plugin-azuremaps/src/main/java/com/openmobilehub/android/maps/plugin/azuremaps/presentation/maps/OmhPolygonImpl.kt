@@ -43,6 +43,7 @@ internal class OmhPolygonImpl(
     private val lineLayer: LineLayer,
     private val delegate: IPolygonDelegate,
     options: OmhPolygonOptions,
+    private var scaleFactor: Float = 1.0f,
     private val logger: UnsupportedFeatureLogger = polygonLogger
 ) : OmhPolygon {
 
@@ -172,6 +173,12 @@ internal class OmhPolygonImpl(
         logger.logSetterNotSupported("zIndex")
     }
 
+    fun setScaleFactor(scaleFactor: Float) {
+        this.scaleFactor = scaleFactor
+        applyStrokeWidth()
+        applyStrokePattern()
+    }
+
     private fun applyStrokeColor() {
         lineLayer.setOptions(
             LineLayerOptions.strokeColor(_strokeColor)
@@ -180,7 +187,7 @@ internal class OmhPolygonImpl(
 
     private fun applyStrokeWidth() {
         lineLayer.setOptions(
-            LineLayerOptions.strokeWidth(_strokeWidth)
+            LineLayerOptions.strokeWidth(_strokeWidth * scaleFactor)
         )
     }
 
@@ -210,7 +217,7 @@ internal class OmhPolygonImpl(
             lineLayer.setOptions(
                 LineLayerOptions.strokeDashArray(
                     PatternConverter.convertToAzureMapsPattern(pattern, logger)
-                        .map { it / _strokeWidth }
+                        .map { it / _strokeWidth * scaleFactor }
                         .toTypedArray()
                 )
             )

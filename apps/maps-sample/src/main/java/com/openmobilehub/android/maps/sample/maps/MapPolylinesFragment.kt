@@ -143,7 +143,7 @@ class MapPolylinesFragment : Fragment(), OmhOnMapReadyCallback {
             infoDisplay.showMessage(R.string.lost_internet_connection)
         }
 
-        omhMap.setScaleFactor(if (omhMap.providerName === Constants.MAPBOX_PROVIDER) 3.0f else 1.0f)
+        omhMap.setScaleFactor(getScaleFactor(omhMap.providerName))
         omhMap.setZoomGesturesEnabled(true)
 
         val omhOnPolylineClickListener = OmhOnPolylineClickListener {
@@ -161,6 +161,20 @@ class MapPolylinesFragment : Fragment(), OmhOnMapReadyCallback {
         DebugPolylineHelper.addReferencePolyline(omhMap)
 
         view?.let { setupUI(it) }
+    }
+
+    private fun getScaleFactor(providerName: String): Float {
+        return when(providerName) {
+            Constants.MAPBOX_PROVIDER -> {
+                3.0f
+            }
+            Constants.AZURE_PROVIDER -> {
+                0.75f
+            }
+            else -> {
+                1.0f
+            }
+        }
     }
 
     private fun mapSpinnerPositionToOmhCap(position: Int): OmhCap? {

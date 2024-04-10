@@ -88,6 +88,13 @@ internal class OmhMapImpl(
     private val polygonManager = PolygonManager(azureMapInterface)
     private val mapMarkerManager = MapMarkerManager(context, azureMapInterface)
 
+    private var _scaleFactor: Float = 1.0f
+        set(value) {
+            field = value
+            polylineManager.scaleFactor = value
+            polygonManager.scaleFactor = value
+        }
+
     override val providerName: String
         get() = Constants.PROVIDER_NAME
 
@@ -218,7 +225,7 @@ internal class OmhMapImpl(
     }
 
     override fun setScaleFactor(scaleFactor: Float) {
-        // To be implemented
+        _scaleFactor = scaleFactor
     }
 
     override fun setCustomInfoWindowViewFactory(factory: OmhInfoWindowViewFactory?) {
