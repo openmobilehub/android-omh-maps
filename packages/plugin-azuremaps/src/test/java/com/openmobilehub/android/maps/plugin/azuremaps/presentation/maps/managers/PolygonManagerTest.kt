@@ -208,7 +208,7 @@ class PolygonManagerTest {
     }
 
     @Test
-    fun `removePolygon remove layers, source and polyline`() {
+    fun `removePolygon remove layers, source and polygon`() {
         // Arrange
         val id = UUID.fromString(DEFAULT_UUID)
 

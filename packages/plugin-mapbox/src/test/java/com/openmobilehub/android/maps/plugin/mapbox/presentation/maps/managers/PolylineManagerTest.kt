@@ -180,7 +180,7 @@ class PolylineManagerTest {
     }
 
     @Test
-    fun `removePolyline does not call removeStyleSource and removeStyleLayer if the source or layer does not exist`() {
+    fun `removePolyline does not call removeStyleSource and removeStyleLayer if the source does not exist`() {
         // Arrange
         val id = "polyline-$DEFAULT_UUID"
 

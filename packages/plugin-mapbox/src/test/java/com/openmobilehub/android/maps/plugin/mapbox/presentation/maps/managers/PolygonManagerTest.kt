@@ -187,7 +187,7 @@ class PolygonManagerTest {
     }
 
     @Test
-    fun `removePolygon does not call removeStyleSource and removeStyleLayer if the source or layer does not exist`() {
+    fun `removePolygon does not call removeStyleSource and removeStyleLayer if the source does not exist`() {
         // Arrange
         val id = "polyline-$DEFAULT_UUID"
         val outlineId = "outline-$id"

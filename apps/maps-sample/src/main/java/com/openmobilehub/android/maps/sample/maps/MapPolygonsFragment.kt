@@ -251,7 +251,7 @@ class MapPolygonsFragment : Fragment(), OmhOnMapReadyCallback {
         }
 
         // referencePolygon
-        showReferencePolygonCheckbox = view.findViewById(R.id.checkBox_showReferencePolyline)
+        showReferencePolygonCheckbox = view.findViewById(R.id.checkBox_showReferencePolygon)
         showReferencePolygonCheckbox?.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
                 referencePolygon = DebugPolygonHelper.addReferencePolygon(omhMap!!)

@@ -183,7 +183,7 @@ interface OmhPolyline {
     fun setZIndex(zIndex: Float)
 
     /**
-     * Removes the polyline
+     * Removes polyline from the map
      */
     fun remove()
 }
