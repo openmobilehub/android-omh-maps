@@ -281,4 +281,8 @@ internal class OmhInfoWindow(
         infoWindowContentsViewFactory = factory
         invalidateInfoWindow()
     }
+
+    fun remove() {
+        mapViewDelegate.removePopup(popup)
+    }
 }

@@ -284,7 +284,11 @@ internal class OmhInfoWindow(
      */
     private fun removeCurrentStyleImage() {
         lastInfoWindowIconID?.let {
-            style.removeStyleImage(it)
+            val removeImageResult = style.removeStyleImage(it)
+
+            removeImageResult.error?.let { error ->
+                throw IllegalStateException("Failed to remove info window image from map: $error")
+            }
 
             lastInfoWindowIconID = null
         }
@@ -416,5 +420,21 @@ internal class OmhInfoWindow(
 
     fun setCustomInfoWindowContentsViewFactory(factory: OmhInfoWindowViewFactory?) {
         infoWindowContentsViewFactory = factory
+    }
+
+    fun remove() {
+        if (isStyleReady()) {
+            val removeLayerResult = style.removeStyleLayer(getSymbolLayerID())
+            removeLayerResult.error?.let { error ->
+                throw IllegalStateException("Failed to remove SymbolLayer from map: $error")
+            }
+
+            val removeSourceResult = style.removeStyleSource(getGeoJsonSourceID())
+            removeSourceResult.error?.let { error ->
+                throw IllegalStateException("Failed to remove GeoJsonSource from map: $error")
+            }
+        }
+
+        removeCurrentStyleImage()
     }
 }

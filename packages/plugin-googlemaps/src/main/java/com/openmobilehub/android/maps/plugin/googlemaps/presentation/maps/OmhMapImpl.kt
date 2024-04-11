@@ -56,6 +56,7 @@ import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogge
 import com.openmobilehub.android.maps.plugin.googlemaps.extensions.toMarkerOptions
 import com.openmobilehub.android.maps.plugin.googlemaps.extensions.toPolygonOptions
 import com.openmobilehub.android.maps.plugin.googlemaps.extensions.toPolylineOptions
+import com.openmobilehub.android.maps.plugin.googlemaps.presentation.interfaces.IMarkerDelegate
 import com.openmobilehub.android.maps.plugin.googlemaps.presentation.interfaces.IPolygonDelegate
 import com.openmobilehub.android.maps.plugin.googlemaps.presentation.interfaces.IPolylineDelegate
 import com.openmobilehub.android.maps.plugin.googlemaps.utils.Constants
@@ -69,7 +70,7 @@ class OmhMapImpl(
     private val context: Context,
     private val logger: Logger = commonLogger,
     private val markerUnsupportedFeatureLogger: UnsupportedFeatureLogger = markerLogger
-) : OmhMap, IPolylineDelegate, IPolygonDelegate {
+) : OmhMap, IMarkerDelegate, IPolylineDelegate, IPolygonDelegate {
 
     override val providerName: String
         get() = Constants.PROVIDER_NAME
@@ -110,7 +111,7 @@ class OmhMapImpl(
         val initiallyClickable = options.clickable
 
         return marker?.let {
-            val omhMarker = OmhMarkerImpl(marker, initiallyClickable)
+            val omhMarker = OmhMarkerImpl(marker, initiallyClickable, markerDelegate = this)
             markers[marker] = omhMarker
 
             return@let omhMarker
@@ -312,6 +313,10 @@ class OmhMapImpl(
 
     override fun setScaleFactor(scaleFactor: Float) {
         // Not required for Google Maps
+    }
+
+    override fun removeMarker(marker: Marker) {
+        markers.remove(marker)
     }
 
     override fun removePolyline(polyline: Polyline) {

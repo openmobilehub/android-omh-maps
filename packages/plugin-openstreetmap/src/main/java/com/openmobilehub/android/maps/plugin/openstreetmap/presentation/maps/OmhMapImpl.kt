@@ -56,6 +56,7 @@ import com.openmobilehub.android.maps.plugin.openstreetmap.extensions.toPolygonO
 import com.openmobilehub.android.maps.plugin.openstreetmap.extensions.toPolylineOptions
 import com.openmobilehub.android.maps.plugin.openstreetmap.interfaces.IPolygonDelegate
 import com.openmobilehub.android.maps.plugin.openstreetmap.interfaces.IPolylineDelegate
+import com.openmobilehub.android.maps.plugin.openstreetmap.presentation.interfaces.IMarkerDelegate
 import com.openmobilehub.android.maps.plugin.openstreetmap.utils.Constants
 import com.openmobilehub.android.maps.plugin.openstreetmap.utils.Constants.DEFAULT_ZOOM_LEVEL
 import com.openmobilehub.android.maps.plugin.openstreetmap.utils.MapListenerController
@@ -76,7 +77,7 @@ import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 class OmhMapImpl(
     val mapView: MapView,
     private val logger: UnsupportedFeatureLogger = mapLogger
-) : OmhMap, IPolylineDelegate, IPolygonDelegate {
+) : OmhMap, IMarkerDelegate, IPolylineDelegate, IPolygonDelegate {
 
     private val mapListenerController: MapListenerController = MapListenerController()
     private var myLocationNewOverlay: MyLocationNewOverlay? = null
@@ -89,7 +90,7 @@ class OmhMapImpl(
 
     private val polylines = mutableMapOf<Polyline, OmhPolyline>()
     private val polygons = mutableMapOf<Polygon, OmhPolygon>()
-    internal val markers = mutableMapOf<Marker, OmhMarker>()
+    internal val markers = mutableMapOf<Marker, OmhMarkerImpl>()
     internal val ignoreInfoWindowOpenCloseEvents = mutableMapOf<OmhMarker, Boolean>()
     private val lastInfoWindowOpenState = mutableMapOf<OmhMarker, Boolean>()
 
@@ -115,14 +116,14 @@ class OmhMapImpl(
     override val providerName: String
         get() = Constants.PROVIDER_NAME
 
-    private fun applyOnMarkerClickListener(marker: Marker, omhMarker: OmhMarker) {
+    private fun applyOnMarkerClickListener(marker: Marker, omhMarker: OmhMarkerImpl) {
         marker.setOnMarkerClickListener ClickHandler@{ _, _ ->
             if (omhMarker.getIsVisible() && omhMarker.getClickable()) {
                 val retVal = markerClickListener?.onMarkerClick(omhMarker) ?: false
 
                 if (!retVal) {
                     // to achieve feature parity with GoogleMaps, the info window should be opened on click
-                    if (!marker.isInfoWindowOpen) {
+                    if (!marker.isInfoWindowOpen && !omhMarker.isRemoved) {
                         marker.showInfoWindow()
                     }
                 }
@@ -160,7 +161,7 @@ class OmhMapImpl(
         val marker = options.toMarkerOptions(this, mapView)
         val initiallyClickable = options.clickable
 
-        val omhMarker = OmhMarkerImpl(marker, mapView, initiallyClickable)
+        val omhMarker = OmhMarkerImpl(marker, mapView, initiallyClickable, markerDelegate = this)
         markers[marker] = omhMarker
 
         applyOnMarkerClickListener(marker, omhMarker)
@@ -174,6 +175,10 @@ class OmhMapImpl(
         reRenderInfoWindows() // to set up info window open state listeners
 
         return omhMarker
+    }
+
+    override fun removeMarker(marker: Marker) {
+        markers.remove(marker)
     }
 
     override fun addPolyline(options: OmhPolylineOptions): OmhPolyline {
