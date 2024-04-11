@@ -21,7 +21,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.RadioGroup
-import android.widget.Toast
+import androidx.core.view.children
 import androidx.fragment.app.Fragment
 import com.openmobilehub.android.maps.core.presentation.fragments.OmhMapFragment
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMap
@@ -29,6 +29,8 @@ import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMap
 import com.openmobilehub.android.maps.core.utils.NetworkConnectivityChecker
 import com.openmobilehub.android.maps.sample.R
 import com.openmobilehub.android.maps.sample.databinding.FragmentMapStylesBinding
+import com.openmobilehub.android.maps.sample.model.InfoDisplay
+import com.openmobilehub.android.maps.sample.utils.Constants
 
 interface MapStyle {
     val dark: Int
@@ -44,14 +46,13 @@ class MapStylesFragment : Fragment(), OmhOnMapReadyCallback {
 
     private var omhMap: OmhMap? = null
 
-
     private val mapStyles: Map<String, MapStyle> = mapOf(
-        "GoogleMaps" to object : MapStyle {
+        Constants.GOOGLE_PROVIDER to object : MapStyle {
             override val dark = R.raw.google_style_dark
             override val retro = R.raw.google_style_retro
             override val silver = R.raw.google_style_silver
         },
-        "Mapbox" to object : MapStyle {
+        Constants.MAPBOX_PROVIDER to object : MapStyle {
             override val dark = R.raw.mapbox_style_dark
             override val retro = R.raw.mapbox_style_retro
             override val silver = R.raw.mapbox_style_silver
@@ -59,6 +60,10 @@ class MapStylesFragment : Fragment(), OmhOnMapReadyCallback {
     )
 
     private var stylesRadioGroup: RadioGroup? = null
+
+    private val infoDisplay by lazy {
+        InfoDisplay(this)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -73,33 +78,31 @@ class MapStylesFragment : Fragment(), OmhOnMapReadyCallback {
 
         networkConnectivityChecker = NetworkConnectivityChecker(requireContext()).apply {
             startListeningForConnectivityChanges {
-                Toast.makeText(
-                    requireContext(),
-                    R.string.lost_internet_connection,
-                    Toast.LENGTH_LONG
-                ).show()
+                infoDisplay.showMessage(R.string.lost_internet_connection)
             }
         }
 
         val omhMapFragment =
             childFragmentManager.findFragmentById(R.id.fragment_map_container) as? OmhMapFragment
         omhMapFragment?.getMapAsync(this)
-
-        setupUI(view)
     }
 
     override fun onMapReady(omhMap: OmhMap) {
         this.omhMap = omhMap
         if (networkConnectivityChecker?.isNetworkAvailable() != true) {
-            Toast.makeText(requireContext(), R.string.no_internet_connection, Toast.LENGTH_LONG)
-                .show()
+            infoDisplay.showMessage(R.string.lost_internet_connection)
         }
 
         omhMap.setZoomGesturesEnabled(true)
+
+        view?.let { setupUI(it) }
     }
 
     private fun setupUI(view: View) {
         stylesRadioGroup = view.findViewById(R.id.radioGroup_styles)
+        stylesRadioGroup?.children?.forEach {
+            it.isEnabled = mapStyles.keys.contains(omhMap?.providerName)
+        }
         stylesRadioGroup?.setOnCheckedChangeListener(RadioGroup.OnCheckedChangeListener { _, checkedId ->
             val providerMapStyles =
                 mapStyles[omhMap?.providerName] ?: return@OnCheckedChangeListener

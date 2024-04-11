@@ -26,7 +26,6 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.LinearLayout
-import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.openmobilehub.android.maps.core.presentation.fragments.OmhMapFragment
@@ -51,6 +50,7 @@ import com.openmobilehub.android.maps.sample.customviews.PanelColorSeekbar
 import com.openmobilehub.android.maps.sample.customviews.PanelSeekbar
 import com.openmobilehub.android.maps.sample.customviews.PanelSpinner
 import com.openmobilehub.android.maps.sample.databinding.FragmentMapPolylinesBinding
+import com.openmobilehub.android.maps.sample.model.InfoDisplay
 import com.openmobilehub.android.maps.sample.utils.Constants
 
 class MapPolylinesFragment : Fragment(), OmhOnMapReadyCallback {
@@ -61,6 +61,7 @@ class MapPolylinesFragment : Fragment(), OmhOnMapReadyCallback {
 
     private var omhMap: OmhMap? = null
     private var customizablePolyline: OmhPolyline? = null
+    private var referencePolyline: OmhPolyline? = null
 
     private var polylineColor: Int = Color.BLUE
     private var withSpan = false
@@ -111,6 +112,12 @@ class MapPolylinesFragment : Fragment(), OmhOnMapReadyCallback {
     private var spanGradientToColorSeekbar: PanelColorSeekbar? = null
     private var withSpanPatternCheckbox: CheckBox? = null
 
+    private var showReferencePolylineCheckbox: CheckBox? = null
+
+    private val infoDisplay by lazy {
+        InfoDisplay(this)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -124,11 +131,7 @@ class MapPolylinesFragment : Fragment(), OmhOnMapReadyCallback {
 
         networkConnectivityChecker = NetworkConnectivityChecker(requireContext()).apply {
             startListeningForConnectivityChanges {
-                Toast.makeText(
-                    requireContext(),
-                    R.string.lost_internet_connection,
-                    Toast.LENGTH_LONG
-                ).show()
+                infoDisplay.showMessage(R.string.lost_internet_connection)
             }
         }
 
@@ -140,8 +143,7 @@ class MapPolylinesFragment : Fragment(), OmhOnMapReadyCallback {
     override fun onMapReady(omhMap: OmhMap) {
         this.omhMap = omhMap
         if (networkConnectivityChecker?.isNetworkAvailable() != true) {
-            Toast.makeText(requireContext(), R.string.no_internet_connection, Toast.LENGTH_LONG)
-                .show()
+            infoDisplay.showMessage(R.string.lost_internet_connection)
         }
 
         omhMap.setScaleFactor(if (omhMap.providerName === Constants.MAPBOX_PROVIDER) 3.0f else 1.0f)
@@ -159,19 +161,20 @@ class MapPolylinesFragment : Fragment(), OmhOnMapReadyCallback {
         omhMap.setOnPolylineClickListener(omhOnPolylineClickListener)
 
         customizablePolyline = DebugPolylineHelper.addSinglePolyline(omhMap)
-        DebugPolylineHelper.addReferencePolyline(omhMap)
 
         view?.let { setupUI(it) }
     }
 
     private fun mapSpinnerPositionToOmhCap(position: Int): OmhCap? {
+        val refWidth = 75f
+
         return when (position) {
             0 -> OmhButtCap()
             1 -> OmhSquareCap()
             2 -> OmhRoundCap()
             3 -> OmhCustomCap(
                 BitmapFactory.decodeResource(resources, R.drawable.soccer_ball),
-                20f
+                refWidth
             )
 
             else -> null
@@ -217,6 +220,17 @@ class MapPolylinesFragment : Fragment(), OmhOnMapReadyCallback {
         }
 
         return hashSetOf(capTypeNameResourceID.indexOf(R.string.cap_type_custom))
+    }
+
+    private fun getDisabledPatternSpinnerPositions(): HashSet<Int> {
+        if (omhMap?.providerName === Constants.AZURE_PROVIDER) {
+            return hashSetOf(
+                patternTypeNameResourceID.indexOf(R.string.pattern_type_dotted),
+                patternTypeNameResourceID.indexOf(R.string.pattern_type_custom)
+            )
+        }
+
+        return hashSetOf()
     }
 
     private fun setupUI(view: View) {
@@ -291,20 +305,30 @@ class MapPolylinesFragment : Fragment(), OmhOnMapReadyCallback {
         }
         // jointType
         jointTypeSpinner = view.findViewById(R.id.panelSpinner_joinType)
-        jointTypeSpinner?.isEnabled = getSupportedStatus(Constants.ALL_PROVIDERS)
+        jointTypeSpinner?.isEnabled = getSupportedStatus(
+            listOf(
+                Constants.GOOGLE_PROVIDER,
+                Constants.MAPBOX_PROVIDER,
+                Constants.AZURE_PROVIDER
+            )
+        )
         jointTypeSpinner?.setValues(requireContext(), jointTypeNameResourceID)
         jointTypeSpinner?.setOnItemSelectedCallback { position: Int ->
             customizablePolyline?.setJointType(position)
         }
         // pattern
         patternSpinner = view.findViewById(R.id.panelSpinner_pattern)
-        patternSpinner?.isEnabled = getSupportedStatus(listOf(Constants.GOOGLE_PROVIDER))
+        patternSpinner?.isEnabled = getSupportedStatus(
+            listOf(
+                Constants.GOOGLE_PROVIDER,
+                Constants.AZURE_PROVIDER
+            )
+        )
+        patternSpinner?.setDisabledPositions(getDisabledPatternSpinnerPositions())
         patternSpinner?.setValues(requireContext(), patternTypeNameResourceID)
         patternSpinner?.setOnItemSelectedCallback { position: Int ->
             val pattern = mapSpinnerPositionToOmhPattern(position)
-            if (pattern != null) {
-                customizablePolyline?.setPattern(pattern)
-            }
+            customizablePolyline?.setPattern(pattern ?: emptyList())
         }
         // zIndex
         zIndexSeekbar = view.findViewById(R.id.panelSeekbar_zIndex)
@@ -356,6 +380,15 @@ class MapPolylinesFragment : Fragment(), OmhOnMapReadyCallback {
         withSpanPatternCheckbox?.setOnCheckedChangeListener { _, isChecked ->
             withSpanPattern = isChecked
             updateSpan()
+        }
+
+        showReferencePolylineCheckbox = view.findViewById(R.id.checkBox_showReferencePolyline)
+        showReferencePolylineCheckbox?.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                referencePolyline = DebugPolylineHelper.addReferencePolyline(omhMap!!)
+            } else {
+                referencePolyline?.remove()
+            }
         }
     }
 

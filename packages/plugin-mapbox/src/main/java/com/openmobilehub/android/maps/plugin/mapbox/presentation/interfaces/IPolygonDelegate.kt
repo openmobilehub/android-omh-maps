@@ -20,4 +20,5 @@ import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 
 interface IPolygonDelegate {
     fun updatePolygonSource(sourceId: String, outline: List<OmhCoordinate>, holes: List<List<OmhCoordinate>>?)
+    fun removePolygon(id: String)
 }

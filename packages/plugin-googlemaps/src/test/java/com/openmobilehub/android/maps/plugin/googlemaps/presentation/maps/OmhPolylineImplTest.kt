@@ -29,6 +29,7 @@ import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhStyle
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhJointType
 import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
+import com.openmobilehub.android.maps.plugin.googlemaps.presentation.interfaces.IPolylineDelegate
 import com.openmobilehub.android.maps.plugin.googlemaps.utils.CapConverter
 import com.openmobilehub.android.maps.plugin.googlemaps.utils.CoordinateConverter
 import com.openmobilehub.android.maps.plugin.googlemaps.utils.PatternConverter
@@ -49,11 +50,12 @@ class OmhPolylineImplTest {
     private lateinit var polyline: Polyline
     private lateinit var omhPolyline: OmhPolylineImpl
     private val polylineLogger = mockk<UnsupportedFeatureLogger>(relaxed = true)
+    private val delegate = mockk<IPolylineDelegate>(relaxed = true)
 
     @Before
     fun setUp() {
         polyline = mockk(relaxed = true)
-        omhPolyline = OmhPolylineImpl(polyline, polylineLogger)
+        omhPolyline = OmhPolylineImpl(polyline, delegate, polylineLogger)
         mockkObject(CapConverter)
         mockkObject(PatternConverter)
         mockkObject(CoordinateConverter)
@@ -390,5 +392,14 @@ class OmhPolylineImplTest {
 
         // Assert
         verify { polyline.tag = tag }
+    }
+
+    @Test
+    fun `remove calls delegate method`() {
+        // Act
+        omhPolyline.remove()
+
+        // Assert
+        verify { delegate.removePolyline(polyline) }
     }
 }

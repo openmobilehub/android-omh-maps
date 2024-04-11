@@ -8,7 +8,7 @@ val useMavenLocal by extra(getBooleanFromProperties("useMavenLocal", null))
 val useLocalProjects by extra(getBooleanFromProperties("useLocalProjects", null))
 
 if (useLocalProjects) {
-    println("OMH Maps project running with useLocalProjects enabled ")
+    println("OMH Maps project running with useLocalProjects enabled")
 }
 
 if (useMavenLocal) {
@@ -126,7 +126,22 @@ tasks {
     getByName("prepareKotlinBuildScriptModel").dependsOn(installPreCommitHook)
 }
 
+val publishToReleaseRepository =
+    getValueFromEnvOrProperties("publishingSonatypeRepository")?.toString() == "release"
+
 if (!useMavenLocal) {
+    println(
+        "OMH Maps project configured to publish to Sonatype "
+                + (if (publishToReleaseRepository) "release" else "snapshot")
+                + " repository"
+    )
+
+    if (!publishToReleaseRepository) {
+        subprojects {
+            version = "$version-SNAPSHOT" // required for publishing to the snapshot repository
+        }
+    }
+
     val ossrhUsername = getValueFromEnvOrProperties("OSSRH_USERNAME", null)
     val ossrhPassword = getValueFromEnvOrProperties("OSSRH_PASSWORD", null)
     val mStagingProfileId = getValueFromEnvOrProperties("SONATYPE_STAGING_PROFILE_ID", null)
@@ -135,15 +150,22 @@ if (!useMavenLocal) {
     val signingKey by extra(getValueFromEnvOrProperties("SIGNING_KEY", null))
 
     // Set up Sonatype repository
-    nexusPublishing {
-        repositories {
-            sonatype {
-                stagingProfileId.set(mStagingProfileId)
-                username.set(ossrhUsername)
-                password.set(ossrhPassword)
-                // Add these lines if using new Sonatype infra
-                nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
-                snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
+    afterEvaluate {
+        nexusPublishing {
+            // fix for nexus publishing plugin not picking up the correct version of the published
+            // subproject, since this is happening in the root project;
+            // see https://github.com/gradle-nexus/publish-plugin/issues/105
+            useStaging.set(provider { publishToReleaseRepository })
+
+            repositories {
+                sonatype {
+                    stagingProfileId.set(mStagingProfileId.toString())
+                    username.set(ossrhUsername.toString())
+                    password.set(ossrhPassword.toString())
+                    // Add these lines if using new Sonatype infra
+                    nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
+                    snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
+                }
             }
         }
     }

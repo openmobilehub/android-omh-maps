@@ -29,27 +29,28 @@ import com.mapbox.maps.extension.style.layers.properties.generated.IconRotationA
 import com.mapbox.maps.extension.style.layers.properties.generated.Visibility
 import com.mapbox.maps.extension.style.sources.addSource
 import com.mapbox.maps.extension.style.sources.generated.GeoJsonSource
+import com.openmobilehub.android.maps.core.R
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMarker
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.utils.DrawableConverter
-import com.openmobilehub.android.maps.plugin.mapbox.R
+import com.openmobilehub.android.maps.core.utils.cartesian.Offset2D
+import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IMapInfoWindowManagerDelegate
+import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IMarkerDelegate
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IOmhInfoWindowMapViewDelegate
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.ITouchInteractable
 import com.openmobilehub.android.maps.plugin.mapbox.utils.AnchorConverter
 import com.openmobilehub.android.maps.plugin.mapbox.utils.Constants
 import com.openmobilehub.android.maps.plugin.mapbox.utils.CoordinateConverter
-import com.openmobilehub.android.maps.plugin.mapbox.utils.cartesian.Offset2D
+import com.openmobilehub.android.maps.plugin.mapbox.utils.markerLogger
 import java.util.UUID
-import kotlin.math.cos
-import kotlin.math.sin
 import com.openmobilehub.android.maps.core.presentation.models.Constants as OmhConstants
 
 @SuppressWarnings("TooManyFunctions", "LongParameterList")
 internal class OmhMarkerImpl(
     internal val markerUUID: UUID,
     internal val context: Context,
-    private val markerSymbolLayer: SymbolLayer,
+    internal val markerSymbolLayer: SymbolLayer,
     private var position: OmhCoordinate,
     initialTitle: String?,
     initialSnippet: String?,
@@ -64,13 +65,16 @@ internal class OmhMarkerImpl(
     initialInfoWindowAnchor: Pair<Float, Float> = OmhConstants.ANCHOR_CENTER to OmhConstants.ANCHOR_TOP,
     initialIcon: Drawable?,
     infoWindowManagerDelegate: IMapInfoWindowManagerDelegate,
-    infoWindowMapViewDelegate: IOmhInfoWindowMapViewDelegate
+    infoWindowMapViewDelegate: IOmhInfoWindowMapViewDelegate,
+    private val logger: UnsupportedFeatureLogger = markerLogger,
+    private val markerDelegate: IMarkerDelegate
 ) : OmhMarker, ITouchInteractable {
+    internal var isRemoved: Boolean = false
 
     private lateinit var geoJsonSource: GeoJsonSource
     private lateinit var style: Style
     internal var omhInfoWindow: OmhInfoWindow
-    private var isCustomIconSet: Boolean = false
+    internal var isCustomIconSet: Boolean = false
     internal var iconWidth: Int = 0
     internal var iconHeight: Int = 0
 
@@ -131,7 +135,7 @@ internal class OmhMarkerImpl(
     @SuppressWarnings("MagicNumber")
     internal fun getHandleTranslation(): Offset2D<Double> {
         val discreteAnchor = AnchorConverter.convertContinuousToDiscreteIconAnchor(bufferedAnchor)
-        var (offsetCoeffX, offsetCoeffY) = when (discreteAnchor) {
+        val (offsetCoeffX, offsetCoeffY) = when (discreteAnchor) {
             IconAnchor.CENTER -> 0.0 to 0.0
             IconAnchor.LEFT -> -0.5 to 0.0
             IconAnchor.RIGHT -> 0.5 to 0.0
@@ -150,20 +154,10 @@ internal class OmhMarkerImpl(
         return Offset2D(offsetX, offsetY)
     }
 
-    private fun rotateOffset(translation: Offset2D<Double>): Offset2D<Double> {
-        // rotation angle
-        val theta = Math.toRadians(getRotation().toDouble())
-
-        return Offset2D(
-            -(cos(theta) * translation.x - sin(theta) * translation.y),
-            -(sin(theta) * translation.x + cos(theta) * translation.y)
-        )
-    }
-
     override fun getHandleCenterOffset(): Offset2D<Double> {
         val translation = getHandleTranslation()
 
-        return rotateOffset(translation)
+        return translation.rotateOffset(getRotation().toDouble())
     }
 
     /**
@@ -173,11 +167,14 @@ internal class OmhMarkerImpl(
      * using `pixelForCoordinate(...)` to the center horizontally & **top edge vertically**.
      */
     fun getHandleTopOffset(): Offset2D<Double> {
-        val translation = getHandleTranslation()
+        val translation = getHandleTranslation() + Offset2D(
+            0.0,
+            iconHeight / 2.0
+        )
 
         // since we are already at the center of the marker, we want to move just by 1/4 of the IW's height
         // to get to just-above-the-top-edge of the marker
-        return rotateOffset(translation + Offset2D(0.0, iconHeight / 2.0))
+        return translation.rotateOffset(getRotation().toDouble())
     }
 
     override fun getLongClickable(): Boolean {
@@ -189,6 +186,11 @@ internal class OmhMarkerImpl(
     }
 
     override fun setAnchor(anchorU: Float, anchorV: Float) {
+        logger.logFeatureSetterPartiallySupported(
+            "anchor",
+            "only discrete anchor types are supported, continuous values are converted to discrete ones"
+        )
+
         bufferedAnchor = anchorU to anchorV
         markerSymbolLayer.iconAnchor(
             AnchorConverter.convertContinuousToDiscreteIconAnchor(bufferedAnchor)
@@ -206,13 +208,16 @@ internal class OmhMarkerImpl(
     }
 
     private fun applyBufferedProperties() {
-        setIcon(bufferedIcon)
         setAlpha(bufferedAlpha)
         setIsVisible(bufferedIsVisible)
         setIsFlat(bufferedIsFlat)
         setRotation(bufferedRotation)
         setAnchor(bufferedAnchor.first, bufferedAnchor.second)
-        setBackgroundColor(backgroundColor)
+        if (backgroundColor == null) {
+            setIcon(bufferedIcon)
+        } else {
+            setBackgroundColor(backgroundColor)
+        }
 
         // one call to updatePosition will happen in omhInfoWindow.applyBufferedProperties(),
         // yet after buffered properties were applied, a re-invalidation is needed
@@ -416,6 +421,31 @@ internal class OmhMarkerImpl(
         }
 
         return markerImageID
+    }
+
+    override fun remove() {
+        isRemoved = true
+
+        markerDelegate.removeMarker(markerSymbolLayer.layerId)
+
+        if (isStyleReady()) {
+            val removeLayerResult = style.removeStyleLayer(getSymbolLayerID(markerUUID))
+            removeLayerResult.error?.let { error ->
+                throw IllegalStateException("Failed to remove SymbolLayer from map: $error")
+            }
+
+            val removeSourceResult = style.removeStyleSource(getGeoJsonSourceID(markerUUID))
+            removeSourceResult.error?.let { error ->
+                throw IllegalStateException("Failed to remove GeoJsonSource from map: $error")
+            }
+
+            val removeImageResult = style.removeStyleImage(getMarkerIconID(isCustomIconSet))
+            removeImageResult.error?.let { error ->
+                throw IllegalStateException("Failed to remove image from map: $error")
+            }
+        }
+
+        omhInfoWindow.remove()
     }
 
     internal companion object {

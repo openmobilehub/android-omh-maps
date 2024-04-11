@@ -5,7 +5,7 @@ import com.azure.android.maps.control.data.Position
 import com.azure.android.maps.control.options.CameraOptions
 import com.azure.android.maps.control.options.Option
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
-import com.openmobilehub.android.maps.plugin.azuremaps.presentation.utils.Constants
+import com.openmobilehub.android.maps.plugin.azuremaps.utils.Constants
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk

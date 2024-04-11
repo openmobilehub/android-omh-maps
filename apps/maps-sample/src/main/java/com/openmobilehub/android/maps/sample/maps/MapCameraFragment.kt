@@ -26,7 +26,6 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.ImageView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.openmobilehub.android.maps.core.presentation.fragments.OmhMapFragment
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMap
@@ -36,6 +35,7 @@ import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.utils.NetworkConnectivityChecker
 import com.openmobilehub.android.maps.sample.R
 import com.openmobilehub.android.maps.sample.databinding.FragmentMapCameraBinding
+import com.openmobilehub.android.maps.sample.model.InfoDisplay
 import com.openmobilehub.android.maps.sample.utils.Constants
 
 class MapCameraFragment : Fragment(), OmhOnMapReadyCallback {
@@ -46,6 +46,10 @@ class MapCameraFragment : Fragment(), OmhOnMapReadyCallback {
 
     private var omhMap: OmhMap? = null
 
+    private val infoDisplay by lazy {
+        InfoDisplay(this)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -54,16 +58,13 @@ class MapCameraFragment : Fragment(), OmhOnMapReadyCallback {
         return binding.root
     }
 
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         networkConnectivityChecker = NetworkConnectivityChecker(requireContext()).apply {
             startListeningForConnectivityChanges {
-                Toast.makeText(
-                    requireContext(),
-                    R.string.lost_internet_connection,
-                    Toast.LENGTH_SHORT
-                ).show()
+                infoDisplay.showMessage(R.string.lost_internet_connection)
             }
         }
 
@@ -75,12 +76,11 @@ class MapCameraFragment : Fragment(), OmhOnMapReadyCallback {
     override fun onMapReady(omhMap: OmhMap) {
         this.omhMap = omhMap
         if (networkConnectivityChecker?.isNetworkAvailable() != true) {
-            Toast.makeText(requireContext(), R.string.no_internet_connection, Toast.LENGTH_SHORT)
-                .show()
+            infoDisplay.showMessage(R.string.lost_internet_connection)
         }
 
         omhMap.setOnMapLoadedCallback {
-            Toast.makeText(requireContext(), "Map Loaded", Toast.LENGTH_SHORT).show()
+            infoDisplay.showMessage("Map Loaded")
         }
 
         omhMap.setZoomGesturesEnabled(true)
@@ -91,12 +91,12 @@ class MapCameraFragment : Fragment(), OmhOnMapReadyCallback {
                 OmhOnCameraMoveStartedListener.REASON_GESTURE -> "Gesture"
                 else -> "Unknown Action"
             }
-            Toast.makeText(requireContext(), "Camera move started by $reason", Toast.LENGTH_SHORT)
-                .show()
+
+            infoDisplay.showMessage("Camera move started by $reason")
         }
 
         omhMap.setOnCameraIdleListener {
-            Toast.makeText(requireContext(), "Camera is idle", Toast.LENGTH_SHORT).show()
+            infoDisplay.showMessage("Camera is idle")
         }
 
         view?.let { setupUI(it) }
@@ -130,11 +130,7 @@ class MapCameraFragment : Fragment(), OmhOnMapReadyCallback {
         showCameraPositionCoordinateButton.isEnabled = getSupportedStatus(Constants.ALL_PROVIDERS)
         showCameraPositionCoordinateButton?.setOnClickListener {
             val cameraPositionCoordinate = omhMap?.getCameraPositionCoordinate()
-            Toast.makeText(
-                requireContext(),
-                "Camera position coordinate: $cameraPositionCoordinate",
-                Toast.LENGTH_SHORT
-            ).show()
+            infoDisplay.showMessage("Camera position coordinate: $cameraPositionCoordinate")
         }
 
         // Move camera
@@ -165,11 +161,7 @@ class MapCameraFragment : Fragment(), OmhOnMapReadyCallback {
                 if (it !== null) {
                     showDialogWithImage(requireContext(), it)
                 } else {
-                    Toast.makeText(
-                        requireContext(),
-                        "Failed to take snapshot",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    infoDisplay.showMessage("Failed to take snapshot")
                 }
             }
         }

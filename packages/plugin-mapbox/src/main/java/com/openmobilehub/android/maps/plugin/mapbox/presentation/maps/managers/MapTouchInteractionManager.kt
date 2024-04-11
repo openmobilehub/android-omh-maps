@@ -18,7 +18,7 @@ package com.openmobilehub.android.maps.plugin.mapbox.presentation.maps.managers
 
 import com.mapbox.geojson.Point
 import com.mapbox.maps.ScreenCoordinate
-import com.openmobilehub.android.maps.plugin.mapbox.extensions.distanceTo
+import com.openmobilehub.android.maps.plugin.mapbox.extensions.toPoint2D
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IMapDragManagerDelegate
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IMapLongClickManagerDelegate
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.ITouchInteractable
@@ -63,7 +63,9 @@ internal class MapTouchInteractionManager(
                 } else {
                     // first, check if we are still at the same point - otherwise, reset the timer
                     // allow a tiny tolerance
-                    val distancePx = interactionTouchStartPoint!!.distanceTo(screenCoordinate)
+                    val distancePx =
+                        interactionTouchStartPoint!!.toPoint2D()
+                            .distanceTo(screenCoordinate.toPoint2D())
                     if (distancePx > Constants.MAP_TOUCH_SAME_COORDINATES_THRESHOLD_PX) {
                         interactionTouchStartTimestamp = TimestampHelper.getNow()
                         interactionTouchStartPoint = screenCoordinate

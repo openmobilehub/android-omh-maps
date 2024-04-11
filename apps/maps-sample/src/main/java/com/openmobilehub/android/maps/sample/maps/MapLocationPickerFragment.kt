@@ -22,7 +22,6 @@ import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -39,6 +38,7 @@ import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.utils.NetworkConnectivityChecker
 import com.openmobilehub.android.maps.sample.R
 import com.openmobilehub.android.maps.sample.databinding.FragmentLocationPickerMapBinding
+import com.openmobilehub.android.maps.sample.model.InfoDisplay
 import com.openmobilehub.android.maps.sample.utils.Constants.ANIMATION_DURATION
 import com.openmobilehub.android.maps.sample.utils.Constants.DEFAULT_ZOOM_LEVEL
 import com.openmobilehub.android.maps.sample.utils.Constants.FINAL_TRANSLATION
@@ -62,6 +62,10 @@ class MapLocationPickerFragment : Fragment(), OmhOnMapReadyCallback {
     private var handledCurrentLocation = false
     private var myLocationEnabled = true
 
+    private val infoDisplay by lazy {
+        InfoDisplay(this)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val coordinate = savedInstanceState?.getOmhCoordinate(LOCATION_KEY)
@@ -83,11 +87,7 @@ class MapLocationPickerFragment : Fragment(), OmhOnMapReadyCallback {
 
         networkConnectivityChecker = NetworkConnectivityChecker(requireContext()).apply {
             startListeningForConnectivityChanges {
-                Toast.makeText(
-                    requireContext(),
-                    R.string.lost_internet_connection,
-                    Toast.LENGTH_LONG
-                ).show()
+                infoDisplay.showMessage(R.string.lost_internet_connection)
             }
         }
         binding.fabShareLocation.setOnClickListener {
@@ -119,8 +119,7 @@ class MapLocationPickerFragment : Fragment(), OmhOnMapReadyCallback {
 
     override fun onMapReady(omhMap: OmhMap) {
         if (networkConnectivityChecker?.isNetworkAvailable() != true) {
-            Toast.makeText(requireContext(), R.string.no_internet_connection, Toast.LENGTH_LONG)
-                .show()
+            infoDisplay.showMessage(R.string.no_internet_connection)
         }
         omhMap.setZoomGesturesEnabled(true)
 
@@ -176,7 +175,7 @@ class MapLocationPickerFragment : Fragment(), OmhOnMapReadyCallback {
             // noinspection MissingPermission
             omhMap.setMyLocationEnabled(true)
             omhMap.setMyLocationButtonClickListener {
-                Toast.makeText(requireContext(), R.string.center_message, Toast.LENGTH_SHORT).show()
+                infoDisplay.showMessage(R.string.center_message)
                 false
             }
         }
@@ -208,7 +207,7 @@ class MapLocationPickerFragment : Fragment(), OmhOnMapReadyCallback {
     private fun initializeRunnable() {
         handler = Handler(Looper.getMainLooper())
         runnable = Runnable {
-            Toast.makeText(requireContext(), R.string.move_message, Toast.LENGTH_LONG).show()
+            infoDisplay.showMessage(R.string.move_message)
             runnable?.let { validRunnable ->
                 handler?.postDelayed(validRunnable, SHOW_MESSAGE_TIME)
             }

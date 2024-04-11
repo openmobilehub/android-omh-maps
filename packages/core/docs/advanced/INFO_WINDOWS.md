@@ -69,6 +69,15 @@ You can find comprehensive code samples of this feature in the following files:
 - [res/layout/info_window.xml](https://github.com/openmobilehub/android-omh-maps/blob/main/apps/maps-sample/src/main/res/layout/info_window.xml)
 - [res/layout/info_window_contents.xml](https://github.com/openmobilehub/android-omh-maps/blob/main/apps/maps-sample/src/main/res/layout/info_window_contents.xml)
 
+{: .note }
+
+> Please note that the exact behaviour of the custom views feature varies between providers.
+>
+> Especially, the primary difference is in the way the custom views are rendered:
+>
+> - for Google Maps and Mapbox, the custom view is rendered to a static bitmap, meaning that any interaction listeners added to the view would be obsolete
+> - for Azure Maps and OpenStreetMap, the custom view is rendered "live", meaning that any interaction listeners added to the view would function as usual, with the exception that adding interaction listeners to the root view in the custom info window view factory may be forbidden - for more information, please refer to the advanced documentation of each of the providers
+
 ### Using a custom window view factory
 
 This is the primary approach that entirely overrides the default info window view and renders a custom one instead. If this factory is set with `OmhMap` method `fun setCustomInfoWindowViewFactory(listener: OmhInfoWindowViewFactory): Unit`, then **it overrides the contents view approach**.
@@ -114,7 +123,7 @@ omhMap?.setCustomInfoWindowViewFactory(object : OmhInfoWindowViewFactory {
 
 ### Using a custom contents view factory
 
-If a custom window view factory has not been set, then OMH Maps checks if a custom contents view factory has been set with `OmhMap` method `fun setCustomInfoWindowContentsViewFactory(listener: OmhInfoWindowViewFactory): Unit`. If it has been set, then it is used to render the contents of the info window inside the default template, which means that while the outer design of the info window will be of the provider, the inside of it would be an arbitrary view.
+If a custom window view factory has not been set, then OMH Maps checks if a custom contents view factory has been set with `OmhMap` method `fun setCustomInfoWindowContentsViewFactory(listener: OmhInfoWindowViewFactory): Unit`. If it has been set, then it is used to render the contents of the info window inside the default template. Effectively, this means that while the outer design of the info window will be of the provider, the contents of it would be the arbitrary view returned from the factory.
 
 ```kotlin
 omhMap?.setCustomInfoWindowContentsViewFactory(object : OmhInfoWindowViewFactory {

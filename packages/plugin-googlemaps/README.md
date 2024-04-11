@@ -78,6 +78,8 @@ Legend of support levels:
 | setOnPolygonClickListener               |      ✅       |
 | snapshot                                |      ✅       |
 | setMapStyle                             |      ✅       |
+| setCustomInfoWindowContentsViewFactory  |      ✅       |
+| setCustomInfoWindowViewFactory          |      ✅       |
 
 Comments for partially supported 🟨 properties:
 
@@ -141,6 +143,7 @@ Comments for partially supported 🟨 properties:
 | showInfoWindow       |      ✅       |
 | hideInfoWindow       |      ✅       |
 | getIsInfoWindowShown |      🟨       |
+| remove               |      ✅       |
 
 Comments for partially supported 🟨 properties:
 
@@ -199,6 +202,7 @@ Comments for partially supported 🟨 properties:
 | setZIndex    |      ✅       |
 | isVisible    |      ✅       |
 | setVisible   |      ✅       |
+| remove       |      ✅       |
 
 ### Polygon
 
@@ -243,6 +247,7 @@ Comments for partially supported 🟨 properties:
 | setZIndex          |      ✅       |
 | isVisible          |      ✅       |
 | setVisible         |      ✅       |
+| remove             |      ✅       |
 
 ## Documentation
 

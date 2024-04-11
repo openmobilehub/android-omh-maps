@@ -23,7 +23,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.CheckBox
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.openmobilehub.android.maps.core.presentation.fragments.OmhMapFragment
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMap
@@ -41,6 +40,7 @@ import com.openmobilehub.android.maps.sample.customviews.PanelColorSeekbar
 import com.openmobilehub.android.maps.sample.customviews.PanelSeekbar
 import com.openmobilehub.android.maps.sample.customviews.PanelSpinner
 import com.openmobilehub.android.maps.sample.databinding.FragmentMapPolygonsBinding
+import com.openmobilehub.android.maps.sample.model.InfoDisplay
 import com.openmobilehub.android.maps.sample.utils.Constants
 
 class MapPolygonsFragment : Fragment(), OmhOnMapReadyCallback {
@@ -51,6 +51,7 @@ class MapPolygonsFragment : Fragment(), OmhOnMapReadyCallback {
 
     private var omhMap: OmhMap? = null
     private var customizablePolygon: OmhPolygon? = null
+    private var referencePolygon: OmhPolygon? = null
 
     private val jointTypeNameResourceID = intArrayOf(
         R.string.joint_type_miter,
@@ -75,6 +76,12 @@ class MapPolygonsFragment : Fragment(), OmhOnMapReadyCallback {
     private var strokePatternSpinner: PanelSpinner? = null
     private var zIndexSeekbar: PanelSeekbar? = null
 
+    private var showReferencePolygonCheckbox: CheckBox? = null
+
+    private val infoDisplay by lazy {
+        InfoDisplay(this)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -88,11 +95,7 @@ class MapPolygonsFragment : Fragment(), OmhOnMapReadyCallback {
 
         networkConnectivityChecker = NetworkConnectivityChecker(requireContext()).apply {
             startListeningForConnectivityChanges {
-                Toast.makeText(
-                    requireContext(),
-                    R.string.lost_internet_connection,
-                    Toast.LENGTH_LONG
-                ).show()
+                infoDisplay.showMessage(R.string.lost_internet_connection)
             }
         }
 
@@ -104,8 +107,7 @@ class MapPolygonsFragment : Fragment(), OmhOnMapReadyCallback {
     override fun onMapReady(omhMap: OmhMap) {
         this.omhMap = omhMap
         if (networkConnectivityChecker?.isNetworkAvailable() != true) {
-            Toast.makeText(requireContext(), R.string.no_internet_connection, Toast.LENGTH_LONG)
-                .show()
+            infoDisplay.showMessage(R.string.no_internet_connection)
         }
 
         omhMap.setZoomGesturesEnabled(true)
@@ -122,7 +124,6 @@ class MapPolygonsFragment : Fragment(), OmhOnMapReadyCallback {
         omhMap.setOnPolygonClickListener(omhOnPolygonClickListener)
 
         customizablePolygon = DebugPolygonHelper.addDebugPolygon(omhMap)
-        DebugPolygonHelper.addReferencePolygon(omhMap)
 
         view?.let { setupUI(it) }
     }
@@ -221,14 +222,22 @@ class MapPolygonsFragment : Fragment(), OmhOnMapReadyCallback {
         // jointType
         strokeJointTypeSpinner = view.findViewById(R.id.panelSpinner_joinType)
         strokeJointTypeSpinner?.isEnabled =
-            getSupportedStatus(listOf(Constants.GOOGLE_PROVIDER, Constants.MAPBOX_PROVIDER))
+            getSupportedStatus(
+                listOf(
+                    Constants.GOOGLE_PROVIDER,
+                    Constants.MAPBOX_PROVIDER,
+                    Constants.AZURE_PROVIDER
+                )
+            )
         strokeJointTypeSpinner?.setValues(requireContext(), jointTypeNameResourceID)
         strokeJointTypeSpinner?.setOnItemSelectedCallback { position: Int ->
             customizablePolygon?.setStrokeJointType(position)
         }
         // pattern
         strokePatternSpinner = view.findViewById(R.id.panelSpinner_pattern)
-        strokePatternSpinner?.isEnabled = getSupportedStatus(listOf(Constants.GOOGLE_PROVIDER))
+        strokePatternSpinner?.isEnabled =
+            getSupportedStatus(listOf(Constants.GOOGLE_PROVIDER, Constants.AZURE_PROVIDER))
+        strokePatternSpinner?.setDisabledPositions(getDisabledStrokePatternSpinnerPositions())
         strokePatternSpinner?.setValues(requireContext(), patternTypeNameResourceID)
         strokePatternSpinner?.setOnItemSelectedCallback { position: Int ->
             val pattern = mapSpinnerPositionToOmhPattern(position)
@@ -240,6 +249,27 @@ class MapPolygonsFragment : Fragment(), OmhOnMapReadyCallback {
         zIndexSeekbar?.setOnProgressChangedCallback { progress: Int ->
             customizablePolygon?.setZIndex(progress.toFloat())
         }
+
+        // referencePolygon
+        showReferencePolygonCheckbox = view.findViewById(R.id.checkBox_showReferencePolygon)
+        showReferencePolygonCheckbox?.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                referencePolygon = DebugPolygonHelper.addReferencePolygon(omhMap!!)
+            } else {
+                referencePolygon?.remove()
+            }
+        }
+    }
+
+    private fun getDisabledStrokePatternSpinnerPositions(): HashSet<Int> {
+        if (omhMap?.providerName === Constants.AZURE_PROVIDER) {
+            return hashSetOf(
+                patternTypeNameResourceID.indexOf(R.string.pattern_type_dotted),
+                patternTypeNameResourceID.indexOf(R.string.pattern_type_custom)
+            )
+        }
+
+        return hashSetOf()
     }
 
     override fun onDestroyView() {

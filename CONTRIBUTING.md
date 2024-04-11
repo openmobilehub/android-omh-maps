@@ -115,9 +115,13 @@ Generally, all files that are placed inside `packages/<name>/docs/` are included
 1. Clone the repository
 2. Update the changelog (and commit it afterwards)
 3. Push the changes and wait for the latest CI build to complete
-4. Bump the version, create a Git tag and commit the changes
+4. Bump the version and commit the changes
 5. Push the version bump commit: `git push`
-6. Push the Git tag: `git push --tags`
+6. Manually dispatch GitHub Actions workflow(s) to publish the new version: `Publish Core Package` or `Publish <plugin name> Plugin`.
+
+At the last step, you will be asked, which Sonatype repository to publish to: `release` or `snapshot`. Snapshot artifacts can be overwritten under the same version. If you choose to publish a snapshot, the scripts will automatically append a `-SNAPSHOT` suffix to the version of all packages.
+
+This is done by GH Actions setting a proper value (`snapshot` / `release`) to Gradle `publishingSonatypeRepository` property, which is handled appropriately in root project's `build.gradle.kts`.
 
 ## Building documentation locally
 
@@ -151,6 +155,12 @@ For markdown advanced documentation, the following rules apply to all files:
 - Images can be included as usual, however they are required to be present in module-level `images/` directory to be picked up by Gradle scripts & copied to the correct location in the generated HTML documentation.
 - Relative links to top-level `README.md` files of other modules (e.g. MD files in `packages/googlemaps/...` to reference `packages/plugin-core/README.md`) are not supported - use absolute (`/packages/...`) paths instead
 - Other links to local files can be project-absolute (beginning with `/packages/`) or relative.
+
+Common Markdown syntax is supported along with features specific to Jekyll & [Just the docs theme](https://just-the-docs.com/), and the following [callouts](https://just-the-docs.com/docs/configuration/#callouts) have been configured:
+
+- warning
+- error
+- note
 
 Additionally, rules for specific files are presented below.
 

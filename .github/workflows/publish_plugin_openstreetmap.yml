@@ -2,6 +2,14 @@ name: Publish OpenStreetMap Plugin
 
 on:
   workflow_dispatch:
+    inputs:
+      destination-repository:
+        type: choice
+        required: true
+        description: Destination repository
+        options:
+          - snapshot
+          - release
 
 jobs:
   publish:
@@ -9,4 +17,5 @@ jobs:
     uses: ./.github/workflows/build_and_publish_to_maven_remotely.yml
     with:
       package-name: :packages:plugin-openstreetmap
+      destination-repository: ${{ github.event.inputs.destination-repository }}
     secrets: inherit

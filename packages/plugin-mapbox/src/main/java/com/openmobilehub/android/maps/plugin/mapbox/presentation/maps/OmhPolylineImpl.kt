@@ -40,7 +40,7 @@ internal class OmhPolylineImpl(
     private val lineLayer: LineLayer,
     options: OmhPolylineOptions,
     private var scaleFactor: Float,
-    private var polylineDelegate: IPolylineDelegate,
+    private var delegate: IPolylineDelegate,
     private var logger: UnsupportedFeatureLogger = polylineLogger
 ) : OmhPolyline {
     private lateinit var style: Style
@@ -121,7 +121,8 @@ internal class OmhPolylineImpl(
 
     override fun setJointType(jointType: Int) {
         if (isStyleReady()) {
-            lineLayer.lineJoin(JoinTypeConverter.convertToLineJoin(jointType))
+            val join = JoinTypeConverter.convertToLineJoin(jointType)
+            lineLayer.lineJoin(join)
         } else {
             bufferedJointType = jointType
         }
@@ -141,7 +142,7 @@ internal class OmhPolylineImpl(
     }
 
     override fun setPoints(omhCoordinates: List<OmhCoordinate>) {
-        polylineDelegate.updatePolylinePoints(lineLayer.sourceId, omhCoordinates)
+        delegate.updatePolylinePoints(lineLayer.sourceId, omhCoordinates)
         points = omhCoordinates
     }
 
@@ -236,5 +237,9 @@ internal class OmhPolylineImpl(
             addSourceAndLayersToMap()
             applyBufferedProperties()
         }
+    }
+
+    override fun remove() {
+        delegate.removePolyline(source.sourceId)
     }
 }

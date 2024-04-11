@@ -28,7 +28,6 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import com.openmobilehub.android.maps.core.presentation.fragments.OmhMapFragment
@@ -47,6 +46,8 @@ import com.openmobilehub.android.maps.sample.R
 import com.openmobilehub.android.maps.sample.customviews.PanelSeekbar
 import com.openmobilehub.android.maps.sample.customviews.PanelSpinner
 import com.openmobilehub.android.maps.sample.databinding.FragmentMapInfoWindowsBinding
+import com.openmobilehub.android.maps.sample.model.InfoDisplay
+import com.openmobilehub.android.maps.sample.utils.Constants.AZURE_PROVIDER
 import com.openmobilehub.android.maps.sample.utils.Constants.DEFAULT_ZOOM_LEVEL
 import com.openmobilehub.android.maps.sample.utils.Constants.GOOGLE_PROVIDER
 import com.openmobilehub.android.maps.sample.utils.Constants.OSM_PROVIDER
@@ -96,6 +97,11 @@ open class MapInfoWindowsFragment : Fragment(), OmhOnMapReadyCallback {
         R.string.info_window_appearance_type_custom_contents_view,
     )
 
+
+    private val infoDisplay by lazy {
+        InfoDisplay(this)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -109,11 +115,7 @@ open class MapInfoWindowsFragment : Fragment(), OmhOnMapReadyCallback {
 
         networkConnectivityChecker = NetworkConnectivityChecker(requireContext()).apply {
             startListeningForConnectivityChanges {
-                Toast.makeText(
-                    requireContext(),
-                    R.string.lost_internet_connection,
-                    Toast.LENGTH_LONG
-                ).show()
+                infoDisplay.showMessage(requireContext().getString(R.string.lost_internet_connection))
             }
         }
 
@@ -143,8 +145,7 @@ open class MapInfoWindowsFragment : Fragment(), OmhOnMapReadyCallback {
         this.omhMap = omhMap
 
         if (networkConnectivityChecker?.isNetworkAvailable() != true) {
-            Toast.makeText(requireContext(), R.string.no_internet_connection, Toast.LENGTH_LONG)
-                .show()
+            infoDisplay.showMessage(requireContext().getString(R.string.no_internet_connection))
         }
         omhMap.setZoomGesturesEnabled(true)
 
@@ -224,12 +225,6 @@ open class MapInfoWindowsFragment : Fragment(), OmhOnMapReadyCallback {
             }
         })
 
-        val eventsToast = Toast.makeText(
-            requireContext(),
-            "",
-            Toast.LENGTH_SHORT
-        ) // single instance to quickly show new toasts while an old one may still be shown
-
         omhMap.setOnInfoWindowOpenStatusChangeListener(object :
             OmhOnInfoWindowOpenStatusChangeListener {
             override fun onInfoWindowOpen(marker: OmhMarker) {
@@ -238,8 +233,7 @@ open class MapInfoWindowsFragment : Fragment(), OmhOnMapReadyCallback {
                     "User opened info window for marker '${marker.getTitle()}' at ${marker.getPosition()}"
                 )
 
-                eventsToast.setText(R.string.info_window_opened)
-                eventsToast.show()
+                infoDisplay.showMessage(R.string.info_window_opened)
 
                 applyStateToImperativeControls(true) // getIsInfoWindowShown() will not yet be true
             }
@@ -250,8 +244,7 @@ open class MapInfoWindowsFragment : Fragment(), OmhOnMapReadyCallback {
                     "User closed info window for marker '${marker.getTitle()}' at ${marker.getPosition()}"
                 )
 
-                eventsToast.setText(R.string.info_window_closed)
-                eventsToast.show()
+                infoDisplay.showMessage(R.string.info_window_closed)
 
                 if (mapProviderName == GOOGLE_PROVIDER) {
                     mainHandler.postDelayed({
@@ -269,8 +262,7 @@ open class MapInfoWindowsFragment : Fragment(), OmhOnMapReadyCallback {
                 "User clicked info window for marker '${marker.getTitle()}' at ${marker.getPosition()}"
             )
 
-            eventsToast.setText(R.string.info_window_clicked)
-            eventsToast.show()
+            infoDisplay.showMessage(R.string.info_window_clicked)
 
             if (demoShouldHideWindowOnClickCheckbox?.isChecked == true) {
                 marker.hideInfoWindow()
@@ -283,8 +275,7 @@ open class MapInfoWindowsFragment : Fragment(), OmhOnMapReadyCallback {
                 "User long-clicked info window for marker '${marker.getTitle()}' at ${marker.getPosition()}"
             )
 
-            eventsToast.setText(R.string.info_window_long_clicked)
-            eventsToast.show()
+            infoDisplay.showMessage(R.string.info_window_long_clicked)
         }
 
         demoShouldReRenderInfoWindowOnDraggingCheckbox?.isChecked = true
@@ -301,6 +292,11 @@ open class MapInfoWindowsFragment : Fragment(), OmhOnMapReadyCallback {
         if (mapProviderName == OSM_PROVIDER) {
             disabledAppearancePositions =
                 hashSetOf(infoWindowAppearanceTypeNameResourceID.indexOf(R.string.info_window_appearance_type_custom_contents_view))
+        }
+
+        if (mapProviderName == AZURE_PROVIDER) {
+            demoShouldReRenderInfoWindowOnDraggingCheckbox?.isChecked = false
+            demoShouldReRenderInfoWindowOnDraggingCheckbox?.isEnabled = false
         }
 
         appearanceSpinner?.setDisabledPositions(disabledAppearancePositions)

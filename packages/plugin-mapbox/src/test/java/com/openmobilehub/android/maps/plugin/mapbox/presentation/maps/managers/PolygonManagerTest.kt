@@ -12,8 +12,8 @@ import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnPol
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhPolygon
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolygonOptions
+import com.openmobilehub.android.maps.core.utils.uuid.UUIDGenerator
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.maps.OmhPolygonImpl
-import com.openmobilehub.android.maps.plugin.mapbox.utils.uuid.UUIDGenerator
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
@@ -148,6 +148,63 @@ class PolygonManagerTest {
 
         // Assert
         verify { geoJsonSource.feature(any<Feature>()) }
+    }
+
+    @Test
+    fun `removePolygon calls removeStyleSource and removeStyleLayer methods and removes polygon`() {
+        // Arrange
+        val id = "polygon-$DEFAULT_UUID"
+        val outlineId = "outline-$id"
+
+        every { mapView.mapboxMap.style } returns style
+
+        every { style.styleSourceExists(id) } returns true
+        every { style.styleLayerExists(id) } returns true
+        every { style.styleLayerExists(outlineId) } returns true
+
+        every { any<MapboxStyleManager>().addSource(any()) } just runs
+        every { any<MapboxStyleManager>().addLayer(any()) } just runs
+
+        // Act
+        val polygonOptions = OmhPolygonOptions().apply {
+            outline = DEFAULT_OUTLINE
+        }
+        polygonManager.addPolygon(polygonOptions, style)
+
+        // Assert
+        Assert.assertEquals(1, polygonManager.polygons.count())
+
+        // Act
+        println(polygonManager.polygons)
+        polygonManager.removePolygon(id)
+
+        // Assert
+        verify { style.removeStyleSource(id) }
+        verify { style.removeStyleLayer(id) }
+        verify { style.removeStyleLayer(outlineId) }
+
+        Assert.assertEquals(0, polygonManager.polygons.count())
+    }
+
+    @Test
+    fun `removePolygon does not call removeStyleSource and removeStyleLayer if the source does not exist`() {
+        // Arrange
+        val id = "polyline-$DEFAULT_UUID"
+        val outlineId = "outline-$id"
+
+        every { mapView.mapboxMap.style } returns style
+
+        every { style.styleSourceExists(id) } returns false
+        every { style.styleLayerExists(id) } returns true
+        every { style.styleLayerExists(outlineId) } returns true
+
+        // Act
+        polygonManager.removePolygon(id)
+
+        // Assert
+        verify(exactly = 0) { style.removeStyleSource(id) }
+        verify(exactly = 0) { style.removeStyleLayer(id) }
+        verify(exactly = 0) { style.removeStyleLayer(outlineId) }
     }
 
     companion object {

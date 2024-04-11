@@ -24,7 +24,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
@@ -43,7 +42,9 @@ import com.openmobilehub.android.maps.sample.customviews.PanelColorSeekbar
 import com.openmobilehub.android.maps.sample.customviews.PanelSeekbar
 import com.openmobilehub.android.maps.sample.customviews.PanelSpinner
 import com.openmobilehub.android.maps.sample.databinding.FragmentMapMarkersBinding
+import com.openmobilehub.android.maps.sample.model.InfoDisplay
 import com.openmobilehub.android.maps.sample.utils.Constants.DEFAULT_ZOOM_LEVEL
+import com.openmobilehub.android.maps.sample.utils.Constants.OSM_PROVIDER
 import com.openmobilehub.android.maps.sample.utils.Constants.PERMISSIONS
 import com.openmobilehub.android.maps.sample.utils.Constants.PRIME_MERIDIAN
 import com.openmobilehub.android.maps.sample.utils.Constants.SHOW_MESSAGE_TIME
@@ -62,6 +63,7 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
     private var hasSnippetCheckbox: CheckBox? = null
     private var isFlatCheckbox: CheckBox? = null
     private var isVisibleCheckbox: CheckBox? = null
+    private var demoShouldRemoveMarkerOnClickCheckBox: CheckBox? = null
     private var anchorUSeekbar: PanelSeekbar? = null
     private var anchorVSeekbar: PanelSeekbar? = null
     private var alphaSeekbar: PanelSeekbar? = null
@@ -81,6 +83,10 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
         R.string.marker_appearance_type_custom_color
     )
 
+    private val infoDisplay by lazy {
+        InfoDisplay(this)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -94,11 +100,7 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
 
         networkConnectivityChecker = NetworkConnectivityChecker(requireContext()).apply {
             startListeningForConnectivityChanges {
-                Toast.makeText(
-                    requireContext(),
-                    R.string.lost_internet_connection,
-                    Toast.LENGTH_LONG
-                ).show()
+                infoDisplay.showMessage(R.string.lost_internet_connection)
             }
         }
 
@@ -116,8 +118,7 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
         mapProviderName = omhMap.providerName
 
         if (networkConnectivityChecker?.isNetworkAvailable() != true) {
-            Toast.makeText(requireContext(), R.string.no_internet_connection, Toast.LENGTH_LONG)
-                .show()
+            infoDisplay.showMessage(R.string.no_internet_connection)
         }
         omhMap.setZoomGesturesEnabled(true)
 
@@ -142,12 +143,6 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
             draggable = true
         })
 
-        val eventsToast = Toast.makeText(
-            context,
-            "",
-            Toast.LENGTH_SHORT
-        )
-
         customizableMarker = omhMap.addMarker(OmhMarkerOptions().apply {
             title = "Configurable test marker"
             position = OmhCoordinate().apply {
@@ -163,8 +158,16 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
                 "User clicked marker '${marker.getTitle()}' at ${marker.getPosition()}"
             )
 
-            eventsToast.setText("Marker '${marker.getTitle()}' has been clicked")
-            eventsToast.show()
+            val shouldRemoveMarker = demoShouldRemoveMarkerOnClickCheckBox?.isChecked ?: false
+
+            if (shouldRemoveMarker) {
+                marker.remove()
+            }
+
+            infoDisplay.showMessage(
+                "Marker '${marker.getTitle()}' has been clicked"
+                        + if (shouldRemoveMarker) " and removed" else ""
+            )
 
             false
         })
@@ -187,8 +190,7 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
                     }"
                 )
 
-                eventsToast.setText("Marker '${marker.getTitle()}' has just ended being dragged")
-                eventsToast.show()
+                infoDisplay.showMessage("Marker '${marker.getTitle()}' has just ended being dragged")
             }
 
             override fun onMarkerDragStart(marker: OmhMarker) {
@@ -199,8 +201,7 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
                     }"
                 )
 
-                eventsToast.setText("Marker '${marker.getTitle()}' started being dragged")
-                eventsToast.show()
+                infoDisplay.showMessage("Marker '${marker.getTitle()}' started being dragged")
             }
         })
 
@@ -217,9 +218,14 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
         anchorVSeekbar?.setProgress(50)
         alphaSeekbar?.setProgress(100)
 
-        if (mapProviderName == "OpenStreetMap") {
+        if (mapProviderName == OSM_PROVIDER) {
             disabledAppearancePositions =
                 hashSetOf(markerAppearanceTypeNameResourceID.indexOf(R.string.marker_appearance_type_custom_color))
+        }
+
+        if (mapProviderName == com.openmobilehub.android.maps.sample.utils.Constants.AZURE_PROVIDER) {
+            isDraggableCheckbox?.isChecked = false
+            isDraggableCheckbox?.isEnabled = false
         }
 
         appearanceSpinner?.setDisabledPositions(disabledAppearancePositions)
@@ -325,6 +331,11 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
             currentAppearancePosition = position
             applyCustomizableMarkerAppearance()
         }
+
+        // demo should remove marker on click checkbox
+        demoShouldRemoveMarkerOnClickCheckBox =
+            view.findViewById(R.id.checkBox_demoShouldRemoveMarkerOnClick)
+        demoShouldRemoveMarkerOnClickCheckBox?.isChecked = false
     }
 
     override fun onResume() {

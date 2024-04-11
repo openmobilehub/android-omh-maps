@@ -57,21 +57,7 @@
                 android:layout_marginBottom="10dp"
                 android:gravity="center"
                 android:text="@string/label_info_window_properties"
-                android:textSize="18dp" />
-
-            <CheckBox
-                android:id="@+id/checkBox_isVisible"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:checked="true"
-                android:text="@string/visible" />
-
-            <CheckBox
-                android:id="@+id/checkBox_isClickable"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:checked="true"
-                android:text="@string/clickable" />
+                android:textSize="18sp" />
 
             <CheckBox
                 android:id="@+id/checkBox_hasSnippet"
@@ -119,7 +105,7 @@
                 android:layout_marginBottom="10dp"
                 android:gravity="center"
                 android:text="@string/label_demo_behaviour"
-                android:textSize="18dp" />
+                android:textSize="18sp" />
 
             <CheckBox
                 android:id="@+id/checkBox_demoShouldReRenderInfoWindowOnDragging"
@@ -153,7 +139,7 @@
                 android:layout_marginBottom="10dp"
                 android:gravity="center"
                 android:text="@string/label_imperative_usage"
-                android:textSize="18dp" />
+                android:textSize="18sp" />
 
             <Button
                 android:id="@+id/button_openInfoWindow"
@@ -178,7 +164,21 @@
                 android:layout_marginBottom="10dp"
                 android:gravity="center"
                 android:text="@string/label_marker_properties"
-                android:textSize="18dp" />
+                android:textSize="18sp" />
+
+            <CheckBox
+                android:id="@+id/checkBox_isVisible"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="@string/visible" />
+
+            <CheckBox
+                android:id="@+id/checkBox_isClickable"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="@string/clickable" />
 
             <com.openmobilehub.android.maps.sample.customviews.PanelSeekbar
                 android:id="@+id/panelSeekbar_rotation"

@@ -20,7 +20,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
 import com.openmobilehub.android.maps.core.presentation.fragments.OmhMapFragment
@@ -30,6 +29,7 @@ import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
 import com.openmobilehub.android.maps.core.utils.NetworkConnectivityChecker
 import com.openmobilehub.android.maps.sample.R
 import com.openmobilehub.android.maps.sample.databinding.FragmentSharedLocationMapBinding
+import com.openmobilehub.android.maps.sample.model.InfoDisplay
 
 
 class MapSharedLocationFragment : Fragment(), OmhOnMapReadyCallback {
@@ -40,6 +40,9 @@ class MapSharedLocationFragment : Fragment(), OmhOnMapReadyCallback {
 
     private val args: MapSharedLocationFragmentArgs by navArgs()
 
+    private val infoDisplay by lazy {
+        InfoDisplay(this)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -54,11 +57,7 @@ class MapSharedLocationFragment : Fragment(), OmhOnMapReadyCallback {
 
         networkConnectivityChecker = NetworkConnectivityChecker(requireContext()).apply {
             startListeningForConnectivityChanges {
-                Toast.makeText(
-                    requireContext(),
-                    R.string.lost_internet_connection,
-                    Toast.LENGTH_LONG
-                ).show()
+                infoDisplay.showMessage(R.string.lost_internet_connection)
             }
         }
 
@@ -70,8 +69,7 @@ class MapSharedLocationFragment : Fragment(), OmhOnMapReadyCallback {
 
     override fun onMapReady(omhMap: OmhMap) {
         if (networkConnectivityChecker?.isNetworkAvailable() != true) {
-            Toast.makeText(requireContext(), R.string.no_internet_connection, Toast.LENGTH_LONG)
-                .show()
+            infoDisplay.showMessage(R.string.lost_internet_connection)
         }
 
         displaySharedLocation(omhMap)

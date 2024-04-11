@@ -18,8 +18,16 @@ package com.openmobilehub.android.maps.plugin.azuremaps.presentation.maps
 
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
+import android.content.Context
 import androidx.annotation.RequiresPermission
 import com.azure.android.maps.control.AzureMap
+import com.azure.android.maps.control.ImageManager
+import com.azure.android.maps.control.LayerManager
+import com.azure.android.maps.control.MapControl
+import com.azure.android.maps.control.PopupManager
+import com.azure.android.maps.control.SourceManager
+import com.azure.android.maps.control.events.OnFeatureClick
+import com.mapbox.geojson.Feature
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhInfoWindowViewFactory
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMap
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMapLoadedCallback
@@ -42,33 +50,92 @@ import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolygonOptions
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolylineOptions
 import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
+import com.openmobilehub.android.maps.plugin.azuremaps.presentation.interfaces.AzureMapInterface
 import com.openmobilehub.android.maps.plugin.azuremaps.presentation.maps.managers.CameraManager
-import com.openmobilehub.android.maps.plugin.azuremaps.presentation.utils.Constants
-import com.openmobilehub.android.maps.plugin.azuremaps.presentation.utils.mapLogger
+import com.openmobilehub.android.maps.plugin.azuremaps.presentation.maps.managers.MapMarkerManager
+import com.openmobilehub.android.maps.plugin.azuremaps.presentation.maps.managers.MyLocationManager
+import com.openmobilehub.android.maps.plugin.azuremaps.presentation.maps.managers.PolygonManager
+import com.openmobilehub.android.maps.plugin.azuremaps.presentation.maps.managers.PolylineManager
+import com.openmobilehub.android.maps.plugin.azuremaps.utils.Constants
+import com.openmobilehub.android.maps.plugin.azuremaps.utils.mapLogger
 
-@SuppressWarnings("TooManyFunctions", "UnusedPrivateMember")
+@SuppressWarnings("TooManyFunctions", "UnusedPrivateMember", "LongParameterList")
 internal class OmhMapImpl(
-    private val mapView: AzureMap,
+    private val context: Context,
+    private val mapControl: MapControl,
+    val mapView: AzureMap,
     private val cameraManager: CameraManager = CameraManager(mapView),
-    private val logger: UnsupportedFeatureLogger = mapLogger
+    private val myLocationManager: MyLocationManager = MyLocationManager(
+        context,
+        mapControl,
+        mapView
+    ),
+    private val logger: UnsupportedFeatureLogger = mapLogger,
+    bRunningInTest: Boolean = false
 ) : OmhMap {
+
+    private val azureMapInterface = object : AzureMapInterface {
+        override val sources: SourceManager
+            get() = mapView.sources
+        override val layers: LayerManager
+            get() = mapView.layers
+        override val images: ImageManager
+            get() = mapView.images
+        override val popups: PopupManager
+            get() = mapView.popups
+    }
+    private val polylineManager = PolylineManager(azureMapInterface)
+    private val polygonManager = PolygonManager(azureMapInterface)
+    private val mapMarkerManager = MapMarkerManager(context, azureMapInterface)
 
     override val providerName: String
         get() = Constants.PROVIDER_NAME
 
-    override fun addMarker(options: OmhMarkerOptions): OmhMarker? {
-        // To be implemented
-        return null
+    init {
+        if (!bRunningInTest) {
+            setupTouchInteractionListeners()
+        }
     }
 
-    override fun addPolyline(options: OmhPolylineOptions): OmhPolyline? {
-        // To be implemented
-        return null
+    private fun setupTouchInteractionListeners() {
+        mapView.events.add(object : OnFeatureClick {
+            override fun onFeatureClick(features: MutableList<Feature>?): Boolean {
+                for (feature in features ?: listOf()) {
+                    if (featureHandleClick(feature)) {
+                        return true
+                    }
+                }
+                return false
+            }
+        })
     }
 
-    override fun addPolygon(options: OmhPolygonOptions): OmhPolygon? {
-        // To be implemented
-        return null
+    @SuppressWarnings("ReturnCount")
+    private fun featureHandleClick(feature: Feature): Boolean {
+        if (feature.hasProperty(Constants.MARKER_FEATURE_UUID_BINDING)) {
+            val markerId = feature.getStringProperty(Constants.MARKER_FEATURE_UUID_BINDING)
+            return mapMarkerManager.maybeHandleClick(markerId)
+        } else if (feature.hasProperty(Constants.POLYLINE_FEATURE_UUID_BINDING)) {
+            val polylineId = feature.getStringProperty(Constants.POLYLINE_FEATURE_UUID_BINDING)
+            return polylineManager.maybeHandleClick(polylineId)
+        } else if (feature.hasProperty(Constants.POLYGON_FEATURE_UUID_BINDING)) {
+            val polygonId = feature.getStringProperty(Constants.POLYGON_FEATURE_UUID_BINDING)
+            return polygonManager.maybeHandleClick(polygonId)
+        }
+
+        return false
+    }
+
+    override fun addMarker(options: OmhMarkerOptions): OmhMarker {
+        return mapMarkerManager.addMarker(options)
+    }
+
+    override fun addPolyline(options: OmhPolylineOptions): OmhPolyline {
+        return polylineManager.addPolyline(options)
+    }
+
+    override fun addPolygon(options: OmhPolygonOptions): OmhPolygon {
+        return polygonManager.addPolygon(options)
     }
 
     override fun getCameraPositionCoordinate(): OmhCoordinate {
@@ -93,18 +160,17 @@ internal class OmhMapImpl(
 
     @RequiresPermission(anyOf = [ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION])
     override fun setMyLocationEnabled(enable: Boolean) {
-        // To be implemented
+        myLocationManager.setMyLocationEnabled(enable)
     }
 
     override fun isMyLocationEnabled(): Boolean {
-        // To be implemented
-        return false
+        return myLocationManager.isMyLocationEnabled()
     }
 
     override fun setMyLocationButtonClickListener(
         omhOnMyLocationButtonClickListener: OmhOnMyLocationButtonClickListener
     ) {
-        // To be implemented
+        myLocationManager.setMyLocationButtonClickListener(omhOnMyLocationButtonClickListener)
     }
 
     override fun setOnCameraMoveStartedListener(listener: OmhOnCameraMoveStartedListener) {
@@ -120,35 +186,35 @@ internal class OmhMapImpl(
     }
 
     override fun setOnMarkerClickListener(listener: OmhOnMarkerClickListener) {
-        // To be implemented
+        mapMarkerManager.setMarkerClickListener(listener)
     }
 
     override fun setOnMarkerDragListener(listener: OmhOnMarkerDragListener) {
-        // To be implemented
+        logger.logSetterNotSupported("markerDragListener")
     }
 
     override fun setOnInfoWindowOpenStatusChangeListener(listener: OmhOnInfoWindowOpenStatusChangeListener) {
-        // To be implemented
+        mapMarkerManager.setInfoWindowOpenStatusChangeListener(listener)
     }
 
     override fun setOnInfoWindowClickListener(listener: OmhOnInfoWindowClickListener) {
-        // To be implemented
+        mapMarkerManager.setOnInfoWindowClickListener(listener)
     }
 
     override fun setOnInfoWindowLongClickListener(listener: OmhOnInfoWindowLongClickListener) {
-        // To be implemented
+        mapMarkerManager.setOnInfoWindowLongClickListener(listener)
     }
 
     override fun setOnPolylineClickListener(listener: OmhOnPolylineClickListener) {
-        // To be implemented
+        polylineManager.clickListener = listener
     }
 
     override fun setOnPolygonClickListener(listener: OmhOnPolygonClickListener) {
-        // To be implemented
+        polygonManager.clickListener = listener
     }
 
     override fun setMapStyle(json: Int?) {
-        // To be implemented
+        logger.logSetterNotSupported("mapStyle")
     }
 
     override fun setScaleFactor(scaleFactor: Float) {
@@ -156,10 +222,10 @@ internal class OmhMapImpl(
     }
 
     override fun setCustomInfoWindowViewFactory(factory: OmhInfoWindowViewFactory?) {
-        // To be implemented
+        mapMarkerManager.setCustomInfoWindowViewFactory(factory)
     }
 
     override fun setCustomInfoWindowContentsViewFactory(factory: OmhInfoWindowViewFactory?) {
-        // To be implemented
+        mapMarkerManager.setCustomInfoWindowContentsViewFactory(factory)
     }
 }

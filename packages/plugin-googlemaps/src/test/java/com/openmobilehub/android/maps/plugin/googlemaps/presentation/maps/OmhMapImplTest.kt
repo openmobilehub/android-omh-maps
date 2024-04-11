@@ -343,4 +343,48 @@ class OmhMapImplTest {
         // Assert
         verify { omhOnPolygonClickListener.onPolygonClick(omhPolygon) }
     }
+
+    @Test
+    fun `removePolyline calls remove method on Polyline object and removes polyline`() {
+        // Arrange
+        val googleMapPolyline = mockk<Polyline>(relaxed = true)
+        every { googleMap.addPolyline(any<PolylineOptions>()) } returns googleMapPolyline
+
+        val omhPolylineOptions = OmhPolylineOptions()
+
+        // Act
+        val omhPolyline = omhMapImpl.addPolyline(omhPolylineOptions)
+
+        // Assert
+        assertEquals(1, omhMapImpl.polylines.count())
+
+        // Act
+        omhMapImpl.removePolyline(googleMapPolyline)
+
+        // Assert
+        verify { omhPolyline.remove() }
+        assertEquals(0, omhMapImpl.polylines.count())
+    }
+
+    @Test
+    fun `removePolygon calls remove method on Polygon object and removes polygon`() {
+        // Arrange
+        val googleMapPolygon = mockk<Polygon>(relaxed = true)
+        every { googleMap.addPolygon(any<PolygonOptions>()) } returns googleMapPolygon
+
+        val omhPolygonOptions = OmhPolygonOptions()
+
+        // Act
+        val omhPolygon = omhMapImpl.addPolygon(omhPolygonOptions)
+
+        // Assert
+        assertEquals(1, omhMapImpl.polygons.count())
+
+        // Act
+        omhMapImpl.removePolygon(googleMapPolygon)
+
+        // Assert
+        verify { omhPolygon.remove() }
+        assertEquals(0, omhMapImpl.polygons.count())
+    }
 }
