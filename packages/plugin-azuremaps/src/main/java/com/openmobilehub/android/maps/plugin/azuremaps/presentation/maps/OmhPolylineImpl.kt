@@ -44,10 +44,12 @@ internal class OmhPolylineImpl(
     private val lineLayer: LineLayer,
     private val delegate: IPolylineDelegate,
     options: OmhPolylineOptions,
-    private var scaleFactor: Float = 1.0f,
+    scaleFactor: Float = 1.0f,
     private val logger: UnsupportedFeatureLogger = polylineLogger
 ) : OmhPolyline {
 
+    var scaleFactor: Float
+        private set
     private var _clickable: Boolean = false
     private var _tag: Any? = null
     private var _points: List<OmhCoordinate>
@@ -95,6 +97,7 @@ internal class OmhPolylineImpl(
         options.jointType?.let { _jointType = it }
         options.cap?.let { _cap = it }
         options.pattern?.let { _pattern = it }
+        this.scaleFactor = scaleFactor
     }
 
     override fun getCap(): OmhCap = _cap

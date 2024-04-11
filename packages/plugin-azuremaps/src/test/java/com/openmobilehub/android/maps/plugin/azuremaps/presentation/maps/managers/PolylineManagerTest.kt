@@ -154,4 +154,23 @@ class PolylineManagerTest {
         verify { source.clear() }
         verify { source.add(any<Feature>()) }
     }
+
+    @Test
+    fun `setScaleFactor should update polylines scale factors`() {
+        // Arrange
+        polylineManager.addPolyline(
+            OmhPolylineOptions()
+        ).apply {
+            setScaleFactor(1.0f)
+        }
+        val newScaleFactor = 2.0f
+
+        // Act
+        polylineManager.scaleFactor = newScaleFactor
+
+        // Assert
+        polylineManager.polylines.values.forEach {
+            assertEquals(newScaleFactor, it.scaleFactor)
+        }
+    }
 }

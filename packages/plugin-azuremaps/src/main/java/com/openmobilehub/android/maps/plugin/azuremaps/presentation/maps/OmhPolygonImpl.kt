@@ -43,10 +43,12 @@ internal class OmhPolygonImpl(
     private val lineLayer: LineLayer,
     private val delegate: IPolygonDelegate,
     options: OmhPolygonOptions,
-    private var scaleFactor: Float = 1.0f,
+    scaleFactor: Float = 1.0f,
     private val logger: UnsupportedFeatureLogger = polygonLogger
 ) : OmhPolygon {
 
+    var scaleFactor: Float
+        private set
     private var _clickable: Boolean = false
     private var _tag: Any? = null
     private var _outline: List<OmhCoordinate>
@@ -99,7 +101,7 @@ internal class OmhPolygonImpl(
         options.strokeJointType?.let { _strokeJointType = it }
         options.strokePattern?.let { _strokePattern = it }
         options.strokeWidth?.let { _strokeWidth = it }
-
+        this.scaleFactor = scaleFactor
         applyFillColor()
     }
 

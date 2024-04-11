@@ -20,6 +20,7 @@ import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.content.Context
 import androidx.annotation.RequiresPermission
+import androidx.annotation.VisibleForTesting
 import com.azure.android.maps.control.AzureMap
 import com.azure.android.maps.control.ImageManager
 import com.azure.android.maps.control.LayerManager
@@ -84,9 +85,13 @@ internal class OmhMapImpl(
         override val popups: PopupManager
             get() = mapView.popups
     }
-    private val polylineManager = PolylineManager(azureMapInterface)
-    private val polygonManager = PolygonManager(azureMapInterface)
     private val mapMarkerManager = MapMarkerManager(context, azureMapInterface)
+
+    @VisibleForTesting
+    internal val polylineManager = PolylineManager(azureMapInterface)
+
+    @VisibleForTesting
+    internal val polygonManager = PolygonManager(azureMapInterface)
 
     private var _scaleFactor: Float = 1.0f
         set(value) {

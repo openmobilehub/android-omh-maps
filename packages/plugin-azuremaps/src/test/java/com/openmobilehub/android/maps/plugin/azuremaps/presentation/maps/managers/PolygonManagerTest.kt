@@ -199,4 +199,23 @@ class PolygonManagerTest {
         verify { source.clear() }
         verify { source.add(any<Feature>()) }
     }
+
+    @Test
+    fun `setScaleFactor should update polygons scale factors`() {
+        // Arrange
+        polygonManager.addPolygon(
+            OmhPolygonOptions()
+        ).apply {
+            setScaleFactor(1.0f)
+        }
+        val newScaleFactor = 2.0f
+
+        // Act
+        polygonManager.scaleFactor = newScaleFactor
+
+        // Assert
+        polygonManager.polygons.values.forEach {
+            assertEquals(newScaleFactor, it.scaleFactor)
+        }
+    }
 }
