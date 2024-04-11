@@ -164,13 +164,15 @@ class MapPolylinesFragment : Fragment(), OmhOnMapReadyCallback {
     }
 
     private fun mapSpinnerPositionToOmhCap(position: Int): OmhCap? {
+        val refWidth = 75f
+
         return when (position) {
             0 -> OmhButtCap()
             1 -> OmhSquareCap()
             2 -> OmhRoundCap()
             3 -> OmhCustomCap(
                 BitmapFactory.decodeResource(resources, R.drawable.soccer_ball),
-                20f
+                refWidth
             )
 
             else -> null
@@ -301,7 +303,13 @@ class MapPolylinesFragment : Fragment(), OmhOnMapReadyCallback {
         }
         // jointType
         jointTypeSpinner = view.findViewById(R.id.panelSpinner_joinType)
-        jointTypeSpinner?.isEnabled = getSupportedStatus(Constants.ALL_PROVIDERS)
+        jointTypeSpinner?.isEnabled = getSupportedStatus(
+            listOf(
+                Constants.GOOGLE_PROVIDER,
+                Constants.MAPBOX_PROVIDER,
+                Constants.AZURE_PROVIDER
+            )
+        )
         jointTypeSpinner?.setValues(requireContext(), jointTypeNameResourceID)
         jointTypeSpinner?.setOnItemSelectedCallback { position: Int ->
             customizablePolyline?.setJointType(position)
