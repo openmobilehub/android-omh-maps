@@ -51,6 +51,7 @@ class MapPolygonsFragment : Fragment(), OmhOnMapReadyCallback {
 
     private var omhMap: OmhMap? = null
     private var customizablePolygon: OmhPolygon? = null
+    private var referencePolygon: OmhPolygon? = null
 
     private val jointTypeNameResourceID = intArrayOf(
         R.string.joint_type_miter,
@@ -74,6 +75,8 @@ class MapPolygonsFragment : Fragment(), OmhOnMapReadyCallback {
     private var strokeJointTypeSpinner: PanelSpinner? = null
     private var strokePatternSpinner: PanelSpinner? = null
     private var zIndexSeekbar: PanelSeekbar? = null
+
+    private var showReferencePolygonCheckbox: CheckBox? = null
 
     private val infoDisplay by lazy {
         InfoDisplay(this)
@@ -121,7 +124,6 @@ class MapPolygonsFragment : Fragment(), OmhOnMapReadyCallback {
         omhMap.setOnPolygonClickListener(omhOnPolygonClickListener)
 
         customizablePolygon = DebugPolygonHelper.addDebugPolygon(omhMap)
-        DebugPolygonHelper.addReferencePolygon(omhMap)
 
         view?.let { setupUI(it) }
     }
@@ -220,14 +222,21 @@ class MapPolygonsFragment : Fragment(), OmhOnMapReadyCallback {
         // jointType
         strokeJointTypeSpinner = view.findViewById(R.id.panelSpinner_joinType)
         strokeJointTypeSpinner?.isEnabled =
-            getSupportedStatus(listOf(Constants.GOOGLE_PROVIDER, Constants.MAPBOX_PROVIDER, Constants.AZURE_PROVIDER))
+            getSupportedStatus(
+                listOf(
+                    Constants.GOOGLE_PROVIDER,
+                    Constants.MAPBOX_PROVIDER,
+                    Constants.AZURE_PROVIDER
+                )
+            )
         strokeJointTypeSpinner?.setValues(requireContext(), jointTypeNameResourceID)
         strokeJointTypeSpinner?.setOnItemSelectedCallback { position: Int ->
             customizablePolygon?.setStrokeJointType(position)
         }
         // pattern
         strokePatternSpinner = view.findViewById(R.id.panelSpinner_pattern)
-        strokePatternSpinner?.isEnabled = getSupportedStatus(listOf(Constants.GOOGLE_PROVIDER, Constants.AZURE_PROVIDER))
+        strokePatternSpinner?.isEnabled =
+            getSupportedStatus(listOf(Constants.GOOGLE_PROVIDER, Constants.AZURE_PROVIDER))
         strokePatternSpinner?.setDisabledPositions(getDisabledStrokePatternSpinnerPositions())
         strokePatternSpinner?.setValues(requireContext(), patternTypeNameResourceID)
         strokePatternSpinner?.setOnItemSelectedCallback { position: Int ->
@@ -239,6 +248,16 @@ class MapPolygonsFragment : Fragment(), OmhOnMapReadyCallback {
         zIndexSeekbar?.isEnabled = getSupportedStatus(listOf(Constants.GOOGLE_PROVIDER))
         zIndexSeekbar?.setOnProgressChangedCallback { progress: Int ->
             customizablePolygon?.setZIndex(progress.toFloat())
+        }
+
+        // referencePolygon
+        showReferencePolygonCheckbox = view.findViewById(R.id.checkBox_showReferencePolygon)
+        showReferencePolygonCheckbox?.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                referencePolygon = DebugPolygonHelper.addReferencePolygon(omhMap!!)
+            } else {
+                referencePolygon?.remove()
+            }
         }
     }
 

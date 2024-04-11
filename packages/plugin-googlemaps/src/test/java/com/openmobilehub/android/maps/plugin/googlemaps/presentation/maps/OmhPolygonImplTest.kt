@@ -6,6 +6,7 @@ import com.google.android.gms.maps.model.PatternItem
 import com.google.android.gms.maps.model.Polygon
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhPatternItem
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
+import com.openmobilehub.android.maps.plugin.googlemaps.presentation.interfaces.IPolygonDelegate
 import com.openmobilehub.android.maps.plugin.googlemaps.utils.CoordinateConverter
 import com.openmobilehub.android.maps.plugin.googlemaps.utils.PatternConverter
 import io.mockk.every
@@ -22,11 +23,12 @@ class OmhPolygonImplTest {
 
     private lateinit var polygon: Polygon
     private lateinit var omhPolygon: OmhPolygonImpl
+    private val delegate = mockk<IPolygonDelegate>(relaxed = true)
 
     @Before
     fun setUp() {
         polygon = mockk(relaxed = true)
-        omhPolygon = OmhPolygonImpl(polygon)
+        omhPolygon = OmhPolygonImpl(polygon, delegate)
         mockkObject(CoordinateConverter)
         mockkObject(PatternConverter)
     }
@@ -324,5 +326,14 @@ class OmhPolygonImplTest {
 
         // Assert
         verify { polygon.zIndex = zIndex }
+    }
+
+    @Test
+    fun `remove calls delegate method`() {
+        // Act
+        omhPolygon.remove()
+
+        // Assert
+        verify { delegate.removePolygon(polygon) }
     }
 }

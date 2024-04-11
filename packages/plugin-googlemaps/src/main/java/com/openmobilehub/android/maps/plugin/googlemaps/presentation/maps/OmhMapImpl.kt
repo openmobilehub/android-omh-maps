@@ -57,6 +57,8 @@ import com.openmobilehub.android.maps.plugin.googlemaps.extensions.toMarkerOptio
 import com.openmobilehub.android.maps.plugin.googlemaps.extensions.toPolygonOptions
 import com.openmobilehub.android.maps.plugin.googlemaps.extensions.toPolylineOptions
 import com.openmobilehub.android.maps.plugin.googlemaps.presentation.interfaces.IMarkerDelegate
+import com.openmobilehub.android.maps.plugin.googlemaps.presentation.interfaces.IPolygonDelegate
+import com.openmobilehub.android.maps.plugin.googlemaps.presentation.interfaces.IPolylineDelegate
 import com.openmobilehub.android.maps.plugin.googlemaps.utils.Constants
 import com.openmobilehub.android.maps.plugin.googlemaps.utils.CoordinateConverter
 import com.openmobilehub.android.maps.plugin.googlemaps.utils.commonLogger
@@ -68,14 +70,18 @@ class OmhMapImpl(
     private val context: Context,
     private val logger: Logger = commonLogger,
     private val markerUnsupportedFeatureLogger: UnsupportedFeatureLogger = markerLogger
-) : OmhMap, IMarkerDelegate {
+) : OmhMap, IMarkerDelegate, IPolylineDelegate, IPolygonDelegate {
 
     override val providerName: String
         get() = Constants.PROVIDER_NAME
 
     private val markers = mutableMapOf<Marker, OmhMarker>()
-    private val polylines = mutableMapOf<Polyline, OmhPolyline>()
-    private val polygons = mutableMapOf<Polygon, OmhPolygon>()
+
+    private val _polylines = mutableMapOf<Polyline, OmhPolyline>()
+    internal val polylines: Map<Polyline, OmhPolyline> = _polylines
+
+    private val _polygons = mutableMapOf<Polygon, OmhPolygon>()
+    internal val polygons: Map<Polygon, OmhPolygon> = _polygons
 
     private var customInfoWindowViewFactory: OmhInfoWindowViewFactory? = null
     private var customInfoWindowContentsViewFactory: OmhInfoWindowViewFactory? = null
@@ -115,9 +121,9 @@ class OmhMapImpl(
     override fun addPolyline(options: OmhPolylineOptions): OmhPolyline {
         val googleOptions = options.toPolylineOptions()
         val polyline = googleMap.addPolyline(googleOptions)
-        val omhPolyline = OmhPolylineImpl(polyline)
+        val omhPolyline = OmhPolylineImpl(polyline, this)
 
-        polylines[polyline] = omhPolyline
+        _polylines[polyline] = omhPolyline
 
         return omhPolyline
     }
@@ -125,9 +131,9 @@ class OmhMapImpl(
     override fun addPolygon(options: OmhPolygonOptions): OmhPolygon {
         val googleOptions = options.toPolygonOptions()
         val polygon = googleMap.addPolygon(googleOptions)
-        val omhPolygon = OmhPolygonImpl(polygon)
+        val omhPolygon = OmhPolygonImpl(polygon, this)
 
-        polygons[polygon] = omhPolygon
+        _polygons[polygon] = omhPolygon
 
         return omhPolygon
     }
@@ -247,7 +253,7 @@ class OmhMapImpl(
 
     override fun setOnPolylineClickListener(listener: OmhOnPolylineClickListener) {
         googleMap.setOnPolylineClickListener {
-            val omhPolyline = polylines[it]
+            val omhPolyline = _polylines[it]
             if (omhPolyline != null) {
                 listener.onPolylineClick(omhPolyline)
             }
@@ -256,7 +262,7 @@ class OmhMapImpl(
 
     override fun setOnPolygonClickListener(listener: OmhOnPolygonClickListener) {
         googleMap.setOnPolygonClickListener {
-            val omhPolygon = polygons[it]
+            val omhPolygon = _polygons[it]
             if (omhPolygon != null) {
                 listener.onPolygonClick(omhPolygon)
             }
@@ -311,5 +317,15 @@ class OmhMapImpl(
 
     override fun removeMarker(marker: Marker) {
         markers.remove(marker)
+    }
+
+    override fun removePolyline(polyline: Polyline) {
+        polyline.remove()
+        _polylines.remove(polyline)
+    }
+
+    override fun removePolygon(polygon: Polygon) {
+        polygon.remove()
+        _polygons.remove(polygon)
     }
 }

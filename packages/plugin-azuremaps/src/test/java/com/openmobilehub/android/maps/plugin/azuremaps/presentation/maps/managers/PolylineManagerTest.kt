@@ -24,8 +24,11 @@ import com.azure.android.maps.control.source.DataSource
 import com.mapbox.geojson.Feature
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnPolylineClickListener
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolylineOptions
+import com.openmobilehub.android.maps.core.utils.uuid.UUIDGenerator
 import com.openmobilehub.android.maps.plugin.azuremaps.presentation.interfaces.AzureMapInterface
+import com.openmobilehub.android.maps.plugin.azuremaps.presentation.maps.OmhPolylineImpl
 import io.mockk.Called
+import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.junit.Assert.assertEquals
@@ -40,6 +43,7 @@ class PolylineManagerTest {
     private val layersMock = mockk<LayerManager>(relaxed = true)
     private val imagesMock = mockk<ImageManager>(relaxed = true)
     private val popupsMock = mockk<PopupManager>(relaxed = true)
+    private val uuidGenerator = mockk<UUIDGenerator>()
 
     private lateinit var polylineManager: PolylineManager
 
@@ -47,6 +51,8 @@ class PolylineManagerTest {
 
     @Before
     fun setUp() {
+        every { uuidGenerator.generate() } returns UUID.fromString(DEFAULT_UUID)
+
         polylineManager = PolylineManager(
             object : AzureMapInterface {
                 override val sources: SourceManager
@@ -57,7 +63,8 @@ class PolylineManagerTest {
                     get() = imagesMock
                 override val popups: PopupManager
                     get() = popupsMock
-            }
+            },
+            uuidGenerator
         ).apply {
             this.clickListener = omhOnPolylineClickListener
         }
@@ -153,5 +160,30 @@ class PolylineManagerTest {
         // Assert
         verify { source.clear() }
         verify { source.add(any<Feature>()) }
+    }
+
+    @Test
+    fun `removePolyline remove layer, source and polyline`() {
+        // Arrange
+        val id = UUID.fromString(DEFAULT_UUID)
+
+        // Act
+        polylineManager.addPolyline(OmhPolylineOptions())
+
+        // Assert
+        assertEquals(1, polylineManager.polylines.count())
+
+        // Act
+        polylineManager.removePolyline(id)
+
+        // Assert
+        verify { layersMock.remove(OmhPolylineImpl.getLineLayerID(id)) }
+        verify { sourcesMock.remove(OmhPolylineImpl.getSourceID(id)) }
+
+        assertEquals(0, polylineManager.polylines.count())
+    }
+
+    companion object {
+        private const val DEFAULT_UUID = "00000000-0000-0000-0000-000000000000"
     }
 }

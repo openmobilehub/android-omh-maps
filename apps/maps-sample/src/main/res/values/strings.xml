@@ -122,4 +122,6 @@
     <string name="window_should_hide_on_click">Info win. hides on click</string>
     <string name="randomize_outline">Randomize outline</string>
     <string name="remove_marker_on_click">Remove marker on click</string>
+    <string name="show_reference_polyline">Show Reference Polyline (Add/Remove)</string>
+    <string name="show_reference_polygon">Show Reference Polygon (Add/Remove)</string>
 </resources>

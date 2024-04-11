@@ -25,8 +25,11 @@ import com.mapbox.geojson.Feature
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnPolygonClickListener
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolygonOptions
+import com.openmobilehub.android.maps.core.utils.uuid.UUIDGenerator
 import com.openmobilehub.android.maps.plugin.azuremaps.presentation.interfaces.AzureMapInterface
+import com.openmobilehub.android.maps.plugin.azuremaps.presentation.maps.OmhPolygonImpl
 import io.mockk.Called
+import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.junit.Assert.assertEquals
@@ -41,6 +44,7 @@ class PolygonManagerTest {
     private val layersMock = mockk<LayerManager>(relaxed = true)
     private val imagesMock = mockk<ImageManager>(relaxed = true)
     private val popupsMock = mockk<PopupManager>(relaxed = true)
+    private val uuidGenerator = mockk<UUIDGenerator>()
 
     private lateinit var polygonManager: PolygonManager
 
@@ -64,6 +68,8 @@ class PolygonManagerTest {
 
     @Before
     fun setUp() {
+        every { uuidGenerator.generate() } returns UUID.fromString(DEFAULT_UUID)
+
         polygonManager = PolygonManager(
             object : AzureMapInterface {
                 override val sources: SourceManager
@@ -74,7 +80,8 @@ class PolygonManagerTest {
                     get() = imagesMock
                 override val popups: PopupManager
                     get() = popupsMock
-            }
+            },
+            uuidGenerator
         ).apply {
             this.clickListener = omhOnPolygonClickListener
         }
@@ -198,5 +205,31 @@ class PolygonManagerTest {
         // Assert
         verify { source.clear() }
         verify { source.add(any<Feature>()) }
+    }
+
+    @Test
+    fun `removePolygon remove layers, source and polygon`() {
+        // Arrange
+        val id = UUID.fromString(DEFAULT_UUID)
+
+        // Act
+        polygonManager.addPolygon(OmhPolygonOptions())
+
+        // Assert
+        assertEquals(1, polygonManager.polygons.count())
+
+        // Act
+        polygonManager.removePolygon(id)
+
+        // Assert
+        verify { layersMock.remove(OmhPolygonImpl.getPolygonLineLayerID(id)) }
+        verify { layersMock.remove(OmhPolygonImpl.getPolygonLayerID(id)) }
+        verify { sourcesMock.remove(OmhPolygonImpl.getSourceID(id)) }
+
+        assertEquals(0, polygonManager.polygons.count())
+    }
+
+    companion object {
+        private const val DEFAULT_UUID = "00000000-0000-0000-0000-000000000000"
     }
 }

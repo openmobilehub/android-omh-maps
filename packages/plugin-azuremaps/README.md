@@ -203,6 +203,7 @@ Comments for partially supported 🟨 properties:
 | setZIndex    |     ❌     |
 | isVisible    |     ✅     |
 | setVisible   |     ✅     |
+| remove       |     ✅     |
 
 Comments for partially supported 🟨 properties:
 
@@ -260,6 +261,7 @@ Comments for partially supported 🟨 properties:
 | setZIndex          |     ❌     |
 | isVisible          |     ✅     |
 | setVisible         |     ✅     |
+| remove             |     ✅     |
 
 Comments for partially supported 🟨 properties:
 
@@ -272,6 +274,10 @@ Comments for partially supported 🟨 properties:
 ### Flat markers clicks are not detected correctly
 
 In certain scenarios (e.g., when the map is rotated by more than 90 degrees), the Azure Maps SDK does not correctly handle click listeners when the flat marker is in use. The root cause of the issue is that the map processes clicks based on geographical coordinates, not the screen position of the markers. Therefore, if the marker's anchor is changed, its position on the screen changes, but its geographical position remains the same. This leads to situations where the marker is not clickable, even though it is visible on the screen. To mitigate this issue, the marker's anchor should be set to its default value, or the marker should be set to non-flat mode.
+
+### Miter joint types are not rendered consistently
+
+When Miter joint type is set, Azure Maps SDK can still render certain joints with acute angle as Bevel.
 
 ## Documentation
 
