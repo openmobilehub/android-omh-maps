@@ -16,9 +16,6 @@
 
 package com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces
 
-import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
-
-interface IPolylineDelegate {
-    fun updatePolylinePoints(sourceId: String, points: List<OmhCoordinate>)
-    fun removePolyline(id: String)
+internal interface IMarkerDelegate {
+    fun removeMarker(layerId: String)
 }

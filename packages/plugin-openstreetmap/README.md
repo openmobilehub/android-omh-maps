@@ -128,6 +128,7 @@ Comments for partially supported 🟨 properties:
 | showInfoWindow       |      ✅       |
 | hideInfoWindow       |      ✅       |
 | getIsInfoWindowShown |      ✅       |
+| remove               |      ✅       |
 
 ### Polyline
 
@@ -153,7 +154,7 @@ Comments for partially supported 🟨 properties:
 | Method       | Supported? |
 | ------------ | :--------: |
 | getCap       |     ✅     |
-| setCap       |     ✅     |
+| setCap       |     🟨     |
 | isClickable  |     ✅     |
 | setClickable |     ✅     |
 | getColor     |     ✅     |
@@ -178,6 +179,12 @@ Comments for partially supported 🟨 properties:
 | setZIndex    |     ❌     |
 | isVisible    |     ✅     |
 | setVisible   |     ✅     |
+| remove       |     ✅     |
+
+
+| Property | Comments                                                                |
+| -------- | ----------------------------------------------------------------------- |
+| setCap   | It applies not only to start and end cap, but to polyline joins as well |                                                                                                                                                                                                                                                                                              |
 
 ### Polygon
 
@@ -222,6 +229,7 @@ Comments for partially supported 🟨 properties:
 | setZIndex          |     ❌     |
 | isVisible          |     ✅     |
 | setVisible         |     ✅     |
+| remove             |     ✅     |
 
 ## Documentation
 

@@ -35,6 +35,7 @@ import com.openmobilehub.android.maps.core.utils.uuid.UUIDGenerator
 import com.openmobilehub.android.maps.plugin.mapbox.extensions.applyMarkerOptions
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IMapInfoWindowManagerDelegate
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IMapLongClickManagerDelegate
+import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IMarkerDelegate
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IOmhInfoWindowMapViewDelegate
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.ITouchInteractable
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.maps.OmhInfoWindow
@@ -45,7 +46,7 @@ import com.openmobilehub.android.maps.plugin.mapbox.utils.CoordinateConverter
 internal class MapMarkerManager(
     private val context: Context,
     private val infoWindowMapViewDelegate: IOmhInfoWindowMapViewDelegate,
-) : IMapInfoWindowManagerDelegate, IMapLongClickManagerDelegate {
+) : IMapInfoWindowManagerDelegate, IMapLongClickManagerDelegate, IMarkerDelegate {
     internal var markerClickListener: OmhOnMarkerClickListener? = null
     internal var markerDragListener: OmhOnMarkerDragListener? = null
     internal var infoWindowOpenStatusChangeListener: OmhOnInfoWindowOpenStatusChangeListener? = null
@@ -91,7 +92,8 @@ internal class MapMarkerManager(
             bufferedIsFlat = options.isFlat,
             bufferedRotation = options.rotation,
             infoWindowManagerDelegate = this,
-            infoWindowMapViewDelegate = infoWindowMapViewDelegate
+            infoWindowMapViewDelegate = infoWindowMapViewDelegate,
+            markerDelegate = this
         )
 
         val markerGeoJsonSource = geoJsonSource(markerGeoJsonSourceID) {
@@ -113,6 +115,10 @@ internal class MapMarkerManager(
         }
 
         return omhMarker
+    }
+
+    override fun removeMarker(layerId: String) {
+        markers.remove(layerId)
     }
 
     fun onStyleLoaded(style: Style) {
@@ -177,7 +183,7 @@ internal class MapMarkerManager(
                 markerClickListener?.onMarkerClick(omhMarker)?.let { eventConsumed ->
                     if (!eventConsumed) {
                         // to achieve feature parity with GoogleMaps, the info window should be opened on click
-                        if (!omhMarker.getIsInfoWindowShown()) {
+                        if (!omhMarker.getIsInfoWindowShown() && !omhMarker.isRemoved) {
                             omhMarker.showInfoWindow()
                         }
                     }

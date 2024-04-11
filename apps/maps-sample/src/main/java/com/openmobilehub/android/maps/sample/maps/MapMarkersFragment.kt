@@ -63,6 +63,7 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
     private var hasSnippetCheckbox: CheckBox? = null
     private var isFlatCheckbox: CheckBox? = null
     private var isVisibleCheckbox: CheckBox? = null
+    private var demoShouldRemoveMarkerOnClickCheckBox: CheckBox? = null
     private var anchorUSeekbar: PanelSeekbar? = null
     private var anchorVSeekbar: PanelSeekbar? = null
     private var alphaSeekbar: PanelSeekbar? = null
@@ -157,7 +158,16 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
                 "User clicked marker '${marker.getTitle()}' at ${marker.getPosition()}"
             )
 
-            infoDisplay.showMessage("Marker '${marker.getTitle()}' has been clicked")
+            val shouldRemoveMarker = demoShouldRemoveMarkerOnClickCheckBox?.isChecked ?: false
+
+            if (shouldRemoveMarker) {
+                marker.remove()
+            }
+
+            infoDisplay.showMessage(
+                "Marker '${marker.getTitle()}' has been clicked"
+                        + if (shouldRemoveMarker) " and removed" else ""
+            )
 
             false
         })
@@ -321,6 +331,11 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
             currentAppearancePosition = position
             applyCustomizableMarkerAppearance()
         }
+
+        // demo should remove marker on click checkbox
+        demoShouldRemoveMarkerOnClickCheckBox =
+            view.findViewById(R.id.checkBox_demoShouldRemoveMarkerOnClick)
+        demoShouldRemoveMarkerOnClickCheckBox?.isChecked = false
     }
 
     override fun onResume() {

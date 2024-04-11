@@ -14,6 +14,10 @@ The maps API allows you to add a marker on the map.
 You can add a marker to an specific position on the map. The marker's icon is rendered on the map at the position.
 To add a marker call the function `fun addMarker(OmhMarkerOptions): OmhMarker?`.
 
+## Remove a marker
+
+To delete a marker from the map, call the method `OmhMarker.remove()`. All marker resources will be freed, the associated info window - if open - will be closed and the marker will be removed from the map. After calling this method, please ensure that you do not use the marker instance anymore.
+
 ## Marker options
 
 Define marker options for a `Marker`.

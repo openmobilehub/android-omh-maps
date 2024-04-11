@@ -37,6 +37,7 @@ import com.openmobilehub.android.maps.core.utils.DrawableConverter
 import com.openmobilehub.android.maps.core.utils.cartesian.Offset2D
 import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
 import com.openmobilehub.android.maps.plugin.azuremaps.presentation.interfaces.IMapViewDelegate
+import com.openmobilehub.android.maps.plugin.azuremaps.presentation.interfaces.IMarkerDelegate
 import com.openmobilehub.android.maps.plugin.azuremaps.presentation.interfaces.ITouchInteractable
 import com.openmobilehub.android.maps.plugin.azuremaps.utils.AnchorConverter
 import com.openmobilehub.android.maps.plugin.azuremaps.utils.Constants
@@ -65,7 +66,8 @@ internal class OmhMarkerImpl(
     initialInfoWindowAnchor: Pair<Float, Float> = OmhConstants.ANCHOR_CENTER to OmhConstants.ANCHOR_TOP,
     initialIcon: Drawable?,
     private val mapViewDelegate: IMapViewDelegate,
-    private val logger: UnsupportedFeatureLogger = markerLogger
+    private val logger: UnsupportedFeatureLogger = markerLogger,
+    private val markerDelegate: IMarkerDelegate,
 ) : OmhMarker, ITouchInteractable {
 
     internal var omhInfoWindow: OmhInfoWindow
@@ -347,6 +349,17 @@ internal class OmhMarkerImpl(
         )
 
         return markerImageID
+    }
+
+    override fun remove() {
+        markerDelegate.removeMarker(markerUUID)
+
+        mapViewDelegate.removeSymbolLayer(markerSymbolLayer)
+        mapViewDelegate.removeDataSource(source)
+
+        mapViewDelegate.removeImage(getMarkerIconID(isCustomIconSet))
+
+        omhInfoWindow.remove()
     }
 
     internal companion object {

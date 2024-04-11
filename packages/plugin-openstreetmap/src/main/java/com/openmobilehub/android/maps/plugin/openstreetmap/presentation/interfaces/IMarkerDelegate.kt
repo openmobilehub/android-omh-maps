@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces
+package com.openmobilehub.android.maps.plugin.openstreetmap.presentation.interfaces
 
-import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
+import org.osmdroid.views.overlay.Marker
 
-interface IPolylineDelegate {
-    fun updatePolylinePoints(sourceId: String, points: List<OmhCoordinate>)
-    fun removePolyline(id: String)
+internal interface IMarkerDelegate {
+    fun removeMarker(marker: Marker)
 }

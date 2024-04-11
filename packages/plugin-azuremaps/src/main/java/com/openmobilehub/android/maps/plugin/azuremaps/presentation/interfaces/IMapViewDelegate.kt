@@ -18,6 +18,9 @@ package com.openmobilehub.android.maps.plugin.azuremaps.presentation.interfaces
 
 import android.content.Context
 import android.graphics.Bitmap
+import com.azure.android.maps.control.Popup
+import com.azure.android.maps.control.layer.SymbolLayer
+import com.azure.android.maps.control.source.DataSource
 import com.openmobilehub.android.maps.plugin.azuremaps.presentation.maps.OmhMarkerImpl
 
 /**
@@ -72,4 +75,25 @@ internal interface IMapViewDelegate {
      * @return The context of the map.
      */
     fun getContext(): Context
+
+    /**
+     * Removes a symbol layer from the map.
+     *
+     * @param symbolLayer The [SymbolLayer].
+     */
+    fun removeSymbolLayer(symbolLayer: SymbolLayer)
+
+    /**
+     * Removes a data source from the map.
+     *
+     * @param dataSource The [DataSource].
+     */
+    fun removeDataSource(dataSource: DataSource)
+
+    /**
+     * Removes a popup from the map.
+     *
+     * @param popup The [Popup].
+     */
+    fun removePopup(popup: Popup)
 }

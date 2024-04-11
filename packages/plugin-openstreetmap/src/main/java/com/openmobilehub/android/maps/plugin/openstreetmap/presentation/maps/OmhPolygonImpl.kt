@@ -20,6 +20,7 @@ import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhPatte
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhPolygon
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
+import com.openmobilehub.android.maps.plugin.openstreetmap.interfaces.IPolygonDelegate
 import com.openmobilehub.android.maps.plugin.openstreetmap.utils.ConverterUtils
 import com.openmobilehub.android.maps.plugin.openstreetmap.utils.polylineLogger
 import org.osmdroid.views.MapView
@@ -30,6 +31,7 @@ internal class OmhPolygonImpl(
     private val polygon: Polygon,
     private val mapView: MapView,
     private var clickable: Boolean,
+    private val delegate: IPolygonDelegate,
     private val logger: UnsupportedFeatureLogger = polylineLogger
 ) : OmhPolygon {
 
@@ -129,6 +131,10 @@ internal class OmhPolygonImpl(
     override fun setVisible(visible: Boolean) {
         polygon.isVisible = visible
         mapView.postInvalidate()
+    }
+
+    override fun remove() {
+        delegate.removePolygon(polygon)
     }
 
     companion object {

@@ -20,12 +20,14 @@ import com.google.android.gms.maps.model.Polygon
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhPatternItem
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhPolygon
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
+import com.openmobilehub.android.maps.plugin.googlemaps.presentation.interfaces.IPolygonDelegate
 import com.openmobilehub.android.maps.plugin.googlemaps.utils.CoordinateConverter
 import com.openmobilehub.android.maps.plugin.googlemaps.utils.PatternConverter
 
 @SuppressWarnings("TooManyFunctions")
 internal class OmhPolygonImpl(
-    private val polygon: Polygon
+    private val polygon: Polygon,
+    private val delegate: IPolygonDelegate
 ) : OmhPolygon {
 
     override fun getClickable(): Boolean {
@@ -127,5 +129,9 @@ internal class OmhPolygonImpl(
 
     override fun setZIndex(zIndex: Float) {
         polygon.zIndex = zIndex
+    }
+
+    override fun remove() {
+        delegate.removePolygon(polygon)
     }
 }
