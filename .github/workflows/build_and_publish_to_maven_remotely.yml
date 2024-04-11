@@ -7,6 +7,10 @@ on:
         description: "Package name"
         type: string
         required: true
+      destination-repository:
+        description: "Publishing destination repository"
+        type: string
+        required: true
 
 jobs:
   publish:
@@ -24,6 +28,9 @@ jobs:
       - name: Setup secrets
         run: bash ./.github/scripts/setup_secrets.sh "${{ secrets.MAPBOX_SECRET_TOKEN }}" "${{ secrets.GOOGLE_MAPS_API_KEY }}" "${{ secrets.MAPBOX_PUBLIC_TOKEN }}" "${{ secrets.AZURE_MAPS_SUBSCRIPTION_KEY }}"
 
+      - name: "Setup target repository: ${{ inputs.destination-repository }}"
+        run: bash ./.github/scripts/setup_publishing_repository_property.sh ${{ inputs.destination-repository }}
+
       - name: Release build
         run: ./gradlew ${{ inputs.package-name }}:assembleRelease
       - name: Source jar
@@ -31,7 +38,7 @@ jobs:
 
         # Runs upload, and then closes & releases the repository
       - name: Publish to MavenCentral
-        if: ${{ vars.PACKAGE_PUBLISHING_ENABLED == 'true' && vars.RELEASE_FLAG == 'true' }}
+        if: ${{ vars.PACKAGE_PUBLISHING_ENABLED == 'true' && inputs.destination-repository == 'release' }}
         run: ./gradlew ${{ inputs.package-name }}:publishReleasePublicationToSonatypeRepository --max-workers 1 closeAndReleaseSonatypeStagingRepository
         env:
           OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
@@ -41,9 +48,9 @@ jobs:
           SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
           SONATYPE_STAGING_PROFILE_ID: ${{ secrets.SONATYPE_STAGING_PROFILE_ID }}
 
-      # Runs upload to the staging repository
-      - name: Publish to Staging area
-        if: ${{ vars.PACKAGE_PUBLISHING_ENABLED == 'true' && vars.RELEASE_FLAG != 'true' }}
+      # Runs upload to the snapshot repository
+      - name: Publish to snapshot area
+        if: ${{ vars.PACKAGE_PUBLISHING_ENABLED == 'true' && inputs.destination-repository == 'snapshot' }}
         run: ./gradlew ${{ inputs.package-name }}:publishReleasePublicationToSonatypeRepository --max-workers 1
         env:
           OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}

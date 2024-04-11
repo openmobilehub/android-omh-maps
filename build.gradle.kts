@@ -16,7 +16,7 @@ val useMavenLocal = getBooleanFromProperties("useMavenLocal")
 val useLocalProjects = getBooleanFromProperties("useLocalProjects")
 
 if (useLocalProjects) {
-    println("OMH Maps project running with useLocalProjects enabled ")
+    println("OMH Maps project running with useLocalProjects enabled")
 }
 
 if (useMavenLocal) {
@@ -132,7 +132,22 @@ tasks {
     getByName("prepareKotlinBuildScriptModel").dependsOn(installPreCommitHook)
 }
 
+val publishToReleaseRepository =
+    getValueFromEnvOrProperties("publishingSonatypeRepository")?.toString() == "release"
+
 if (!useMavenLocal) {
+    println(
+        "OMH Maps project configured to publish to Sonatype "
+                + (if (publishToReleaseRepository) "release" else "snapshot")
+                + " repository"
+    )
+
+    if (!publishToReleaseRepository) {
+        subprojects {
+            version = "$version-SNAPSHOT" // required for publishing to the snapshot repository
+        }
+    }
+
     val ossrhUsername by extra(getValueFromEnvOrProperties("OSSRH_USERNAME"))
     val ossrhPassword by extra(getValueFromEnvOrProperties("OSSRH_PASSWORD"))
     val mStagingProfileId by extra(getValueFromEnvOrProperties("SONATYPE_STAGING_PROFILE_ID"))
@@ -146,11 +161,7 @@ if (!useMavenLocal) {
             // fix for nexus publishing plugin not picking up the correct version of the published
             // subproject, since this is happening in the root project;
             // see https://github.com/gradle-nexus/publish-plugin/issues/105
-            useStaging.set(provider {
-                subprojects.all { project ->
-                    !project.version.toString().endsWith("-SNAPSHOT")
-                }
-            })
+            useStaging.set(provider { publishToReleaseRepository })
 
             repositories {
                 sonatype {

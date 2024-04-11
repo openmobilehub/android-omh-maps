@@ -12,7 +12,7 @@ dependencies {
     if (useLocalProjects) {
         api(project(":packages:core"))
     } else {
-        api("com.openmobilehub.android.maps:core:2.0.0-SNAPSHOT")
+        api("com.openmobilehub.android.maps:core:2.0.0-beta")
     }
 
     // KTX
