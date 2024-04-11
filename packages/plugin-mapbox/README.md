@@ -184,6 +184,9 @@ Comments for partially supported 🟨 properties:
 | setZIndex    |     ❌     |
 | isVisible    |     ✅     |
 | setVisible   |     ✅     |
+| remove       |     ✅     |
+
+
 
 ### Polygon
 
@@ -228,6 +231,7 @@ Comments for partially supported 🟨 properties:
 | setZIndex          |     ❌     |
 | isVisible          |     ✅     |
 | setVisible         |     ✅     |
+| remove             |     ✅     |
 
 ## Known issues
 
