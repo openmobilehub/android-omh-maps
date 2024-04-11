@@ -49,7 +49,7 @@ import com.openmobilehub.android.maps.core.presentation.models.Constants as OmhC
 internal class OmhMarkerImpl(
     internal val markerUUID: UUID,
     internal val context: Context,
-    private val markerSymbolLayer: SymbolLayer,
+    internal val markerSymbolLayer: SymbolLayer,
     private var position: OmhCoordinate,
     initialTitle: String?,
     initialSnippet: String?,
@@ -72,7 +72,7 @@ internal class OmhMarkerImpl(
     private lateinit var geoJsonSource: GeoJsonSource
     private lateinit var style: Style
     internal var omhInfoWindow: OmhInfoWindow
-    private var isCustomIconSet: Boolean = false
+    internal var isCustomIconSet: Boolean = false
     internal var iconWidth: Int = 0
     internal var iconHeight: Int = 0
 
@@ -424,19 +424,21 @@ internal class OmhMarkerImpl(
     override fun remove() {
         isRemoved = true
 
-        val removeLayerResult = style.removeStyleLayer(getSymbolLayerID(markerUUID))
-        removeLayerResult.error?.let { error ->
-            throw IllegalStateException("Failed to remove SymbolLayer from map: $error")
-        }
+        if (isStyleReady()) {
+            val removeLayerResult = style.removeStyleLayer(getSymbolLayerID(markerUUID))
+            removeLayerResult.error?.let { error ->
+                throw IllegalStateException("Failed to remove SymbolLayer from map: $error")
+            }
 
-        val removeSourceResult = style.removeStyleSource(getGeoJsonSourceID(markerUUID))
-        removeSourceResult.error?.let { error ->
-            throw IllegalStateException("Failed to remove GeoJsonSource from map: $error")
-        }
+            val removeSourceResult = style.removeStyleSource(getGeoJsonSourceID(markerUUID))
+            removeSourceResult.error?.let { error ->
+                throw IllegalStateException("Failed to remove GeoJsonSource from map: $error")
+            }
 
-        val removeImageResult = style.removeStyleImage(getMarkerIconID(isCustomIconSet))
-        removeImageResult.error?.let { error ->
-            throw IllegalStateException("Failed to remove image from map: $error")
+            val removeImageResult = style.removeStyleImage(getMarkerIconID(isCustomIconSet))
+            removeImageResult.error?.let { error ->
+                throw IllegalStateException("Failed to remove image from map: $error")
+            }
         }
 
         omhInfoWindow.remove()

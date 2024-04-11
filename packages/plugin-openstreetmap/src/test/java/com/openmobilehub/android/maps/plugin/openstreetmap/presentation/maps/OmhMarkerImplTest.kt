@@ -268,7 +268,7 @@ class OmhMarkerImplTest {
     }
 
     @Test
-    fun `remove removes the marker and closes info window`() {
+    fun `remove() removes the marker and closes info window`() {
         // Arrange
         every { marker.closeInfoWindow() } just runs
 

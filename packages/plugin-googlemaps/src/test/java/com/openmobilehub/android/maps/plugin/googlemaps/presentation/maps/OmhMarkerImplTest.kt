@@ -279,7 +279,7 @@ class OmhMarkerImplTest {
     }
 
     @Test
-    fun `remove removes the marker and closes info window`() {
+    fun `remove() removes the marker and closes info window`() {
         // Act
         omhMarker.remove()
 

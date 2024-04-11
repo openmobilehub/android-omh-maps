@@ -50,7 +50,9 @@ import io.mockk.mockk
 import io.mockk.mockkObject
 import io.mockk.mockkStatic
 import io.mockk.slot
+import io.mockk.unmockkAll
 import io.mockk.verify
+import org.junit.AfterClass
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNotNull
@@ -104,6 +106,12 @@ internal class OmhMarkerExtensionsTest(
             omhMarkerOptionsInvisible,
             omhMarkerOptionsWithIcon
         )
+
+        @JvmStatic
+        @AfterClass
+        fun cleanup() {
+            unmockkAll()
+        }
     }
 
     @Before
