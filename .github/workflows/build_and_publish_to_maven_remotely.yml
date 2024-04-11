@@ -28,6 +28,9 @@ jobs:
       - name: Setup secrets
         run: bash ./.github/scripts/setup_secrets.sh "${{ secrets.MAPBOX_SECRET_TOKEN }}" "${{ secrets.GOOGLE_MAPS_API_KEY }}" "${{ secrets.MAPBOX_PUBLIC_TOKEN }}" "${{ secrets.AZURE_MAPS_SUBSCRIPTION_KEY }}"
 
+      - name: Set useLocalProjects flag
+        run: echo useLocalProjects=true >> local.properties
+
       - name: "Setup target repository: ${{ inputs.destination-repository }}"
         run: bash ./.github/scripts/setup_publishing_repository_property.sh ${{ inputs.destination-repository }}
 

@@ -5,7 +5,7 @@ name: Android CD
 
 on:
   push:
-    branches: [main]
+    branches: [main, fix/maven]
 
 # GITHUB_TOKEN needs to be granted the permissions required to make a Pages deployment
 permissions:
@@ -15,7 +15,8 @@ permissions:
 
 jobs:
   # Build and publish only core package to MavenLocal
-  maps-core:
+  maps-core-local:
+    name: Publish Core Package to Maven Local
     uses: ./.github/workflows/build_and_publish_to_maven_local.yml
     with:
       output-cache-prefix: mavenLocal-core
@@ -23,8 +24,9 @@ jobs:
     secrets: inherit
 
   # Build and publish all plugins to MavenLocal
-  maps-plugins:
-    needs: maps-core
+  maps-plugins-local:
+    needs: maps-core-local
+    name: Publish Plugins to Maven Local
     uses: ./.github/workflows/build_and_publish_to_maven_local.yml
     with:
       input-cache-prefix: mavenLocal-core
@@ -32,16 +34,45 @@ jobs:
       gradle-command: "publishPluginsToMavenLocal"
     secrets: inherit
 
+  # Build and publish only core package to Sonatype
+  maps-core-remote:
+    needs: maps-core-local
+    name: Publish Core Package to Sonatype
+    uses: ./.github/workflows/build_and_publish_to_maven_remotely.yml
+    with:
+      package-name: :packages:core
+      destination-repository: snapshot
+    secrets: inherit
+
+  # Build and publish all plugins to Sonatype
+  maps-plugins-remote:
+    needs: maps-plugins-local
+    name: Publish snapshots of Plugins to Sonatype
+    secrets: inherit
+    strategy:
+      matrix:
+        plugin-name:
+          [
+            "plugin-googlemaps",
+            "plugin-openstreetmap",
+            "plugin-mapbox",
+            "plugin-azuremaps",
+          ]
+    uses: ./.github/workflows/build_and_publish_to_maven_remotely.yml
+    with:
+      package-name: :packages:${{ matrix.plugin-name }}
+      destination-repository: snapshot
+
   # Build and publish Sample App
   maps-app:
-    needs: maps-plugins
+    needs: maps-plugins-local
     uses: ./.github/workflows/publish_sample_app.yml
     with:
       input-cache-prefix: mavenLocal-core-and-plugins
     secrets: inherit
 
   build-documentation:
-    needs: maps-plugins
+    needs: maps-plugins-local
     name: Build documentation
     runs-on: ubuntu-latest
 
