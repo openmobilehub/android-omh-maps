@@ -25,7 +25,6 @@ internal object Constants {
     const val MIN_DISTANCE_M = 0f
 
     // My Location
-    const val PADDING_MY_LOCATION_ICON = 16
     const val DEFAULT_ZOOM_LEVEL = 15.0
 
     // Gestures and animation
