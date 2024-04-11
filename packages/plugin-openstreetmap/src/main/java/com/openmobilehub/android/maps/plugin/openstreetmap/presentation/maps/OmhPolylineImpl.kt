@@ -22,6 +22,7 @@ import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhPolyl
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhStyleSpan
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
+import com.openmobilehub.android.maps.plugin.openstreetmap.interfaces.IPolylineDelegate
 import com.openmobilehub.android.maps.plugin.openstreetmap.utils.CapConverter
 import com.openmobilehub.android.maps.plugin.openstreetmap.utils.ConverterUtils
 import com.openmobilehub.android.maps.plugin.openstreetmap.utils.polylineLogger
@@ -33,6 +34,7 @@ internal class OmhPolylineImpl(
     private val polyline: Polyline,
     private val mapView: MapView,
     private var clickable: Boolean,
+    private val delegate: IPolylineDelegate,
     private val logger: UnsupportedFeatureLogger = polylineLogger
 ) : OmhPolyline {
 
@@ -152,5 +154,9 @@ internal class OmhPolylineImpl(
     override fun setVisible(visible: Boolean) {
         polyline.isVisible = visible
         mapView.postInvalidate()
+    }
+
+    override fun remove() {
+        delegate.removePolyline(polyline)
     }
 }

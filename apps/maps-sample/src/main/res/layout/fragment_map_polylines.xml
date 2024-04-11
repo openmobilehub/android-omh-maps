@@ -42,6 +42,13 @@
                 android:text="@string/randomize_points" />
 
             <CheckBox
+                android:id="@+id/checkBox_showReferencePolyline"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:text="@string/show_reference_polyline" />
+
+            <CheckBox
                 android:id="@+id/checkBox_isVisible"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -188,8 +195,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="15dp"
                     android:text="@string/span_pattern" />
-            </LinearLayout>
 
+            </LinearLayout>
         </LinearLayout>
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

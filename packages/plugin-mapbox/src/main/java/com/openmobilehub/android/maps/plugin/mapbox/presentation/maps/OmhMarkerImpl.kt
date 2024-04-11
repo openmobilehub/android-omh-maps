@@ -36,6 +36,7 @@ import com.openmobilehub.android.maps.core.utils.DrawableConverter
 import com.openmobilehub.android.maps.core.utils.cartesian.Offset2D
 import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IMapInfoWindowManagerDelegate
+import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IMarkerDelegate
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IOmhInfoWindowMapViewDelegate
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.ITouchInteractable
 import com.openmobilehub.android.maps.plugin.mapbox.utils.AnchorConverter
@@ -49,7 +50,7 @@ import com.openmobilehub.android.maps.core.presentation.models.Constants as OmhC
 internal class OmhMarkerImpl(
     internal val markerUUID: UUID,
     internal val context: Context,
-    private val markerSymbolLayer: SymbolLayer,
+    internal val markerSymbolLayer: SymbolLayer,
     private var position: OmhCoordinate,
     initialTitle: String?,
     initialSnippet: String?,
@@ -65,13 +66,15 @@ internal class OmhMarkerImpl(
     initialIcon: Drawable?,
     infoWindowManagerDelegate: IMapInfoWindowManagerDelegate,
     infoWindowMapViewDelegate: IOmhInfoWindowMapViewDelegate,
-    private val logger: UnsupportedFeatureLogger = markerLogger
+    private val logger: UnsupportedFeatureLogger = markerLogger,
+    private val markerDelegate: IMarkerDelegate
 ) : OmhMarker, ITouchInteractable {
+    internal var isRemoved: Boolean = false
 
     private lateinit var geoJsonSource: GeoJsonSource
     private lateinit var style: Style
     internal var omhInfoWindow: OmhInfoWindow
-    private var isCustomIconSet: Boolean = false
+    internal var isCustomIconSet: Boolean = false
     internal var iconWidth: Int = 0
     internal var iconHeight: Int = 0
 
@@ -418,6 +421,31 @@ internal class OmhMarkerImpl(
         }
 
         return markerImageID
+    }
+
+    override fun remove() {
+        isRemoved = true
+
+        markerDelegate.removeMarker(markerSymbolLayer.layerId)
+
+        if (isStyleReady()) {
+            val removeLayerResult = style.removeStyleLayer(getSymbolLayerID(markerUUID))
+            removeLayerResult.error?.let { error ->
+                throw IllegalStateException("Failed to remove SymbolLayer from map: $error")
+            }
+
+            val removeSourceResult = style.removeStyleSource(getGeoJsonSourceID(markerUUID))
+            removeSourceResult.error?.let { error ->
+                throw IllegalStateException("Failed to remove GeoJsonSource from map: $error")
+            }
+
+            val removeImageResult = style.removeStyleImage(getMarkerIconID(isCustomIconSet))
+            removeImageResult.error?.let { error ->
+                throw IllegalStateException("Failed to remove image from map: $error")
+            }
+        }
+
+        omhInfoWindow.remove()
     }
 
     internal companion object {

@@ -22,4 +22,5 @@ import java.util.UUID
 
 internal interface IPolylineDelegate {
     fun updatePolylineSourceWithPoints(polylineId: UUID, source: DataSource, points: List<OmhCoordinate>)
+    fun removePolyline(id: UUID)
 }

@@ -53,8 +53,8 @@ This plugin provides support for Azure Maps by utilizing the [Azure Maps Android
 
 | Method                                  | Supported? |
 | --------------------------------------- | :--------: |
-| addMarker                               |     ✅      |
-| addPolyline                             |     ✅      |
+| addMarker                               |     ✅     |
+| addPolyline                             |     ✅     |
 | addPolygon                              |     ?      |
 | getCameraPositionCoordinate             |     ✅     |
 | moveCamera                              |     ✅     |
@@ -71,7 +71,7 @@ This plugin provides support for Azure Maps by utilizing the [Azure Maps Android
 | setOnInfoWindowOpenStatusChangeListener |     ✅     |
 | setOnInfoWindowClickListener            |     ✅     |
 | setOnInfoWindowLongClickListener        |     ✅     |
-| setOnPolylineClickListener              |     ✅      |
+| setOnPolylineClickListener              |     ✅     |
 | setOnPolygonClickListener               |     ?      |
 | snapshot                                |     ❌     |
 | setMapStyle                             |     ❌     |
@@ -139,6 +139,7 @@ Comments for partially supported 🟨 properties:
 | showInfoWindow       |      ✅       |
 | hideInfoWindow       |      ✅       |
 | getIsInfoWindowShown |      ✅       |
+| remove               |      ✅       |
 
 Comments for partially supported 🟨 properties:
 
@@ -152,63 +153,64 @@ Comments for partially supported 🟨 properties:
 
 | Property  | Supported? |
 | --------- | :--------: |
-| points    |     ✅      |
-| clickable |     ✅      |
-| color     |     ✅      |
-| width     |     ✅      |
-| isVisible |     ✅      |
-| zIndex    |     ❌      |
-| jointType |     ✅      |
-| pattern   |     🟨      |
-| cap       |     🟨      |
-| startCap  |     ❌      |
-| endCap    |     ❌      |
+| points    |     ✅     |
+| clickable |     ✅     |
+| color     |     ✅     |
+| width     |     ✅     |
+| isVisible |     ✅     |
+| zIndex    |     ❌     |
+| jointType |     ✅     |
+| pattern   |     🟨     |
+| cap       |     🟨     |
+| startCap  |     ❌     |
+| endCap    |     ❌     |
 | spans     |     ?      |
 
 Comments for partially supported 🟨 properties:
 
-| Property  | Comments                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
-| --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| pattern | Azure Maps SDK only supports alternating dashes and gaps that form the dash pattern. |
-| cap | Azure Maps SDK supports BUTT, SQUARE and ROUND caps. Defaults to ROUND when other value is provided. |
+| Property | Comments                                                                                             |
+| -------- | ---------------------------------------------------------------------------------------------------- |
+| pattern  | Azure Maps SDK only supports alternating dashes and gaps that form the dash pattern.                 |
+| cap      | Azure Maps SDK supports BUTT, SQUARE and ROUND caps. Defaults to ROUND when other value is provided. |
 
 #### OmhPolyline
 
 | Method       | Supported? |
 | ------------ | :--------: |
-| getCap       |     ✅      |
-| setCap       |     🟨      |
-| isClickable  |     ✅      |
-| setClickable |     ✅      |
-| getColor     |     ✅      |
-| setColor     |     ✅      |
-| getEndCap    |     ❌      |
-| setEndCap    |     ❌      |
-| getJoinType  |     ✅      |
-| setJoinType  |     ✅      |
-| getPattern   |     ✅      |
-| setPattern   |     🟨      |
-| getPoints    |     ✅      |
-| setPoints    |     ✅      |
+| getCap       |     ✅     |
+| setCap       |     🟨     |
+| isClickable  |     ✅     |
+| setClickable |     ✅     |
+| getColor     |     ✅     |
+| setColor     |     ✅     |
+| getEndCap    |     ❌     |
+| setEndCap    |     ❌     |
+| getJoinType  |     ✅     |
+| setJoinType  |     ✅     |
+| getPattern   |     ✅     |
+| setPattern   |     🟨     |
+| getPoints    |     ✅     |
+| setPoints    |     ✅     |
 | getSpans     |     ?      |
 | setSpans     |     ?      |
-| getStartCap  |     ❌      |
-| setStartCap  |     ❌      |
-| getTag       |     ✅      |
-| setTag       |     ✅      |
-| getWidth     |     ✅      |
-| setWidth     |     ✅      |
-| getZIndex    |     ❌      |
-| setZIndex    |     ❌      |
-| isVisible    |     ✅      |
-| setVisible   |     ✅      |
+| getStartCap  |     ❌     |
+| setStartCap  |     ❌     |
+| getTag       |     ✅     |
+| setTag       |     ✅     |
+| getWidth     |     ✅     |
+| setWidth     |     ✅     |
+| getZIndex    |     ❌     |
+| setZIndex    |     ❌     |
+| isVisible    |     ✅     |
+| setVisible   |     ✅     |
+| remove       |     ✅     |
 
 Comments for partially supported 🟨 properties:
 
-| Property  | Comments                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
-| --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| setPattern | Azure Maps SDK only supports alternating dashes and gaps that form the dash pattern. |
-| setCap | Azure Maps SDK supports BUTT, SQUARE and ROUND caps. Defaults to ROUND when other value is provided. |
+| Property   | Comments                                                                                             |
+| ---------- | ---------------------------------------------------------------------------------------------------- |
+| setPattern | Azure Maps SDK only supports alternating dashes and gaps that form the dash pattern.                 |
+| setCap     | Azure Maps SDK supports BUTT, SQUARE and ROUND caps. Defaults to ROUND when other value is provided. |
 
 ### Polygon
 
@@ -216,62 +218,66 @@ Comments for partially supported 🟨 properties:
 
 | Property        | Supported? |
 | --------------- | :--------: |
-| outline         |     ✅      |
-| clickable       |     ✅      |
-| fillColor       |     ✅      |
-| holes           |     ✅      |
-| isVisible       |     ✅      |
-| strokeColor     |     ✅      |
-| strokeJointType |     ✅      |
-| strokePattern   |     🟨      |
-| strokeWidth     |     ✅      |
-| zIndex          |     ❌      |
+| outline         |     ✅     |
+| clickable       |     ✅     |
+| fillColor       |     ✅     |
+| holes           |     ✅     |
+| isVisible       |     ✅     |
+| strokeColor     |     ✅     |
+| strokeJointType |     ✅     |
+| strokePattern   |     🟨     |
+| strokeWidth     |     ✅     |
+| zIndex          |     ❌     |
 
 Comments for partially supported 🟨 properties:
 
-| Property  | Comments                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
-| --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Property      | Comments                                                                             |
+| ------------- | ------------------------------------------------------------------------------------ |
 | strokePattern | Azure Maps SDK only supports alternating dashes and gaps that form the dash pattern. |
 
 #### OmhPolygon
 
 | Method             | Supported? |
 | ------------------ | :--------: |
-| getClickable       |     ✅      |
-| setClickable       |     ✅      |
-| getStrokeColor     |     ✅      |
-| setStrokeColor     |     ✅      |
-| getFillColor       |     ✅      |
-| setFillColor       |     ✅      |
-| getStrokeJointType |     ✅      |
-| setStrokeJointType |     ✅      |
-| getStrokePattern   |     ✅      |
-| setStrokePattern   |     🟨      |
-| getOutline         |     ✅      |
-| setOutline         |     ✅      |
-| getHoles           |     ✅      |
-| setHoles           |     ✅      |
-| getTag             |     ✅      |
-| setTag             |     ✅      |
-| getStrokeWidth     |     ✅      |
-| setStrokeWidth     |     ✅      |
-| getZIndex          |     ❌      |
-| setZIndex          |     ❌      |
-| isVisible          |     ✅      |
-| setVisible         |     ✅      |
+| getClickable       |     ✅     |
+| setClickable       |     ✅     |
+| getStrokeColor     |     ✅     |
+| setStrokeColor     |     ✅     |
+| getFillColor       |     ✅     |
+| setFillColor       |     ✅     |
+| getStrokeJointType |     ✅     |
+| setStrokeJointType |     ✅     |
+| getStrokePattern   |     ✅     |
+| setStrokePattern   |     🟨     |
+| getOutline         |     ✅     |
+| setOutline         |     ✅     |
+| getHoles           |     ✅     |
+| setHoles           |     ✅     |
+| getTag             |     ✅     |
+| setTag             |     ✅     |
+| getStrokeWidth     |     ✅     |
+| setStrokeWidth     |     ✅     |
+| getZIndex          |     ❌     |
+| setZIndex          |     ❌     |
+| isVisible          |     ✅     |
+| setVisible         |     ✅     |
+| remove             |     ✅     |
 
 Comments for partially supported 🟨 properties:
 
-| Property  | Comments                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
-| --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Property         | Comments                                                                             |
+| ---------------- | ------------------------------------------------------------------------------------ |
 | setStrokePattern | Azure Maps SDK only supports alternating dashes and gaps that form the dash pattern. |
-
 
 ## Known issues
 
 ### Flat markers clicks are not detected correctly
 
 In certain scenarios (e.g., when the map is rotated by more than 90 degrees), the Azure Maps SDK does not correctly handle click listeners when the flat marker is in use. The root cause of the issue is that the map processes clicks based on geographical coordinates, not the screen position of the markers. Therefore, if the marker's anchor is changed, its position on the screen changes, but its geographical position remains the same. This leads to situations where the marker is not clickable, even though it is visible on the screen. To mitigate this issue, the marker's anchor should be set to its default value, or the marker should be set to non-flat mode.
+
+### Miter joint types are not rendered consistently
+
+When Miter joint type is set, Azure Maps SDK can still render certain joints with acute angle as Bevel.
 
 ## Documentation
 

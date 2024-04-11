@@ -226,6 +226,10 @@ internal class OmhPolygonImpl(
         }
     }
 
+    override fun remove() {
+        delegate.removePolygon(id)
+    }
+
     companion object {
         internal fun getPolygonLayerID(polygonId: UUID): String {
             return "$polygonId-omh-polygon-layer"

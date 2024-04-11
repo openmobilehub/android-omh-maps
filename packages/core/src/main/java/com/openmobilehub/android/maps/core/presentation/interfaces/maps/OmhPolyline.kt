@@ -181,4 +181,9 @@ interface OmhPolyline {
      * @param zIndex A float representing the z-index of the polyline.
      */
     fun setZIndex(zIndex: Float)
+
+    /**
+     * Removes polyline from the map
+     */
+    fun remove()
 }

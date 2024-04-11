@@ -20,4 +20,5 @@ import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 
 interface IPolylineDelegate {
     fun updatePolylinePoints(sourceId: String, points: List<OmhCoordinate>)
+    fun removePolyline(id: String)
 }

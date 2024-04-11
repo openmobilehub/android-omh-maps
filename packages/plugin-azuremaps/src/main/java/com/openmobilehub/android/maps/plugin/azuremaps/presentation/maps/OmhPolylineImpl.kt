@@ -238,6 +238,10 @@ internal class OmhPolylineImpl(
         }
     }
 
+    override fun remove() {
+        delegate.removePolyline(id)
+    }
+
     companion object {
         internal fun getLineLayerID(polylineId: UUID): String {
             return "$polylineId-omh-polyline-layer"

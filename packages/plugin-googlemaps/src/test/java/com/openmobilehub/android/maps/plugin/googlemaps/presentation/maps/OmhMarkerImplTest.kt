@@ -35,6 +35,7 @@ import org.junit.Test
 class OmhMarkerImplTest {
 
     private lateinit var marker: Marker
+    private lateinit var omhMap: OmhMapImpl
     private lateinit var omhMarker: OmhMarkerImpl
     private lateinit var mockLogger: UnsupportedFeatureLogger
     private val initiallyClickable = true
@@ -42,8 +43,9 @@ class OmhMarkerImplTest {
     @Before
     fun setUp() {
         marker = mockk(relaxed = true)
+        omhMap = mockk(relaxed = true)
         mockLogger = mockk<UnsupportedFeatureLogger>(relaxed = true)
-        omhMarker = OmhMarkerImpl(marker, initiallyClickable, mockLogger)
+        omhMarker = OmhMarkerImpl(marker, initiallyClickable, mockLogger, markerDelegate = omhMap)
         mockkObject(CoordinateConverter)
         mockkObject(PatternConverter)
         mockkObject(MarkerIconConverter)
@@ -276,5 +278,17 @@ class OmhMarkerImplTest {
 
         // Assert
         verify { marker.rotation = expected }
+    }
+
+    @Test
+    fun `remove() removes the marker and closes info window`() {
+        // Act
+        omhMarker.remove()
+
+        // Assert
+        verify(exactly = 1) {
+            marker.remove()
+        }
+        assertEquals(marker.isInfoWindowShown, false)
     }
 }

@@ -137,4 +137,12 @@ internal class PolygonManager(
 
         return clickListener?.onPolygonClick(polygon) ?: false
     }
+
+    override fun removePolygon(id: UUID) {
+        map.layers.remove(OmhPolygonImpl.getPolygonLineLayerID(id))
+        map.layers.remove(OmhPolygonImpl.getPolygonLayerID(id))
+        map.sources.remove(OmhPolygonImpl.getSourceID(id))
+
+        _polygons.remove(id.toString())
+    }
 }
