@@ -31,6 +31,7 @@ class OmhMarkerImplTest {
 
     private lateinit var marker: CustomMarker
     private lateinit var omhMarker: OmhMarkerImpl
+    private lateinit var omhMap: OmhMapImpl
     private lateinit var mockMapView: MapView
     private lateinit var mockLogger: UnsupportedFeatureLogger
     private val initiallyClickable = true
@@ -38,9 +39,16 @@ class OmhMarkerImplTest {
     @Before
     fun setUp() {
         marker = mockk(relaxed = true)
+        omhMap = mockk(relaxed = true)
         mockMapView = mockk(relaxed = true)
         mockLogger = mockk<UnsupportedFeatureLogger>(relaxed = true)
-        omhMarker = OmhMarkerImpl(marker, mockMapView, initiallyClickable, mockLogger)
+        omhMarker = OmhMarkerImpl(
+            marker,
+            mockMapView,
+            initiallyClickable,
+            mockLogger,
+            markerDelegate = omhMap
+        )
     }
 
     @Test

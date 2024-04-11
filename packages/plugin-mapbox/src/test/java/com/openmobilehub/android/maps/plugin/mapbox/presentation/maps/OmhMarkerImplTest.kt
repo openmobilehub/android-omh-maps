@@ -49,6 +49,7 @@ class OmhMarkerImplTest {
     private val style = mockk<Style>(relaxed = true)
 
     private lateinit var omhMarker: OmhMarkerImpl
+    private lateinit var omhMap: OmhMapImpl
 
     private val defaultMarkerIconDrawable = mockk<Drawable>()
     private val convertDrawableToBitmapMock = mockk<Bitmap>()
@@ -94,6 +95,7 @@ class OmhMarkerImplTest {
         mockkObject(DrawableConverter)
         every { DrawableConverter.convertDrawableToBitmap(any()) } answers { convertDrawableToBitmapMock }
 
+        omhMap = mockk(relaxed = true)
         omhMarker = OmhMarkerImpl(
             markerUUID,
             context,
@@ -107,7 +109,8 @@ class OmhMarkerImplTest {
             infoWindowManagerDelegate = infoWindowManagerDelegate,
             infoWindowMapViewDelegate = infoWindowMapViewDelegate,
             initialIcon = INITIAL_ICON,
-            logger = logger
+            logger = logger,
+            markerDelegate = omhMap.mapMarkerManager
         )
         omhMarker.setGeoJsonSource(source)
         omhMarker.omhInfoWindow.setGeoJsonSource(source)

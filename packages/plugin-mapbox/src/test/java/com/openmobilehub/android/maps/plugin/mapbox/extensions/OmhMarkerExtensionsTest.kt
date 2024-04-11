@@ -186,7 +186,8 @@ internal class OmhMarkerExtensionsTest(
             bufferedIsFlat = options.isFlat,
             bufferedRotation = options.rotation,
             infoWindowManagerDelegate = omhMap.mapMarkerManager,
-            infoWindowMapViewDelegate = omhMap
+            infoWindowMapViewDelegate = omhMap,
+            markerDelegate = omhMap.mapMarkerManager,
         )
 
         val markerGeoJsonSource = geoJsonSource(markerGeoJsonSourceID) {

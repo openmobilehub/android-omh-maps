@@ -54,6 +54,7 @@ import com.openmobilehub.android.maps.plugin.openstreetmap.extensions.toMarkerOp
 import com.openmobilehub.android.maps.plugin.openstreetmap.extensions.toOmhCoordinate
 import com.openmobilehub.android.maps.plugin.openstreetmap.extensions.toPolygonOptions
 import com.openmobilehub.android.maps.plugin.openstreetmap.extensions.toPolylineOptions
+import com.openmobilehub.android.maps.plugin.openstreetmap.presentation.interfaces.IMarkerDelegate
 import com.openmobilehub.android.maps.plugin.openstreetmap.utils.Constants
 import com.openmobilehub.android.maps.plugin.openstreetmap.utils.Constants.DEFAULT_ZOOM_LEVEL
 import com.openmobilehub.android.maps.plugin.openstreetmap.utils.MapListenerController
@@ -74,7 +75,7 @@ import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 class OmhMapImpl(
     val mapView: MapView,
     private val logger: UnsupportedFeatureLogger = mapLogger
-) : OmhMap {
+) : OmhMap, IMarkerDelegate {
 
     private val mapListenerController: MapListenerController = MapListenerController()
     private var myLocationNewOverlay: MyLocationNewOverlay? = null
@@ -158,7 +159,7 @@ class OmhMapImpl(
         val marker = options.toMarkerOptions(this, mapView)
         val initiallyClickable = options.clickable
 
-        val omhMarker = OmhMarkerImpl(marker, mapView, initiallyClickable)
+        val omhMarker = OmhMarkerImpl(marker, mapView, initiallyClickable, markerDelegate = this)
         markers[marker] = omhMarker
 
         applyOnMarkerClickListener(marker, omhMarker)
@@ -172,6 +173,10 @@ class OmhMapImpl(
         reRenderInfoWindows() // to set up info window open state listeners
 
         return omhMarker
+    }
+
+    override fun removeMarker(marker: Marker) {
+        markers.remove(marker)
     }
 
     override fun addPolyline(options: OmhPolylineOptions): OmhPolyline {

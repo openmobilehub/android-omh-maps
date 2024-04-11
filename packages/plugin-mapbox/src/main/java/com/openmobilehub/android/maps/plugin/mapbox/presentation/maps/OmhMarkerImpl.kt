@@ -36,6 +36,7 @@ import com.openmobilehub.android.maps.core.utils.DrawableConverter
 import com.openmobilehub.android.maps.core.utils.cartesian.Offset2D
 import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IMapInfoWindowManagerDelegate
+import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IMarkerDelegate
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IOmhInfoWindowMapViewDelegate
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.ITouchInteractable
 import com.openmobilehub.android.maps.plugin.mapbox.utils.AnchorConverter
@@ -65,7 +66,8 @@ internal class OmhMarkerImpl(
     initialIcon: Drawable?,
     infoWindowManagerDelegate: IMapInfoWindowManagerDelegate,
     infoWindowMapViewDelegate: IOmhInfoWindowMapViewDelegate,
-    private val logger: UnsupportedFeatureLogger = markerLogger
+    private val logger: UnsupportedFeatureLogger = markerLogger,
+    private val markerDelegate: IMarkerDelegate
 ) : OmhMarker, ITouchInteractable {
     internal var isRemoved: Boolean = false
 
@@ -423,6 +425,8 @@ internal class OmhMarkerImpl(
 
     override fun remove() {
         isRemoved = true
+
+        markerDelegate.removeMarker(markerSymbolLayer.layerId)
 
         if (isStyleReady()) {
             val removeLayerResult = style.removeStyleLayer(getSymbolLayerID(markerUUID))

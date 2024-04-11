@@ -22,6 +22,7 @@ import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMarke
 import com.openmobilehub.android.maps.core.presentation.models.Constants
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
+import com.openmobilehub.android.maps.plugin.googlemaps.presentation.interfaces.IMarkerDelegate
 import com.openmobilehub.android.maps.plugin.googlemaps.utils.CoordinateConverter
 import com.openmobilehub.android.maps.plugin.googlemaps.utils.MarkerIconConverter
 import com.openmobilehub.android.maps.plugin.googlemaps.utils.markerLogger
@@ -30,7 +31,8 @@ import com.openmobilehub.android.maps.plugin.googlemaps.utils.markerLogger
 internal class OmhMarkerImpl(
     private val marker: Marker,
     private var clickable: Boolean = true,
-    private val logger: UnsupportedFeatureLogger = markerLogger
+    private val logger: UnsupportedFeatureLogger = markerLogger,
+    private val markerDelegate: IMarkerDelegate
 ) : OmhMarker {
 
     private var lastInfoWindowAnchor: Pair<Float, Float> =
@@ -175,6 +177,8 @@ internal class OmhMarkerImpl(
     }
 
     override fun remove() {
+        markerDelegate.removeMarker(marker)
+
         marker.remove()
     }
 }

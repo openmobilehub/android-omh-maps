@@ -56,6 +56,7 @@ import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogge
 import com.openmobilehub.android.maps.plugin.googlemaps.extensions.toMarkerOptions
 import com.openmobilehub.android.maps.plugin.googlemaps.extensions.toPolygonOptions
 import com.openmobilehub.android.maps.plugin.googlemaps.extensions.toPolylineOptions
+import com.openmobilehub.android.maps.plugin.googlemaps.presentation.interfaces.IMarkerDelegate
 import com.openmobilehub.android.maps.plugin.googlemaps.utils.Constants
 import com.openmobilehub.android.maps.plugin.googlemaps.utils.CoordinateConverter
 import com.openmobilehub.android.maps.plugin.googlemaps.utils.commonLogger
@@ -67,7 +68,7 @@ class OmhMapImpl(
     private val context: Context,
     private val logger: Logger = commonLogger,
     private val markerUnsupportedFeatureLogger: UnsupportedFeatureLogger = markerLogger
-) : OmhMap {
+) : OmhMap, IMarkerDelegate {
 
     override val providerName: String
         get() = Constants.PROVIDER_NAME
@@ -104,7 +105,7 @@ class OmhMapImpl(
         val initiallyClickable = options.clickable
 
         return marker?.let {
-            val omhMarker = OmhMarkerImpl(marker, initiallyClickable)
+            val omhMarker = OmhMarkerImpl(marker, initiallyClickable, markerDelegate = this)
             markers[marker] = omhMarker
 
             return@let omhMarker
@@ -306,5 +307,9 @@ class OmhMapImpl(
 
     override fun setScaleFactor(scaleFactor: Float) {
         // Not required for Google Maps
+    }
+
+    override fun removeMarker(marker: Marker) {
+        markers.remove(marker)
     }
 }

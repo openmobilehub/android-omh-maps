@@ -34,16 +34,18 @@ import com.openmobilehub.android.maps.core.utils.uuid.UUIDGenerator
 import com.openmobilehub.android.maps.plugin.azuremaps.extensions.toSymbolLayerOptionsList
 import com.openmobilehub.android.maps.plugin.azuremaps.presentation.interfaces.AzureMapInterface
 import com.openmobilehub.android.maps.plugin.azuremaps.presentation.interfaces.IMapViewDelegate
+import com.openmobilehub.android.maps.plugin.azuremaps.presentation.interfaces.IMarkerDelegate
 import com.openmobilehub.android.maps.plugin.azuremaps.presentation.maps.OmhInfoWindow
 import com.openmobilehub.android.maps.plugin.azuremaps.presentation.maps.OmhMarkerImpl
 import com.openmobilehub.android.maps.plugin.azuremaps.utils.Constants
 import com.openmobilehub.android.maps.plugin.azuremaps.utils.CoordinateConverter
+import java.util.UUID
 
 @SuppressWarnings("TooManyFunctions")
 internal class MapMarkerManager(
     private val context: Context,
     private val map: AzureMapInterface,
-) : IMapViewDelegate {
+) : IMapViewDelegate, IMarkerDelegate {
     internal var markerClickListener: OmhOnMarkerClickListener? = null
     internal var infoWindowOpenStatusChangeListener: OmhOnInfoWindowOpenStatusChangeListener? = null
     internal var infoWindowClickListener: OmhOnInfoWindowClickListener? = null
@@ -97,6 +99,7 @@ internal class MapMarkerManager(
             rotation = options.rotation,
             infoWindowPopup = infoWindowPopup,
             mapViewDelegate = this,
+            markerDelegate = this
         )
 
         val omhMarkerUUIDStr = omhMarker.markerUUID.toString()
@@ -104,6 +107,10 @@ internal class MapMarkerManager(
         infoWindows[omhMarkerUUIDStr] = omhMarker.omhInfoWindow
 
         return omhMarker
+    }
+
+    override fun removeMarker(markerUUID: UUID) {
+        markers.remove(markerUUID.toString())
     }
 
     fun setMarkerClickListener(listener: OmhOnMarkerClickListener) {
