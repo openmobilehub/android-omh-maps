@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-package com.openmobilehub.android.maps.plugin.azuremaps.presentation.utils
+package com.openmobilehub.android.maps.core.utils.uuid
 
-import com.openmobilehub.android.maps.core.utils.logging.Logger
-import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
+import java.util.UUID
 
-val mapLogger = UnsupportedFeatureLogger(Constants.PROVIDER_NAME, "OmhMap")
-val commonLogger = Logger(Constants.PROVIDER_NAME)
+class DefaultUUIDGenerator : UUIDGenerator {
+    override fun generate(): UUID {
+        return UUID.randomUUID()
+    }
+}

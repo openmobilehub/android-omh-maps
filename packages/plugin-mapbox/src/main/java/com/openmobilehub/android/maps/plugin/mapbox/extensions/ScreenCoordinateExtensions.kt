@@ -17,16 +17,12 @@
 package com.openmobilehub.android.maps.plugin.mapbox.extensions
 
 import com.mapbox.maps.ScreenCoordinate
-import com.openmobilehub.android.maps.plugin.mapbox.utils.cartesian.Offset2D
-import kotlin.math.pow
-import kotlin.math.sqrt
+import com.openmobilehub.android.maps.core.utils.cartesian.Point2D
 
-operator fun ScreenCoordinate.plus(offset: Offset2D<Double>): ScreenCoordinate {
-    return ScreenCoordinate(x + offset.x, y + offset.y)
+fun ScreenCoordinate.toPoint2D(): Point2D<Double> {
+    return Point2D(x, y)
 }
 
-fun ScreenCoordinate.distanceTo(other: ScreenCoordinate): Double {
-    return sqrt(
-        (other.x - x).pow(2.0) + (other.y - y).pow(2.0)
-    )
+fun Point2D<Double>.toScreenCoordinate(): ScreenCoordinate {
+    return ScreenCoordinate(x, y)
 }

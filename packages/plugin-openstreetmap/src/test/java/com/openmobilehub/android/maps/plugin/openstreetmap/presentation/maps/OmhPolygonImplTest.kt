@@ -21,6 +21,7 @@ import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhPatte
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhJointType
 import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
+import com.openmobilehub.android.maps.plugin.openstreetmap.interfaces.IPolygonDelegate
 import com.openmobilehub.android.maps.plugin.openstreetmap.utils.ConverterUtils
 import io.mockk.every
 import io.mockk.just
@@ -40,6 +41,7 @@ class OmhPolygonImplTest {
     private lateinit var polygon: Polygon
     private lateinit var omhPolygon: OmhPolygonImpl
     private val initiallyClickable = true
+    private val delegate = mockk<IPolygonDelegate>(relaxed = true)
     private val mockMapView: MapView = mockk(relaxed = true)
     private val mockLogger: UnsupportedFeatureLogger =
         mockk<UnsupportedFeatureLogger>(relaxed = true)
@@ -47,7 +49,7 @@ class OmhPolygonImplTest {
     @Before
     fun setUp() {
         polygon = mockk(relaxed = true)
-        omhPolygon = OmhPolygonImpl(polygon, mockMapView, initiallyClickable, mockLogger)
+        omhPolygon = OmhPolygonImpl(polygon, mockMapView, initiallyClickable, delegate, mockLogger)
         mockkObject(ConverterUtils)
     }
 
@@ -323,5 +325,14 @@ class OmhPolygonImplTest {
 
         // Assert
         verify { mockLogger.logSetterNotSupported("zIndex") }
+    }
+
+    @Test
+    fun `remove calls delegate method`() {
+        // Act
+        omhPolygon.remove()
+
+        // Assert
+        verify { delegate.removePolygon(polygon) }
     }
 }

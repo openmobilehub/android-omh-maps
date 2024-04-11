@@ -1,4 +1,4 @@
-import com.openmobilehub.android.maps.plugin.mapbox.utils.uuid.DefaultUUIDGenerator
+import com.openmobilehub.android.maps.core.utils.uuid.DefaultUUIDGenerator
 import org.junit.Assert
 import org.junit.Test
 import java.util.UUID

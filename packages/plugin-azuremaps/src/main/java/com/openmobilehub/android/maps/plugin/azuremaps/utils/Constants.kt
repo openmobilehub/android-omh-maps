@@ -14,15 +14,26 @@
  * limitations under the License.
  */
 
-package com.openmobilehub.android.maps.plugin.azuremaps.presentation.utils
+package com.openmobilehub.android.maps.plugin.azuremaps.utils
+
+import androidx.annotation.ColorInt
 
 internal object Constants {
+    // Marker style
+    @ColorInt
+    const val DEFAULT_MARKER_COLOR: Int = 0xFFEA393F.toInt()
+
     // Common
     const val PROVIDER_NAME = "AzureMaps"
 
     // Defaults
     const val DEFAULT_MIN_ZOOM = 1.0
     const val DEFAULT_MAX_ZOOM = 20.0
+
+    // Map interaction
+    const val MARKER_FEATURE_UUID_BINDING = "omh-marker-id-binding"
+    const val POLYLINE_FEATURE_UUID_BINDING = "omh-polyline-id-binding"
+    const val POLYGON_FEATURE_UUID_BINDING = "omh-polygon-id-binding"
 
     // Camera
     /**

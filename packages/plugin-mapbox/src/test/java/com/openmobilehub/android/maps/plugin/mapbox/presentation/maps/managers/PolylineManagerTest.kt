@@ -12,8 +12,8 @@ import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnPol
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhPolyline
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolylineOptions
+import com.openmobilehub.android.maps.core.utils.uuid.UUIDGenerator
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.maps.OmhPolylineImpl
-import com.openmobilehub.android.maps.plugin.mapbox.utils.uuid.UUIDGenerator
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
@@ -147,6 +147,54 @@ class PolylineManagerTest {
 
         // Assert
         verify { geoJsonSource.feature(any<Feature>()) }
+    }
+
+    @Test
+    fun `removePolyline calls removeStyleSource and removeStyleLayer methods and removes polyline`() {
+        // Arrange
+        val id = "polyline-$DEFAULT_UUID"
+
+        every { mapView.mapboxMap.style } returns style
+
+        every { style.styleSourceExists(id) } returns true
+        every { style.styleLayerExists(id) } returns true
+
+        every { any<MapboxStyleManager>().addSource(any()) } just runs
+        every { any<MapboxStyleManager>().addLayer(any()) } just runs
+
+        // Act
+        val polylineOptions = OmhPolylineOptions()
+        polylineManager.addPolyline(polylineOptions, style)
+
+        // Assert
+        Assert.assertEquals(1, polylineManager.polylines.count())
+
+        // Act
+        polylineManager.removePolyline(id)
+
+        // Assert
+        verify { style.removeStyleSource(id) }
+        verify { style.removeStyleLayer(id) }
+
+        Assert.assertEquals(0, polylineManager.polylines.count())
+    }
+
+    @Test
+    fun `removePolyline does not call removeStyleSource and removeStyleLayer if the source does not exist`() {
+        // Arrange
+        val id = "polyline-$DEFAULT_UUID"
+
+        every { mapView.mapboxMap.style } returns style
+
+        every { style.styleSourceExists(id) } returns false
+        every { style.styleLayerExists(id) } returns true
+
+        // Act
+        polylineManager.removePolyline(id)
+
+        // Assert
+        verify(exactly = 0) { style.removeStyleSource(id) }
+        verify(exactly = 0) { style.removeStyleLayer(id) }
     }
 
     companion object {

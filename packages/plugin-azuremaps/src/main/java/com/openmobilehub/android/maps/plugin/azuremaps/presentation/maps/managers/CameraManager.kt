@@ -25,7 +25,7 @@ import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMapLo
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnCameraIdleListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnCameraMoveStartedListener
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
-import com.openmobilehub.android.maps.plugin.azuremaps.presentation.utils.Constants
+import com.openmobilehub.android.maps.plugin.azuremaps.utils.Constants
 
 class CameraManager(private val mapView: AzureMap) {
     private var zoomGestureEnabled = true

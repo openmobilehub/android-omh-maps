@@ -49,6 +49,15 @@
             android:orientation="vertical"
             android:padding="16dp">
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="10dp"
+                android:gravity="center"
+                android:text="@string/label_marker_properties"
+                android:textSize="18sp" />
+
             <CheckBox
                 android:id="@+id/checkBox_isVisible"
                 android:layout_width="match_parent"
@@ -139,6 +148,22 @@
                 android:layout_marginTop="15dp"
                 android:layout_marginBottom="15dp"
                 app:titleText="@string/color" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="10dp"
+                android:gravity="center"
+                android:text="@string/label_demo_behaviour"
+                android:textSize="18sp" />
+
+            <CheckBox
+                android:id="@+id/checkBox_demoShouldRemoveMarkerOnClick"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="@string/remove_marker_on_click" />
         </LinearLayout>
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

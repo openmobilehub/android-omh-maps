@@ -23,6 +23,7 @@ import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhPolyl
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhStyleSpan
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
+import com.openmobilehub.android.maps.plugin.googlemaps.presentation.interfaces.IPolylineDelegate
 import com.openmobilehub.android.maps.plugin.googlemaps.utils.CapConverter
 import com.openmobilehub.android.maps.plugin.googlemaps.utils.CoordinateConverter
 import com.openmobilehub.android.maps.plugin.googlemaps.utils.PatternConverter
@@ -32,6 +33,7 @@ import com.openmobilehub.android.maps.plugin.googlemaps.utils.polylineLogger
 @SuppressWarnings("TooManyFunctions")
 internal class OmhPolylineImpl(
     private val polyline: Polyline,
+    private val delegate: IPolylineDelegate,
     private val logger: UnsupportedFeatureLogger = polylineLogger
 ) : OmhPolyline {
 
@@ -88,7 +90,7 @@ internal class OmhPolylineImpl(
     override fun setPattern(pattern: List<OmhPatternItem>) {
         polyline.pattern = pattern.map { patternItem ->
             PatternConverter.convertToPatternItem(patternItem)
-        }
+        }.ifEmpty { null }
     }
 
     override fun getPoints(): List<OmhCoordinate> {
@@ -147,5 +149,9 @@ internal class OmhPolylineImpl(
 
     override fun setZIndex(zIndex: Float) {
         polyline.zIndex = zIndex
+    }
+
+    override fun remove() {
+        delegate.removePolyline(polyline)
     }
 }

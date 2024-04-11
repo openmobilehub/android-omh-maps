@@ -14,10 +14,19 @@
  * limitations under the License.
  */
 
-package com.openmobilehub.android.maps.plugin.mapbox.utils.uuid
+package com.openmobilehub.android.maps.plugin.azuremaps.utils
 
-import java.util.UUID
+import com.azure.android.maps.control.options.LineCap
+import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhCap
+import com.openmobilehub.android.maps.core.presentation.models.OmhButtCap
+import com.openmobilehub.android.maps.core.presentation.models.OmhSquareCap
 
-interface UUIDGenerator {
-    fun generate(): UUID
+object CapConverter {
+    fun convertToAzureMapsLineCap(omhCap: OmhCap): String {
+        return when (omhCap) {
+            is OmhButtCap -> LineCap.BUTT
+            is OmhSquareCap -> LineCap.SQUARE
+            else -> LineCap.ROUND
+        }
+    }
 }

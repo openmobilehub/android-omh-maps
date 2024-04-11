@@ -50,8 +50,21 @@ just_the_docs:
       name: Plugin Mapbox
       nav_fold: false
       nav_order: 4
-    
+
     plugin-azuremaps:
       name: Plugin AzureMaps
       nav_fold: false
       nav_order: 5
+
+callouts:
+  warning:
+    title: Warning
+    color: yellow
+
+  note:
+    title: Note
+    color: blue
+
+  error:
+    title: Error
+    color: red

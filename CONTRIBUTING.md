@@ -152,6 +152,12 @@ For markdown advanced documentation, the following rules apply to all files:
 - Relative links to top-level `README.md` files of other modules (e.g. MD files in `packages/googlemaps/...` to reference `packages/plugin-core/README.md`) are not supported - use absolute (`/packages/...`) paths instead
 - Other links to local files can be project-absolute (beginning with `/packages/`) or relative.
 
+Common Markdown syntax is supported along with features specific to Jekyll & [Just the docs theme](https://just-the-docs.com/), and the following [callouts](https://just-the-docs.com/docs/configuration/#callouts) have been configured:
+
+- warning
+- error
+- note
+
 Additionally, rules for specific files are presented below.
 
 #### `README.md`

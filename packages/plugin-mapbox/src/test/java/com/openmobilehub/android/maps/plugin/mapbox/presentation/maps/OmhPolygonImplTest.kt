@@ -638,6 +638,19 @@ class OmhPolygonImplTest {
         verify { style.addLayer(lineLayer) }
     }
 
+    @Test
+    fun `remove calls delegate method`() {
+        // Arrange
+        val id = "test-id"
+        every { source.sourceId } returns id
+
+        // Act
+        omhPolygon.remove()
+
+        // Assert
+        verify { polygonDelegate.removePolygon(id) }
+    }
+
     companion object {
         private val DEFAULT_OUTLINE = listOf(
             OmhCoordinate(-20.0, 25.0),

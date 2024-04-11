@@ -32,7 +32,16 @@ class OmhMapImplTest {
 
     @Before
     fun setUp() {
-        omhMapImpl = OmhMapImpl(context, mapControl, mapView, cameraManager, myLocationManager, logger)
+        omhMapImpl =
+            OmhMapImpl(
+                context,
+                mapControl,
+                mapView,
+                cameraManager,
+                myLocationManager,
+                logger = logger,
+                bRunningInTest = true
+            )
     }
 
     @Test
@@ -41,7 +50,10 @@ class OmhMapImplTest {
         val latitude = 10.0
         val longitude = 15.0
 
-        every { cameraManager.getCameraPositionCoordinate() } returns OmhCoordinate(latitude, longitude)
+        every { cameraManager.getCameraPositionCoordinate() } returns OmhCoordinate(
+            latitude,
+            longitude
+        )
 
         // Act
         val result = omhMapImpl.getCameraPositionCoordinate()
@@ -170,5 +182,17 @@ class OmhMapImplTest {
 
         // Assert
         verify { myLocationManager.setMyLocationButtonClickListener(listener) }
+    }
+
+    @Test
+    fun `setMapStyle calls logger logSetterNotSupported`() {
+        // Arrange
+        val mapStyle = 0
+
+        // Act
+        omhMapImpl.setMapStyle(mapStyle)
+
+        // Assert
+        verify { logger.logSetterNotSupported("mapStyle") }
     }
 }

@@ -16,7 +16,7 @@
 
 package com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces
 
-import com.openmobilehub.android.maps.plugin.mapbox.utils.cartesian.Offset2D
+import com.openmobilehub.android.maps.core.utils.cartesian.Offset2D
 
 /**
  * Common interface for draggable entities on the map.

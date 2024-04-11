@@ -33,6 +33,7 @@ This plugin provides support for Azure Maps by utilizing the [Azure Maps Android
       </application>
    </manifest>
    ```
+
 4. (Optional - only when using the `plugin-mapbox` in the single application). Exclude the `android-sdk-geojson` module from the `plugin-azuremaps` dependency to avoid conflicts with the `plugin-mapbox` dependency.
 
    ```kotlin
@@ -52,28 +53,36 @@ This plugin provides support for Azure Maps by utilizing the [Azure Maps Android
 
 | Method                                  | Supported? |
 | --------------------------------------- | :--------: |
-| addMarker                               |     ?      |
-| addPolyline                             |     ?      |
+| addMarker                               |     ✅     |
+| addPolyline                             |     ✅     |
 | addPolygon                              |     ?      |
 | getCameraPositionCoordinate             |     ✅     |
 | moveCamera                              |     ✅     |
 | setZoomGesturesEnabled                  |     ✅     |
 | setRotateGesturesEnabled                |     ❌     |
-| setMyLocationEnabled                    |     ?      |
-| isMyLocationEnabled                     |     ?      |
-| setMyLocationButtonClickListener        |     ?      |
+| setMyLocationEnabled                    |     ✅     |
+| isMyLocationEnabled                     |     ✅     |
+| setMyLocationButtonClickListener        |     ✅     |
 | setOnCameraMoveStartedListener          |     ✅     |
 | setOnCameraIdleListener                 |     ✅     |
 | setOnMapLoadedCallback                  |     ✅     |
-| setOnMarkerClickListener                |     ?      |
-| setOnMarkerDragListener                 |     ?      |
-| setOnInfoWindowOpenStatusChangeListener |     ?      |
-| setOnInfoWindowClickListener            |     ?      |
-| setOnInfoWindowLongClickListener        |     ?      |
-| setOnPolylineClickListener              |     ?      |
+| setOnMarkerClickListener                |     ✅     |
+| setOnMarkerDragListener                 |     ❌     |
+| setOnInfoWindowOpenStatusChangeListener |     ✅     |
+| setOnInfoWindowClickListener            |     ✅     |
+| setOnInfoWindowLongClickListener        |     ✅     |
+| setOnPolylineClickListener              |     ✅     |
 | setOnPolygonClickListener               |     ?      |
 | snapshot                                |     ❌     |
-| setMapStyle                             |     ?      |
+| setMapStyle                             |     ❌     |
+| setCustomInfoWindowContentsViewFactory  |     ✅     |
+| setCustomInfoWindowViewFactory          |     🟨     |
+
+Comments for partially supported 🟨 properties:
+
+| Property                       | Comments                                                                                                                                                                                                                                                                                                                                           |
+| ------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| setCustomInfoWindowViewFactory | The provider supports this method in full, however since the view is rendered "live" (i.e., the view is mounted instead of being rendered to a bitmap), attaching interaction listeners to the root view returned by the factory is forbidden. Please consult the [advanced documentation](https://todo.todo) of this plugin for more information. |
 
 ### Marker
 
@@ -81,49 +90,62 @@ This plugin provides support for Azure Maps by utilizing the [Azure Maps Android
 
 | Property         | Support level |
 | ---------------- | :-----------: |
-| position         |       ?       |
-| title            |       ?       |
-| draggable        |       ?       |
-| anchor           |       ?       |
-| infoWindowAnchor |       ?       |
-| alpha            |       ?       |
-| snippet          |       ?       |
-| isVisible        |       ?       |
-| isFlat           |       ?       |
-| rotation         |       ?       |
-| backgroundColor  |       ?       |
-| clickable        |       ?       |
+| position         |      ✅       |
+| title            |      ✅       |
+| draggable        |      ❌       |
+| anchor           |      🟨       |
+| infoWindowAnchor |      ✅       |
+| alpha            |      ✅       |
+| snippet          |      ✅       |
+| isVisible        |      ✅       |
+| isFlat           |      ✅       |
+| rotation         |      ✅       |
+| backgroundColor  |      ✅       |
+| clickable        |      ✅       |
+
+Comments for partially supported 🟨 properties:
+
+| Property | Comments                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| anchor   | Azure Maps SDK utilizes Mapbox underneath, which only supports [enumerated (discrete) values](https://docs.mapbox.com/android/maps/api/10.0.0/mapbox-maps-android/com.mapbox.maps.extension.style.layers.properties.generated/-icon-anchor/), opposed to continuous (`Float`) values in OMH; this property is mapped for each axis such that ranges: <br/>&bull; `<0; 0.25>` is mapped to left or top <br/>&bull; `<0.75; 0.1>` is mapped to right or bottom <br/>&bull; `(0.25; 0.75)` is mapped to center <br/> Also taking into account combinations, e.g. `Pair(0.1f, 0.9f)` would be mapped to `BOTTOM_LEFT` |
 
 #### OmhMarker
 
 | Method               | Support level |
 | -------------------- | :-----------: |
-| getPosition          |       ?       |
-| setPosition          |       ?       |
-| getTitle             |       ?       |
-| setTitle             |       ?       |
-| getClickable         |       ?       |
-| setClickable         |       ?       |
-| getDraggable         |       ?       |
-| setDraggable         |       ?       |
-| setAnchor            |       ?       |
-| setInfoWindowAnchor  |       ?       |
-| getAlpha             |       ?       |
-| setAlpha             |       ?       |
-| getSnippet           |       ?       |
-| setSnippet           |       ?       |
-| setIcon              |       ?       |
-| getIsVisible         |       ?       |
-| setIsVisible         |       ?       |
-| getIsFlat            |       ?       |
-| setIsFlat            |       ?       |
-| getRotation          |       ?       |
-| setRotation          |       ?       |
-| getBackgroundColor   |       ?       |
-| setBackgroundColor   |       ?       |
-| showInfoWindow       |       ?       |
-| hideInfoWindow       |       ?       |
-| getIsInfoWindowShown |       ?       |
+| getPosition          |      ✅       |
+| setPosition          |      ✅       |
+| getTitle             |      ✅       |
+| setTitle             |      ✅       |
+| getClickable         |      ✅       |
+| setClickable         |      ✅       |
+| getDraggable         |      ❌       |
+| setDraggable         |      ❌       |
+| setAnchor            |      🟨       |
+| setInfoWindowAnchor  |      ✅       |
+| getAlpha             |      ✅       |
+| setAlpha             |      ✅       |
+| getSnippet           |      ✅       |
+| setSnippet           |      ✅       |
+| setIcon              |      ✅       |
+| getIsVisible         |      ✅       |
+| setIsVisible         |      ✅       |
+| getIsFlat            |      ✅       |
+| setIsFlat            |      ✅       |
+| getRotation          |      ✅       |
+| setRotation          |      ✅       |
+| getBackgroundColor   |      ✅       |
+| setBackgroundColor   |      ✅       |
+| showInfoWindow       |      ✅       |
+| hideInfoWindow       |      ✅       |
+| getIsInfoWindowShown |      ✅       |
+| remove               |      ✅       |
+
+Comments for partially supported 🟨 properties:
+
+| Property  | Comments                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| setAnchor | Azure Maps SDK utilizes Mapbox underneath, which only supports [enumerated (discrete) values](https://docs.mapbox.com/android/maps/api/10.0.0/mapbox-maps-android/com.mapbox.maps.extension.style.layers.properties.generated/-icon-anchor/), opposed to continuous (`Float`) values in OMH; this property is mapped for each axis such that ranges: <br/>&bull; `<0; 0.25>` is mapped to left or top <br/>&bull; `<0.75; 0.1>` is mapped to right or bottom <br/>&bull; `(0.25; 0.75)` is mapped to center <br/> Also taking into account combinations, e.g. `Pair(0.1f, 0.9f)` would be mapped to `BOTTOM_LEFT` |
 
 ### Polyline
 
@@ -131,49 +153,64 @@ This plugin provides support for Azure Maps by utilizing the [Azure Maps Android
 
 | Property  | Supported? |
 | --------- | :--------: |
-| points    |     ?      |
-| clickable |     ?      |
-| color     |     ?      |
-| width     |     ?      |
-| isVisible |     ?      |
-| zIndex    |     ?      |
-| jointType |     ?      |
-| pattern   |     ?      |
-| cap       |     ?      |
-| startCap  |     ?      |
-| endCap    |     ?      |
+| points    |     ✅     |
+| clickable |     ✅     |
+| color     |     ✅     |
+| width     |     ✅     |
+| isVisible |     ✅     |
+| zIndex    |     ❌     |
+| jointType |     ✅     |
+| pattern   |     🟨     |
+| cap       |     🟨     |
+| startCap  |     ❌     |
+| endCap    |     ❌     |
 | spans     |     ?      |
+
+Comments for partially supported 🟨 properties:
+
+| Property | Comments                                                                                             |
+| -------- | ---------------------------------------------------------------------------------------------------- |
+| pattern  | Azure Maps SDK only supports alternating dashes and gaps that form the dash pattern.                 |
+| cap      | Azure Maps SDK supports BUTT, SQUARE and ROUND caps. Defaults to ROUND when other value is provided. |
 
 #### OmhPolyline
 
 | Method       | Supported? |
 | ------------ | :--------: |
-| getCap       |     ?      |
-| setCap       |     ?      |
-| isClickable  |     ?      |
-| setClickable |     ?      |
-| getColor     |     ?      |
-| setColor     |     ?      |
-| getEndCap    |     ?      |
-| setEndCap    |     ?      |
-| getJoinType  |     ?      |
-| setJoinType  |     ?      |
-| getPattern   |     ?      |
-| setPattern   |     ?      |
-| getPoints    |     ?      |
-| setPoints    |     ?      |
+| getCap       |     ✅     |
+| setCap       |     🟨     |
+| isClickable  |     ✅     |
+| setClickable |     ✅     |
+| getColor     |     ✅     |
+| setColor     |     ✅     |
+| getEndCap    |     ❌     |
+| setEndCap    |     ❌     |
+| getJoinType  |     ✅     |
+| setJoinType  |     ✅     |
+| getPattern   |     ✅     |
+| setPattern   |     🟨     |
+| getPoints    |     ✅     |
+| setPoints    |     ✅     |
 | getSpans     |     ?      |
 | setSpans     |     ?      |
-| getStartCap  |     ?      |
-| setStartCap  |     ?      |
-| getTag       |     ?      |
-| setTag       |     ?      |
-| getWidth     |     ?      |
-| setWidth     |     ?      |
-| getZIndex    |     ?      |
-| setZIndex    |     ?      |
-| isVisible    |     ?      |
-| setVisible   |     ?      |
+| getStartCap  |     ❌     |
+| setStartCap  |     ❌     |
+| getTag       |     ✅     |
+| setTag       |     ✅     |
+| getWidth     |     ✅     |
+| setWidth     |     ✅     |
+| getZIndex    |     ❌     |
+| setZIndex    |     ❌     |
+| isVisible    |     ✅     |
+| setVisible   |     ✅     |
+| remove       |     ✅     |
+
+Comments for partially supported 🟨 properties:
+
+| Property   | Comments                                                                                             |
+| ---------- | ---------------------------------------------------------------------------------------------------- |
+| setPattern | Azure Maps SDK only supports alternating dashes and gaps that form the dash pattern.                 |
+| setCap     | Azure Maps SDK supports BUTT, SQUARE and ROUND caps. Defaults to ROUND when other value is provided. |
 
 ### Polygon
 
@@ -181,43 +218,66 @@ This plugin provides support for Azure Maps by utilizing the [Azure Maps Android
 
 | Property        | Supported? |
 | --------------- | :--------: |
-| outline         |     ?      |
-| clickable       |     ?      |
-| fillColor       |     ?      |
-| holes           |     ?      |
-| isVisible       |     ?      |
-| strokeColor     |     ?      |
-| strokeJointType |     ?      |
-| strokePattern   |     ?      |
-| strokeWidth     |     ?      |
-| zIndex          |     ?      |
+| outline         |     ✅     |
+| clickable       |     ✅     |
+| fillColor       |     ✅     |
+| holes           |     ✅     |
+| isVisible       |     ✅     |
+| strokeColor     |     ✅     |
+| strokeJointType |     ✅     |
+| strokePattern   |     🟨     |
+| strokeWidth     |     ✅     |
+| zIndex          |     ❌     |
+
+Comments for partially supported 🟨 properties:
+
+| Property      | Comments                                                                             |
+| ------------- | ------------------------------------------------------------------------------------ |
+| strokePattern | Azure Maps SDK only supports alternating dashes and gaps that form the dash pattern. |
 
 #### OmhPolygon
 
 | Method             | Supported? |
 | ------------------ | :--------: |
-| getClickable       |     ?      |
-| setClickable       |     ?      |
-| getStrokeColor     |     ?      |
-| setStrokeColor     |     ?      |
-| getFillColor       |     ?      |
-| setFillColor       |     ?      |
-| getStrokeJointType |     ?      |
-| setStrokeJointType |     ?      |
-| getStrokePattern   |     ?      |
-| setStrokePattern   |     ?      |
-| getOutline         |     ?      |
-| setOutline         |     ?      |
-| getHoles           |     ?      |
-| setHoles           |     ?      |
-| getTag             |     ?      |
-| setTag             |     ?      |
-| getStrokeWidth     |     ?      |
-| setStrokeWidth     |     ?      |
-| getZIndex          |     ?      |
-| setZIndex          |     ?      |
-| isVisible          |     ?      |
-| setVisible         |     ?      |
+| getClickable       |     ✅     |
+| setClickable       |     ✅     |
+| getStrokeColor     |     ✅     |
+| setStrokeColor     |     ✅     |
+| getFillColor       |     ✅     |
+| setFillColor       |     ✅     |
+| getStrokeJointType |     ✅     |
+| setStrokeJointType |     ✅     |
+| getStrokePattern   |     ✅     |
+| setStrokePattern   |     🟨     |
+| getOutline         |     ✅     |
+| setOutline         |     ✅     |
+| getHoles           |     ✅     |
+| setHoles           |     ✅     |
+| getTag             |     ✅     |
+| setTag             |     ✅     |
+| getStrokeWidth     |     ✅     |
+| setStrokeWidth     |     ✅     |
+| getZIndex          |     ❌     |
+| setZIndex          |     ❌     |
+| isVisible          |     ✅     |
+| setVisible         |     ✅     |
+| remove             |     ✅     |
+
+Comments for partially supported 🟨 properties:
+
+| Property         | Comments                                                                             |
+| ---------------- | ------------------------------------------------------------------------------------ |
+| setStrokePattern | Azure Maps SDK only supports alternating dashes and gaps that form the dash pattern. |
+
+## Known issues
+
+### Flat markers clicks are not detected correctly
+
+In certain scenarios (e.g., when the map is rotated by more than 90 degrees), the Azure Maps SDK does not correctly handle click listeners when the flat marker is in use. The root cause of the issue is that the map processes clicks based on geographical coordinates, not the screen position of the markers. Therefore, if the marker's anchor is changed, its position on the screen changes, but its geographical position remains the same. This leads to situations where the marker is not clickable, even though it is visible on the screen. To mitigate this issue, the marker's anchor should be set to its default value, or the marker should be set to non-flat mode.
+
+### Miter joint types are not rendered consistently
+
+When Miter joint type is set, Azure Maps SDK can still render certain joints with acute angle as Bevel.
 
 ## Documentation
 

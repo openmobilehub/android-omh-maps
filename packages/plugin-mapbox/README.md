@@ -43,7 +43,7 @@ This plugin provides support for Mapbox by utilizing the [Mapbox Android SDK](ht
 | Method                                  | Supported? |
 | --------------------------------------- | :--------: |
 | addMarker                               |     ?      |
-| addPolyline                             |     ✅      |
+| addPolyline                             |     ✅     |
 | addPolygon                              |     ✅     |
 | getCameraPositionCoordinate             |     ✅     |
 | moveCamera                              |     ✅     |
@@ -61,9 +61,11 @@ This plugin provides support for Mapbox by utilizing the [Mapbox Android SDK](ht
 | setOnInfoWindowClickListener            |     ✅     |
 | setOnInfoWindowLongClickListener        |     ✅     |
 | setOnPolylineClickListener              |     ✅     |
-| setOnPolygonClickListener               |     ✅      |
+| setOnPolygonClickListener               |     ✅     |
 | snapshot                                |     ✅     |
 | setMapStyle                             |     ✅     |
+| setCustomInfoWindowContentsViewFactory  |     ✅     |
+| setCustomInfoWindowViewFactory          |     ✅     |
 
 Comments for partially supported 🟨 properties:
 
@@ -126,12 +128,13 @@ Comments for partially supported 🟨 properties:
 | showInfoWindow       |      ✅       |
 | hideInfoWindow       |      ✅       |
 | getIsInfoWindowShown |      ✅       |
+| remove               |      ✅       |
 
 Comments for partially supported 🟨 properties:
 
-| Property | Comments                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| anchor   | Mapbox provider only supports [enumerated (discrete) values](https://docs.mapbox.com/android/maps/api/10.0.0/mapbox-maps-android/com.mapbox.maps.extension.style.layers.properties.generated/-icon-anchor/), opposed to continuous (`Float`) values in OMH; this property is mapped for each axis such that ranges: <br/>&bull; `<0; 0.25>` is mapped to left or top <br/>&bull; `<0.75; 0.1>` is mapped to right or bottom <br/>&bull; `(0.25; 0.75)` is mapped to center <br/> Also taking into account combinations, e.g. `Pair(0.1f, 0.9f)` would be mapped to `BOTTOM_LEFT` |
+| Property  | Comments                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| setAnchor | Mapbox provider only supports [enumerated (discrete) values](https://docs.mapbox.com/android/maps/api/10.0.0/mapbox-maps-android/com.mapbox.maps.extension.style.layers.properties.generated/-icon-anchor/), opposed to continuous (`Float`) values in OMH; this property is mapped for each axis such that ranges: <br/>&bull; `<0; 0.25>` is mapped to left or top <br/>&bull; `<0.75; 0.1>` is mapped to right or bottom <br/>&bull; `(0.25; 0.75)` is mapped to center <br/> Also taking into account combinations, e.g. `Pair(0.1f, 0.9f)` would be mapped to `BOTTOM_LEFT` |
 
 ### Polyline
 
@@ -182,6 +185,9 @@ Comments for partially supported 🟨 properties:
 | setZIndex    |     ❌     |
 | isVisible    |     ✅     |
 | setVisible   |     ✅     |
+| remove       |     ✅     |
+
+
 
 ### Polygon
 
@@ -226,6 +232,13 @@ Comments for partially supported 🟨 properties:
 | setZIndex          |     ❌     |
 | isVisible          |     ✅     |
 | setVisible         |     ✅     |
+| remove             |     ✅     |
+
+## Known issues
+
+### Flat markers clicks are not detected correctly
+
+In certain scenarios (e.g., when the map is rotated by more than 90 degrees), the Mapbox SDK does not correctly handle click listeners when the flat marker is in use. The root cause of the issue is that the map processes clicks based on geographical coordinates, not the screen position of the markers. Therefore, if the marker's anchor is changed, its position on the screen changes, but its geographical position remains the same. This leads to situations where the marker is not clickable, even though it is visible on the screen. To mitigate this issue, the marker's anchor should be set to its default value, or the marker should be set to non-flat mode.
 
 ## Documentation
 

@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-package com.openmobilehub.android.maps.plugin.mapbox.utils.cartesian
-
-import com.mapbox.maps.ScreenCoordinate
+package com.openmobilehub.android.maps.core.utils.cartesian
 
 /**
  * A 2D bounding box.
@@ -25,7 +23,7 @@ import com.mapbox.maps.ScreenCoordinate
  * The `hitBorder` will be divided by 2 and each half will be applied on each of the sides of this BB.
  */
 class BoundingBox2D(
-    centerPoint: ScreenCoordinate,
+    centerPoint: Point2D<Double>,
     width: Double,
     height: Double,
     hitBorder: Double
@@ -54,7 +52,7 @@ class BoundingBox2D(
      *
      * @return `true` if the [screenCoordinate] lays inside the bounding box, `false` otherwise.
      */
-    fun contains(screenCoordinate: ScreenCoordinate): Boolean {
+    fun contains(screenCoordinate: Point2D<Double>): Boolean {
         return (left..right).contains(screenCoordinate.x) && (bottom..top).contains(screenCoordinate.y)
     }
 }

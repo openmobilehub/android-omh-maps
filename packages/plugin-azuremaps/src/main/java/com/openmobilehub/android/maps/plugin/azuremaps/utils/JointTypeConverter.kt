@@ -14,12 +14,17 @@
  * limitations under the License.
  */
 
-package com.openmobilehub.android.maps.plugin.mapbox.utils.uuid
+package com.openmobilehub.android.maps.plugin.azuremaps.utils
 
-import java.util.UUID
+import com.azure.android.maps.control.options.LineJoin
+import com.openmobilehub.android.maps.core.presentation.models.OmhJointType
 
-class DefaultUUIDGenerator : UUIDGenerator {
-    override fun generate(): UUID {
-        return UUID.randomUUID()
+object JointTypeConverter {
+    fun convertToAzureMapsLineJoin(joinType: Int): String {
+        return when (joinType) {
+            OmhJointType.BEVEL -> LineJoin.BEVEL
+            OmhJointType.ROUND -> LineJoin.ROUND
+            else -> LineJoin.MITER
+        }
     }
 }

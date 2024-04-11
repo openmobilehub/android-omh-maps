@@ -31,14 +31,14 @@ import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhPolyg
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolygonOptions
 import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
+import com.openmobilehub.android.maps.core.utils.uuid.DefaultUUIDGenerator
+import com.openmobilehub.android.maps.core.utils.uuid.UUIDGenerator
 import com.openmobilehub.android.maps.plugin.mapbox.extensions.applyPolygonOptions
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IPolygonDelegate
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.maps.OmhPolygonImpl
 import com.openmobilehub.android.maps.plugin.mapbox.utils.Constants
 import com.openmobilehub.android.maps.plugin.mapbox.utils.CoordinateConverter
 import com.openmobilehub.android.maps.plugin.mapbox.utils.polygonLogger
-import com.openmobilehub.android.maps.plugin.mapbox.utils.uuid.DefaultUUIDGenerator
-import com.openmobilehub.android.maps.plugin.mapbox.utils.uuid.UUIDGenerator
 
 class PolygonManager(
     private val mapView: MapView,
@@ -46,7 +46,9 @@ class PolygonManager(
     private val uuidGenerator: UUIDGenerator = DefaultUUIDGenerator(),
     private val logger: UnsupportedFeatureLogger = polygonLogger
 ) : IPolygonDelegate {
-    private var polygons = mutableMapOf<String, OmhPolygonImpl>()
+    private val _polygons = mutableMapOf<String, OmhPolygonImpl>()
+    internal val polygons: Map<String, OmhPolygonImpl> = _polygons
+
     var clickListener: OmhOnPolygonClickListener? = null
 
     private fun generatePolygonId(): String {
@@ -62,7 +64,7 @@ class PolygonManager(
     }
 
     fun maybeHandleClick(layerId: String): Boolean {
-        val omhPolygon = polygons[getPolygonId(layerId)]
+        val omhPolygon = _polygons[getPolygonId(layerId)]
         if (omhPolygon !== null && omhPolygon.getClickable()) {
             clickListener?.onPolygonClick(omhPolygon)?.let { evenConsumed ->
                 return evenConsumed
@@ -126,7 +128,7 @@ class PolygonManager(
             this
         )
 
-        polygons[polygonId] = omhPolygon
+        _polygons[polygonId] = omhPolygon
 
         style?.let { safeStyle ->
             omhPolygon.onStyleLoaded(safeStyle)
@@ -136,7 +138,7 @@ class PolygonManager(
     }
 
     fun onStyleLoaded(style: Style) {
-        polygons.forEach {
+        _polygons.forEach {
             it.value.onStyleLoaded(style)
         }
     }
@@ -150,6 +152,23 @@ class PolygonManager(
             val feature = getPolygonFeature(outline, holes)
             val source = (style.getSource(sourceId) as GeoJsonSource)
             source.feature(feature)
+        }
+    }
+
+    override fun removePolygon(id: String) {
+        val polygonOutlineId = generatePolygonOutlineId(id)
+
+        mapView.mapboxMap.style?.let { style ->
+            if (style.styleSourceExists(id) && style.styleLayerExists(id) && style.styleLayerExists(
+                    polygonOutlineId
+                )
+            ) {
+                style.removeStyleSource(id)
+                style.removeStyleLayer(id)
+                style.removeStyleLayer(polygonOutlineId)
+
+                _polygons.remove(id)
+            }
         }
     }
 
