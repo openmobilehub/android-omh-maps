@@ -24,6 +24,7 @@ import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhStyle
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhJointType
 import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
+import com.openmobilehub.android.maps.plugin.openstreetmap.interfaces.IPolylineDelegate
 import com.openmobilehub.android.maps.plugin.openstreetmap.utils.CapConverter
 import com.openmobilehub.android.maps.plugin.openstreetmap.utils.ConverterUtils
 import io.mockk.every
@@ -44,6 +45,7 @@ class OmhPolylineImplTest {
     private lateinit var polyline: Polyline
     private lateinit var omhPolyline: OmhPolylineImpl
     private val initiallyClickable = true
+    private val delegate = mockk<IPolylineDelegate>(relaxed = true)
     private val mockMapView: MapView = mockk(relaxed = true)
     private val mockLogger: UnsupportedFeatureLogger =
         mockk<UnsupportedFeatureLogger>(relaxed = true)
@@ -53,7 +55,7 @@ class OmhPolylineImplTest {
         mockkObject(CapConverter)
 
         polyline = mockk(relaxed = true)
-        omhPolyline = OmhPolylineImpl(polyline, mockMapView, initiallyClickable, mockLogger)
+        omhPolyline = OmhPolylineImpl(polyline, mockMapView, initiallyClickable, delegate, mockLogger)
         mockkObject(ConverterUtils)
     }
 
@@ -362,5 +364,14 @@ class OmhPolylineImplTest {
 
         // Assert
         verify { polyline.relatedObject = tag }
+    }
+
+    @Test
+    fun `remove calls delegate method`() {
+        // Act
+        omhPolyline.remove()
+
+        // Assert
+        verify { delegate.removePolyline(polyline) }
     }
 }

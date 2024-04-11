@@ -27,4 +27,5 @@ internal interface IPolygonDelegate {
         outline: List<OmhCoordinate>,
         holes: List<List<OmhCoordinate>>?
     )
+    fun removePolygon(id: UUID)
 }

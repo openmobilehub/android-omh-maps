@@ -215,6 +215,10 @@ class OmhPolygonImpl(
         style.addLayer(lineLayer)
     }
 
+    override fun remove() {
+        polygonDelegate.removePolygon(source.sourceId)
+    }
+
     fun onStyleLoaded(style: Style) {
         check(!isStyleReady()) { "Buffered properties have already been applied" }
 

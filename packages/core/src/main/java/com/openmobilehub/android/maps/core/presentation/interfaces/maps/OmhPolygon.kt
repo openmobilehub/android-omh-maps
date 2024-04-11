@@ -157,4 +157,9 @@ interface OmhPolygon {
      * @param zIndex A float representing the z-index of the polygon.
      */
     fun setZIndex(zIndex: Float)
+
+    /**
+     * Removes polygon from the map
+     */
+    fun remove()
 }

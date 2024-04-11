@@ -44,7 +44,9 @@ class PolylineManager(
     private val uuidGenerator: UUIDGenerator = DefaultUUIDGenerator(),
     private val logger: UnsupportedFeatureLogger = polylineLogger
 ) : IPolylineDelegate {
-    private var polylines = mutableMapOf<String, OmhPolylineImpl>()
+    private val _polylines = mutableMapOf<String, OmhPolylineImpl>()
+    internal val polylines: Map<String, OmhPolylineImpl> = _polylines
+
     var clickListener: OmhOnPolylineClickListener? = null
 
     private fun generatePolylineId(): String {
@@ -62,7 +64,7 @@ class PolylineManager(
     }
 
     fun maybeHandleClick(layerId: String): Boolean {
-        val omhPolyline = polylines[layerId]
+        val omhPolyline = _polylines[layerId]
         if (omhPolyline !== null && omhPolyline.getClickable()) {
             clickListener?.onPolylineClick(omhPolyline)?.let { eventConsumed ->
                 return eventConsumed
@@ -95,7 +97,7 @@ class PolylineManager(
             this
         )
 
-        polylines[polylineId] = omhPolyline
+        _polylines[polylineId] = omhPolyline
 
         style?.let { safeStyle ->
             omhPolyline.onStyleLoaded(safeStyle)
@@ -105,7 +107,7 @@ class PolylineManager(
     }
 
     fun onStyleLoaded(style: Style) {
-        polylines.forEach {
+        _polylines.forEach {
             it.value.onStyleLoaded(style)
         }
     }
@@ -115,6 +117,16 @@ class PolylineManager(
             val feature = getPolylineFeature(points)
             val source = (style.getSource(sourceId) as GeoJsonSource)
             source.feature(feature)
+        }
+    }
+
+    override fun removePolyline(id: String) {
+        mapView.mapboxMap.style?.let { style ->
+            if (style.styleSourceExists(id) && style.styleLayerExists(id)) {
+                style.removeStyleSource(id)
+                style.removeStyleLayer(id)
+                _polylines.remove(id)
+            }
         }
     }
 
