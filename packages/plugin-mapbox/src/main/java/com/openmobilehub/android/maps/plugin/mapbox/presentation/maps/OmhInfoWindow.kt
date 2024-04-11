@@ -423,14 +423,16 @@ internal class OmhInfoWindow(
     }
 
     fun remove() {
-        val removeLayerResult = style.removeStyleLayer(getSymbolLayerID())
-        removeLayerResult.error?.let { error ->
-            throw IllegalStateException("Failed to remove SymbolLayer from map: $error")
-        }
+        if (isStyleReady()) {
+            val removeLayerResult = style.removeStyleLayer(getSymbolLayerID())
+            removeLayerResult.error?.let { error ->
+                throw IllegalStateException("Failed to remove SymbolLayer from map: $error")
+            }
 
-        val removeSourceResult = style.removeStyleSource(getGeoJsonSourceID())
-        removeSourceResult.error?.let { error ->
-            throw IllegalStateException("Failed to remove GeoJsonSource from map: $error")
+            val removeSourceResult = style.removeStyleSource(getGeoJsonSourceID())
+            removeSourceResult.error?.let { error ->
+                throw IllegalStateException("Failed to remove GeoJsonSource from map: $error")
+            }
         }
 
         removeCurrentStyleImage()
