@@ -5,7 +5,7 @@ name: Android CD
 
 on:
   push:
-    branches: [main, fix/maven]
+    branches: [main]
 
 # GITHUB_TOKEN needs to be granted the permissions required to make a Pages deployment
 permissions:
@@ -15,6 +15,7 @@ permissions:
 
 jobs:
   # Build and publish only core package to MavenLocal
+  # this artifact is used by publish_sample_app.yml
   maps-core-local:
     name: Publish Core Package to Maven Local
     uses: ./.github/workflows/build_and_publish_to_maven_local.yml
@@ -24,6 +25,7 @@ jobs:
     secrets: inherit
 
   # Build and publish all plugins to MavenLocal
+  # these artifacts are used by publish_sample_app.yml
   maps-plugins-local:
     needs: maps-core-local
     name: Publish Plugins to Maven Local
@@ -35,6 +37,7 @@ jobs:
     secrets: inherit
 
   # Build and publish only core package to Sonatype
+  # this workflow uses local projects
   maps-core-remote:
     needs: maps-core-local
     name: Publish Core Package to Sonatype
@@ -44,7 +47,8 @@ jobs:
       destination-repository: snapshot
     secrets: inherit
 
-  # Build and publish all plugins to Sonatype
+  # Build and publish snapshots of all plugins to Sonatype
+  # this workflow uses local projects
   maps-plugins-remote:
     needs: maps-plugins-local
     name: Publish snapshots of Plugins to Sonatype
@@ -64,6 +68,7 @@ jobs:
       destination-repository: snapshot
 
   # Build and publish Sample App
+  # this workflow uses Maven Local artifacts
   maps-app:
     needs: maps-plugins-local
     uses: ./.github/workflows/publish_sample_app.yml
