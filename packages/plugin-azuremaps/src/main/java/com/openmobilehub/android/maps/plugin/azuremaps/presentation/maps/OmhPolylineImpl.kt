@@ -89,6 +89,7 @@ internal class OmhPolylineImpl(
         }
 
     init {
+        this.scaleFactor = scaleFactor
         _points = options.points
         options.clickable?.let { _clickable = it }
         options.color?.let { _color = it }
@@ -97,7 +98,6 @@ internal class OmhPolylineImpl(
         options.jointType?.let { _jointType = it }
         options.cap?.let { _cap = it }
         options.pattern?.let { _pattern = it }
-        this.scaleFactor = scaleFactor
     }
 
     override fun getCap(): OmhCap = _cap

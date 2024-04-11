@@ -92,6 +92,7 @@ internal class OmhPolygonImpl(
         }
 
     init {
+        this.scaleFactor = scaleFactor
         _outline = options.outline
         options.clickable?.let { _clickable = it }
         options.fillColor?.let { _fillColor = it }
@@ -101,7 +102,6 @@ internal class OmhPolygonImpl(
         options.strokeJointType?.let { _strokeJointType = it }
         options.strokePattern?.let { _strokePattern = it }
         options.strokeWidth?.let { _strokeWidth = it }
-        this.scaleFactor = scaleFactor
         applyFillColor()
     }
 
