@@ -54,6 +54,8 @@ import com.openmobilehub.android.maps.plugin.openstreetmap.extensions.toMarkerOp
 import com.openmobilehub.android.maps.plugin.openstreetmap.extensions.toOmhCoordinate
 import com.openmobilehub.android.maps.plugin.openstreetmap.extensions.toPolygonOptions
 import com.openmobilehub.android.maps.plugin.openstreetmap.extensions.toPolylineOptions
+import com.openmobilehub.android.maps.plugin.openstreetmap.interfaces.IPolygonDelegate
+import com.openmobilehub.android.maps.plugin.openstreetmap.interfaces.IPolylineDelegate
 import com.openmobilehub.android.maps.plugin.openstreetmap.utils.Constants
 import com.openmobilehub.android.maps.plugin.openstreetmap.utils.Constants.DEFAULT_ZOOM_LEVEL
 import com.openmobilehub.android.maps.plugin.openstreetmap.utils.MapListenerController
@@ -74,7 +76,7 @@ import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 class OmhMapImpl(
     val mapView: MapView,
     private val logger: UnsupportedFeatureLogger = mapLogger
-) : OmhMap {
+) : OmhMap, IPolylineDelegate, IPolygonDelegate {
 
     private val mapListenerController: MapListenerController = MapListenerController()
     private var myLocationNewOverlay: MyLocationNewOverlay? = null
@@ -178,7 +180,7 @@ class OmhMapImpl(
         val initiallyClickable = options.clickable ?: false
 
         val polyline = options.toPolylineOptions()
-        val omhPolyline = OmhPolylineImpl(polyline, mapView, initiallyClickable)
+        val omhPolyline = OmhPolylineImpl(polyline, mapView, initiallyClickable, this)
 
         polylines[polyline] = omhPolyline
         polyline.setOnClickListener { _, _, _ ->
@@ -200,7 +202,7 @@ class OmhMapImpl(
         val initiallyClickable = options.clickable ?: false
 
         val polygon = options.toPolygonOptions()
-        val omhPolygon = OmhPolygonImpl(polygon, mapView, initiallyClickable)
+        val omhPolygon = OmhPolygonImpl(polygon, mapView, initiallyClickable, this)
 
         polygons[polygon] = omhPolygon
         polygon.setOnClickListener { _, _, _ ->
@@ -504,5 +506,21 @@ class OmhMapImpl(
 
     override fun setCustomInfoWindowContentsViewFactory(factory: OmhInfoWindowViewFactory?) {
         logger.logSetterNotSupported("customInfoWindowContentsViewFactory")
+    }
+
+    override fun removePolyline(polyline: Polyline) {
+        mapView.run {
+            overlayManager.remove(polyline)
+            postInvalidate()
+        }
+        polylines.remove(polyline)
+    }
+
+    override fun removePolygon(polygon: Polygon) {
+        mapView.run {
+            overlayManager.remove(polygon)
+            postInvalidate()
+        }
+        polygons.remove(polygon)
     }
 }

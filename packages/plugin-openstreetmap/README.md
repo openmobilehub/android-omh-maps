@@ -178,6 +178,7 @@ Comments for partially supported 🟨 properties:
 | setZIndex    |     ❌     |
 | isVisible    |     ✅     |
 | setVisible   |     ✅     |
+| remove       |     ✅     |
 
 
 | Property | Comments                                                                |
@@ -227,6 +228,7 @@ Comments for partially supported 🟨 properties:
 | setZIndex          |     ❌     |
 | isVisible          |     ✅     |
 | setVisible         |     ✅     |
+| remove             |     ✅     |
 
 ## Documentation
 

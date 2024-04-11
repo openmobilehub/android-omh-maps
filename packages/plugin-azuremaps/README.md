@@ -202,6 +202,7 @@ Comments for partially supported 🟨 properties:
 | setZIndex    |     ❌      |
 | isVisible    |     ✅      |
 | setVisible   |     ✅      |
+| remove       |     ✅      |
 
 Comments for partially supported 🟨 properties:
 
@@ -259,6 +260,7 @@ Comments for partially supported 🟨 properties:
 | setZIndex          |     ❌      |
 | isVisible          |     ✅      |
 | setVisible         |     ✅      |
+| remove             |     ✅      |
 
 Comments for partially supported 🟨 properties:
 

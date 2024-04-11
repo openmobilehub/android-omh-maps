@@ -102,4 +102,11 @@ internal class PolylineManager(
 
         return clickListener?.onPolylineClick(polyline) ?: false
     }
+
+    override fun removePolyline(id: UUID) {
+        map.layers.remove(OmhPolylineImpl.getLineLayerID(id))
+        map.sources.remove(OmhPolylineImpl.getSourceID(id))
+
+        _polylines.remove(id.toString())
+    }
 }

@@ -643,6 +643,19 @@ class OmhPolylineImplTest {
         verify { style.addLayer(lineLayer) }
     }
 
+    @Test
+    fun `remove calls delegate method`() {
+        // Arrange
+        val id = "test-id"
+        every { source.sourceId } returns id
+
+        // Act
+        omhPolyline.remove()
+
+        // Assert
+        verify { polylineDelegate.removePolyline(id) }
+    }
+
     companion object {
         private val DEFAULT_POINTS = listOf(
             OmhCoordinate(-20.0, 25.0),

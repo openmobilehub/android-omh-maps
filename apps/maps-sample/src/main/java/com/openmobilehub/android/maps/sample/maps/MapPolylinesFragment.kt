@@ -61,6 +61,7 @@ class MapPolylinesFragment : Fragment(), OmhOnMapReadyCallback {
 
     private var omhMap: OmhMap? = null
     private var customizablePolyline: OmhPolyline? = null
+    private var referencePolyline: OmhPolyline? = null
 
     private var polylineColor: Int = Color.BLUE
     private var withSpan = false
@@ -111,6 +112,8 @@ class MapPolylinesFragment : Fragment(), OmhOnMapReadyCallback {
     private var spanGradientToColorSeekbar: PanelColorSeekbar? = null
     private var withSpanPatternCheckbox: CheckBox? = null
 
+    private var showReferencePolylineCheckbox: CheckBox? = null
+
     private val infoDisplay by lazy {
         InfoDisplay(this)
     }
@@ -158,7 +161,6 @@ class MapPolylinesFragment : Fragment(), OmhOnMapReadyCallback {
         omhMap.setOnPolylineClickListener(omhOnPolylineClickListener)
 
         customizablePolyline = DebugPolylineHelper.addSinglePolyline(omhMap)
-        DebugPolylineHelper.addReferencePolyline(omhMap)
 
         view?.let { setupUI(it) }
     }
@@ -378,6 +380,15 @@ class MapPolylinesFragment : Fragment(), OmhOnMapReadyCallback {
         withSpanPatternCheckbox?.setOnCheckedChangeListener { _, isChecked ->
             withSpanPattern = isChecked
             updateSpan()
+        }
+
+        showReferencePolylineCheckbox = view.findViewById(R.id.checkBox_showReferencePolyline)
+        showReferencePolylineCheckbox?.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                referencePolyline = DebugPolylineHelper.addReferencePolyline(omhMap!!)
+            } else {
+                referencePolyline?.remove()
+            }
         }
     }
 
