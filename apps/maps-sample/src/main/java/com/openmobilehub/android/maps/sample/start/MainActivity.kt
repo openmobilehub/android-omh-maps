@@ -26,6 +26,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.azure.android.maps.control.AzureMaps
+import com.mapbox.common.MapboxOptions
 import com.openmobilehub.android.maps.core.factories.OmhMapProvider
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.sample.BuildConfig
@@ -46,6 +47,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         // Azure maps setup:
         AzureMaps.setSubscriptionKey(BuildConfig.AZURE_MAPS_SUBSCRIPTION_KEY)
+        // Mapbox setup:
+        MapboxOptions.accessToken = BuildConfig.MAPBOX_PUBLIC_TOKEN
+
         setContentView(binding.root)
         handleIntent(intent)
         setSupportActionBar(binding.toolbar)

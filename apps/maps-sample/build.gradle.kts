@@ -1,7 +1,5 @@
 @file:Suppress("UnstableApiUsage")
 
-import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
-
 val useLocalProjects = project.rootProject.extra["useLocalProjects"] as Boolean
 
 plugins {
@@ -17,11 +15,6 @@ android {
     defaultConfig {
         versionCode = 1
         versionName = "1.0"
-        resValue(
-            "string",
-            "mapbox_access_token_value",
-            (getValueFromEnvOrProperties("MAPBOX_PUBLIC_TOKEN", rootDir) as String? ?: "")
-        )
     }
 
     signingConfigs {
@@ -30,13 +23,13 @@ android {
         // The alternative would be to pass all the environment variables for signing apk to the packages workflows.
         create("release") {
             val storeFileName =
-                getValueFromEnvOrProperties("SAMPLE_APP_KEYSTORE_FILE_NAME", ".") as? String
+                getValueFromEnvOrProperties("SAMPLE_APP_KEYSTORE_FILE_NAME", null)
             val storePassword =
-                getValueFromEnvOrProperties("SAMPLE_APP_KEYSTORE_STORE_PASSWORD", ".") as? String
+                getValueFromEnvOrProperties("SAMPLE_APP_KEYSTORE_STORE_PASSWORD", null)
             val keyAlias =
-                getValueFromEnvOrProperties("SAMPLE_APP_KEYSTORE_KEY_ALIAS", ".") as? String
+                getValueFromEnvOrProperties("SAMPLE_APP_KEYSTORE_KEY_ALIAS", null)
             val keyPassword =
-                getValueFromEnvOrProperties("SAMPLE_APP_KEYSTORE_KEY_PASSWORD", ".") as? String
+                getValueFromEnvOrProperties("SAMPLE_APP_KEYSTORE_KEY_PASSWORD", null)
 
             if (storeFileName != null && storePassword != null && keyAlias != null && keyPassword != null) {
                 this.storeFile = file(storeFileName)
@@ -104,11 +97,6 @@ dependencies {
             exclude(group = "org.maplibre.gl", module = "android-sdk-geojson")
         }
     }
-}
-
-fun getValueFromEnvOrProperties(name: String, propertiesFilePath: Any): Any? {
-    val localProperties = gradleLocalProperties(file(propertiesFilePath))
-    return System.getenv(name) ?: localProperties[name]
 }
 
 tasks.dokkaHtmlPartial {

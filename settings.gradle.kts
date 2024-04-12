@@ -14,7 +14,7 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "omh-maps"
+rootProject.name = "OMH Maps"
 include(":packages:core")
 include(":apps:maps-sample")
 include(":packages:plugin-googlemaps")

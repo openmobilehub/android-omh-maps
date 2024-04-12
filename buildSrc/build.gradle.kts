@@ -1,24 +1,8 @@
-import org.jetbrains.kotlin.konan.properties.hasProperty
-import java.util.Properties
-
-var properties = Properties()
-var localPropertiesFile = project.file("../local.properties")
-if (localPropertiesFile.exists()) {
-    properties.load(localPropertiesFile.inputStream())
-}
-var useMavenLocal =
-    (rootProject.ext.has("useMavenLocal") && rootProject.ext.get("useMavenLocal") == "true") || (properties.hasProperty(
-        "useMavenLocal"
-    ) && properties.getProperty("useMavenLocal") == "true")
-
 plugins {
     `kotlin-dsl`
 }
 
 repositories {
-    if (useMavenLocal) {
-        mavenLocal()
-    }
     mavenCentral()
     google()
     gradlePluginPortal()

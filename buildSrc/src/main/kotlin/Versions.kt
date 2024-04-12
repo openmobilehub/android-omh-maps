@@ -5,9 +5,8 @@ object Versions {
     const val detekt = "1.22.0"
     const val jacoco = "0.8.8"
     const val dokka = "1.9.10"
-    const val omhCore = "2.0.1-beta"
 
-    //KTX
+    // KTX
     const val coreKtx = "1.9.0"
     const val lifecycleKtx = "2.5.1"
 
@@ -20,6 +19,9 @@ object Versions {
     const val playServicesMaps = "18.2.0"
     const val playServicesLocation = "21.0.1"
     const val googlePlayBase = "18.2.0"
+
+    // OMH Maps
+    const val omhMapsCore = "2.0.0"
 
     // Open Street Map
     const val osmdroid = "6.1.11"

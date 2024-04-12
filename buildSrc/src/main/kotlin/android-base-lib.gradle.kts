@@ -1,5 +1,3 @@
-import org.gradle.plugins.signing.SigningPlugin
-
 val useMavenLocal = project.rootProject.extra["useMavenLocal"] as Boolean
 
 plugins {
@@ -11,7 +9,7 @@ plugins {
     id("signing").apply(false)
 }
 
-if(!useMavenLocal) {
+if (!useMavenLocal) {
     apply<SigningPlugin>()
 }
 
@@ -53,10 +51,10 @@ dependencies {
 
 // Publishing block
 
-val groupProperty = getPropertyOrFail("group")
-val versionProperty = getPropertyOrFail("version")
-val artifactId = getPropertyOrFail("artifactId")
-val mDescription = getPropertyOrFail("description")
+val groupProperty = getRequiredValueFromEnvOrProperties("group")
+val versionProperty = getRequiredValueFromEnvOrProperties("version")
+val artifactId = getRequiredValueFromEnvOrProperties("artifactId")
+val mDescription = getRequiredValueFromEnvOrProperties("description")
 
 val androidSourcesJar by tasks.registering(Jar::class) {
     archiveClassifier.set("sources")
@@ -109,7 +107,7 @@ fun MavenPublication.setupPublication() {
     }
 }
 
-if(useMavenLocal) {
+if (useMavenLocal) {
     publishing {
         publications {
             register<MavenPublication>("release") {
