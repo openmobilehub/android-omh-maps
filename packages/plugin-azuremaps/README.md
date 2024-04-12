@@ -55,7 +55,7 @@ This plugin provides support for Azure Maps by utilizing the [Azure Maps Android
 | --------------------------------------- | :--------: |
 | addMarker                               |     ✅     |
 | addPolyline                             |     ✅     |
-| addPolygon                              |     ?      |
+| addPolygon                              |     ✅     |
 | getCameraPositionCoordinate             |     ✅     |
 | moveCamera                              |     ✅     |
 | setZoomGesturesEnabled                  |     ✅     |
@@ -72,7 +72,7 @@ This plugin provides support for Azure Maps by utilizing the [Azure Maps Android
 | setOnInfoWindowClickListener            |     ✅     |
 | setOnInfoWindowLongClickListener        |     ✅     |
 | setOnPolylineClickListener              |     ✅     |
-| setOnPolygonClickListener               |     ?      |
+| setOnPolygonClickListener               |     ✅     |
 | snapshot                                |     ❌     |
 | setMapStyle                             |     ❌     |
 | setCustomInfoWindowContentsViewFactory  |     ✅     |
@@ -164,7 +164,7 @@ Comments for partially supported 🟨 properties:
 | cap       |     🟨     |
 | startCap  |     ❌     |
 | endCap    |     ❌     |
-| spans     |     ?      |
+| spans     |     ❌     |
 
 Comments for partially supported 🟨 properties:
 
@@ -191,8 +191,8 @@ Comments for partially supported 🟨 properties:
 | setPattern   |     🟨     |
 | getPoints    |     ✅     |
 | setPoints    |     ✅     |
-| getSpans     |     ?      |
-| setSpans     |     ?      |
+| getSpans     |     ❌     |
+| setSpans     |     ❌     |
 | getStartCap  |     ❌     |
 | setStartCap  |     ❌     |
 | getTag       |     ✅     |
