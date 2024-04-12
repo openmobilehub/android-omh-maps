@@ -53,6 +53,7 @@ import com.openmobilehub.android.maps.sample.utils.Constants.GOOGLE_PROVIDER
 import com.openmobilehub.android.maps.sample.utils.Constants.OSM_PROVIDER
 import com.openmobilehub.android.maps.sample.utils.Constants.PERMISSIONS
 import com.openmobilehub.android.maps.sample.utils.Constants.PRIME_MERIDIAN
+import com.openmobilehub.android.maps.sample.utils.applySystemBarWindowInsetToPaddingBottom
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -112,6 +113,8 @@ open class MapInfoWindowsFragment : Fragment(), OmhOnMapReadyCallback {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        binding.scrollView.applySystemBarWindowInsetToPaddingBottom()
 
         networkConnectivityChecker = NetworkConnectivityChecker(requireContext()).apply {
             startListeningForConnectivityChanges {
