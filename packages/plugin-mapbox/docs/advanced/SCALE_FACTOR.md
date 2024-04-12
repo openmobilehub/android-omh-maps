@@ -11,5 +11,5 @@ Mapbox plugin supports the scale factor feature. The scale factor is used to adj
 To set the scale factor use the `setMapScaleFactor` method of the `OmhMap` class:
 
 ```kt
-omhMap.setScaleFactor(if (omhMap.providerName === "Mapbox") 3.0f else 1.0f)
+omhMap.setScaleFactor(if (omhMap.providerName == "Mapbox") 3.0f else 1.0f)
 ```

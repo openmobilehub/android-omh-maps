@@ -37,16 +37,19 @@ import com.openmobilehub.android.maps.plugin.azuremaps.utils.PatternConverter
 import com.openmobilehub.android.maps.plugin.azuremaps.utils.polylineLogger
 import java.util.UUID
 
-@SuppressWarnings("TooManyFunctions")
+@SuppressWarnings("TooManyFunctions", "LongParameterList")
 internal class OmhPolylineImpl(
     val id: UUID,
     private val source: DataSource,
     private val lineLayer: LineLayer,
     private val delegate: IPolylineDelegate,
     options: OmhPolylineOptions,
+    scaleFactor: Float = 1.0f,
     private val logger: UnsupportedFeatureLogger = polylineLogger
 ) : OmhPolyline {
 
+    var scaleFactor: Float
+        private set
     private var _clickable: Boolean = false
     private var _tag: Any? = null
     private var _points: List<OmhCoordinate>
@@ -86,6 +89,7 @@ internal class OmhPolylineImpl(
         }
 
     init {
+        this.scaleFactor = scaleFactor
         _points = options.points
         options.clickable?.let { _clickable = it }
         options.color?.let { _color = it }
@@ -187,6 +191,12 @@ internal class OmhPolylineImpl(
         logger.logSetterNotSupported("zIndex")
     }
 
+    fun setScaleFactor(scaleFactor: Float) {
+        this.scaleFactor = scaleFactor
+        applyWidth()
+        applyPatter()
+    }
+
     private fun applyIsVisible() {
         lineLayer.setOptions(
             LayerOptions.visible(_isVisible),
@@ -201,7 +211,7 @@ internal class OmhPolylineImpl(
 
     private fun applyWidth() {
         lineLayer.setOptions(
-            LineLayerOptions.strokeWidth(_width)
+            LineLayerOptions.strokeWidth(_width * scaleFactor)
         )
     }
 
@@ -221,7 +231,7 @@ internal class OmhPolylineImpl(
         _pattern?.let { pattern ->
             lineLayer.setOptions(
                 LineLayerOptions.strokeDashArray(
-                    PatternConverter.convertToAzureMapsPattern(pattern, logger).map { it / _width }
+                    PatternConverter.convertToAzureMapsPattern(pattern, logger).map { it / _width * scaleFactor }
                         .toTypedArray()
                 )
             )
