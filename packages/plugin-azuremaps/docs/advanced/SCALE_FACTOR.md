@@ -11,5 +11,5 @@ Plugin supports the scale factor feature. The scale factor is used to adjust the
 To set the scale factor use the `setMapScaleFactor` method of the `OmhMap` class:
 
 ```kt
-omhMap.setScaleFactor(if (omhMap.providerName === "AzureMaps") 0.5f else 1.0f)
+omhMap.setScaleFactor(if (omhMap.providerName == "AzureMaps") 0.5f else 1.0f)
 ```
