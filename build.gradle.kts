@@ -1,30 +1,24 @@
-import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
-import org.gradle.internal.Cast.uncheckedCast
 import org.jetbrains.dokka.DokkaConfiguration
 import org.jetbrains.dokka.base.DokkaBase
 import org.jetbrains.dokka.base.DokkaBaseConfiguration
 import org.jetbrains.dokka.gradle.DokkaTaskPartial
 import java.net.URL
-import java.util.Properties
 
-val properties = Properties()
-val localPropertiesFile = project.file("local.properties")
-if (localPropertiesFile.exists()) {
-    properties.load(localPropertiesFile.inputStream())
-}
-val useMavenLocal = getBooleanFromProperties("useMavenLocal")
-val useLocalProjects = getBooleanFromProperties("useLocalProjects")
+val useMavenLocal by extra(getBooleanFromProperties("useMavenLocal", null))
+val useLocalProjects by extra(getBooleanFromProperties("useLocalProjects", null))
 
 if (useLocalProjects) {
-    println("OMH Maps project running with useLocalProjects enabled ")
+    println("OMH Maps project running with useLocalProjects enabled")
 }
 
 if (useMavenLocal) {
-    println("OMH Maps project running with useMavenLocal enabled${if (useLocalProjects) ", but only publishing will be altered since dependencies are overriden by useLocalProjects" else ""} ")
+    println(
+        "OMH Maps project running with useMavenLocal enabled${
+            if (useLocalProjects) ", but only publishing will be altered since dependencies are overriden by useLocalProjects"
+            else ""
+        } "
+    )
 }
-
-project.extra.set("useLocalProjects", useLocalProjects)
-project.extra.set("useMavenLocal", useMavenLocal)
 
 plugins {
     id("io.github.gradle-nexus.publish-plugin") version "1.1.0"
@@ -132,53 +126,65 @@ tasks {
     getByName("prepareKotlinBuildScriptModel").dependsOn(installPreCommitHook)
 }
 
+val publishToReleaseRepository =
+    getValueFromEnvOrProperties("publishingSonatypeRepository")?.toString() == "release"
+
 if (!useMavenLocal) {
-    val ossrhUsername by extra(getValueFromEnvOrProperties("OSSRH_USERNAME"))
-    val ossrhPassword by extra(getValueFromEnvOrProperties("OSSRH_PASSWORD"))
-    val mStagingProfileId by extra(getValueFromEnvOrProperties("SONATYPE_STAGING_PROFILE_ID"))
-    val signingKeyId by extra(getValueFromEnvOrProperties("SIGNING_KEY_ID"))
-    val signingPassword by extra(getValueFromEnvOrProperties("SIGNING_PASSWORD"))
-    val signingKey by extra(getValueFromEnvOrProperties("SIGNING_KEY"))
+    println(
+        "OMH Maps project configured to publish to Sonatype "
+                + (if (publishToReleaseRepository) "release" else "snapshot")
+                + " repository"
+    )
+
+    if (!publishToReleaseRepository) {
+        subprojects {
+            version = "$version-SNAPSHOT" // required for publishing to the snapshot repository
+        }
+    }
+
+    val ossrhUsername = getValueFromEnvOrProperties("OSSRH_USERNAME", null)
+    val ossrhPassword = getValueFromEnvOrProperties("OSSRH_PASSWORD", null)
+    val mStagingProfileId = getValueFromEnvOrProperties("SONATYPE_STAGING_PROFILE_ID", null)
+    val signingKeyId by extra(getValueFromEnvOrProperties("SIGNING_KEY_ID", null))
+    val signingPassword by extra(getValueFromEnvOrProperties("SIGNING_PASSWORD", null))
+    val signingKey by extra(getValueFromEnvOrProperties("SIGNING_KEY", null))
 
     // Set up Sonatype repository
-    nexusPublishing {
-        repositories {
-            sonatype {
-                stagingProfileId.set(mStagingProfileId.toString())
-                username.set(ossrhUsername.toString())
-                password.set(ossrhPassword.toString())
-                // Add these lines if using new Sonatype infra
-                nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
-                snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
+    afterEvaluate {
+        nexusPublishing {
+            // fix for nexus publishing plugin not picking up the correct version of the published
+            // subproject, since this is happening in the root project;
+            // see https://github.com/gradle-nexus/publish-plugin/issues/105
+            useStaging.set(provider { publishToReleaseRepository })
+
+            repositories {
+                sonatype {
+                    stagingProfileId.set(mStagingProfileId.toString())
+                    username.set(ossrhUsername.toString())
+                    password.set(ossrhPassword.toString())
+                    // Add these lines if using new Sonatype infra
+                    nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
+                    snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
+                }
             }
         }
     }
 }
 
-fun getValueFromEnvOrProperties(name: String): Any? {
-    val localProperties = gradleLocalProperties(rootDir)
-    return System.getenv(name) ?: localProperties[name]
-}
-
-fun getBooleanFromProperties(name: String): Boolean {
-    val localProperties = gradleLocalProperties(rootDir)
-    return (project.ext.has(name) && project.ext.get(name) == "true") || localProperties[name] == "true"
-}
-
 fun RepositoryHandler.configureMapboxMaven() {
     maven {
+        val mapboxDownloadToken =
+            getRequiredValueFromEnvOrProperties("MAPBOX_DOWNLOADS_TOKEN", null)
+
         url = uri("https://api.mapbox.com/downloads/v2/releases/maven")
         credentials.username = "mapbox"
-        credentials.password = providers.gradleProperty("MAPBOX_DOWNLOADS_TOKEN").get()
+        credentials.password = mapboxDownloadToken
         authentication.create<BasicAuthentication>("basic")
     }
 }
 
-apply("./plugin/docsTasks.gradle.kts") // applies all tasks related to docs
-val discoverImagesInProject =
-    uncheckedCast<(project: Project) -> (List<File>?)>(extra["discoverImagesInProject"])
-val dokkaDocsOutputDir = uncheckedCast<File>(extra["dokkaDocsOutputDir"])
-val copyMarkdownDocsTask = uncheckedCast<TaskProvider<Task>>(extra["copyMarkdownDocsTask"])
+apply(from = rootProject.file("buildSrc/docs-tasks.gradle.kts")) // registers all tasks related to docs
+val dokkaDocsOutputDir = getDokkaDocsOutputDir()
 
 tasks.register("cleanDokkaDocsOutputDirectory", Delete::class) {
     group = "other"
@@ -198,7 +204,7 @@ tasks.dokkaHtmlMultiModule {
         footerMessage = "(c) 2023 Open Mobile Hub"
         separateInheritedMembers = false
         customAssets = (setOf(rootProject) union subprojects).mapNotNull { project ->
-            discoverImagesInProject!!(project)
+            project.discoverImagesInProject()
         }.flatten()
     }
 }

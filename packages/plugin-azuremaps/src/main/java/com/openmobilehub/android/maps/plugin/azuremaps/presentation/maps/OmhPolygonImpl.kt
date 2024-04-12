@@ -102,6 +102,11 @@ internal class OmhPolygonImpl(
         options.strokeJointType?.let { _strokeJointType = it }
         options.strokePattern?.let { _strokePattern = it }
         options.strokeWidth?.let { _strokeWidth = it }
+
+        polygonLayer.setOptions(
+            PolygonLayerOptions.fillOpacity(1.0f)
+        )
+
         applyFillColor()
     }
 

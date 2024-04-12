@@ -115,9 +115,13 @@ Generally, all files that are placed inside `packages/<name>/docs/` are included
 1. Clone the repository
 2. Update the changelog (and commit it afterwards)
 3. Push the changes and wait for the latest CI build to complete
-4. Bump the version, create a Git tag and commit the changes
+4. Bump the version and commit the changes
 5. Push the version bump commit: `git push`
-6. Push the Git tag: `git push --tags`
+6. Manually dispatch GitHub Actions workflow(s) to publish the new version: `Publish Core Package` or `Publish <plugin name> Plugin`.
+
+At the last step, you will be asked, which Sonatype repository to publish to: `release` or `snapshot`. Snapshot artifacts can be overwritten under the same version. If you choose to publish a snapshot, the scripts will automatically append a `-SNAPSHOT` suffix to the version of all packages.
+
+This is done by GH Actions setting a proper value (`snapshot` / `release`) to Gradle `publishingSonatypeRepository` property, which is handled appropriately in root project's `build.gradle.kts`.
 
 ## Building documentation locally
 
@@ -226,4 +230,4 @@ To include a new module's markdown advanced documentation residing in its module
 
 Each `.md` file in each module directory from `packages/{module_name}` will be copied to `docs/markdown/_{module_name}`, optionally with trailing directory structure (if present).
 
-For implementation of the helpers backing documentation generation tasks, see [`plugin/docsTasks.gradle.kts`](plugin/docsTasks.gradle.kts).
+For implementation of the helpers backing documentation generation tasks, see [`buildSrc/docs-tasks.gradle.kts`](buildSrc/docs-tasks.gradle.kts).
