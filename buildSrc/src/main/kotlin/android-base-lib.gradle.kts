@@ -45,6 +45,11 @@ android {
 
 setupJacoco()
 
+tasks.named("jacocoCoverageVerification").configure { dependsOn("mergeDebugJniLibFolders") }
+tasks.named("jacocoCoverageVerification").configure { dependsOn("copyDebugJniLibsProjectAndLocalJars") }
+tasks.named("jacocoCoverageVerification").configure { dependsOn("copyDebugJniLibsProjectOnly") }
+tasks.named("jacocoCoverageVerification").configure { dependsOn("syncDebugLibJars") }
+
 dependencies {
     detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:${Versions.detekt}")
 }

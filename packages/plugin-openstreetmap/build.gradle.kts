@@ -8,11 +8,6 @@ android {
 
 val useLocalProjects = project.rootProject.extra["useLocalProjects"] as Boolean
 
-tasks.named("jacocoCoverageVerification").configure { dependsOn("mergeDebugJniLibFolders") }
-tasks.named("jacocoCoverageVerification").configure { dependsOn("copyDebugJniLibsProjectAndLocalJars") }
-tasks.named("jacocoCoverageVerification").configure { dependsOn("copyDebugJniLibsProjectOnly") }
-tasks.named("jacocoCoverageVerification").configure { dependsOn("syncDebugLibJars") }
-
 dependencies {
     if (useLocalProjects) {
         api(project(":packages:core"))
