@@ -26,6 +26,14 @@ For instance, the following screenshots showcase multiple devices with Android, 
 |--------------------------------|------------------------------|---------------------------------|--------------------------------|
 | Camera Map                     |
 | <img src="images/gmaps_1.gif"> | <img src="images/osm_1.gif"> | <img src="images/mapbox_1.gif"> | <img src="images/azure_1.gif"> |
+</div>
+<details>
+  <summary>Show more</summary>
+
+<div align="center">
+
+| Google Maps                    | Open Street Maps             | MapBox                          | Azure Maps                     |
+|--------------------------------|------------------------------|---------------------------------|--------------------------------|
 | Location Sharing Map           |
 | <img src="images/gmaps_2.gif"> | <img src="images/osm_2.gif"> | <img src="images/mapbox_2.gif"> | <img src="images/azure_2.gif"> |
 | Marker Map                     |
@@ -39,6 +47,7 @@ For instance, the following screenshots showcase multiple devices with Android, 
 | Custom Styles Map              |
 | <img src="images/gmaps_7.gif"> | <img src="images/osm_7.png"> | <img src="images/mapbox_7.gif"> | <img src="images/azure_7.png"> |
 </div>
+</details>
 
 ## Getting Started
 
