@@ -50,7 +50,6 @@ import com.openmobilehub.android.maps.sample.utils.Constants.PRIME_MERIDIAN
 import com.openmobilehub.android.maps.sample.utils.Constants.SHOW_MESSAGE_TIME
 import com.openmobilehub.android.maps.sample.utils.Constants.ZOOM_LEVEL_5
 import com.openmobilehub.android.maps.sample.utils.PermissionsUtils
-import com.openmobilehub.android.maps.sample.utils.applySystemBarWindowInsetToPaddingBottom
 import com.openmobilehub.android.maps.sample.utils.getOmhCoordinate
 
 class MapLocationPickerFragment : Fragment(), OmhOnMapReadyCallback {
@@ -85,8 +84,6 @@ class MapLocationPickerFragment : Fragment(), OmhOnMapReadyCallback {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        binding.root.applySystemBarWindowInsetToPaddingBottom()
 
         networkConnectivityChecker = NetworkConnectivityChecker(requireContext()).apply {
             startListeningForConnectivityChanges {

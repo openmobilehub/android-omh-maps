@@ -42,7 +42,6 @@ import com.openmobilehub.android.maps.sample.customviews.PanelSpinner
 import com.openmobilehub.android.maps.sample.databinding.FragmentMapPolygonsBinding
 import com.openmobilehub.android.maps.sample.model.InfoDisplay
 import com.openmobilehub.android.maps.sample.utils.Constants
-import com.openmobilehub.android.maps.sample.utils.applySystemBarWindowInsetToPaddingBottom
 
 class MapPolygonsFragment : Fragment(), OmhOnMapReadyCallback {
 
@@ -93,8 +92,6 @@ class MapPolygonsFragment : Fragment(), OmhOnMapReadyCallback {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        binding.scrollView.applySystemBarWindowInsetToPaddingBottom()
 
         networkConnectivityChecker = NetworkConnectivityChecker(requireContext()).apply {
             startListeningForConnectivityChanges {

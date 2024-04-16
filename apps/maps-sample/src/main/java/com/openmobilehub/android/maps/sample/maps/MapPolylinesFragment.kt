@@ -52,7 +52,6 @@ import com.openmobilehub.android.maps.sample.customviews.PanelSpinner
 import com.openmobilehub.android.maps.sample.databinding.FragmentMapPolylinesBinding
 import com.openmobilehub.android.maps.sample.model.InfoDisplay
 import com.openmobilehub.android.maps.sample.utils.Constants
-import com.openmobilehub.android.maps.sample.utils.applySystemBarWindowInsetToPaddingBottom
 
 class MapPolylinesFragment : Fragment(), OmhOnMapReadyCallback {
 
@@ -129,8 +128,6 @@ class MapPolylinesFragment : Fragment(), OmhOnMapReadyCallback {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        binding.scrollView.applySystemBarWindowInsetToPaddingBottom()
 
         networkConnectivityChecker = NetworkConnectivityChecker(requireContext()).apply {
             startListeningForConnectivityChanges {
