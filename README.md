@@ -22,11 +22,32 @@ For instance, the following screenshots showcase multiple devices with Android, 
 
 <div align="center">
 
-| Non-GMS Device</br>Kindle Fire HD 10 Kids      | Non-GMS Android Emulator Image</br>Pixel 6 Pro  | Non-GMS Device</br>Huawei P60                      | GMS Device</br>Pixel 6a                      |
-| ---------------------------------------------- | ----------------------------------------------- | -------------------------------------------------- | -------------------------------------------- |
-| <img src="images/omh-maps-non-gms-kindle.gif"> | <img src="images/omh-maps-non-gms-pixel-6.gif"> | <img src="images/omh-maps-non-gms-huawei-p60.gif"> | <img src="images/omh-maps-gms-pixel-6a.gif"> |
-
+| Google Maps                    | Open Street Maps             | MapBox                          | Azure Maps                     |
+|--------------------------------|------------------------------|---------------------------------|--------------------------------|
+| Camera Map                     |
+| <img src="images/gmaps_1.gif"> | <img src="images/osm_1.gif"> | <img src="images/mapbox_1.gif"> | <img src="images/azure_1.gif"> |
 </div>
+<details>
+  <summary>Show more</summary>
+
+<div align="center">
+
+| Google Maps                    | Open Street Maps             | MapBox                          | Azure Maps                     |
+|--------------------------------|------------------------------|---------------------------------|--------------------------------|
+| Location Sharing Map           |
+| <img src="images/gmaps_2.gif"> | <img src="images/osm_2.gif"> | <img src="images/mapbox_2.gif"> | <img src="images/azure_2.gif"> |
+| Marker Map                     |
+| <img src="images/gmaps_3.gif"> | <img src="images/osm_3.gif"> | <img src="images/mapbox_3.gif"> | <img src="images/azure_3.gif"> |
+| Info Windows Map               |
+| <img src="images/gmaps_4.gif"> | <img src="images/osm_4.gif"> | <img src="images/mapbox_4.gif"> | <img src="images/azure_4.gif"> |
+| Polyline Map                   |
+| <img src="images/gmaps_5.gif"> | <img src="images/osm_5.gif"> | <img src="images/mapbox_5.gif"> | <img src="images/azure_5.gif"> |
+| Polygon Map                    |
+| <img src="images/gmaps_6.gif"> | <img src="images/osm_6.gif"> | <img src="images/mapbox_6.gif"> | <img src="images/azure_6.gif"> |
+| Custom Styles Map              |
+| <img src="images/gmaps_7.gif"> | <img src="images/osm_7.png"> | <img src="images/mapbox_7.gif"> | <img src="images/azure_7.png"> |
+</div>
+</details>
 
 ## Getting Started
 
