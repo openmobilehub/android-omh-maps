@@ -26,6 +26,12 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v4
 
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
         with:
@@ -43,9 +49,6 @@ jobs:
         with:
           path: ~/.m2/repository
           key: ${{ inputs.input-cache-prefix }}-${{ github.run_id }}
-
-      - name: Source jar
-        run: ./gradlew androidSourcesJar
 
       - name: Publish to MavenLocal
         run: ./gradlew ${{ inputs.gradle-command }}

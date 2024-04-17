@@ -30,8 +30,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     testOptions {
@@ -45,6 +45,11 @@ android {
 
 setupJacoco()
 
+tasks.named("jacocoCoverageVerification").configure { dependsOn("mergeDebugJniLibFolders") }
+tasks.named("jacocoCoverageVerification").configure { dependsOn("copyDebugJniLibsProjectAndLocalJars") }
+tasks.named("jacocoCoverageVerification").configure { dependsOn("copyDebugJniLibsProjectOnly") }
+tasks.named("jacocoCoverageVerification").configure { dependsOn("syncDebugLibJars") }
+
 dependencies {
     detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:${Versions.detekt}")
 }
@@ -56,14 +61,12 @@ val versionProperty = getRequiredValueFromEnvOrProperties("version")
 val artifactId = getRequiredValueFromEnvOrProperties("artifactId")
 val mDescription = getRequiredValueFromEnvOrProperties("description")
 
-val androidSourcesJar by tasks.registering(Jar::class) {
-    archiveClassifier.set("sources")
-    from("src/main/java")
-    from("src/main/kotlin")
-}
-
-artifacts {
-    add("archives", androidSourcesJar)
+android {
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+        }
+    }
 }
 
 fun MavenPublication.setupPublication() {
@@ -76,8 +79,6 @@ fun MavenPublication.setupPublication() {
     } else {
         from(project.components["java"])
     }
-
-    artifact(androidSourcesJar)
 
     pom {
         name.set(artifactId)

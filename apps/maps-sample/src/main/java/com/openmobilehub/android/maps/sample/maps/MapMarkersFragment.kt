@@ -48,6 +48,7 @@ import com.openmobilehub.android.maps.sample.utils.Constants.OSM_PROVIDER
 import com.openmobilehub.android.maps.sample.utils.Constants.PERMISSIONS
 import com.openmobilehub.android.maps.sample.utils.Constants.PRIME_MERIDIAN
 import com.openmobilehub.android.maps.sample.utils.Constants.SHOW_MESSAGE_TIME
+import com.openmobilehub.android.maps.sample.utils.applySystemBarWindowInsetToPaddingBottom
 
 open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
     private var _binding: FragmentMapMarkersBinding? = null
@@ -97,6 +98,8 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        binding.scrollView.applySystemBarWindowInsetToPaddingBottom()
 
         networkConnectivityChecker = NetworkConnectivityChecker(requireContext()).apply {
             startListeningForConnectivityChanges {

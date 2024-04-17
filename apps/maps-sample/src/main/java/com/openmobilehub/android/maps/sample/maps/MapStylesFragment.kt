@@ -31,6 +31,7 @@ import com.openmobilehub.android.maps.sample.R
 import com.openmobilehub.android.maps.sample.databinding.FragmentMapStylesBinding
 import com.openmobilehub.android.maps.sample.model.InfoDisplay
 import com.openmobilehub.android.maps.sample.utils.Constants
+import com.openmobilehub.android.maps.sample.utils.applySystemBarWindowInsetToPaddingBottom
 
 interface MapStyle {
     val dark: Int
@@ -75,6 +76,8 @@ class MapStylesFragment : Fragment(), OmhOnMapReadyCallback {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        binding.scrollView.applySystemBarWindowInsetToPaddingBottom()
 
         networkConnectivityChecker = NetworkConnectivityChecker(requireContext()).apply {
             startListeningForConnectivityChanges {
