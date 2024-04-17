@@ -1,14 +1,15 @@
 [![Discord](https://img.shields.io/discord/1115727214827278446)](https://discord.gg/X8QB9DJXX6)
 ![Apache-2.0](https://img.shields.io/badge/license-Apache-blue)
+![GitHub contributors](https://img.shields.io/github/contributors/openmobilehub/android-omh-maps)
 
-<!--
-// TODO - enable when the repo gets released and is public
-![GitHub contributors](https://img.shields.io/github/contributors/openmobilehub/omh-maps)
--->
+[![CD Workflow](https://github.com/openmobilehub/android-omh-maps/actions/workflows/on_push_workflow.yml/badge.svg)](https://github.com/openmobilehub/android-omh-maps/actions/workflows/on_push_workflow.yml)
+[![CI Workflow](https://github.com/openmobilehub/android-omh-maps/actions/workflows/on_pull_request.yml/badge.svg)](https://github.com/openmobilehub/android-omh-maps/actions/workflows/on_pull_request.yml)
 
-[![Publish Maps API](https://github.com/openmobilehub/omh-maps/actions/workflows/publish_maps_api.yml/badge.svg)](https://github.com/openmobilehub/omh-maps/actions/workflows/publish_maps_api.yml)
-[![Publish Maps API Google Maps Implementation](https://github.com/openmobilehub/omh-maps/actions/workflows/publish_maps_api_gms.yml/badge.svg)](https://github.com/openmobilehub/omh-maps/actions/workflows/publish_maps_api_gms.yml)
-[![Publish Maps API OpenStreetMap Implementation](https://github.com/openmobilehub/omh-maps/actions/workflows/publish_maps_api_ngms.yml/badge.svg)](https://github.com/openmobilehub/omh-maps/actions/workflows/publish_maps_api_ngms.yml)
+[![Publish Core Package](https://github.com/openmobilehub/android-omh-maps/actions/workflows/publish_core.yml/badge.svg)](https://github.com/openmobilehub/android-omh-maps/actions/workflows/publish_core.yml)
+[![Publish Google Maps Plugin](https://github.com/openmobilehub/android-omh-maps/actions/workflows/publish_plugin_googlemaps.yml/badge.svg)](https://github.com/openmobilehub/android-omh-maps/actions/workflows/publish_plugin_googlemaps.yml)
+[![Publish OpenStreetMap Plugin](https://github.com/openmobilehub/android-omh-maps/actions/workflows/publish_plugin_openstreetmap.yml/badge.svg)](https://github.com/openmobilehub/android-omh-maps/actions/workflows/publish_plugin_openstreetmap.yml)
+[![Publish Mapbox Plugin](https://github.com/openmobilehub/android-omh-maps/actions/workflows/publish_plugin_mapbox.yml/badge.svg)](https://github.com/openmobilehub/android-omh-maps/actions/workflows/publish_plugin_mapbox.yml)
+[![Publish Azure Maps Plugin](https://github.com/openmobilehub/android-omh-maps/actions/workflows/publish_plugin_azuremaps.yml/badge.svg)](https://github.com/openmobilehub/android-omh-maps/actions/workflows/publish_plugin_azuremaps.yml)
 
 # OMH Maps Client Library
 
@@ -23,9 +24,10 @@ For instance, the following screenshots showcase multiple devices with Android, 
 <div align="center">
 
 | Google Maps                    | Open Street Maps             | MapBox                          | Azure Maps                     |
-|--------------------------------|------------------------------|---------------------------------|--------------------------------|
+| ------------------------------ | ---------------------------- | ------------------------------- | ------------------------------ |
 | Camera Map                     |
 | <img src="images/gmaps_1.gif"> | <img src="images/osm_1.gif"> | <img src="images/mapbox_1.gif"> | <img src="images/azure_1.gif"> |
+
 </div>
 <details>
   <summary>Show more</summary>
@@ -33,7 +35,7 @@ For instance, the following screenshots showcase multiple devices with Android, 
 <div align="center">
 
 | Google Maps                    | Open Street Maps             | MapBox                          | Azure Maps                     |
-|--------------------------------|------------------------------|---------------------------------|--------------------------------|
+| ------------------------------ | ---------------------------- | ------------------------------- | ------------------------------ |
 | Location Sharing Map           |
 | <img src="images/gmaps_2.gif"> | <img src="images/osm_2.gif"> | <img src="images/mapbox_2.gif"> | <img src="images/azure_2.gif"> |
 | Marker Map                     |
@@ -46,6 +48,7 @@ For instance, the following screenshots showcase multiple devices with Android, 
 | <img src="images/gmaps_6.gif"> | <img src="images/osm_6.gif"> | <img src="images/mapbox_6.gif"> | <img src="images/azure_6.gif"> |
 | Custom Styles Map              |
 | <img src="images/gmaps_7.gif"> | <img src="images/osm_7.png"> | <img src="images/mapbox_7.gif"> | <img src="images/azure_7.png"> |
+
 </div>
 </details>
 
@@ -65,7 +68,7 @@ This section describes how to setup an Android Studio project to use the OMH Map
 To clone the repository and checkout the `starter-code` branch, use the following command in your Terminal:
 
 ```
-git clone --branch starter-code https://github.com/openmobilehub/omh-maps.git
+git clone --branch starter-code https://github.com/openmobilehub/android-omh-maps.git
 ```
 
 ### Provider specific setup
@@ -128,7 +131,7 @@ Fragment has to declare `android:name` that sets the class name of the fragment 
 
    </androidx.constraintlayout.widget.ConstraintLayout>
    ```
-      
+
 2. Click `Run` for the app module.
 
 ## Sample App
