@@ -61,14 +61,12 @@ val versionProperty = getRequiredValueFromEnvOrProperties("version")
 val artifactId = getRequiredValueFromEnvOrProperties("artifactId")
 val mDescription = getRequiredValueFromEnvOrProperties("description")
 
-val androidSourcesJar by tasks.registering(Jar::class) {
-    archiveClassifier.set("sources")
-    from("src/main/java")
-    from("src/main/kotlin")
-}
-
-artifacts {
-    add("archives", androidSourcesJar)
+android {
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+        }
+    }
 }
 
 fun MavenPublication.setupPublication() {
@@ -81,8 +79,6 @@ fun MavenPublication.setupPublication() {
     } else {
         from(project.components["java"])
     }
-
-    artifact(androidSourcesJar)
 
     pom {
         name.set(artifactId)

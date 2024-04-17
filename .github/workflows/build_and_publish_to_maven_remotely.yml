@@ -42,29 +42,14 @@ jobs:
 
       - name: Release build
         run: ./gradlew ${{ inputs.package-name }}:assembleRelease
-      - name: Source jar
-        run: ./gradlew androidSourcesJar
-
-        # Runs upload, and then closes & releases the repository
-      - name: Publish to MavenCentral
-        if: ${{ vars.PACKAGE_PUBLISHING_ENABLED == 'true' && inputs.destination-repository == 'release' }}
-        run: ./gradlew ${{ inputs.package-name }}:publishReleasePublicationToSonatypeRepository --max-workers 1 closeAndReleaseSonatypeStagingRepository
-        env:
-          OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-          OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
-          SIGNING_KEY_ID: ${{ secrets.SIGNING_KEY_ID }}
-          SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
-          SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
-          SONATYPE_STAGING_PROFILE_ID: ${{ secrets.SONATYPE_STAGING_PROFILE_ID }}
 
       # Runs upload to the snapshot repository
       - name: Publish to snapshot area
-        if: ${{ vars.PACKAGE_PUBLISHING_ENABLED == 'true' && inputs.destination-repository == 'snapshot' }}
         run: ./gradlew ${{ inputs.package-name }}:publishReleasePublicationToSonatypeRepository --max-workers 1
         env:
-          OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-          OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
-          SIGNING_KEY_ID: ${{ secrets.SIGNING_KEY_ID }}
-          SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
-          SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
-          SONATYPE_STAGING_PROFILE_ID: ${{ secrets.SONATYPE_STAGING_PROFILE_ID }}
+          OSSRH_USERNAME: 'test'
+          OSSRH_PASSWORD: 'test'
+          SIGNING_KEY_ID: 'test'
+          SIGNING_PASSWORD: 'test'
+          SIGNING_KEY: 'test'
+          SONATYPE_STAGING_PROFILE_ID: 'test'

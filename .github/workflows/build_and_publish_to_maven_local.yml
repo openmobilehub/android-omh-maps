@@ -50,9 +50,6 @@ jobs:
           path: ~/.m2/repository
           key: ${{ inputs.input-cache-prefix }}-${{ github.run_id }}
 
-      - name: Source jar
-        run: ./gradlew androidSourcesJar
-
       - name: Publish to MavenLocal
         run: ./gradlew ${{ inputs.gradle-command }}
 
