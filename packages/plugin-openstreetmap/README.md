@@ -15,8 +15,8 @@ This plugin provides support for OpenStreetMap maps by utilizing the [osmdroid](
 
 1. Add the plugin to the project by following one of the guides:
 
-- [Setup with omh-core plugin](/packages/core/docs/SETUP_WITH_OMH_CORE_PLUGIN.md)
-- [Setup without omh-core plugin](/packages/core/docs/SETUP_WITHOUT_OMH_CORE_PLUGIN.md)
+- [Setup with omh-core plugin](https://www.openmobilehub.com/android-omh-maps/advanced-docs/core/SETUP_WITH_OMH_CORE_PLUGIN/)
+- [Setup without omh-core plugin](https://www.openmobilehub.com/android-omh-maps/advanced-docs/core/SETUP_WITHOUT_OMH_CORE_PLUGIN/)
 
 2. In your app's module-level `AndroidManifest.xml` add the required permissions, for more information see [permissions](https://developer.android.com/training/permissions/declaring).
 
@@ -74,10 +74,10 @@ Legend of support levels:
 
 Comments for partially supported 🟨 properties:
 
-| Property                       | Comments                                                                                                                                                                                                                                                                                                                                           |
-| ------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| setOnCameraMoveStartedListener | The reason of the camera changed started is unknown                                                                                                                                                                                                                                                                                                |
-| setCustomInfoWindowViewFactory | The provider supports this method in full, however since the view is rendered "live" (i.e., the view is mounted instead of being rendered to a bitmap), attaching interaction listeners to the root view returned by the factory is forbidden. Please consult the [advanced documentation](https://todo.todo) of this plugin for more information. |
+| Property                       | Comments                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| setOnCameraMoveStartedListener | The reason of the camera changed started is unknown                                                                                                                                                                                                                                                                                                                                                                                       |
+| setCustomInfoWindowViewFactory | The provider supports this method in full, however since the view is rendered "live" (i.e., the view is mounted instead of being rendered to a bitmap), attaching interaction listeners to the root view returned by the factory is forbidden. Please consult the [advanced documentation](https://www.openmobilehub.com/android-omh-maps/advanced-docs/plugin-openstreetmap/advanced/INFO_WINDOWS/) of this plugin for more information. |
 
 ### Marker
 
@@ -181,10 +181,9 @@ Comments for partially supported 🟨 properties:
 | setVisible   |     ✅     |
 | remove       |     ✅     |
 
-
 | Property | Comments                                                                |
-| -------- | ----------------------------------------------------------------------- |
-| setCap   | It applies not only to start and end cap, but to polyline joins as well |                                                                                                                                                                                                                                                                                              |
+| -------- | ----------------------------------------------------------------------- | --- |
+| setCap   | It applies not only to start and end cap, but to polyline joins as well |     |
 
 ### Polygon
 

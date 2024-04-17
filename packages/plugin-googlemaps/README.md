@@ -22,8 +22,8 @@ Complete the required Cloud Console setup following the next steps, for more inf
 
 1. Add the plugin to the project by following one of the guides:
 
-- [Setup with omh-core plugin](/packages/core/docs/SETUP_WITH_OMH_CORE_PLUGIN.md)
-- [Setup without omh-core plugin](/packages/core/docs/SETUP_WITHOUT_OMH_CORE_PLUGIN.md)
+- [Setup with omh-core plugin](https://www.openmobilehub.com/android-omh-maps/advanced-docs/core/SETUP_WITH_OMH_CORE_PLUGIN/)
+- [Setup without omh-core plugin](https://www.openmobilehub.com/android-omh-maps/advanced-docs/core/SETUP_WITHOUT_OMH_CORE_PLUGIN/)
 
 2. Configure API key according to the [Official Documentation](https://developers.google.com/maps/documentation/android-sdk/start#add-key).
 

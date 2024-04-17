@@ -101,7 +101,7 @@ val copyMarkdownDocsTask = tasks.register("copyMarkdownDocs") {
                 imagesDestDir.deleteRecursively()
             }
 
-            val images = discoverImagesInProject()
+            val images = project.discoverImagesInProject()
             if (images?.isNotEmpty() == true) {
                 imagesDestDir.mkdir()
                 images.forEach { srcImageFile ->
