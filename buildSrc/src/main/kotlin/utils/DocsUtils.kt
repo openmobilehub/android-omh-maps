@@ -68,8 +68,6 @@ fun Project.getMarkdownDocsOutputDirBase(): File {
 /**
  * Discovers all images in the project's `images/` directory
  *
- * @param rootProject The root project
- * @param project The project to search for images in
  * @return A list of images in the project's `images/` directory
  */
 fun Project.discoverImagesInProject(): List<File>? {
