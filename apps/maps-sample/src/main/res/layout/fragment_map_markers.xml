@@ -165,6 +165,13 @@
                 android:layout_height="wrap_content"
                 android:checked="true"
                 android:text="@string/remove_marker_on_click" />
+
+            <Button
+                android:id="@+id/button_demoRestoreCustomizableMarker"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="80dp"
+                android:text="@string/label_demo_button_restore_customizable_marker" />
         </LinearLayout>
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

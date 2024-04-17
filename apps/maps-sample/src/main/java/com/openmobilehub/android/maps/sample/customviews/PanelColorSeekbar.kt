@@ -67,4 +67,8 @@ class PanelColorSeekbar @JvmOverloads constructor(
 
         customSeekBar.isEnabled = enabled
     }
+
+    fun setProgress(progress: Int) {
+        customSeekBar.progress = progress
+    }
 }

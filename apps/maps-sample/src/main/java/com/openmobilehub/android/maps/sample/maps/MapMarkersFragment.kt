@@ -23,6 +23,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.CheckBox
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.res.ResourcesCompat
@@ -57,6 +58,7 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
     private var handler: Handler? = null
     private var runnable: Runnable? = null
 
+    private var omhMap: OmhMap? = null
     private var customizableMarker: OmhMarker? = null
 
     private var isClickableCheckbox: CheckBox? = null
@@ -71,6 +73,7 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
     private var appearanceSpinner: PanelSpinner? = null
     private var colorSeekbar: PanelColorSeekbar? = null
     private var rotationSeekbar: PanelSeekbar? = null
+    private var restoreCustomizableMarkerButton: Button? = null
     private var customizableMarkerAnchor: Pair<Float, Float> =
         Pair(Constants.ANCHOR_CENTER, Constants.ANCHOR_CENTER)
     private var customBackgroundColor: Int = Color.parseColor("#FFEA393F")
@@ -117,7 +120,37 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
         setupUI(view)
     }
 
+    private fun setCustomizableMarkerControlsEnabled(enabled: Boolean) {
+        restoreCustomizableMarkerButton?.isEnabled = !enabled
+
+        isVisibleCheckbox?.isEnabled = enabled
+        isFlatCheckbox?.isEnabled = enabled
+        isClickableCheckbox?.isEnabled = enabled
+        isDraggableCheckbox?.isEnabled = enabled
+        hasSnippetCheckbox?.isEnabled = enabled
+        anchorUSeekbar?.isEnabled = enabled
+        anchorVSeekbar?.isEnabled = enabled
+        alphaSeekbar?.isEnabled = enabled
+        appearanceSpinner?.isEnabled = enabled
+        colorSeekbar?.isEnabled = enabled
+        rotationSeekbar?.isEnabled = enabled
+    }
+
+    private fun addCustomizableMarker() {
+        customizableMarker = omhMap?.addMarker(OmhMarkerOptions().apply {
+            title = "Configurable test marker"
+            position = OmhCoordinate().apply {
+                latitude = PRIME_MERIDIAN.latitude - 0.001
+                longitude = PRIME_MERIDIAN.longitude
+            }
+            draggable = true
+        })
+    }
+
+    @Suppress("CyclomaticComplexMethod", "LongMethod")
     override fun onMapReady(omhMap: OmhMap) {
+        this.omhMap = omhMap
+
         mapProviderName = omhMap.providerName
 
         if (networkConnectivityChecker?.isNetworkAvailable() != true) {
@@ -146,14 +179,7 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
             draggable = true
         })
 
-        customizableMarker = omhMap.addMarker(OmhMarkerOptions().apply {
-            title = "Configurable test marker"
-            position = OmhCoordinate().apply {
-                latitude = PRIME_MERIDIAN.latitude - 0.001
-                longitude = PRIME_MERIDIAN.longitude
-            }
-            draggable = true
-        })
+        addCustomizableMarker()
 
         omhMap.setOnMarkerClickListener(OmhOnMarkerClickListener { marker ->
             Log.d(
@@ -165,6 +191,12 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
 
             if (shouldRemoveMarker) {
                 marker.remove()
+
+                if (marker == customizableMarker) {
+                    customizableMarker = null
+
+                    setCustomizableMarkerControlsEnabled(false)
+                }
             }
 
             infoDisplay.showMessage(
@@ -212,6 +244,11 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
             it.hideInfoWindow()
         }
 
+        applyDefaultCustomizableMarkerControlOptions()
+    }
+
+    private fun applyDefaultCustomizableMarkerControlOptions() {
+        rotationSeekbar?.setProgress(0)
         isVisibleCheckbox?.isChecked = customizableMarker?.getIsVisible() ?: true
         isFlatCheckbox?.isChecked = customizableMarker?.getIsFlat() ?: false
         isClickableCheckbox?.isClickable = customizableMarker?.getClickable() ?: true
@@ -232,6 +269,16 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
         }
 
         appearanceSpinner?.setDisabledPositions(disabledAppearancePositions)
+        appearanceSpinner?.setSelection(
+            markerAppearanceTypeNameResourceID.indexOf(
+                markerAppearanceTypeNameResourceID.first {
+                    !(disabledAppearancePositions?.contains(
+                        it
+                    ) ?: false)
+                })
+        )
+        colorSeekbar?.setProgress(0)
+        applyCustomizableMarkerAppearance()
     }
 
     private fun applyCustomizableMarkerAnchor() {
@@ -339,6 +386,20 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
         demoShouldRemoveMarkerOnClickCheckBox =
             view.findViewById(R.id.checkBox_demoShouldRemoveMarkerOnClick)
         demoShouldRemoveMarkerOnClickCheckBox?.isChecked = false
+
+        // demo restore customizable marker button
+        restoreCustomizableMarkerButton =
+            view.findViewById(R.id.button_demoRestoreCustomizableMarker)
+        restoreCustomizableMarkerButton?.isEnabled = false
+        restoreCustomizableMarkerButton?.setOnClickListener {
+            if (customizableMarker == null) addCustomizableMarker()
+
+            // ensure the marker was successfully added first
+            if (customizableMarker != null) {
+                applyDefaultCustomizableMarkerControlOptions()
+                setCustomizableMarkerControlsEnabled(true)
+            }
+        }
     }
 
     override fun onResume() {

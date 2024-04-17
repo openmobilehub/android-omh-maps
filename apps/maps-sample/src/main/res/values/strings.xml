@@ -124,4 +124,5 @@
     <string name="remove_marker_on_click">Remove marker on click</string>
     <string name="show_reference_polyline">Show Reference Polyline (Add/Remove)</string>
     <string name="show_reference_polygon">Show Reference Polygon (Add/Remove)</string>
+    <string name="label_demo_button_restore_customizable_marker">Restore customizable marker</string>
 </resources>

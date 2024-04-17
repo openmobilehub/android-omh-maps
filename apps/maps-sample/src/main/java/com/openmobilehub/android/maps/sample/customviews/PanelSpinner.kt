@@ -47,7 +47,7 @@ class PanelSpinner @JvmOverloads constructor(
     }
 
     private fun getResourceStrings(resourceIds: IntArray): MutableList<String> {
-        val strings = mutableListOf<String>();
+        val strings = mutableListOf<String>()
         for (i in resourceIds.indices) {
             strings.add(context.getString(resourceIds[i]))
         }
@@ -71,7 +71,7 @@ class PanelSpinner @JvmOverloads constructor(
                 position: Int,
                 convertView: View?,
                 parent: ViewGroup
-            ): View? {
+            ): View {
                 val textView = super.getDropDownView(position, convertView, parent) as TextView
 
                 textView.isEnabled = positionEnabled(position)
@@ -103,8 +103,12 @@ class PanelSpinner @JvmOverloads constructor(
         spinner.isEnabled = enabled
         titleTextView.alpha = if (enabled) 1.0f else 0.5f
     }
-    
+
     fun setDisabledPositions(disabledPositions: HashSet<Int>?) {
         this.disabledPositions = disabledPositions
+    }
+
+    fun setSelection(position: Int) {
+        spinner.setSelection(position)
     }
 }
