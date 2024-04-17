@@ -136,9 +136,7 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
         rotationSeekbar?.isEnabled = enabled
     }
 
-    private fun maybeAddCustomizableMarker() {
-        if (customizableMarker != null) return
-
+    private fun addCustomizableMarker() {
         customizableMarker = omhMap?.addMarker(OmhMarkerOptions().apply {
             title = "Configurable test marker"
             position = OmhCoordinate().apply {
@@ -181,7 +179,7 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
             draggable = true
         })
 
-        maybeAddCustomizableMarker()
+        addCustomizableMarker()
 
         omhMap.setOnMarkerClickListener(OmhOnMarkerClickListener { marker ->
             Log.d(
@@ -394,8 +392,9 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
             view.findViewById(R.id.button_demoRestoreCustomizableMarker)
         restoreCustomizableMarkerButton?.isEnabled = false
         restoreCustomizableMarkerButton?.setOnClickListener {
-            maybeAddCustomizableMarker()
+            if (customizableMarker == null) addCustomizableMarker()
 
+            // ensure the marker was successfully added first
             if (customizableMarker != null) {
                 applyDefaultCustomizableMarkerControlOptions()
                 setCustomizableMarkerControlsEnabled(true)
