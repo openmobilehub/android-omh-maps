@@ -21,6 +21,16 @@ internal object Constants {
     const val NO_INTERNET_CONNECTION = "No internet connection"
     const val LOST_INTERNET_CONNECTION = "Lost internet connection"
 
+    // Paths
+    const val GOOGLE_MAPS_PATH =
+        "com.openmobilehub.android.maps.plugin.googlemaps.presentation.OmhMapFactoryImpl"
+    const val OPEN_STREET_MAP_PATH =
+        "com.openmobilehub.android.maps.plugin.openstreetmap.presentation.OmhMapFactoryImpl"
+    const val MAPBOX_PATH =
+        "com.openmobilehub.android.maps.plugin.mapbox.presentation.OmhMapFactoryImpl"
+    const val AZURE_MAPS_PATH =
+        "com.openmobilehub.android.maps.plugin.azuremaps.presentation.OmhMapFactoryImpl"
+
     // Log
     const val MAX_NAME_LENGTH = 23
     const val MIN_NAME_LENGTH = 0
