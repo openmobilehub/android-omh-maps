@@ -20,14 +20,12 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
-import androidx.core.view.updatePadding
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
@@ -36,13 +34,13 @@ import com.azure.android.maps.control.AzureMaps
 import com.mapbox.common.MapboxOptions
 import com.openmobilehub.android.maps.core.factories.OmhMapProvider
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
+import com.openmobilehub.android.maps.core.utils.MapProvidersUtils
 import com.openmobilehub.android.maps.sample.BuildConfig
 import com.openmobilehub.android.maps.sample.NavGraphDirections
 import com.openmobilehub.android.maps.sample.R
 import com.openmobilehub.android.maps.sample.databinding.ActivityMainBinding
 import com.openmobilehub.android.maps.sample.utils.Constants.LAT_PARAM
 import com.openmobilehub.android.maps.sample.utils.Constants.LNG_PARAM
-import com.openmobilehub.android.maps.sample.utils.MapProvidersUtils
 
 class MainActivity : AppCompatActivity() {
     private lateinit var appBarConfiguration: AppBarConfiguration
@@ -93,7 +91,7 @@ class MainActivity : AppCompatActivity() {
                     OmhMapProvider.getInstance()
                 } catch (e: IllegalStateException) {
                     OmhMapProvider.Initiator()
-                        .addNonGmsPath(MapProvidersUtils.getDefaultMapProvider(this).path)
+                        .addNonGmsPath(MapProvidersUtils().getDefaultMapProvider(this).path)
                         .initialize()
                 }
                 findNavController(R.id.nav_host_fragment_content_main).navigate(action)
