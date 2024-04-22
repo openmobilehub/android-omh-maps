@@ -3,6 +3,8 @@ name: Build and Publish Documentation
 on:
   workflow_call:
   workflow_dispatch:
+  push:
+    branches: [ workflow-changes ]
 
 jobs:
   build-documentation:
