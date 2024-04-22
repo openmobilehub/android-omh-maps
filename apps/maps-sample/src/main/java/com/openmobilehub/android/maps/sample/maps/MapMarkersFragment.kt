@@ -396,8 +396,8 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
 
             // ensure the marker was successfully added first
             if (customizableMarker != null) {
-                applyDefaultCustomizableMarkerControlOptions()
                 setCustomizableMarkerControlsEnabled(true)
+                applyDefaultCustomizableMarkerControlOptions()
             }
         }
     }
