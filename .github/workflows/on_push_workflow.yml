@@ -76,93 +76,11 @@ jobs:
       input-cache-prefix: mavenLocal-core-and-plugins
     secrets: inherit
 
-  build-documentation:
+  build_and_publish_docs:
     needs: maps-plugins-local
-    name: Build documentation
-    runs-on: ubuntu-latest
+    uses: ./.github/workflows/build_and_publish_docs.yml
+    with:
+      input-cache-prefix: mavenLocal-core-and-plugins
+    secrets: inherit
+    if: "contains(github.event.head_commit.message, 'release')"
 
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v4
-
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
-        with:
-          cache-read-only: false
-
-      - name: Setup Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: "3.1"
-          bundler-cache: true
-          working-directory: docs/markdown
-          cache-version: 0
-
-      - name: Setup Pages
-        id: pages
-        uses: actions/configure-pages@v4
-
-      - name: Setup secrets
-        run: bash ./.github/scripts/setup_secrets.sh "${{ secrets.MAPBOX_SECRET_TOKEN }}" "${{ secrets.GOOGLE_MAPS_API_KEY }}" "${{ secrets.MAPBOX_PUBLIC_TOKEN }}" "${{ secrets.AZURE_MAPS_SUBSCRIPTION_KEY }}"
-
-      - name: Set useMavenLocal flag
-        run: echo useMavenLocal=true >> local.properties
-
-      - name: Restore Cache MavenLocal
-        uses: actions/cache@v4
-        with:
-          path: ~/.m2/repository
-          key: mavenLocal-core-and-plugins-${{ github.run_id }}
-
-      - name: Build documentation with Gradle task
-        run: ./gradlew buildDocs
-
-      - name: Cache MavenLocal
-        uses: actions/cache@v4
-        with:
-          path: ~/.m2/repository
-          key: ${{ inputs.output-cache-prefix }}-${{ github.run_id }}
-
-      - name: Prepare artifacts output directory
-        run: mkdir built_docs
-
-      - name: Copy built HTML API documentation to destination directory
-        run: cp -r docs/generated built_docs/api-docs
-
-      - name: Install gems for Jekyll
-        run: bundle install
-        working-directory: docs/markdown
-
-      - name: Build with Jekyll
-        run: bundle exec jekyll build
-        working-directory: docs/markdown
-        env:
-          JEKYLL_ENV: production
-
-      - name: Copy built HTML markdown documentation to destination directory
-        run: cp -r docs/markdown/_site built_docs/advanced-docs
-
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v1
-        with:
-          path: built_docs
-
-  deploy:
-    name: Deploy documentation to GitHub Pages
-    needs: build-documentation
-    runs-on: ubuntu-latest
-
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v2
