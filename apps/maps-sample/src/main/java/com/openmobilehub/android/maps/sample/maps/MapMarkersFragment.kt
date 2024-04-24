@@ -70,6 +70,7 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
     private var anchorUSeekbar: PanelSeekbar? = null
     private var anchorVSeekbar: PanelSeekbar? = null
     private var alphaSeekbar: PanelSeekbar? = null
+    private var zIndexSeekbar: PanelSeekbar? = null
     private var appearanceSpinner: PanelSpinner? = null
     private var colorSeekbar: PanelColorSeekbar? = null
     private var rotationSeekbar: PanelSeekbar? = null
@@ -134,6 +135,7 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
         appearanceSpinner?.isEnabled = enabled
         colorSeekbar?.isEnabled = enabled
         rotationSeekbar?.isEnabled = enabled
+        zIndexSeekbar?.isEnabled = enabled
     }
 
     private fun addCustomizableMarker() {
@@ -165,6 +167,7 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
             position = OmhCoordinate().apply {
                 latitude = PRIME_MERIDIAN.latitude + 0.0016
                 longitude = PRIME_MERIDIAN.longitude + 0.002
+                zIndex = 1.9f
             }
             icon = ResourcesCompat.getDrawable(resources, R.drawable.ic_map_marker, null)
         })
@@ -174,6 +177,7 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
             position = OmhCoordinate().apply {
                 latitude = PRIME_MERIDIAN.latitude + 0.0016
                 longitude = PRIME_MERIDIAN.longitude - 0.002
+                zIndex = 2.9f
             }
             backgroundColor = 0xFF005918.toInt() // green-ish
             draggable = true
@@ -257,6 +261,9 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
         anchorUSeekbar?.setProgress(50)
         anchorVSeekbar?.setProgress(50)
         alphaSeekbar?.setProgress(100)
+        zIndexSeekbar?.setProgress(0)
+        zIndexSeekbar?.isEnabled =
+            mapProviderName == com.openmobilehub.android.maps.sample.utils.Constants.GOOGLE_PROVIDER
 
         if (mapProviderName == OSM_PROVIDER) {
             disabledAppearancePositions =
@@ -399,6 +406,12 @@ open class MapMarkersFragment : Fragment(), OmhOnMapReadyCallback {
                 setCustomizableMarkerControlsEnabled(true)
                 applyDefaultCustomizableMarkerControlOptions()
             }
+        }
+
+        // zIndex
+        zIndexSeekbar = view.findViewById(R.id.panelSeekbar_zIndex)
+        zIndexSeekbar?.setOnProgressChangedCallback { progress: Int ->
+            customizableMarker?.setZIndex(progress.toFloat())
         }
     }
 

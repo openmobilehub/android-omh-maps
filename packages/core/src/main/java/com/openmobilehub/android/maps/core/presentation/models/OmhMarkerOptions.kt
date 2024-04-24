@@ -56,6 +56,7 @@ object Constants {
  * **NOTE:** please remember to pass color integers with set bytes corresponding
  * to alpha channel (e.g. of shape `0xAARRGGBB`).
  * @property icon The icon [Drawable] for the marker. Overrides [backgroundColor] if not null.
+ * @property zIndex The z-index of the marker. Default: `null`
  */
 @Keep
 @Parcelize
@@ -76,5 +77,6 @@ data class OmhMarkerOptions(
     var isFlat: Boolean = Constants.DEFAULT_IS_FLAT,
     var rotation: Float = Constants.DEFAULT_ROTATION,
     @ColorInt var backgroundColor: Int? = null,
-    @IgnoredOnParcel var icon: Drawable? = null
+    @IgnoredOnParcel var icon: Drawable? = null,
+    var zIndex: Float? = null
 ) : Parcelable

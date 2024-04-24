@@ -136,7 +136,7 @@ internal class OmhMarkerOptionsExtensionTest {
     }
 
     @Test
-    fun `toMarkerOptions has proper default constructor arguments`() {
+    fun `OmhMarkerOptions has proper default constructor arguments`() {
         val defaultOmhMarkerOptions = OmhMarkerOptions()
 
         assertEquals(defaultOmhMarkerOptions.draggable, false)
@@ -162,5 +162,16 @@ internal class OmhMarkerOptionsExtensionTest {
         assertEquals(defaultOmhMarkerOptions.backgroundColor, null)
         assertEquals(defaultOmhMarkerOptions.icon, null)
         assertEquals(defaultOmhMarkerOptions.clickable, true)
+    }
+
+    @Test
+    fun `toMarkerOptions should log zIndex not supported when using zIndex`() {
+        // Act
+        OmhMarkerOptions().apply {
+            zIndex = 1.0f
+        }.toMarkerOptions(omhMap, mapView, mockLogger)
+
+        // Assert
+        verify { mockLogger.logNotSupported("zIndex") }
     }
 }

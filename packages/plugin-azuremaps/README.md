@@ -102,6 +102,7 @@ Comments for partially supported 🟨 properties:
 | rotation         |      ✅       |
 | backgroundColor  |      ✅       |
 | clickable        |      ✅       |
+| zIndex           |      ❌       |
 
 Comments for partially supported 🟨 properties:
 
@@ -140,6 +141,8 @@ Comments for partially supported 🟨 properties:
 | hideInfoWindow       |      ✅       |
 | getIsInfoWindowShown |      ✅       |
 | remove               |      ✅       |
+| getZIndex            |      ❌       |
+| setZIndex            |      ❌       |
 
 Comments for partially supported 🟨 properties:
 

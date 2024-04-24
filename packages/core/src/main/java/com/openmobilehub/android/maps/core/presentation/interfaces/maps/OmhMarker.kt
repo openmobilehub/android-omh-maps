@@ -227,4 +227,18 @@ interface OmhMarker {
      * Removes the marker from the map.
      */
     fun remove()
+
+    /**
+     * Gets the zIndex of the marker, which specifies the order in which the marker is drawn on the map.
+     *
+     * @return the zIndex of the marker or null if not set.
+     */
+    fun getZIndex(): Float?
+
+    /**
+     * Sets the zIndex of the marker, which specifies the order in which the marker is drawn on the map.
+     *
+     * @param zIndex the zIndex of the marker.
+     */
+    fun setZIndex(zIndex: Float)
 }

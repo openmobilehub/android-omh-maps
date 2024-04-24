@@ -18,12 +18,15 @@ package com.openmobilehub.android.maps.plugin.mapbox.extensions
 
 import com.mapbox.maps.extension.style.layers.generated.SymbolLayer
 import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
+import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.maps.OmhMarkerImpl
 import com.openmobilehub.android.maps.plugin.mapbox.utils.AnchorConverter
 import com.openmobilehub.android.maps.plugin.mapbox.utils.Constants
+import com.openmobilehub.android.maps.plugin.mapbox.utils.markerLogger
 
 internal fun OmhMarkerOptions.applyMarkerOptions(
-    markerSymbolLayer: SymbolLayer
+    markerSymbolLayer: SymbolLayer,
+    logger: UnsupportedFeatureLogger = markerLogger
 ) {
     // icon
     // iconImage(markerImageID) will be handled by setIcon
@@ -49,4 +52,9 @@ internal fun OmhMarkerOptions.applyMarkerOptions(
     // isFlat
     markerSymbolLayer.iconPitchAlignment(OmhMarkerImpl.getIconsPitchAlignment(isFlat))
     markerSymbolLayer.iconRotationAlignment(OmhMarkerImpl.getIconsRotationAlignment(isFlat))
+
+    // zIndex
+    zIndex?.let {
+        logger.logNotSupported("zIndex")
+    }
 }

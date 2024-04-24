@@ -165,6 +165,26 @@ internal class OmhMarkerOptionsTest {
     }
 
     @Test
+    fun `toMarkerOptions should leave zIndex at default value when not passed`() {
+        // Act
+        val options = OmhMarkerOptions().toMarkerOptions(mockLogger)
+
+        // Assert
+        assertEquals(options.zIndex, 0f)
+    }
+
+    @Test
+    fun `toMarkerOptions should set zIndex when passed`() {
+        // Act
+        val options = OmhMarkerOptions().apply {
+            zIndex = 1f
+        }.toMarkerOptions(mockLogger)
+
+        // Assert
+        assertEquals(options.zIndex, 1f)
+    }
+
+    @Test
     fun `toMarkerOptions should return log setter not supported for backgroundColor property`() {
         OmhMarkerOptions().apply {
             backgroundColor = 0xFFFFFF

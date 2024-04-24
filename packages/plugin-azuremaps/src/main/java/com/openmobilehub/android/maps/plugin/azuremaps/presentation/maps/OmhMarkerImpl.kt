@@ -362,6 +362,15 @@ internal class OmhMarkerImpl(
         omhInfoWindow.remove()
     }
 
+    override fun getZIndex(): Float? {
+        logger.logGetterNotSupported("zIndex")
+        return null
+    }
+
+    override fun setZIndex(zIndex: Float) {
+        logger.logSetterNotSupported("zIndex")
+    }
+
     internal companion object {
         internal fun getIconsRotationAlignment(isFlat: Boolean): String {
             return if (isFlat) {

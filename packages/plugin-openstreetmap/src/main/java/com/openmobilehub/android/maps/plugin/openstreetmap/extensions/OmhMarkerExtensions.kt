@@ -60,5 +60,9 @@ internal fun OmhMarkerOptions.toMarkerOptions(
         marker.setDefaultIcon()
     }
 
+    zIndex?.let {
+        logger.logNotSupported("zIndex")
+    }
+
     return marker
 }

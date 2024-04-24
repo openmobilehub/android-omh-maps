@@ -22,6 +22,7 @@ import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnInf
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMarkerClickListener
 import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
 import com.openmobilehub.android.maps.core.utils.DrawableConverter
+import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
 import com.openmobilehub.android.maps.plugin.azuremaps.presentation.interfaces.AzureMapInterface
 import io.mockk.every
 import io.mockk.mockk
@@ -45,6 +46,7 @@ class MapMarkerManagerTest {
     private val defaultMarkerIconDrawable = mockk<Drawable>()
     private val convertDrawableToBitmapMock = mockk<Bitmap>()
     private val iwMockFrameLayout = mockk<FrameLayout>(relaxed = true)
+    private val mockLogger = mockk<UnsupportedFeatureLogger>(relaxed = true)
 
     @Before
     fun setUp() {
@@ -111,15 +113,6 @@ class MapMarkerManagerTest {
     @Test
     fun `setCustomInfoWindowViewFactory sets custom IW view factory`() {
         // Arrange
-//        mockkConstructor(OmhInfoWindow::class)
-//        var capturedInfoWindowViewFactory: OmhInfoWindowViewFactory? = null
-//        every { anyConstructed<OmhInfoWindow>().setCustomInfoWindowViewFactory(any()) } answers {
-//            capturedInfoWindowViewFactory = firstArg()
-//        }
-//        var capturedInfoWindowContentsViewFactory: OmhInfoWindowViewFactory? = null
-//        every { anyConstructed<OmhInfoWindow>().setCustomInfoWindowContentsViewFactory(any()) } answers {
-//            capturedInfoWindowContentsViewFactory = firstArg()
-//        }
         val marker = mapMarkerManager.addMarker(OmhMarkerOptions())
 
         val mockedIWView = mockk<View>(relaxed = true)
@@ -237,5 +230,41 @@ class MapMarkerManagerTest {
 
         // Assert
         verify(exactly = 1) { omhOnIWLongClickListener.onInfoWindowLongClick(marker) }
+    }
+
+    @Test
+    fun `getZIndex should return null and log getter not supported`() {
+        // Act
+        val result = mapMarkerManager.addMarker(OmhMarkerOptions(), logger = mockLogger).getZIndex()
+
+        // Assert
+        Assert.assertNull(result)
+        verify { mockLogger.logGetterNotSupported("zIndex") }
+    }
+
+    @Test
+    fun `setZIndex should log setter not supported`() {
+        // Act
+        mapMarkerManager.addMarker(
+            OmhMarkerOptions(),
+            logger = mockLogger
+        ).setZIndex(1.0f)
+
+        // Assert
+        verify { mockLogger.logSetterNotSupported("zIndex") }
+    }
+
+    @Test
+    fun `OmhMarkerOptions should log zIndex not supported when passed`() {
+        // Act
+        mapMarkerManager.addMarker(
+            OmhMarkerOptions().apply {
+                zIndex = 1.0f
+            },
+            logger = mockLogger
+        )
+
+        // Assert
+        verify { mockLogger.logNotSupported("zIndex") }
     }
 }
