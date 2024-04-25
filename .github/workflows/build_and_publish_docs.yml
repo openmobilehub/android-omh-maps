@@ -4,6 +4,12 @@ on:
   workflow_call:
   workflow_dispatch:  
 
+# GITHUB_TOKEN needs to be granted the permissions required to make a Pages deployment
+permissions:
+  contents: read
+  pages: write # to deploy to Pages
+  id-token: write # to verify the deployment originates from an appropriate source
+
 jobs:
   build-documentation:
     name: Build documentation
@@ -77,7 +83,7 @@ jobs:
         run: cp -r docs/markdown/_site built_docs/advanced-docs
 
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-pages-artifact@v3
         with:
           path: built_docs
 
@@ -93,4 +99,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v2
+        uses: actions/deploy-pages@v4
