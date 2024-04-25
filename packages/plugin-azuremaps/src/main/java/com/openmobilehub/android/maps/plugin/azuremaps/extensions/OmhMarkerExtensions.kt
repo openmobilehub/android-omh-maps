@@ -32,6 +32,10 @@ internal fun OmhMarkerOptions.toSymbolLayerOptionsList(
         logger.logNotSupported("draggable")
     }
 
+    zIndex.let {
+        logger.logNotSupported("zIndex")
+    }
+
     return listOf<Option<*>>(
         // icon
         SymbolLayerOptions.iconSize(1f), // icon scale
@@ -54,6 +58,6 @@ internal fun OmhMarkerOptions.toSymbolLayerOptionsList(
         SymbolLayerOptions.iconRotation(rotation),
 
         // isFlat
-        SymbolLayerOptions.iconRotationAlignment(OmhMarkerImpl.getIconsRotationAlignment(isFlat))
+        SymbolLayerOptions.iconRotationAlignment(OmhMarkerImpl.getIconsRotationAlignment(isFlat)),
     )
 }

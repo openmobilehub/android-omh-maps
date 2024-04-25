@@ -32,6 +32,7 @@ import io.mockk.runs
 import io.mockk.unmockkAll
 import io.mockk.verify
 import org.junit.AfterClass
+import org.junit.Assert
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -369,6 +370,28 @@ class OmhMarkerImplTest {
             omhMarker.omhInfoWindow.remove()
         }
         assertEquals(omhMarker.getIsInfoWindowShown(), false)
+    }
+
+    @Test
+    fun `getZIndex should return null and log getter not supported`() {
+        // Act
+        val result = omhMarker.getZIndex()
+
+        // Assert
+        Assert.assertNull(result)
+        verify { logger.logGetterNotSupported("zIndex") }
+    }
+
+    @Test
+    fun `setZIndex should log setter not supported`() {
+        // Arrange
+        val zIndex = 1.0f
+
+        // Act
+        omhMarker.setZIndex(zIndex)
+
+        // Assert
+        verify { logger.logSetterNotSupported("zIndex") }
     }
 
     companion object {

@@ -181,4 +181,12 @@ internal class OmhMarkerImpl(
 
         marker.remove()
     }
+
+    override fun getZIndex(): Float {
+        return marker.zIndex
+    }
+
+    override fun setZIndex(zIndex: Float) {
+        marker.zIndex = zIndex
+    }
 }

@@ -150,6 +150,16 @@
                 android:layout_marginBottom="15dp"
                 app:titleText="@string/color" />
 
+            <com.openmobilehub.android.maps.sample.customviews.PanelSeekbar
+                android:id="@+id/panelSeekbar_zIndex"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="15dp"
+                app:maxValue="5"
+                app:minValue="0"
+                app:titleText="@string/z_index" />
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

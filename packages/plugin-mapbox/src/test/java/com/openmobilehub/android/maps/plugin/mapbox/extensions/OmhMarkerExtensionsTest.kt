@@ -41,6 +41,7 @@ import com.openmobilehub.android.maps.core.R
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
 import com.openmobilehub.android.maps.core.utils.DrawableConverter
+import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
 import com.openmobilehub.android.maps.core.utils.uuid.DefaultUUIDGenerator
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.maps.OmhMapImpl
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.maps.OmhMarkerImpl
@@ -73,6 +74,8 @@ internal class OmhMarkerExtensionsTest(
     private val mapView = mockk<MapView>()
     private val context = mockk<Context>()
     private val safeStyle = mockk<Style>(relaxed = true)
+    private val mockLogger: UnsupportedFeatureLogger =
+        mockk<UnsupportedFeatureLogger>(relaxed = true)
     private val defaultMarkerIconDrawable = mockk<Drawable>()
     private val convertDrawableToBitmapMock = mockk<Bitmap>()
     private lateinit var mockedViewDrawnToBitmap: Bitmap
@@ -98,6 +101,7 @@ internal class OmhMarkerExtensionsTest(
             position = omhCoordinate
             title = "Marker Title 1"
             isVisible = false
+            zIndex = 1.0f
         }
 
         @JvmStatic
@@ -166,7 +170,7 @@ internal class OmhMarkerExtensionsTest(
         val markerLayer =
             symbolLayer(OmhMarkerImpl.getSymbolLayerID(markerUUID), markerGeoJsonSourceID) {}
 
-        options.applyMarkerOptions(markerLayer)
+        options.applyMarkerOptions(markerLayer, mockLogger)
 
         val omhMarker = OmhMarkerImpl(
             markerUUID = markerUUID,
@@ -500,6 +504,21 @@ internal class OmhMarkerExtensionsTest(
 
             safeStyle.addLayer(markerIconLayer)
             safeStyle.addLayer(infoWindowLayer)
+        }
+    }
+
+    @Test
+    fun `OmhMarkerOptions should log zIndex not supported when using zIndex`() {
+        // Act
+        createMarker(
+            mapView.context,
+            markerUUID,
+            data
+        )
+
+        // Assert
+        if (data.zIndex != null) {
+            verify { mockLogger.logNotSupported("zIndex") }
         }
     }
 }

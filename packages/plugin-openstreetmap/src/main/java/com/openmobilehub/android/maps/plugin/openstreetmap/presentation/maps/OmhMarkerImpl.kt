@@ -191,4 +191,13 @@ internal class OmhMarkerImpl(
 
         mapView.invalidate()
     }
+
+    override fun getZIndex(): Float? {
+        logger.logGetterNotSupported("zIndex")
+        return null
+    }
+
+    override fun setZIndex(zIndex: Float) {
+        logger.logSetterNotSupported("zIndex")
+    }
 }

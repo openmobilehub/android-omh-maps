@@ -22,6 +22,7 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
+import org.junit.Assert
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -291,5 +292,27 @@ class OmhMarkerImplTest {
             mockMapView.invalidate()
         }
         assertEquals(marker.isInfoWindowShown, false)
+    }
+
+    @Test
+    fun `getZIndex should return null and log getter not supported`() {
+        // Act
+        val result = omhMarker.getZIndex()
+
+        // Assert
+        Assert.assertNull(result)
+        verify { mockLogger.logGetterNotSupported("zIndex") }
+    }
+
+    @Test
+    fun `setZIndex should log setter not supported`() {
+        // Arrange
+        val zIndex = 1.0f
+
+        // Act
+        omhMarker.setZIndex(zIndex)
+
+        // Assert
+        verify { mockLogger.logSetterNotSupported("zIndex") }
     }
 }

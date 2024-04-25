@@ -291,4 +291,30 @@ class OmhMarkerImplTest {
         }
         assertEquals(marker.isInfoWindowShown, false)
     }
+
+    @Test
+    fun `getZIndex should return proper value`() {
+        // Arrange
+        val expected = 0.45f
+        every { marker.zIndex } returns expected
+
+        // Act
+        val actual = omhMarker.getZIndex()
+
+        // Assert
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun `setZIndex should log setter not supported`() {
+        // Arrange
+        val expected = 0.45f
+        every { marker.zIndex = any() } just runs
+
+        // Act
+        omhMarker.setZIndex(expected)
+
+        // Assert
+        verify { marker.zIndex = expected }
+    }
 }

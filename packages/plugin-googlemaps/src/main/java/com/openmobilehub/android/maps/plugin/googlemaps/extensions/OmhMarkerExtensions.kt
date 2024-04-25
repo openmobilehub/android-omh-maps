@@ -58,5 +58,9 @@ internal fun OmhMarkerOptions.toMarkerOptions(logger: UnsupportedFeatureLogger =
         mappedOptions.icon(null)
     }
 
+    zIndex?.let {
+        mappedOptions.zIndex(it)
+    }
+
     return mappedOptions
 }

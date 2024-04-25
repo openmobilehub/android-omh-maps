@@ -97,6 +97,7 @@ Comments for partially supported 🟨 properties:
 | rotation         |      ✅       |
 | backgroundColor  |      ❌       |
 | clickable        |      ✅       |
+| zIndex           |      ❌       |
 
 #### OmhMarker
 
@@ -129,6 +130,8 @@ Comments for partially supported 🟨 properties:
 | hideInfoWindow       |      ✅       |
 | getIsInfoWindowShown |      ✅       |
 | remove               |      ✅       |
+| getZIndex            |      ❌       |
+| setZIndex            |      ❌       |
 
 ### Polyline
 

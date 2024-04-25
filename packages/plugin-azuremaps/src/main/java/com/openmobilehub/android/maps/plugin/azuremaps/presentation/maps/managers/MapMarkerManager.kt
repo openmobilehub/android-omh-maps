@@ -29,6 +29,7 @@ import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnInf
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnInfoWindowOpenStatusChangeListener
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMarkerClickListener
 import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
+import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
 import com.openmobilehub.android.maps.core.utils.uuid.DefaultUUIDGenerator
 import com.openmobilehub.android.maps.core.utils.uuid.UUIDGenerator
 import com.openmobilehub.android.maps.plugin.azuremaps.extensions.toSymbolLayerOptionsList
@@ -39,6 +40,7 @@ import com.openmobilehub.android.maps.plugin.azuremaps.presentation.maps.OmhInfo
 import com.openmobilehub.android.maps.plugin.azuremaps.presentation.maps.OmhMarkerImpl
 import com.openmobilehub.android.maps.plugin.azuremaps.utils.Constants
 import com.openmobilehub.android.maps.plugin.azuremaps.utils.CoordinateConverter
+import com.openmobilehub.android.maps.plugin.azuremaps.utils.markerLogger
 import java.util.UUID
 
 @SuppressWarnings("TooManyFunctions")
@@ -55,7 +57,8 @@ internal class MapMarkerManager(
 
     fun addMarker(
         options: OmhMarkerOptions,
-        uuidGenerator: UUIDGenerator = DefaultUUIDGenerator()
+        uuidGenerator: UUIDGenerator = DefaultUUIDGenerator(),
+        logger: UnsupportedFeatureLogger = markerLogger
     ): OmhMarkerImpl {
         val markerUUID = uuidGenerator.generate()
         val pointOnMap = CoordinateConverter.convertToPoint(options.position)
@@ -72,7 +75,7 @@ internal class MapMarkerManager(
             markerDataSource,
             OmhMarkerImpl.getSymbolLayerID(markerUUID)
         )
-        for (option in options.toSymbolLayerOptionsList()) {
+        for (option in options.toSymbolLayerOptionsList(logger)) {
             markerLayer.setOptions(option)
         }
         map.layers.add(markerLayer)
@@ -99,7 +102,8 @@ internal class MapMarkerManager(
             rotation = options.rotation,
             infoWindowPopup = infoWindowPopup,
             mapViewDelegate = this,
-            markerDelegate = this
+            markerDelegate = this,
+            logger = logger
         )
 
         val omhMarkerUUIDStr = omhMarker.markerUUID.toString()
