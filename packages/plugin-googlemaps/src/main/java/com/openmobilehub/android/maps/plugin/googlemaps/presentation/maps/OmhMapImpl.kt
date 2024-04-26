@@ -280,8 +280,22 @@ class OmhMapImpl(
             googleMap.setMapStyle(null)
             return
         }
+
+        applyMapStyle(MapStyleOptions.loadRawResourceStyle(context, json))
+    }
+
+    override fun setMapStyle(jsonString: String?) {
+        if (jsonString == null) {
+            googleMap.setMapStyle(null)
+            return
+        }
+
+        applyMapStyle(MapStyleOptions(jsonString))
+    }
+
+    private fun applyMapStyle(mapStyleOptions: MapStyleOptions) {
         val isStyleApplied =
-            googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(context, json))
+            googleMap.setMapStyle(mapStyleOptions)
         if (!isStyleApplied) {
             logger.logWarning("Failed to apply custom map style. Check logs from Google Maps SDK.")
         }

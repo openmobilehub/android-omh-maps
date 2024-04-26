@@ -420,15 +420,28 @@ class OmhMapImpl(
 
         val styleJSONString = JSONUtil.convertJSONToString(context, json, logger)
 
+        applyMapStyle(styleJSONString)
+    }
+
+    override fun setMapStyle(jsonString: String?) {
+        if (jsonString == null) {
+            mapView.mapboxMap.loadStyle(Style.STANDARD)
+            return
+        }
+
+        applyMapStyle(jsonString)
+    }
+
+    private fun applyMapStyle(jsonString: String?) {
         val onStyleLoadedCallback = { style: Style ->
             if (!style.isValid()) {
                 logger.logWarning("Failed to apply custom map style. Check logs from Mapbox SDK.")
             }
         }
 
-        styleJSONString?.let { jsonString ->
-            mapView.mapboxMap.loadStyle(jsonString, onStyleLoadedCallback)
-        } ?: logger.logError("Failed to load style from resource with id: $json")
+        jsonString?.let { safeJsonString ->
+            mapView.mapboxMap.loadStyle(safeJsonString, onStyleLoadedCallback)
+        } ?: logger.logError("Failed to load map style. Style string is null.")
     }
 
     override fun setScaleFactor(scaleFactor: Float) {

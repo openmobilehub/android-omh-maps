@@ -202,6 +202,15 @@ interface OmhMap {
     fun setMapStyle(json: Int?)
 
     /**
+     * Sets the style of the map based on a provided string.
+     * The string should define the styles for the map elements.
+     *
+     * @param jsonString The string defining the map styles.
+     * If null, the map style will be reset to the default style.
+     */
+    fun setMapStyle(jsonString: String?)
+
+    /**
      * Updates the scale factor of the map.
      * The scale factor is used to adjust the size of the map elements, e.g. polylines width.
      * Might be useful when the app uses multiple map providers and the map elements should have the same
