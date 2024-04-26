@@ -110,7 +110,7 @@ class MapStylesFragment : Fragment(), OmhOnMapReadyCallback {
             val providerMapStyles =
                 mapStyles[omhMap?.providerName] ?: return@OnCheckedChangeListener
             when (checkedId) {
-                R.id.style_none -> omhMap?.setMapStyle(null)
+                R.id.style_none -> omhMap?.setMapStyle(json = null)
                 R.id.style_retro -> omhMap?.setMapStyle(providerMapStyles.retro)
                 R.id.style_dark -> omhMap?.setMapStyle(providerMapStyles.dark)
                 R.id.style_silver -> omhMap?.setMapStyle(providerMapStyles.silver)

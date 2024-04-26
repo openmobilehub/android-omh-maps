@@ -584,7 +584,7 @@ class OmhMapImplTest {
     }
 
     @Test
-    fun `setMapStyle applies custom style when JSON resource ID provided with no errors`() {
+    fun `setMapStyle (json) applies custom style when JSON resource ID provided with no errors`() {
         // Arrange
         val jsonStyleResId = 1
         every {
@@ -610,7 +610,7 @@ class OmhMapImplTest {
     }
 
     @Test
-    fun `setMapStyle logs warning message when JSON was not parsed`() {
+    fun `setMapStyle (json) logs warning message when JSON was not parsed`() {
         // Arrange
         val jsonStyleResId = 1
         every {
@@ -625,11 +625,11 @@ class OmhMapImplTest {
         omhMapImpl.setMapStyle(jsonStyleResId)
 
         // Assert
-        verify { logger.logError("Failed to load style from resource with id: $jsonStyleResId") }
+        verify { logger.logError("Failed to load map style. Style string is null.") }
     }
 
     @Test
-    fun `setMapStyle logs warning message when style was not applied correctly`() {
+    fun `setMapStyle (json) logs warning message when style was not applied correctly`() {
         // Arrange
         val jsonStyleResId = 1
         every {
@@ -653,12 +653,60 @@ class OmhMapImplTest {
     }
 
     @Test
-    fun `setMapStyle sets default style when null JSON resource ID provided`() {
+    fun `setMapStyle (json) sets default style when null JSON resource ID provided`() {
         // Arrange
         every { map.mapboxMap.loadStyle(any<String>()) } just runs
 
         // Act
-        omhMapImpl.setMapStyle(null)
+        omhMapImpl.setMapStyle(json = null)
+
+        // Assert
+        verify { map.mapboxMap.loadStyle(Style.STANDARD) }
+    }
+
+    @Test
+    fun `setMapStyle (jsonString) applies custom style when string provided with no errors`() {
+        // Arrange
+        val jsonStyleString = "{}"
+
+        val style = mockk<Style>(relaxed = true)
+        every { style.isValid() } returns true
+
+        setupLoadStyleCallback(style)
+
+        // Act
+        omhMapImpl.setMapStyle(jsonStyleString)
+
+        // Assert
+        verify(exactly = 0) { logger.logWarning(any()) }
+        verify(exactly = 0) { logger.logError(any()) }
+        verify { map.mapboxMap.loadStyle("{}", any()) }
+    }
+
+    @Test
+    fun `setMapStyle (jsonString) logs warning message when style was not applied correctly`() {
+        // Arrange
+        val jsonStyleString = "{}"
+
+        val style = mockk<Style>(relaxed = true)
+        every { style.isValid() } returns false
+
+        setupLoadStyleCallback(style)
+
+        // Act
+        omhMapImpl.setMapStyle(jsonStyleString)
+
+        // Assert
+        verify { logger.logWarning("Failed to apply custom map style. Check logs from Mapbox SDK.") }
+    }
+
+    @Test
+    fun `setMapStyle (jsonString) sets default style when null provided`() {
+        // Arrange
+        every { map.mapboxMap.loadStyle(any<String>()) } just runs
+
+        // Act
+        omhMapImpl.setMapStyle(jsonString = null)
 
         // Assert
         verify { map.mapboxMap.loadStyle(Style.STANDARD) }

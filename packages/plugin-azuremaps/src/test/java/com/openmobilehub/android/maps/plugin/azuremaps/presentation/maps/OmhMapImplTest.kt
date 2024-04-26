@@ -185,9 +185,21 @@ class OmhMapImplTest {
     }
 
     @Test
-    fun `setMapStyle calls logger logSetterNotSupported`() {
+    fun `setMapStyle (json) calls logger logSetterNotSupported`() {
         // Arrange
         val mapStyle = 0
+
+        // Act
+        omhMapImpl.setMapStyle(mapStyle)
+
+        // Assert
+        verify { logger.logSetterNotSupported("mapStyle") }
+    }
+
+    @Test
+    fun `setMapStyle (jsonString) calls logger logSetterNotSupported`() {
+        // Arrange
+        val mapStyle = ""
 
         // Act
         omhMapImpl.setMapStyle(mapStyle)

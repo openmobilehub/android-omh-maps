@@ -133,7 +133,7 @@ class OmhMapImplTest {
     }
 
     @Test
-    fun `setMapStyle applies custom style when JSON resource ID provided`() {
+    fun `setMapStyle (json) applies custom style when JSON resource ID provided`() {
         // Arrange
         val jsonStyleResId = 1
 
@@ -150,7 +150,7 @@ class OmhMapImplTest {
     }
 
     @Test
-    fun `setMapStyle logs warning message when style is not applied`() {
+    fun `setMapStyle (json) logs warning message when style is not applied`() {
         // Arrange
         val jsonStyleResId = 1
 
@@ -167,12 +167,50 @@ class OmhMapImplTest {
     }
 
     @Test
-    fun `setMapStyle sets default style when null JSON resource ID provided`() {
+    fun `setMapStyle (json) sets default style when null JSON resource ID provided`() {
         // Arrange
         every { googleMap.setMapStyle(any()) } returns true
 
         // Act
-        omhMapImpl.setMapStyle(null)
+        omhMapImpl.setMapStyle(json = null)
+
+        // Assert
+        verify { googleMap.setMapStyle(null) }
+    }
+
+    @Test
+    fun `setMapStyle (jsonString) applies custom style when json string provided`() {
+        // Arrange
+        val jsonStyleString = "{}"
+        every { googleMap.setMapStyle(any()) } returns true
+
+        // Act
+        omhMapImpl.setMapStyle(jsonStyleString)
+
+        // Assert
+        verify { googleMap.setMapStyle(any<MapStyleOptions>()) }
+    }
+
+    @Test
+    fun `setMapStyle (jsonString) logs warning message when style is not applied`() {
+        // Arrange
+        val jsonStyleString = "{}"
+        every { googleMap.setMapStyle(any()) } returns false
+
+        // Act
+        omhMapImpl.setMapStyle(jsonStyleString)
+
+        // Assert
+        verify { logger.logWarning("Failed to apply custom map style. Check logs from Google Maps SDK.") }
+    }
+
+    @Test
+    fun `setMapStyle (jsonString) sets default style when null provided`() {
+        // Arrange
+        every { googleMap.setMapStyle(any()) } returns true
+
+        // Act
+        omhMapImpl.setMapStyle(jsonString = null)
 
         // Assert
         verify { googleMap.setMapStyle(null) }

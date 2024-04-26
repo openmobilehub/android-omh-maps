@@ -229,6 +229,10 @@ internal class OmhMapImpl(
         logger.logSetterNotSupported("mapStyle")
     }
 
+    override fun setMapStyle(jsonString: String?) {
+        logger.logSetterNotSupported("mapStyle")
+    }
+
     override fun setScaleFactor(scaleFactor: Float) {
         _scaleFactor = scaleFactor
     }
