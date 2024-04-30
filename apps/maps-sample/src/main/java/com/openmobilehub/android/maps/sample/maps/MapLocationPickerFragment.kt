@@ -220,9 +220,11 @@ class MapLocationPickerFragment : Fragment(), OmhOnMapReadyCallback {
     private fun handleAfterGetLocation(omhMap: OmhMap) {
         handledCurrentLocation = true
         handler?.removeCallbacksAndMessages(null)
-        binding.progressIndicatorIcon.visibility = View.GONE
-        moveToCurrentLocation(omhMap, DEFAULT_ZOOM_LEVEL)
-        enableMyLocation(omhMap)
+        if(isAdded && _binding!=null){
+            binding.progressIndicatorIcon.visibility = View.GONE
+            moveToCurrentLocation(omhMap, DEFAULT_ZOOM_LEVEL)
+            enableMyLocation(omhMap)
+        }
     }
 
     private fun moveToCurrentLocation(omhMap: OmhMap, zoomLevel: Float) {
