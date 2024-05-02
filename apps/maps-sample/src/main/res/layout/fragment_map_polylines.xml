@@ -40,6 +40,7 @@
                 android:id="@+id/button_randomizePoints"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:contentDescription="@string/randomize_points"
                 android:text="@string/randomize_points" />
 
             <CheckBox
@@ -47,6 +48,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
+                android:contentDescription="@string/show_reference_polyline"
                 android:text="@string/show_reference_polyline" />
 
             <CheckBox
@@ -54,6 +56,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:checked="true"
+                android:contentDescription="@string/visible"
                 android:padding="0dp"
                 android:text="@string/visible" />
 
@@ -61,6 +64,7 @@
                 android:id="@+id/checkBox_isClickable"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:contentDescription="@string/clickable"
                 android:text="@string/clickable" />
 
             <com.openmobilehub.android.maps.sample.customviews.PanelSeekbar
@@ -69,6 +73,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
                 android:layout_marginBottom="15dp"
+                android:contentDescription="@string/width"
                 app:maxValue="100"
                 app:minValue="1"
                 app:titleText="@string/width" />
@@ -79,12 +84,14 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
                 android:layout_marginBottom="15dp"
+                android:contentDescription="@string/color"
                 app:titleText="@string/color" />
 
             <com.openmobilehub.android.maps.sample.customviews.PanelSpinner
                 android:id="@+id/panelSpinner_cap"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:contentDescription="@string/cap"
                 app:titleText="@string/cap" />
 
             <com.openmobilehub.android.maps.sample.customviews.PanelSpinner
@@ -93,6 +100,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
                 android:layout_marginBottom="15dp"
+                android:contentDescription="@string/start_cap"
                 app:titleText="@string/start_cap" />
 
             <com.openmobilehub.android.maps.sample.customviews.PanelSpinner
@@ -101,6 +109,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
                 android:layout_marginBottom="15dp"
+                android:contentDescription="@string/end_cap"
                 app:titleText="@string/end_cap" />
 
             <com.openmobilehub.android.maps.sample.customviews.PanelSpinner
@@ -109,6 +118,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
                 android:layout_marginBottom="15dp"
+                android:contentDescription="@string/join_type"
                 app:titleText="@string/join_type" />
 
             <com.openmobilehub.android.maps.sample.customviews.PanelSpinner
@@ -117,6 +127,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
                 android:layout_marginBottom="15dp"
+                android:contentDescription="@string/pattern"
                 app:titleText="@string/pattern" />
 
             <com.openmobilehub.android.maps.sample.customviews.PanelSeekbar
@@ -125,6 +136,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
                 android:layout_marginBottom="15dp"
+                android:contentDescription="@string/z_index"
                 app:maxValue="100"
                 app:minValue="1"
                 app:titleText="@string/z_index" />
@@ -134,6 +146,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
+                android:contentDescription="@string/span"
                 android:text="@string/span" />
 
             <LinearLayout
@@ -149,6 +162,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="15dp"
                     android:layout_marginBottom="15dp"
+                    android:contentDescription="@string/segments"
                     app:maxValue="7"
                     app:minValue="1"
                     app:titleText="@string/segments" />
@@ -159,6 +173,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="15dp"
                     android:layout_marginBottom="15dp"
+                    android:contentDescription="@string/span_color"
                     app:titleText="@string/span_color" />
 
                 <CheckBox
@@ -166,6 +181,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="15dp"
+                    android:contentDescription="@string/gradient"
                     android:text="@string/gradient" />
 
                 <LinearLayout
@@ -179,6 +195,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="15dp"
+                        android:contentDescription="@string/from_color"
                         app:titleText="@string/from_color" />
 
                     <com.openmobilehub.android.maps.sample.customviews.PanelColorSeekbar
@@ -187,6 +204,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="15dp"
                         android:layout_marginBottom="15dp"
+                        android:contentDescription="@string/to_color"
                         app:titleText="@string/to_color" />
                 </LinearLayout>
 
@@ -195,6 +213,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="15dp"
+                    android:contentDescription="@string/span_pattern"
                     android:text="@string/span_pattern" />
 
             </LinearLayout>
