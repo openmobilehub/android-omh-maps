@@ -146,7 +146,7 @@ OMH Maps SDK is open-source, promoting community collaboration and plugin suppor
 
 ## Documentation
 
-- Check out the [API Reference Docs](https://openmobilehub.github.io/omh-maps)
+- Check out the [API Reference Docs](https://www.openmobilehub.com/android-omh-maps/api-docs/)
 - Check out the [Core Package documentation](/packages/core/README.md)
 - Check out the [Google Maps Plugin documentation](/packages/plugin-googlemaps/README.md)
 - Check out the [OpenStreetMap Plugin documentation](/packages/plugin-openstreetmap/README.md)

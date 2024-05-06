@@ -6,7 +6,7 @@ The Core package is the backbone of the map feature, mainly providing common int
 
 ## Documentation
 
-- [API Reference Docs](https://openmobilehub.github.io/omh-maps)
+- [API Reference Docs](https://www.openmobilehub.com/android-omh-maps/api-docs/)
 - [Advanced documentation](https://www.openmobilehub.com/android-omh-maps/advanced-docs/core/README/)
 
 ## Contributing
