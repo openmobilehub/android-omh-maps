@@ -18,7 +18,6 @@ package com.openmobilehub.android.maps.core.utils
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.VectorDrawable
 
@@ -34,21 +33,18 @@ object DrawableConverter {
      * @return The bitmap.
      */
     fun convertDrawableToBitmap(drawable: Drawable): Bitmap {
-        if (drawable is VectorDrawable) {
-            val bitmap = Bitmap.createBitmap(
-                drawable.intrinsicWidth,
-                drawable.intrinsicHeight,
-                Bitmap.Config.ARGB_8888
-            )
+        val divFactor = if (drawable is VectorDrawable) 1 else 2
+        val bitmap = Bitmap.createBitmap(
+            drawable.intrinsicWidth / divFactor,
+            drawable.intrinsicHeight / divFactor,
+            Bitmap.Config.ARGB_8888
+        )
 
-            // render the drawable to bitmap
-            val renderCanvas = Canvas(bitmap)
-            drawable.setBounds(0, 0, renderCanvas.width, renderCanvas.height)
-            drawable.draw(renderCanvas)
+        // render the drawable to bitmap
+        val renderCanvas = Canvas(bitmap)
+        drawable.setBounds(0, 0, renderCanvas.width, renderCanvas.height)
+        drawable.draw(renderCanvas)
 
-            return bitmap
-        } else {
-            return (drawable as BitmapDrawable).bitmap
-        }
+        return bitmap
     }
 }
