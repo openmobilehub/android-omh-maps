@@ -87,7 +87,7 @@ internal class OmhMarkerImpl(
             omhMarker = this,
         )
 
-        setIcon(initialIcon)
+        setIcon(initialIcon, backgroundColor)
     }
 
     override fun getPosition(): OmhCoordinate {
@@ -215,14 +215,19 @@ internal class OmhMarkerImpl(
         omhInfoWindow.setSnippet(snippet)
     }
 
-    override fun setIcon(icon: Drawable?) {
+    private fun setIcon(icon: Drawable?, color: Int?) {
         isCustomIconSet = icon != null
+        backgroundColor = color
 
         val addedIconID = addOrUpdateMarkerIconImage(icon)
         // color the icon image using Mapbox's SDF implementation
         markerSymbolLayer.setOptions(
             SymbolLayerOptions.iconImage(addedIconID)
         )
+    }
+
+    override fun setIcon(icon: Drawable?) {
+        setIcon(icon, null)
     }
 
     override fun getIsVisible(): Boolean {
@@ -274,11 +279,9 @@ internal class OmhMarkerImpl(
     }
 
     override fun setBackgroundColor(color: Int?) {
-        backgroundColor = color
-
         // set the default icon, also setting isCustomIconSet to keep track
         // of current state for rebuilding the icon
-        setIcon(null)
+        setIcon(null, color)
     }
 
     override fun showInfoWindow() {
