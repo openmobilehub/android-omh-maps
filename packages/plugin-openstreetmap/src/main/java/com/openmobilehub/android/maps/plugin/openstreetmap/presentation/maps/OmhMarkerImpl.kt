@@ -16,9 +16,11 @@
 
 package com.openmobilehub.android.maps.plugin.openstreetmap.presentation.maps
 
+import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMarker
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
+import com.openmobilehub.android.maps.core.utils.DrawableConverter
 import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
 import com.openmobilehub.android.maps.plugin.openstreetmap.extensions.toGeoPoint
 import com.openmobilehub.android.maps.plugin.openstreetmap.extensions.toOmhCoordinate
@@ -115,7 +117,10 @@ internal class OmhMarkerImpl(
     }
 
     override fun setIcon(icon: Drawable?) {
-        marker.icon = icon
+        val bitmap = icon?.let { DrawableConverter.convertDrawableToBitmap(it) }
+        val bitmapAsDrawable = bitmap?.let { BitmapDrawable(mapView.resources, bitmap) }
+
+        marker.icon = bitmapAsDrawable
         marker.updateInfoWindowState() // apply the possibly new marker icon
         mapView.postInvalidate()
     }
