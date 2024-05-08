@@ -251,7 +251,9 @@ class OmhMapImpl(
 
     override fun setRotateGesturesEnabled(enableRotateGestures: Boolean) {
         if (enableRotateGestures) {
-            mapView.overlayManager.add(rotationGestureOverlay)
+            if (mapView.overlayManager.contains(rotationGestureOverlay).not()) {
+                mapView.overlayManager.add(rotationGestureOverlay)
+            }
         } else {
             mapView.overlayManager.remove(rotationGestureOverlay)
         }
@@ -300,7 +302,9 @@ class OmhMapImpl(
             myLocationNewOverlay = MyLocationNewOverlay(gpsMyLocationProvider, mapView).apply {
                 enableMyLocation()
             }
-            mapView.overlayManager.add(myLocationNewOverlay)
+            if (mapView.overlayManager.contains(myLocationNewOverlay).not()) {
+                mapView.overlayManager.add(myLocationNewOverlay)
+            }
             omhMapView.setCenterLocationButtonEnabled(true)
         }
         myLocationNewOverlay?.myLocation?.let { geoPoint ->
