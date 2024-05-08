@@ -35,6 +35,8 @@ import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.utils.DrawableConverter
 import com.openmobilehub.android.maps.core.utils.cartesian.Offset2D
 import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
+import com.openmobilehub.android.maps.core.utils.uuid.DefaultUUIDGenerator
+import com.openmobilehub.android.maps.core.utils.uuid.UUIDGenerator
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IMapInfoWindowManagerDelegate
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IMarkerDelegate
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IOmhInfoWindowMapViewDelegate
@@ -67,21 +69,21 @@ internal class OmhMarkerImpl(
     infoWindowManagerDelegate: IMapInfoWindowManagerDelegate,
     infoWindowMapViewDelegate: IOmhInfoWindowMapViewDelegate,
     private val logger: UnsupportedFeatureLogger = markerLogger,
-    private val markerDelegate: IMarkerDelegate
+    private val markerDelegate: IMarkerDelegate,
+    private val iconUUIDGenerator: UUIDGenerator = DefaultUUIDGenerator()
 ) : OmhMarker, ITouchInteractable {
     internal var isRemoved: Boolean = false
 
     private lateinit var geoJsonSource: GeoJsonSource
     private lateinit var style: Style
     internal var omhInfoWindow: OmhInfoWindow
-    internal var isCustomIconSet: Boolean = false
     internal var iconWidth: Int = 0
     internal var iconHeight: Int = 0
 
     internal var bufferedIcon: Drawable? = null
+    internal var lastMarkerIconID: String? = null
 
     init {
-        isCustomIconSet = initialIcon != null
         setIcon(initialIcon) // will be buffered if the layer has not been not added to the map yet
 
         omhInfoWindow = OmhInfoWindow(
@@ -272,8 +274,6 @@ internal class OmhMarkerImpl(
     }
 
     override fun setIcon(icon: Drawable?) {
-        isCustomIconSet = icon != null
-
         if (isStyleReady()) {
             val addedIconID = addOrUpdateMarkerIconImage(icon)
             // color the icon image using Mapbox's SDF implementation
@@ -351,8 +351,7 @@ internal class OmhMarkerImpl(
     override fun setBackgroundColor(color: Int?) {
         backgroundColor = color
 
-        // set the default icon, also setting isCustomIconSet to keep track
-        // of current state for rebuilding the icon
+        // set the default icon
         setIcon(null)
 
         // color the icon image using Mapbox's SDF implementation
@@ -373,8 +372,16 @@ internal class OmhMarkerImpl(
         return omhInfoWindow.getIsInfoWindowShown()
     }
 
-    internal fun getMarkerIconID(bForCustomIcon: Boolean): String {
-        return "$markerUUID-omh-marker-icon-${if (bForCustomIcon) "custom" else "default"}"
+    private fun getMarkerIconID(bForCustomIcon: Boolean): String {
+        val suffix = if (bForCustomIcon) {
+            // a new UUID each time is required for Mapbox to rerender the icon
+            // when a custom icon is changed to another custom icon
+            "custom-${iconUUIDGenerator.generate()}"
+        } else {
+            "default"
+        }
+
+        return "$markerUUID-omh-marker-icon-$suffix"
     }
 
     private fun getDefaultIcon(): Drawable {
@@ -400,8 +407,8 @@ internal class OmhMarkerImpl(
     ): String {
         val markerImageID = getMarkerIconID(icon != null)
 
-        // ensure the other icon is removed for memory optimization
-        style.removeStyleImage(getMarkerIconID(!isCustomIconSet))
+        // ensure the old icon is removed for memory optimization
+        if (lastMarkerIconID != null) style.removeStyleImage(lastMarkerIconID!!)
 
         val bitmap = DrawableConverter.convertDrawableToBitmap(icon ?: getDefaultIcon())
 
@@ -419,6 +426,8 @@ internal class OmhMarkerImpl(
         addImageResult.error?.let { error ->
             throw IllegalStateException("Failed to add image to map: $error")
         }
+
+        lastMarkerIconID = markerImageID
 
         return markerImageID
     }
@@ -439,9 +448,11 @@ internal class OmhMarkerImpl(
                 throw IllegalStateException("Failed to remove GeoJsonSource from map: $error")
             }
 
-            val removeImageResult = style.removeStyleImage(getMarkerIconID(isCustomIconSet))
-            removeImageResult.error?.let { error ->
-                throw IllegalStateException("Failed to remove image from map: $error")
+            if (lastMarkerIconID != null) {
+                val removeImageResult = style.removeStyleImage(lastMarkerIconID!!)
+                removeImageResult.error?.let { error ->
+                    throw IllegalStateException("Failed to remove image from map: $error")
+                }
             }
         }
 

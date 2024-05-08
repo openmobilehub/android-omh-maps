@@ -346,11 +346,16 @@ internal class OmhMarkerExtensionsTest(
         // mock (on the new OmhMarker instance) that the map style had been loaded
         omhMarker.onStyleLoaded(safeStyle)
 
+        val previousMarkerIconId = omhMarker.lastMarkerIconID
+
+        omhMarker.setIcon(someOtherMockedDrawable)
+
         // here we check if marker properties are valid & set properly on the layer after map style is loaded
         verify {
             markerIconLayer.iconIgnorePlacement(true) // defaults from OmhMarkerExtensions
             markerIconLayer.iconAllowOverlap(true) // defaults from OmhMarkerExtensions
-            markerIconLayer.iconImage(omhMarker.getMarkerIconID(data.icon !== null))
+            markerIconLayer.iconImage(previousMarkerIconId!!)
+            markerIconLayer.iconImage(omhMarker.lastMarkerIconID!!)
             markerIconLayer.iconOpacity(data.alpha.toDouble())
             markerIconLayer.iconPitchAlignment(
                 OmhMarkerImpl.getIconsPitchAlignment(data.isFlat)
@@ -376,12 +381,18 @@ internal class OmhMarkerExtensionsTest(
         verify {
             // ensure that the previous icon (from the in-between scenario) has been
             // deleted from the layer to free allocated memory
-            safeStyle.removeStyleImage(omhMarker.getMarkerIconID(data.icon === null))
-            // ensure that the new icon has been added to the layer
+            safeStyle.removeStyleImage(previousMarkerIconId!!)
+            // ensure that the previous icon has once been added to the layer
             safeStyle.addImage(
-                omhMarker.getMarkerIconID(data.icon !== null),
+                previousMarkerIconId,
                 convertDrawableToBitmapMock,
                 data.icon === null // ensure SDF coloring is only enabled for the default icon
+            )
+            // ensure that the new icon has been added to the layer
+            safeStyle.addImage(
+                omhMarker.lastMarkerIconID!!,
+                convertDrawableToBitmapMock,
+                false // ensure SDF coloring is only enabled for the default icon
             )
         }
     }

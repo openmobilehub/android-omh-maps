@@ -360,7 +360,7 @@ class OmhMarkerImplTest {
             // marker cleanup
             style.removeStyleLayer(OmhMarkerImpl.getSymbolLayerID(markerUUID))
             style.removeStyleSource(OmhMarkerImpl.getGeoJsonSourceID(markerUUID))
-            style.removeStyleImage(omhMarker.getMarkerIconID(omhMarker.isCustomIconSet))
+            style.removeStyleImage(omhMarker.lastMarkerIconID!!)
 
             // IW cleanup
             style.removeStyleLayer(omhMarker.omhInfoWindow.getSymbolLayerID())
