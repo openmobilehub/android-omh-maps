@@ -40,6 +40,7 @@
                 android:id="@+id/button_randomizeOutline"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:contentDescription="@string/randomize_outline"
                 android:text="@string/randomize_outline" />
 
             <CheckBox
@@ -47,6 +48,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
+                android:contentDescription="@string/show_reference_polygon"
                 android:text="@string/show_reference_polygon" />
 
             <CheckBox
@@ -54,18 +56,21 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:checked="true"
+                android:contentDescription="@string/visible"
                 android:text="@string/visible" />
 
             <CheckBox
                 android:id="@+id/checkBox_isClickable"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:contentDescription="@string/clickable"
                 android:text="@string/clickable" />
 
             <CheckBox
                 android:id="@+id/checkBox_withHoles"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:contentDescription="@string/holes"
                 android:text="@string/holes" />
 
             <com.openmobilehub.android.maps.sample.customviews.PanelSeekbar
@@ -74,6 +79,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
                 android:layout_marginBottom="15dp"
+                android:contentDescription="@string/stroke_width"
                 app:maxValue="100"
                 app:minValue="1"
                 app:titleText="@string/stroke_width" />
@@ -84,6 +90,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
                 android:layout_marginBottom="15dp"
+                android:contentDescription="@string/stroke_color"
                 app:titleText="@string/stroke_color" />
 
             <com.openmobilehub.android.maps.sample.customviews.PanelColorSeekbar
@@ -92,6 +99,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
                 android:layout_marginBottom="15dp"
+                android:contentDescription="@string/fill_color"
                 app:titleText="@string/fill_color" />
 
             <com.openmobilehub.android.maps.sample.customviews.PanelSpinner
@@ -100,6 +108,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
                 android:layout_marginBottom="15dp"
+                android:contentDescription="@string/stroke_join_type"
                 app:titleText="@string/stroke_join_type" />
 
             <com.openmobilehub.android.maps.sample.customviews.PanelSpinner
@@ -108,6 +117,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
                 android:layout_marginBottom="15dp"
+                android:contentDescription="@string/stroke_pattern"
                 app:titleText="@string/stroke_pattern" />
 
             <com.openmobilehub.android.maps.sample.customviews.PanelSeekbar
@@ -116,6 +126,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
                 android:layout_marginBottom="15dp"
+                android:contentDescription="@string/z_index"
                 app:maxValue="100"
                 app:minValue="1"
                 app:titleText="@string/z_index" />

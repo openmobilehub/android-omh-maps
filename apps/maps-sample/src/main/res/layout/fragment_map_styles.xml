@@ -47,31 +47,36 @@
                 android:id="@+id/radioGroup_styles"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:checkedButton="@id/style_none">
+                android:checkedButton="@id/style_none"
+                android:contentDescription="@string/map_style_radio_group_title"
+                android:orientation="vertical">
 
                 <RadioButton
                     android:id="@+id/style_none"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:contentDescription="@string/none"
                     android:text="@string/none" />
 
                 <RadioButton
                     android:id="@+id/style_dark"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:contentDescription="@string/dark"
                     android:text="@string/dark" />
 
                 <RadioButton
                     android:id="@+id/style_retro"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:contentDescription="@string/retro"
                     android:text="@string/retro" />
 
                 <RadioButton
                     android:id="@+id/style_silver"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:contentDescription="@string/silver"
                     android:text="@string/silver" />
             </RadioGroup>
 

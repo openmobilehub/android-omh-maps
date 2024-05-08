@@ -64,6 +64,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:checked="true"
+                android:contentDescription="@string/visible"
                 android:text="@string/visible" />
 
             <CheckBox
@@ -71,6 +72,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:checked="true"
+                android:contentDescription="@string/flat"
                 android:text="@string/flat" />
 
             <CheckBox
@@ -78,6 +80,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:checked="true"
+                android:contentDescription="@string/clickable"
                 android:text="@string/clickable" />
 
             <CheckBox
@@ -85,6 +88,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:checked="true"
+                android:contentDescription="@string/draggable"
                 android:text="@string/draggable" />
 
             <CheckBox
@@ -92,6 +96,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:checked="true"
+                android:contentDescription="@string/snippet"
                 android:text="@string/snippet" />
 
             <com.openmobilehub.android.maps.sample.customviews.PanelSeekbar
@@ -100,6 +105,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
                 android:layout_marginBottom="15dp"
+                android:contentDescription="@string/rotation"
                 app:maxValue="360"
                 app:minValue="0"
                 app:titleText="@string/rotation" />
@@ -110,6 +116,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
                 android:layout_marginBottom="15dp"
+                android:contentDescription="@string/anchorU"
                 app:maxValue="100"
                 app:minValue="0"
                 app:titleText="@string/anchorU" />
@@ -120,6 +127,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
                 android:layout_marginBottom="15dp"
+                android:contentDescription="@string/anchorV"
                 app:maxValue="100"
                 app:minValue="0"
                 app:titleText="@string/anchorV" />
@@ -130,6 +138,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
                 android:layout_marginBottom="15dp"
+                android:contentDescription="@string/alpha"
                 app:maxValue="100"
                 app:minValue="0"
                 app:titleText="@string/alpha" />
@@ -140,6 +149,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
                 android:layout_marginBottom="15dp"
+                android:contentDescription="@string/appearance"
                 app:titleText="@string/appearance" />
 
             <com.openmobilehub.android.maps.sample.customviews.PanelColorSeekbar
@@ -148,6 +158,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
                 android:layout_marginBottom="15dp"
+                android:contentDescription="@string/color"
                 app:titleText="@string/color" />
 
             <com.openmobilehub.android.maps.sample.customviews.PanelSeekbar
@@ -156,6 +167,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
                 android:layout_marginBottom="15dp"
+                android:contentDescription="@string/z_index"
                 app:maxValue="5"
                 app:minValue="0"
                 app:titleText="@string/z_index" />
@@ -165,6 +177,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="10dp"
+                android:contentDescription="@string/label_demo_behaviour"
                 android:gravity="center"
                 android:text="@string/label_demo_behaviour"
                 android:textSize="18sp" />
@@ -174,6 +187,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:checked="true"
+                android:contentDescription="@string/remove_marker_on_click"
                 android:text="@string/remove_marker_on_click" />
 
             <Button
@@ -181,6 +195,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginBottom="80dp"
+                android:contentDescription="@string/label_demo_button_restore_customizable_marker"
                 android:text="@string/label_demo_button_restore_customizable_marker" />
         </LinearLayout>
     </ScrollView>

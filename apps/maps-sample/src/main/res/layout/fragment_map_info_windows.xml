@@ -65,6 +65,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:checked="true"
+                android:contentDescription="@string/snippet"
                 android:text="@string/snippet" />
 
             <com.openmobilehub.android.maps.sample.customviews.PanelSeekbar
@@ -73,6 +74,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
                 android:layout_marginBottom="15dp"
+                android:contentDescription="@string/anchorIWU"
                 app:maxValue="100"
                 app:minValue="0"
                 app:titleText="@string/anchorIWU" />
@@ -83,6 +85,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
                 android:layout_marginBottom="15dp"
+                android:contentDescription="@string/anchorIWV"
                 app:maxValue="100"
                 app:minValue="0"
                 app:titleText="@string/anchorIWV" />
@@ -93,6 +96,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
                 android:layout_marginBottom="15dp"
+                android:contentDescription="@string/appearance"
                 app:titleText="@string/appearance" />
 
             <com.google.android.material.divider.MaterialDivider
@@ -113,6 +117,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:checked="true"
+                android:contentDescription="@string/window_should_rerender_on_drag"
                 android:text="@string/window_should_rerender_on_drag" />
 
             <CheckBox
@@ -120,6 +125,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:checked="true"
+                android:contentDescription="@string/window_should_toggle_on_marker_click"
                 android:text="@string/window_should_toggle_on_marker_click" />
 
             <CheckBox
@@ -127,6 +133,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:checked="true"
+                android:contentDescription="@string/window_should_hide_on_click"
                 android:text="@string/window_should_hide_on_click" />
 
             <com.google.android.material.divider.MaterialDivider
@@ -138,6 +145,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="10dp"
+                android:contentDescription="@string/label_imperative_usage"
                 android:gravity="center"
                 android:text="@string/label_imperative_usage"
                 android:textSize="18sp" />
@@ -146,12 +154,14 @@
                 android:id="@+id/button_openInfoWindow"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:contentDescription="@string/open_info_window"
                 android:text="@string/open_info_window" />
 
             <Button
                 android:id="@+id/button_hideInfoWindow"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:contentDescription="@string/hide_info_window"
                 android:text="@string/hide_info_window" />
 
             <com.google.android.material.divider.MaterialDivider
@@ -172,6 +182,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:checked="true"
+                android:contentDescription="@string/visible"
                 android:text="@string/visible" />
 
             <CheckBox
@@ -179,6 +190,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:checked="true"
+                android:contentDescription="@string/clickable"
                 android:text="@string/clickable" />
 
             <com.openmobilehub.android.maps.sample.customviews.PanelSeekbar
@@ -187,6 +199,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
                 android:layout_marginBottom="15dp"
+                android:contentDescription="@string/rotation"
                 app:maxValue="360"
                 app:minValue="0"
                 app:titleText="@string/rotation" />
@@ -197,6 +210,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
                 android:layout_marginBottom="15dp"
+                android:contentDescription="@string/anchorU"
                 app:maxValue="100"
                 app:minValue="0"
                 app:titleText="@string/anchorU" />
@@ -207,6 +221,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
                 android:layout_marginBottom="15dp"
+                android:contentDescription="@string/anchorV"
                 app:maxValue="100"
                 app:minValue="0"
                 app:titleText="@string/anchorV" />

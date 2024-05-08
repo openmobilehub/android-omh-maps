@@ -117,6 +117,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:checked="true"
+                android:contentDescription="@string/my_location_enabled"
                 android:text="@string/my_location_enabled" />
 
         </LinearLayout>

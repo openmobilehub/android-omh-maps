@@ -41,6 +41,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:checked="true"
+                android:contentDescription="@string/zoom_gestures"
                 android:text="@string/zoom_gestures" />
 
             <CheckBox
@@ -48,30 +49,35 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:checked="true"
+                android:contentDescription="@string/rotate_gestures"
                 android:text="@string/rotate_gestures" />
 
             <Button
                 android:id="@+id/button_showCameraPositionCoordinate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:contentDescription="@string/show_camera_position_coordinate"
                 android:text="@string/show_camera_position_coordinate" />
 
             <Button
                 android:id="@+id/button_moveMapToEverest"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:contentDescription="@string/move_map_to_everest"
                 android:text="@string/move_map_to_everest" />
 
             <Button
                 android:id="@+id/button_moveMapSahara"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:contentDescription="@string/move_map_to_sahara"
                 android:text="@string/move_map_to_sahara" />
 
             <Button
                 android:id="@+id/button_makeSnapshot"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:contentDescription="@string/make_snapshot"
                 android:text="@string/make_snapshot" />
 
         </LinearLayout>
