@@ -354,8 +354,8 @@ internal class OmhMarkerExtensionsTest(
         verify {
             markerIconLayer.iconIgnorePlacement(true) // defaults from OmhMarkerExtensions
             markerIconLayer.iconAllowOverlap(true) // defaults from OmhMarkerExtensions
-            markerIconLayer.iconImage(previousMarkerIconId!!)
-            markerIconLayer.iconImage(omhMarker.lastMarkerIconID!!)
+            previousMarkerIconId?.let { markerIconLayer.iconImage(it) }
+            omhMarker.lastMarkerIconID?.let { markerIconLayer.iconImage(it) }
             markerIconLayer.iconOpacity(data.alpha.toDouble())
             markerIconLayer.iconPitchAlignment(
                 OmhMarkerImpl.getIconsPitchAlignment(data.isFlat)
@@ -378,22 +378,29 @@ internal class OmhMarkerExtensionsTest(
         every { safeStyle.addSource(capture(capturedSource)) } answers {}
         every { safeStyle.addLayer(capture(capturedLayer)) } answers {}
 
-        verify {
-            // ensure that the previous icon (from the in-between scenario) has been
-            // deleted from the layer to free allocated memory
-            safeStyle.removeStyleImage(previousMarkerIconId!!)
-            // ensure that the previous icon has once been added to the layer
-            safeStyle.addImage(
-                previousMarkerIconId,
-                convertDrawableToBitmapMock,
-                data.icon === null // ensure SDF coloring is only enabled for the default icon
-            )
-            // ensure that the new icon has been added to the layer
-            safeStyle.addImage(
-                omhMarker.lastMarkerIconID!!,
-                convertDrawableToBitmapMock,
-                false // ensure SDF coloring is only enabled for the default icon
-            )
+        if (previousMarkerIconId != null) {
+            verify {
+                // ensure that the previous icon (from the in-between scenario) has been
+                // deleted from the layer to free allocated memory
+                safeStyle.removeStyleImage(previousMarkerIconId)
+                // ensure that the previous icon has once been added to the layer
+                safeStyle.addImage(
+                    previousMarkerIconId,
+                    convertDrawableToBitmapMock,
+                    data.icon === null // ensure SDF coloring is only enabled for the default icon
+                )
+            }
+        }
+
+        omhMarker.lastMarkerIconID?.let {
+            verify {
+                // ensure that the new icon has been added to the layer
+                safeStyle.addImage(
+                    it,
+                    convertDrawableToBitmapMock,
+                    false // ensure SDF coloring is only enabled for the default icon
+                )
+            }
         }
     }
 
@@ -499,7 +506,7 @@ internal class OmhMarkerExtensionsTest(
 
         // here we check if IW properties are valid & set properly on the layer after map style is loaded
         verify {
-            infoWindowLayer.iconImage(omhMarker.omhInfoWindow.lastInfoWindowIconID!!)
+            omhMarker.omhInfoWindow.lastInfoWindowIconID?.let { infoWindowLayer.iconImage(it) }
             infoWindowLayer.iconSize(1.0)
             infoWindowLayer.iconImage(any<String>())
             infoWindowLayer.iconAnchor(IconAnchor.CENTER)
