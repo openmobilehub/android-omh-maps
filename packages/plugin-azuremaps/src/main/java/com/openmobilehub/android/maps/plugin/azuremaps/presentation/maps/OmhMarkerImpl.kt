@@ -326,7 +326,7 @@ internal class OmhMarkerImpl(
         val markerImageID = getMarkerIconID(icon != null)
 
         // ensure the other custom icon is removed for memory optimization (if present)
-        if (lastMarkerIconID != null) mapViewDelegate.removeImage(lastMarkerIconID!!)
+        lastMarkerIconID?.let { mapViewDelegate.removeImage(it) }
 
         val bitmap = DrawableConverter.convertDrawableToBitmap(icon ?: getDefaultIcon())
 

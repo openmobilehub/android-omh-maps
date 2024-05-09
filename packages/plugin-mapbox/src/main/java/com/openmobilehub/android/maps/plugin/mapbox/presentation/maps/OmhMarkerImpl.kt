@@ -408,7 +408,7 @@ internal class OmhMarkerImpl(
         val markerImageID = getMarkerIconID(icon != null)
 
         // ensure the old icon is removed for memory optimization
-        if (lastMarkerIconID != null) style.removeStyleImage(lastMarkerIconID!!)
+        lastMarkerIconID?.let { style.removeStyleImage(it) }
 
         val bitmap = DrawableConverter.convertDrawableToBitmap(icon ?: getDefaultIcon())
 
@@ -448,8 +448,8 @@ internal class OmhMarkerImpl(
                 throw IllegalStateException("Failed to remove GeoJsonSource from map: $error")
             }
 
-            if (lastMarkerIconID != null) {
-                val removeImageResult = style.removeStyleImage(lastMarkerIconID!!)
+            lastMarkerIconID?.let {
+                val removeImageResult = style.removeStyleImage(it)
                 removeImageResult.error?.let { error ->
                     throw IllegalStateException("Failed to remove image from map: $error")
                 }
