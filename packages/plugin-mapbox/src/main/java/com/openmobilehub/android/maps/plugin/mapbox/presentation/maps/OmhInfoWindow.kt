@@ -229,7 +229,7 @@ internal class OmhInfoWindow(
     }
 
     @SuppressWarnings("MagicNumber")
-    private fun invalidateInfoWindow() {
+    fun invalidateInfoWindow() {
         if (!this::style.isInitialized) return
 
         backgroundThreadExecutor.execute {

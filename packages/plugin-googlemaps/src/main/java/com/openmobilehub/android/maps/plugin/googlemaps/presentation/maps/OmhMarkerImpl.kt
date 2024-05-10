@@ -170,7 +170,7 @@ internal class OmhMarkerImpl(
         return marker.isInfoWindowShown
     }
 
-    private fun invalidateInfoWindow() {
+    override fun invalidateInfoWindow() {
         if (marker.isInfoWindowShown) {
             marker.showInfoWindow() // open or close-and-reopen to apply the new contents
         }
