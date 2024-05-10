@@ -135,11 +135,8 @@ open class MapInfoWindowsFragment : Fragment(), OmhOnMapReadyCallback {
     private fun maybeReRenderMarkerWindowIfShown(marker: OmhMarker) {
         // if the marker has been dragged & re-rendering is enabled,
         // re-open the info window to have the coordinates description refreshed
-        if (
-            (demoShouldReRenderInfoWindowOnDraggingCheckbox?.isChecked != false)
-            && marker.getIsInfoWindowShown()
-        ) {
-            marker.showInfoWindow()
+        if (demoShouldReRenderInfoWindowOnDraggingCheckbox?.isChecked != false) {
+            marker.invalidateInfoWindow()
         }
     }
 
