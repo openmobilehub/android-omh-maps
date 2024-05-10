@@ -27,6 +27,7 @@ class MyLocationControl(context: Context) :
     androidx.appcompat.widget.AppCompatImageButton(context) {
 
     init {
+        contentDescription = context.getString(R.string.button_center_my_location)
         setImageResource(R.drawable.recenter_camera_icon)
         setBackgroundColor(Color.WHITE)
 
@@ -44,6 +45,7 @@ class MyLocationControl(context: Context) :
 
         this.layoutParams = layoutParams
     }
+
     companion object {
         const val BUTTON_SIZE = 44.0f
         const val BUTTON_TOP_MARGIN = 2.0f
