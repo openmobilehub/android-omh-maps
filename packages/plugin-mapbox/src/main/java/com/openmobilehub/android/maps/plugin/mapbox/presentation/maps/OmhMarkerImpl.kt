@@ -373,7 +373,9 @@ internal class OmhMarkerImpl(
     }
 
     override fun invalidateInfoWindow() {
-        omhInfoWindow.invalidateInfoWindow()
+        if (getIsInfoWindowShown()) {
+            omhInfoWindow.invalidateInfoWindow()
+        }
     }
 
     private fun getMarkerIconID(bForCustomIcon: Boolean): String {
