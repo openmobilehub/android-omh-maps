@@ -147,7 +147,7 @@ internal class OmhInfoWindow(
     }
 
     @SuppressWarnings("MagicNumber")
-    private fun invalidateInfoWindow() {
+    fun invalidateInfoWindow() {
         windowView = if (customInfoWindowViewFactory != null) {
             customInfoWindowViewFactory!!.createInfoWindowView(omhMarker)
         } else {

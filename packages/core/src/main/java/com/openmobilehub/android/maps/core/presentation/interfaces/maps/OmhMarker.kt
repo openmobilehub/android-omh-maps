@@ -224,6 +224,11 @@ interface OmhMarker {
     fun getIsInfoWindowShown(): Boolean
 
     /**
+     * Invalidates the info window associated with this marker, causing the re-render of the info window.
+     */
+    fun invalidateInfoWindow()
+
+    /**
      * Removes the marker from the map.
      */
     fun remove()

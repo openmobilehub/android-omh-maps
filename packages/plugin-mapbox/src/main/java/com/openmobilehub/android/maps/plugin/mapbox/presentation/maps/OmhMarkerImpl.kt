@@ -372,6 +372,12 @@ internal class OmhMarkerImpl(
         return omhInfoWindow.getIsInfoWindowShown()
     }
 
+    override fun invalidateInfoWindow() {
+        if (getIsInfoWindowShown()) {
+            omhInfoWindow.invalidateInfoWindow()
+        }
+    }
+
     private fun getMarkerIconID(bForCustomIcon: Boolean): String {
         val suffix = if (bForCustomIcon) {
             // a new UUID each time is required for Mapbox to rerender the icon
