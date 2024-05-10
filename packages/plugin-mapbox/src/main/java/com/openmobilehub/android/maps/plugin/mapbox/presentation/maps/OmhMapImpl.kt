@@ -63,6 +63,7 @@ import com.openmobilehub.android.maps.core.presentation.models.OmhPolylineOption
 import com.openmobilehub.android.maps.core.utils.ScreenUnitConverter
 import com.openmobilehub.android.maps.core.utils.cartesian.BoundingBox2D
 import com.openmobilehub.android.maps.core.utils.logging.Logger
+import com.openmobilehub.android.maps.plugin.mapbox.R
 import com.openmobilehub.android.maps.plugin.mapbox.extensions.toPoint2D
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IMapDragManagerDelegate
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IOmhInfoWindowMapViewDelegate
@@ -456,6 +457,8 @@ class OmhMapImpl(
         mapView.compass.position = Gravity.TOP or Gravity.START
 
         mapView.scalebar.enabled = false
+
+        myLocationIcon.contentDescription = context.getString(R.string.button_center_my_location)
     }
 
     private fun updateMyLocationIconClickListener() {
