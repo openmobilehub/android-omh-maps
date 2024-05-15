@@ -184,7 +184,7 @@ Comments for partially supported 🟨 properties:
 | setVisible   |     ✅     |
 | remove       |     ✅     |
 
-| Property | Comments                                                                |
+| Property | Comments                                                                |     |
 | -------- | ----------------------------------------------------------------------- | --- |
 | setCap   | It applies not only to start and end cap, but to polyline joins as well |     |
 

@@ -42,7 +42,7 @@ This plugin provides support for Mapbox by utilizing the [Mapbox Android SDK](ht
 
 | Method                                  | Supported? |
 | --------------------------------------- | :--------: |
-| addMarker                               |     ?      |
+| addMarker                               |     ✅     |
 | addPolyline                             |     ✅     |
 | addPolygon                              |     ✅     |
 | getCameraPositionCoordinate             |     ✅     |
