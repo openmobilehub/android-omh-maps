@@ -68,7 +68,7 @@ internal object Constants {
      * Large limits prevents converting line joins to bevel joins for sharp angles.
      *  It's required to have parity with Google Maps
      */
-    const val LINE_JOIN_MITER_LIMIT = 700.0
+    const val LINE_JOIN_MITER_LIMIT = 4.0
     const val LINE_JOINT_ROUND_LIMIT = 0.0
 
     // Map Elements
