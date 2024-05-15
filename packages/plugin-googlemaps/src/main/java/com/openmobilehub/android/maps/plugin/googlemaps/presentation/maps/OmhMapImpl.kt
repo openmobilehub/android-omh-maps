@@ -66,7 +66,7 @@ import com.openmobilehub.android.maps.plugin.googlemaps.utils.markerLogger
 
 @SuppressWarnings("TooManyFunctions")
 class OmhMapImpl(
-    val googleMap: GoogleMap,
+    override val mapView: GoogleMap,
     private val context: Context,
     private val logger: Logger = commonLogger,
     private val markerUnsupportedFeatureLogger: UnsupportedFeatureLogger = markerLogger
@@ -88,7 +88,7 @@ class OmhMapImpl(
 
     init {
         // hook up the custom info window adapter
-        googleMap.setInfoWindowAdapter(object : InfoWindowAdapter {
+        mapView.setInfoWindowAdapter(object : InfoWindowAdapter {
             override fun getInfoContents(marker: Marker): View? {
                 val omhMarker = markers[marker] ?: return null
 
@@ -107,7 +107,7 @@ class OmhMapImpl(
 
     override fun addMarker(options: OmhMarkerOptions): OmhMarker? {
         val googleOptions = options.toMarkerOptions()
-        val marker: Marker? = googleMap.addMarker(googleOptions)
+        val marker: Marker? = mapView.addMarker(googleOptions)
         val initiallyClickable = options.clickable
 
         return marker?.let {
@@ -120,7 +120,7 @@ class OmhMapImpl(
 
     override fun addPolyline(options: OmhPolylineOptions): OmhPolyline {
         val googleOptions = options.toPolylineOptions()
-        val polyline = googleMap.addPolyline(googleOptions)
+        val polyline = mapView.addPolyline(googleOptions)
         val omhPolyline = OmhPolylineImpl(polyline, this)
 
         _polylines[polyline] = omhPolyline
@@ -130,7 +130,7 @@ class OmhMapImpl(
 
     override fun addPolygon(options: OmhPolygonOptions): OmhPolygon {
         val googleOptions = options.toPolygonOptions()
-        val polygon = googleMap.addPolygon(googleOptions)
+        val polygon = mapView.addPolygon(googleOptions)
         val omhPolygon = OmhPolygonImpl(polygon, this)
 
         _polygons[polygon] = omhPolygon
@@ -139,55 +139,55 @@ class OmhMapImpl(
     }
 
     override fun getCameraPositionCoordinate(): OmhCoordinate {
-        val position: LatLng = googleMap.cameraPosition.target
+        val position: LatLng = mapView.cameraPosition.target
         return CoordinateConverter.convertToOmhCoordinate(position)
     }
 
     override fun setZoomGesturesEnabled(enableZoomGestures: Boolean) {
-        googleMap.uiSettings.isZoomGesturesEnabled = enableZoomGestures
+        mapView.uiSettings.isZoomGesturesEnabled = enableZoomGestures
     }
 
     override fun setRotateGesturesEnabled(enableRotateGestures: Boolean) {
-        googleMap.uiSettings.isRotateGesturesEnabled = enableRotateGestures
+        mapView.uiSettings.isRotateGesturesEnabled = enableRotateGestures
     }
 
     @RequiresPermission(anyOf = [ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION])
     override fun setMyLocationEnabled(enable: Boolean) {
-        googleMap.isMyLocationEnabled = enable
+        mapView.isMyLocationEnabled = enable
     }
 
     override fun isMyLocationEnabled(): Boolean {
-        return googleMap.isMyLocationEnabled
+        return mapView.isMyLocationEnabled
     }
 
     override fun setMyLocationButtonClickListener(
         omhOnMyLocationButtonClickListener: OmhOnMyLocationButtonClickListener
     ) {
-        googleMap.setOnMyLocationButtonClickListener {
+        mapView.setOnMyLocationButtonClickListener {
             omhOnMyLocationButtonClickListener.onMyLocationButtonClick()
         }
     }
 
     override fun setOnCameraMoveStartedListener(listener: OmhOnCameraMoveStartedListener) {
-        googleMap.setOnCameraMoveStartedListener {
+        mapView.setOnCameraMoveStartedListener {
             listener.onCameraMoveStarted(it)
         }
     }
 
     override fun setOnCameraIdleListener(listener: OmhOnCameraIdleListener) {
-        googleMap.setOnCameraIdleListener {
+        mapView.setOnCameraIdleListener {
             listener.onCameraIdle()
         }
     }
 
     override fun setOnMapLoadedCallback(callback: OmhMapLoadedCallback?) {
-        googleMap.setOnMapLoadedCallback {
+        mapView.setOnMapLoadedCallback {
             callback?.onMapLoaded()
         }
     }
 
     override fun setOnMarkerClickListener(listener: OmhOnMarkerClickListener) {
-        this.googleMap.setOnMarkerClickListener ClickHandler@{ marker ->
+        this.mapView.setOnMarkerClickListener ClickHandler@{ marker ->
             val omhMarker = markers[marker]
 
             if (omhMarker != null) {
@@ -201,7 +201,7 @@ class OmhMapImpl(
     }
 
     override fun setOnMarkerDragListener(listener: OmhOnMarkerDragListener) {
-        this.googleMap.setOnMarkerDragListener(object : GoogleMap.OnMarkerDragListener {
+        this.mapView.setOnMarkerDragListener(object : GoogleMap.OnMarkerDragListener {
             override fun onMarkerDrag(marker: Marker) {
                 markers[marker]?.let { omhMarker ->
                     listener.onMarkerDrag(omhMarker)
@@ -228,7 +228,7 @@ class OmhMapImpl(
             "only the onInfoWindowClose event is supported"
         )
 
-        googleMap.setOnInfoWindowCloseListener {
+        mapView.setOnInfoWindowCloseListener {
             markers[it]?.let { omhMarker ->
                 listener.onInfoWindowClose(omhMarker)
             }
@@ -236,7 +236,7 @@ class OmhMapImpl(
     }
 
     override fun setOnInfoWindowClickListener(listener: OmhOnInfoWindowClickListener) {
-        googleMap.setOnInfoWindowClickListener {
+        mapView.setOnInfoWindowClickListener {
             markers[it]?.let { omhMarker ->
                 listener.onInfoWindowClick(omhMarker)
             }
@@ -244,7 +244,7 @@ class OmhMapImpl(
     }
 
     override fun setOnInfoWindowLongClickListener(listener: OmhOnInfoWindowLongClickListener) {
-        googleMap.setOnInfoWindowLongClickListener {
+        mapView.setOnInfoWindowLongClickListener {
             markers[it]?.let { omhMarker ->
                 listener.onInfoWindowLongClick(omhMarker)
             }
@@ -252,7 +252,7 @@ class OmhMapImpl(
     }
 
     override fun setOnPolylineClickListener(listener: OmhOnPolylineClickListener) {
-        googleMap.setOnPolylineClickListener {
+        mapView.setOnPolylineClickListener {
             val omhPolyline = _polylines[it]
             if (omhPolyline != null) {
                 listener.onPolylineClick(omhPolyline)
@@ -261,7 +261,7 @@ class OmhMapImpl(
     }
 
     override fun setOnPolygonClickListener(listener: OmhOnPolygonClickListener) {
-        googleMap.setOnPolygonClickListener {
+        mapView.setOnPolygonClickListener {
             val omhPolygon = _polygons[it]
             if (omhPolygon != null) {
                 listener.onPolygonClick(omhPolygon)
@@ -270,14 +270,14 @@ class OmhMapImpl(
     }
 
     override fun snapshot(omhSnapshotReadyCallback: OmhSnapshotReadyCallback) {
-        googleMap.snapshot { bitmap: Bitmap? ->
+        mapView.snapshot { bitmap: Bitmap? ->
             omhSnapshotReadyCallback.onSnapshotReady(bitmap)
         }
     }
 
     override fun setMapStyle(json: Int?) {
         if (json == null) {
-            googleMap.setMapStyle(null)
+            mapView.setMapStyle(null)
             return
         }
 
@@ -286,7 +286,7 @@ class OmhMapImpl(
 
     override fun setMapStyle(jsonString: String?) {
         if (jsonString == null) {
-            googleMap.setMapStyle(null)
+            mapView.setMapStyle(null)
             return
         }
 
@@ -295,7 +295,7 @@ class OmhMapImpl(
 
     private fun applyMapStyle(mapStyleOptions: MapStyleOptions) {
         val isStyleApplied =
-            googleMap.setMapStyle(mapStyleOptions)
+            mapView.setMapStyle(mapStyleOptions)
         if (!isStyleApplied) {
             logger.logWarning("Failed to apply custom map style. Check logs from Google Maps SDK.")
         }
@@ -322,7 +322,7 @@ class OmhMapImpl(
 
     override fun moveCamera(coordinate: OmhCoordinate, zoomLevel: Float) {
         val latLng: LatLng = CoordinateConverter.convertToLatLng(coordinate)
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoomLevel))
+        mapView.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoomLevel))
     }
 
     override fun setScaleFactor(scaleFactor: Float) {

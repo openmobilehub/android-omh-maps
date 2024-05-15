@@ -79,7 +79,7 @@ import com.openmobilehub.android.maps.plugin.mapbox.utils.commonLogger
 
 @SuppressWarnings("TooManyFunctions", "LongParameterList")
 class OmhMapImpl(
-    val mapView: MapView,
+    override val mapView: MapView,
     private val context: Context,
     private val myLocationIcon: ImageView = MyLocationIcon(context),
     private var scaleFactor: Float = 1.0f,

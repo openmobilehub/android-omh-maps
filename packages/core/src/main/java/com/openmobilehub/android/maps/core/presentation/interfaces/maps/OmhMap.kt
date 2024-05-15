@@ -39,6 +39,12 @@ interface OmhMap {
     val providerName: String
 
     /**
+     * The provider view that displays the map.
+     * This is a read-only property.
+     */
+    val mapView: Any
+
+    /**
      * Adds a marker to this map. The marker's icon is rendered on the map at the position.
      *
      * @param options a marker options object that defines how to render the marker.

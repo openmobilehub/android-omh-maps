@@ -64,7 +64,7 @@ import com.openmobilehub.android.maps.plugin.azuremaps.utils.mapLogger
 internal class OmhMapImpl(
     private val context: Context,
     private val mapControl: MapControl,
-    val mapView: AzureMap,
+    override val mapView: AzureMap,
     private val cameraManager: CameraManager = CameraManager(mapView),
     private val myLocationManager: MyLocationManager = MyLocationManager(
         context,
