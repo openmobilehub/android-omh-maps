@@ -26,6 +26,7 @@ import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhPatte
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhPolyline
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhStyleSpan
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
+import com.openmobilehub.android.maps.core.presentation.models.OmhGap
 import com.openmobilehub.android.maps.core.presentation.models.OmhJointType
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolylineOptions
 import com.openmobilehub.android.maps.core.presentation.models.OmhRoundCap
@@ -74,6 +75,7 @@ internal class OmhPolylineImpl(
         set(value) {
             field = value
             applyCap()
+            applyPattern()
         }
 
     private var _jointType: Int = OmhJointType.ROUND
@@ -85,7 +87,7 @@ internal class OmhPolylineImpl(
     private var _pattern: List<OmhPatternItem>? = null
         set(value) {
             field = value
-            applyPatter()
+            applyPattern()
         }
 
     init {
@@ -194,7 +196,7 @@ internal class OmhPolylineImpl(
     fun setScaleFactor(scaleFactor: Float) {
         this.scaleFactor = scaleFactor
         applyWidth()
-        applyPatter()
+        applyPattern()
     }
 
     private fun applyIsVisible() {
@@ -227,11 +229,18 @@ internal class OmhPolylineImpl(
         )
     }
 
-    private fun applyPatter() {
+    private fun applyPattern() {
+        val multiplier = if (_cap is OmhRoundCap) Math.PI.toFloat() else 1.0f
         _pattern?.let { pattern ->
+            val modifiedPattern = if (_cap is OmhRoundCap) {
+                pattern.map { if (it is OmhGap) OmhGap(it.length * multiplier) else it }
+            } else {
+                pattern
+            }
             lineLayer.setOptions(
                 LineLayerOptions.strokeDashArray(
-                    PatternConverter.convertToAzureMapsPattern(pattern, logger).map { it / _width * scaleFactor }
+                    PatternConverter.convertToAzureMapsPattern(modifiedPattern, logger)
+                        .map { it / _width * scaleFactor }
                         .toTypedArray()
                 )
             )
