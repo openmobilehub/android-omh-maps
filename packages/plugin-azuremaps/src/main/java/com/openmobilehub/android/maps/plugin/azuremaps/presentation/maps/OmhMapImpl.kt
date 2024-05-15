@@ -61,7 +61,7 @@ import com.openmobilehub.android.maps.plugin.azuremaps.utils.Constants
 import com.openmobilehub.android.maps.plugin.azuremaps.utils.mapLogger
 
 @SuppressWarnings("TooManyFunctions", "UnusedPrivateMember", "LongParameterList")
-internal class OmhMapImpl(
+class OmhMapImpl(
     private val context: Context,
     private val mapControl: MapControl,
     override val mapView: AzureMap,
