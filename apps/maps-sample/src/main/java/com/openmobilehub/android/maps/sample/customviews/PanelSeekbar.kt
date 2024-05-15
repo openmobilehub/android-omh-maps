@@ -15,7 +15,7 @@ class PanelSeekbar @JvmOverloads constructor(
 
     private var titleTextView: TextView
     private var customSeekBar: SeekBar
-    private var minValue :Int = 0
+    private var minValue : Int = 0
 
     init {
         orientation = HORIZONTAL
