@@ -78,7 +78,7 @@ import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 
 @SuppressWarnings("TooManyFunctions")
 class OmhMapImpl(
-    val mapView: MapView,
+    override val mapView: MapView,
     private val omhMapView: CenterMapViewDelegate,
     private val logger: UnsupportedFeatureLogger = mapLogger
 ) : OmhMap, IMarkerDelegate, IPolylineDelegate, IPolygonDelegate {
