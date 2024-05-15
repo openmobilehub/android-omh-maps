@@ -13,8 +13,9 @@ class PanelSeekbar @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : LinearLayout(context, attrs, defStyleAttr) {
 
-    var titleTextView: TextView
-    var customSeekBar: SeekBar
+    private var titleTextView: TextView
+    private var customSeekBar: SeekBar
+    private var minValue : Int = 0
 
     init {
         orientation = HORIZONTAL
@@ -35,8 +36,10 @@ class PanelSeekbar @JvmOverloads constructor(
                 val title = getString(R.styleable.PanelSeekbar_titleText)
                 title?.let { titleTextView.text = it }
 
+                minValue = getInteger(R.styleable.PanelSeekbar_minValue, 0)
+
                 val max = getInteger(R.styleable.PanelSeekbar_maxValue, 0)
-                customSeekBar.max = max
+                customSeekBar.max = max - minValue
             } finally {
                 recycle()
             }
@@ -44,13 +47,13 @@ class PanelSeekbar @JvmOverloads constructor(
     }
 
     fun setProgress(value: Int) {
-        customSeekBar.progress = value
+        customSeekBar.progress = value - minValue
     }
 
     fun setOnProgressChangedCallback(callback: (progress: Int) -> Unit) {
         customSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                callback(progress)
+                callback(progress + minValue)
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {
