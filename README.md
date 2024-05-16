@@ -19,7 +19,7 @@ OMH Maps Client Library is an Android SDK that simplifies the integration of map
 
 ### A single codebase, running seamlessly on any device
 
-For instance, the following screenshots showcase multiple devices with Android, both with GMS and Non-GMS. The same app works without changing a single line of code, supporting multiple map provider implementations (Google Maps and OpenStreetMap).
+For instance, the following screenshots showcase multiple devices with Android, both with GMS and Non-GMS. The same app works without changing a single line of code, supporting multiple map provider implementations (Google Maps , Mapbox, OpenStreetMap, Azure Maps).
 
 <div align="center">
 
@@ -56,6 +56,13 @@ For instance, the following screenshots showcase multiple devices with Android, 
 
 This section describes how to setup and use the OMH Maps SDK.
 
+There are two possibilities to add and configure the OMH Maps SDK into your project. 
+
+We highly encourage you to use our plugin, which offers automatic creation of the separate build variants for GMS and Non-GMS builds, adds needed dependencies and generates BuildConfig fields for you.
+[To learn more click here](https://www.openmobilehub.com/android-omh-maps/advanced-docs/core/SETUP_WITH_OMH_CORE_PLUGIN/)
+
+Below you will find the basic quick start guide 
+
 **Note: To quickly run a full-featured app with all OMH Maps functionality, refer to the [`Sample App`](#sample-app) section and follow the provided steps.**
 
 ### Download
@@ -64,23 +71,17 @@ OMH Maps Client Library is available on `mavenCentral()`
 
 Add the plugins you want to use:
 
-Azure Maps
 ```kotlin
+//Azure Maps
 implementation("com.openmobilehub.android.maps:plugin-azuremaps:2.0.0")
-```
 
-Google Maps
-```kotlin
+//Google Maps
 implementation("com.openmobilehub.android.maps:plugin-googlemaps:2.0.0")
-```
 
-Mapbox
-```kotlin
+//Mapbox
 implementation("com.openmobilehub.android.maps:plugin-mapbox:2.0.0")
-```
 
-Open Street Map
-```kotlin
+//Open Street Map
 implementation("com.openmobilehub.android.maps:plugin-openstreetmap:2.0.0")
 ```
 
@@ -101,9 +102,7 @@ In your Application class configure initial plugin paths:
         }
     }
 ```
-You can find more detailed info here:
-- [Setup with omh-core plugin](https://www.openmobilehub.com/android-omh-maps/advanced-docs/core/SETUP_WITH_OMH_CORE_PLUGIN/)
-- [Setup without omh-core plugin](https://www.openmobilehub.com/android-omh-maps/advanced-docs/core/SETUP_WITHOUT_OMH_CORE_PLUGIN/)
+You can find more detailed info [here](https://www.openmobilehub.com/android-omh-maps/advanced-docs/core/SETUP_WITHOUT_OMH_CORE_PLUGIN/):
 
 ### Provider specific setup
 
