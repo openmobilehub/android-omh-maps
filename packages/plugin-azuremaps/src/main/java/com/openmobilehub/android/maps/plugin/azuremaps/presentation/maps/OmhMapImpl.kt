@@ -64,26 +64,29 @@ import com.openmobilehub.android.maps.plugin.azuremaps.utils.mapLogger
 class OmhMapImpl(
     private val context: Context,
     private val mapControl: MapControl,
-    override val mapView: AzureMap,
-    private val cameraManager: CameraManager = CameraManager(mapView),
+    private val azureMap: AzureMap,
+    private val cameraManager: CameraManager = CameraManager(azureMap),
     private val myLocationManager: MyLocationManager = MyLocationManager(
         context,
         mapControl,
-        mapView
+        azureMap
     ),
     private val logger: UnsupportedFeatureLogger = mapLogger,
     bRunningInTest: Boolean = false
 ) : OmhMap {
 
+    override val mapView: Any
+        get() = Pair(mapControl, azureMap)
+
     private val azureMapInterface = object : AzureMapInterface {
         override val sources: SourceManager
-            get() = mapView.sources
+            get() = azureMap.sources
         override val layers: LayerManager
-            get() = mapView.layers
+            get() = azureMap.layers
         override val images: ImageManager
-            get() = mapView.images
+            get() = azureMap.images
         override val popups: PopupManager
-            get() = mapView.popups
+            get() = azureMap.popups
     }
     private val mapMarkerManager = MapMarkerManager(context, azureMapInterface)
 
@@ -110,7 +113,7 @@ class OmhMapImpl(
     }
 
     private fun setupTouchInteractionListeners() {
-        mapView.events.add(object : OnFeatureClick {
+        azureMap.events.add(object : OnFeatureClick {
             override fun onFeatureClick(features: MutableList<Feature>?): Boolean {
                 for (feature in features ?: listOf()) {
                     if (featureHandleClick(feature)) {
