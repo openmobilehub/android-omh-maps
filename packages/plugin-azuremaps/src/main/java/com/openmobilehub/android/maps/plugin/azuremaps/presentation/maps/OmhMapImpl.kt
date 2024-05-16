@@ -57,6 +57,7 @@ import com.openmobilehub.android.maps.plugin.azuremaps.presentation.maps.manager
 import com.openmobilehub.android.maps.plugin.azuremaps.presentation.maps.managers.MyLocationManager
 import com.openmobilehub.android.maps.plugin.azuremaps.presentation.maps.managers.PolygonManager
 import com.openmobilehub.android.maps.plugin.azuremaps.presentation.maps.managers.PolylineManager
+import com.openmobilehub.android.maps.plugin.azuremaps.presentation.model.OmhMapView
 import com.openmobilehub.android.maps.plugin.azuremaps.utils.Constants
 import com.openmobilehub.android.maps.plugin.azuremaps.utils.mapLogger
 
@@ -75,8 +76,8 @@ class OmhMapImpl(
     bRunningInTest: Boolean = false
 ) : OmhMap {
 
-    override val mapView: Any
-        get() = Pair(mapControl, azureMap)
+    override val mapView: OmhMapView
+        get() = OmhMapView(azureMap, mapControl)
 
     private val azureMapInterface = object : AzureMapInterface {
         override val sources: SourceManager
