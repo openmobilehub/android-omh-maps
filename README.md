@@ -102,7 +102,7 @@ In your Application class configure initial plugin paths:
         }
     }
 ```
-You can find more detailed info [here](https://www.openmobilehub.com/android-omh-maps/advanced-docs/core/SETUP_WITHOUT_OMH_CORE_PLUGIN/):
+You can find more detailed info [here](https://www.openmobilehub.com/android-omh-maps/advanced-docs/core/SETUP_WITHOUT_OMH_CORE_PLUGIN/)
 
 ### Provider specific setup
 
