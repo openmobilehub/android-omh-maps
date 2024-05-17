@@ -183,7 +183,11 @@ class MapPolylinesFragment : Fragment(), OmhOnMapReadyCallback {
     }
 
     private fun mapSpinnerPositionToOmhCap(position: Int): OmhCap? {
-        val refWidth = 75f
+        val bitmapSize = 75f
+        val density = requireContext().resources.displayMetrics.density
+
+        // We want to match the size of the custom cap with the polyline width.
+        val refWidth = bitmapSize * density
 
         return when (position) {
             0 -> OmhButtCap()
