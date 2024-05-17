@@ -7,8 +7,18 @@ has_children: false
 # Gradle Setup with OMH Core Gradle Plugin
 
 To incorporate OMH Maps into your project, you have two options: utilize the OMH Core Gradle Plugin or directly include the OMH Client libraries dependencies. The subsequent instructions will outline the necessary steps for including the OMH Core Gradle Plugin.
+1. In main `build.gradle` add following code
 
-1. In your app's module-level `build.gradle`under the `plugins` element add the plugin id.
+```kotlin
+buildscript{
+    dependencies{
+        ...
+        classpath("com.openmobilehub.android:omh-core:2.0.0")
+    }
+}
+```
+
+2. In your app's module-level `build.gradle`under the `plugins` element add the plugin id.
 
    ```kotlin
    plugins {
@@ -16,8 +26,8 @@ To incorporate OMH Maps into your project, you have two options: utilize the OMH
       id("com.openmobilehub.android.omh-core")
    }
    ```
-
-2. Save the file and [sync Project with Gradle Files](https://developer.android.com/studio/build#sync-files).
+   
+3. Save the file and [sync Project with Gradle Files](https://developer.android.com/studio/build#sync-files).
 
 ## Configure the OMH Core plugin
 
@@ -25,7 +35,7 @@ In this sample app, we utilize the `OmhConfig` definition to expand the capabili
 
 ### Basic configuration
 
-1.  In your app's module-level `build.gradle` file add the following code at the end of the file.
+4. In your app's module-level `build.gradle` file add the following code at the end of the file.
 
 ```kotlin
 ...
@@ -33,28 +43,28 @@ dependencies {
    ...
 }
 
-OmhConfig {
+omhConfig {
    bundle("singleBuild") {
       maps {
          gmsService {
-            dependency = "com.openmobilehub.android.maps:plugin-googlemaps:1.0"
+            dependency = "com.openmobilehub.android.maps:plugin-googlemaps:2.0.0"
          }
          nonGmsService {
-            dependency = "com.openmobilehub.android.maps:plugin-openstreetmap:1.0"
+            dependency = "com.openmobilehub.android.maps:plugin-openstreetmap:2.0.0"
          }
       }
    }
    bundle("gms") {
       maps {
          gmsService {
-            dependency = "com.openmobilehub.android.maps:plugin-googlemaps:1.0"
+            dependency = "com.openmobilehub.android.maps:plugin-googlemaps:2.0.0"
          }
       }
    }
    bundle("nonGms") {
       maps {
          nonGmsService {
-            dependency = "com.openmobilehub.android.maps:plugin-openstreetmap:1.0"
+            dependency = "com.openmobilehub.android.maps:plugin-openstreetmap:2.0.0"
          }
       }
    }
@@ -70,7 +80,7 @@ In this step, you defined the OMH Core Plugin bundles to generate multiple build
 
 - Define the `Service`. In this example is maps.
 - Define the `ServiceDetails`. In this example are `gmsService` and `nonGmsService`.
-- Define the dependency and the path. In this example are `com.openmobilehub.android.maps:plugin-googlemaps:1.0"` and `com.openmobilehub.android.maps:plugin-openstreetmap:1.0`.
+- Define the dependency and the path. In this example are `com.openmobilehub.android.maps:plugin-googlemaps:2.0.0"` and `com.openmobilehub.android.maps:plugin-openstreetmap:2.0.0`.
 
   **Note: It's important to observe how a single build encompasses both GMS and Non-GMS configurations.**
 
@@ -78,7 +88,7 @@ In this step, you defined the OMH Core Plugin bundles to generate multiple build
 
 - Define the `Service`. In this example is maps.
 - Define the `ServiceDetails` . In this example is `gmsService`.
-- Define the dependency and the path. In this example is `com.openmobilehub.android.maps:plugin-googlemaps:1.0"`.
+- Define the dependency and the path. In this example is `com.openmobilehub.android.maps:plugin-googlemaps:2.0.0"`.
 
   **Note:** gms build covers only GMS (Google Mobile Services).
 
@@ -86,7 +96,7 @@ In this step, you defined the OMH Core Plugin bundles to generate multiple build
 
 - Define the `Service`. In this example is maps.
 - Define the `ServiceDetails` . In this example is `nonGmsService`.
-- Define the dependency and the path. In this example is `com.openmobilehub.android.maps:plugin-openstreetmap:1.0`.
+- Define the dependency and the path. In this example is `com.openmobilehub.android.maps:plugin-openstreetmap:2.0.0`.
 
   **Note:** nonGms build covers only Non-GMS configurations.
 

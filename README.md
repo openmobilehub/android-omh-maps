@@ -58,8 +58,8 @@ This section describes how to setup and use the OMH Maps SDK.
 
 There are two possibilities to add and configure the OMH Maps SDK into your project. 
 
-We highly encourage you to use our plugin, which offers automatic creation of the separate build variants for GMS and Non-GMS builds, adds needed dependencies and generates BuildConfig fields for you.
-[To learn more click here](https://www.openmobilehub.com/android-omh-maps/advanced-docs/core/SETUP_WITH_OMH_CORE_PLUGIN/)
+**_We highly encourage you to use our plugin, which offers automatic creation of the separate build variants for GMS and Non-GMS builds, adds needed dependencies and generates BuildConfig fields for you.
+[To learn more click here](https://www.openmobilehub.com/android-omh-maps/advanced-docs/core/SETUP_WITH_OMH_CORE_PLUGIN/)_**
 
 Below you will find the basic quick start guide 
 
