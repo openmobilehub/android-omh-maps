@@ -185,8 +185,8 @@ Comments for partially supported 🟨 properties:
 | remove       |     ✅     |
 
 | Property | Comments                                                                |
-| -------- | ----------------------------------------------------------------------- | --- |
-| setCap   | It applies not only to start and end cap, but to polyline joins as well |     |
+| -------- | ----------------------------------------------------------------------- |
+| setCap   | It applies not only to start and end cap, but to polyline joins as well |
 
 ### Polygon
 
