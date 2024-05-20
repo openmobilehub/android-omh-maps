@@ -19,7 +19,7 @@ OMH Maps Client Library is an Android SDK that simplifies the integration of map
 
 ### A single codebase, running seamlessly on any device
 
-For instance, the following screenshots showcase multiple devices with Android, both with GMS and Non-GMS. The same app works without changing a single line of code, supporting multiple map provider implementations (Google Maps and OpenStreetMap).
+For instance, the following screenshots showcase multiple devices with Android, both with GMS and Non-GMS. The same app works without changing a single line of code, supporting multiple map provider implementations (Google Maps , Mapbox, OpenStreetMap, Azure Maps).
 
 <div align="center">
 
@@ -54,22 +54,55 @@ For instance, the following screenshots showcase multiple devices with Android, 
 
 ## Getting Started
 
-This section describes how to setup an Android Studio project to use the OMH Maps SDK for Android. For greater ease, a base code will be used within the repository.
+This section describes how to setup and use the OMH Maps SDK.
+
+There are two possibilities to add and configure the OMH Maps SDK into your project. 
+
+**_We highly encourage you to use our plugin, which offers automatic creation of the separate build variants for GMS and Non-GMS builds, adds needed dependencies and generates BuildConfig fields for you.
+[To learn more click here](https://www.openmobilehub.com/android-omh-maps/advanced-docs/core/SETUP_WITH_OMH_CORE_PLUGIN/)_**
+
+Below you will find the basic quick start guide 
 
 **Note: To quickly run a full-featured app with all OMH Maps functionality, refer to the [`Sample App`](#sample-app) section and follow the provided steps.**
 
-### Set up the development environment
+### Download
 
-1. Android Studio is required. If you haven't already done so, [download](https://developer.android.com/studio/index.html) and [install](https://developer.android.com/studio/install.html?pkg=studio) it.
-2. Ensure that you are using the [Android Gradle plugin](https://developer.android.com/studio/releases/gradle-plugin) version 7.0 or later in Android Studio.
+OMH Maps Client Library is available on `mavenCentral()`
 
-### Clone the repository
+Add the plugins you want to use:
 
-To clone the repository and checkout the `starter-code` branch, use the following command in your Terminal:
+```kotlin
+//Azure Maps
+implementation("com.openmobilehub.android.maps:plugin-azuremaps:2.0.0")
 
+//Google Maps
+implementation("com.openmobilehub.android.maps:plugin-googlemaps:2.0.0")
+
+//Mapbox
+implementation("com.openmobilehub.android.maps:plugin-mapbox:2.0.0")
+
+//Open Street Map
+implementation("com.openmobilehub.android.maps:plugin-openstreetmap:2.0.0")
 ```
-git clone --branch starter-code https://github.com/openmobilehub/android-omh-maps.git
+
+### Initial configuration
+
+In your Application class configure initial plugin paths:
+
+```kotlin
+    class MainApplication : Application() {
+
+        override fun onCreate() {
+            super.onCreate()
+
+        OmhMapProvider.Initiator()
+            .addGmsPath("com.openmobilehub.android.maps.plugin.googlemaps.presentation.OmhMapFactoryImpl")
+            .addNonGmsPath("com.openmobilehub.android.maps.plugin.mapbox.presentation.OmhMapFactoryImpl")
+            .initialize()
+        }
+    }
 ```
+You can find more detailed info [here](https://www.openmobilehub.com/android-omh-maps/advanced-docs/core/SETUP_WITHOUT_OMH_CORE_PLUGIN/)
 
 ### Provider specific setup
 
@@ -92,47 +125,16 @@ Additionally a fragment `OmhMapFragment` is provided, this fragment manages the 
 `OmhMapFragment` is the simplest way to place a map in an application.
 Fragment has to declare `android:name` that sets the class name of the fragment to `OmhMapFragment`, which is the fragment type used in the maps fragment file.
 
-1. Insert the XML fragment snippet into the `fragment_map.xml`.
+Insert the XML fragment snippet into your layout xml file.
 
    ```xml
    ...
        <fragment
            android:id="@+id/fragment_map_container"
            android:name="com.openmobilehub.android.maps.core.presentation.fragments.OmhMapFragment"
-           android:layout_width="0dp"
-           android:layout_height="0dp"
-           app:layout_constraintBottom_toBottomOf="parent"
-           app:layout_constraintEnd_toEndOf="parent"
-           app:layout_constraintStart_toStartOf="parent"
-           app:layout_constraintTop_toTopOf="parent" />
+       />
    ...
    ```
-
-   And the complete fragment's layout should look similar to this example:
-
-   ```xml
-   <?xml version="1.0" encoding="utf-8"?>
-   <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-       xmlns:app="http://schemas.android.com/apk/res-auto"
-       xmlns:tools="http://schemas.android.com/tools"
-       android:layout_width="match_parent"
-       android:layout_height="match_parent"
-       tools:context=".MapFragment">
-
-   <fragment
-       android:id="@+id/fragment_map_container"
-       android:name="com.openmobilehub.android.maps.core.presentation.fragments.OmhMapFragment"
-       android:layout_width="0dp"
-       android:layout_height="0dp"
-       app:layout_constraintBottom_toBottomOf="parent"
-       app:layout_constraintEnd_toEndOf="parent"
-       app:layout_constraintStart_toStartOf="parent"
-       app:layout_constraintTop_toTopOf="parent" />
-
-   </androidx.constraintlayout.widget.ConstraintLayout>
-   ```
-
-2. Click `Run` for the app module.
 
 ## Sample App
 

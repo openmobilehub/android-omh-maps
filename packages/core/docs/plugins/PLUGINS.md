@@ -8,17 +8,17 @@ has_children: false
 
 The OMH Maps SDK offers developers the flexibility to create custom map implementations or plugins for any map provider. With built-in support for popular providers like Google Maps and OpenStreetMap, developers can easily integrate maps into their applications. Additionally, the OMH Maps community is actively working to expand support for more providers such as MapBox, TomTom, Azure Maps, and others. By leveraging the comprehensive interfaces and utilities provided by OMH Maps, developers can seamlessly integrate their preferred mapping services and customize their mapping experiences to suit their specific needs.
 
-1. in your app in the `OmhConfig` add the path of your library:
+1. in your app in the `omhConfig` add the path of your library:
 
 ```
-OmhConfig {
+omhConfig {
         bundle("singleBuild") {
             maps {
                 gmsService {
-                    dependency = "com.openmobilehub.android:plugin-googlemaps:1.0"
+                    dependency = "com.openmobilehub.android:plugin-googlemaps:2.0.0"
                 }
                 nonGmsService {
-                    dependency = "com.openmobilehub.android:plugin-openstreetmap:1.0"
+                    dependency = "com.openmobilehub.android:plugin-openstreetmap:2.0.0"
                     path = "your libraries path"
                 }
             }
@@ -26,7 +26,7 @@ OmhConfig {
 }
 ```
 
-2. In your library you need to add the references like: `implementation("com.openmobilehub.android.maps:core:1.0")`
+2. In your library you need to add the references like: `implementation("com.openmobilehub.android.maps:core:2.0.0")`
 
 3. Basically is implement all the interfaces from the `OmhMapApi`.
    This means to implement the `OmhMapFactory`, `OmhMap`, `OmhMapView`, `OmhMarker`, `OmhPolyline`, `OmhPolygon` and `OmhLocation` interfaces.
