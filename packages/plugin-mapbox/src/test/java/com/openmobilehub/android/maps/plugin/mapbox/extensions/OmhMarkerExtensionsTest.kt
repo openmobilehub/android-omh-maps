@@ -220,7 +220,6 @@ internal class OmhMarkerExtensionsTest(
             markerUUID,
             data
         )
-        var (markerSymbolLayer, infoWindowSymbolLayer) = layers
         var (markerGeoJsonSource, infoWindowGeoJsonSource) = sources
 
         fun verifyIconLoaderProcessing(icon: Drawable?, bMarkerBufferedMode: Boolean) {

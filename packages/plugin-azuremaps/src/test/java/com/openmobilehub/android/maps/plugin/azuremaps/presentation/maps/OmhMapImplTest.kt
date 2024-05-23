@@ -207,17 +207,4 @@ class OmhMapImplTest {
         // Assert
         verify { logger.logSetterNotSupported("mapStyle") }
     }
-
-    @Test
-    fun `setScaleFactor updates polylineManager and polygonManager scaleFactor`() {
-        // Arrange
-        val scaleFactor = 2.0f
-
-        // Act
-        omhMapImpl.setScaleFactor(scaleFactor)
-
-        // Assert
-        Assert.assertEquals(scaleFactor, omhMapImpl.polygonManager.scaleFactor)
-        Assert.assertEquals(scaleFactor, omhMapImpl.polylineManager.scaleFactor)
-    }
 }

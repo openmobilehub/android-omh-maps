@@ -29,7 +29,6 @@ class PolygonManagerTest {
     private val mapView = mockk<MapView>(relaxed = true)
     private val style = mockk<Style>(relaxed = true)
     private val uuidGenerator = mockk<UUIDGenerator>()
-    private val scaleFactor = 1.0f
 
     private lateinit var polygonManager: PolygonManager
 
@@ -40,7 +39,7 @@ class PolygonManagerTest {
 
         every { uuidGenerator.generate() } returns UUID.fromString(DEFAULT_UUID)
 
-        polygonManager = PolygonManager(mapView, scaleFactor, uuidGenerator)
+        polygonManager = PolygonManager(mapView, uuidGenerator)
     }
 
     @Test

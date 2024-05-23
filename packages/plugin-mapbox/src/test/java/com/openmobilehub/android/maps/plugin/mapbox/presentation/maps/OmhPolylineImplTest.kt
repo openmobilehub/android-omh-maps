@@ -15,6 +15,7 @@ import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhPatte
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhStyleSpan
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolylineOptions
+import com.openmobilehub.android.maps.core.utils.ScreenUnitConverter
 import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IPolylineDelegate
 import com.openmobilehub.android.maps.plugin.mapbox.utils.CapConverter
@@ -33,7 +34,6 @@ import org.junit.Test
 class OmhPolylineImplTest {
     private val source = mockk<GeoJsonSource>(relaxed = true)
     private val lineLayer = mockk<LineLayer>(relaxed = true)
-    private val scaleFactor = 3.0f
     private val polylineDelegate = mockk<IPolylineDelegate>(relaxed = true)
     private val logger: UnsupportedFeatureLogger =
         mockk<UnsupportedFeatureLogger>(relaxed = true)
@@ -55,13 +55,14 @@ class OmhPolylineImplTest {
         mockkObject(CapConverter)
         mockkObject(JoinTypeConverter)
 
+        mockkObject(ScreenUnitConverter)
+
         every { style.isStyleLoaded() } returns true
 
         omhPolyline = OmhPolylineImpl(
             source,
             lineLayer,
             initialOptions,
-            scaleFactor,
             polylineDelegate,
             logger
         )
@@ -208,8 +209,11 @@ class OmhPolylineImplTest {
         // Arrange
         omhPolyline.onStyleLoaded(style)
 
+        val density = 2.0f
+        every { ScreenUnitConverter.dpToPx(any<Float>()) } answers { firstArg<Float>() * density }
+
         val nativeWidth = 10.0
-        val expectedWidth = (nativeWidth * scaleFactor).toFloat()
+        val expectedWidth = (nativeWidth * density).toFloat()
         every { lineLayer.lineWidth } returns nativeWidth
 
         // Act
@@ -225,8 +229,11 @@ class OmhPolylineImplTest {
         // Arrange
         omhPolyline.onStyleLoaded(style)
 
+        val density = 2.0f
+        every { ScreenUnitConverter.pxToDp(any<Float>()) } answers { firstArg<Float>() / density }
+
         val width = 30.0f
-        val nativeWidth = (width / scaleFactor).toDouble()
+        val nativeWidth = (width / density).toDouble()
 
         // Act
         omhPolyline.setWidth(width)
@@ -619,9 +626,12 @@ class OmhPolylineImplTest {
         val lineCap = mockk<LineCap>()
         every { CapConverter.convertToLineCap(any<OmhCap>()) } returns lineCap
 
+        val density = 2.0f
+        every { ScreenUnitConverter.pxToDp(any<Float>()) } answers { firstArg<Float>() / density }
+
         val expectedStrokeColor = Color.RED
         val expectedStrokeWidth = 30f
-        val expectedNativeStrokeWidth = 10.0
+        val expectedNativeStrokeWidth = (expectedStrokeWidth / density).toDouble()
         val expectedVisibility = false
 
         // Act

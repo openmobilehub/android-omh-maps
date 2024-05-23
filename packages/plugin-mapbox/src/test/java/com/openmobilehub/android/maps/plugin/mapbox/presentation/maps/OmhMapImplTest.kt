@@ -238,7 +238,6 @@ class OmhMapImplTest {
                 map,
                 context,
                 myLocationIcon,
-                1.0f,
                 polylineManager,
                 polygonManager,
                 logger

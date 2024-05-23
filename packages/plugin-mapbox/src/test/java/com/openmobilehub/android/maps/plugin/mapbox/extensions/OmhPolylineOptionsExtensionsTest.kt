@@ -15,6 +15,7 @@ import com.openmobilehub.android.maps.core.presentation.models.OmhRoundCap
 import com.openmobilehub.android.maps.core.presentation.models.OmhSquareCap
 import com.openmobilehub.android.maps.core.presentation.models.OmhStyleSpanGradient
 import com.openmobilehub.android.maps.core.presentation.models.OmhStyleSpanMonochromatic
+import com.openmobilehub.android.maps.core.utils.ScreenUnitConverter
 import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
 import com.openmobilehub.android.maps.plugin.mapbox.utils.CapConverter
 import com.openmobilehub.android.maps.plugin.mapbox.utils.JoinTypeConverter
@@ -27,7 +28,6 @@ import org.junit.Test
 
 class OmhPolylineOptionsExtensionsTest {
     private val lineLayer = mockk<LineLayer>(relaxed = true)
-    private val scaleFactor = 1f
     private val logger = mockk<UnsupportedFeatureLogger>(relaxed = true)
 
     private val omhPolylineOptions = OmhPolylineOptions().apply {
@@ -62,6 +62,7 @@ class OmhPolylineOptionsExtensionsTest {
     fun setUp() {
         mockkObject(JoinTypeConverter)
         mockkObject(CapConverter)
+        mockkObject(ScreenUnitConverter)
     }
 
     @Test
@@ -73,12 +74,15 @@ class OmhPolylineOptionsExtensionsTest {
         val lineCap = mockk<LineCap>()
         every { CapConverter.convertToLineCap(any<OmhSquareCap>()) } returns lineCap
 
+        val density = 2.0f
+        every { ScreenUnitConverter.pxToDp(any<Float>()) } answers { firstArg<Float>() / density }
+
         // Act
-        omhPolylineOptions.applyPolylineOptions(lineLayer, scaleFactor, logger)
+        omhPolylineOptions.applyPolylineOptions(lineLayer, logger)
 
         // Assert
         verify { lineLayer.lineColor(Color.RED) }
-        verify { lineLayer.lineWidth(10.0) }
+        verify { lineLayer.lineWidth((omhPolylineOptions.width!! / density).toDouble()) }
         verify { lineLayer.lineJoin(lineJoin) }
         verify { lineLayer.visibility(Visibility.VISIBLE) }
         verify { lineLayer.lineCap(lineCap) }
