@@ -32,6 +32,7 @@ import com.openmobilehub.android.maps.core.utils.ScreenUnitConverter
 import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IPolylineDelegate
 import com.openmobilehub.android.maps.plugin.mapbox.utils.CapConverter
+import com.openmobilehub.android.maps.plugin.mapbox.utils.Constants
 import com.openmobilehub.android.maps.plugin.mapbox.utils.JoinTypeConverter
 import com.openmobilehub.android.maps.plugin.mapbox.utils.polylineLogger
 
@@ -55,7 +56,7 @@ internal class OmhPolylineImpl(
     private var bufferedColor: Int? = null
     private var bufferedJointType: Int? = null
     private var bufferedWidth: Float? = null
-    private var bufferedVisibility: Boolean = true
+    private var bufferedVisibility: Boolean? = null
 
     init {
         options.clickable?.let { clickable = it }
@@ -193,7 +194,7 @@ internal class OmhPolylineImpl(
         if (isStyleReady()) {
             return lineLayer.visibility === Visibility.VISIBLE
         }
-        return bufferedVisibility
+        return bufferedVisibility ?: Constants.DEFAULT_ELEMENTS_VISIBILITY
     }
 
     override fun setVisible(visible: Boolean) {
@@ -218,12 +219,13 @@ internal class OmhPolylineImpl(
         bufferedColor?.let { setColor(it) }
         bufferedJointType?.let { setJointType(it) }
         bufferedWidth?.let { setWidth(it) }
-        setVisible(bufferedVisibility)
+        bufferedVisibility?.let { setVisible(it) }
 
         bufferedCap = null
         bufferedColor = null
         bufferedJointType = null
         bufferedWidth = null
+        bufferedVisibility = null
     }
 
     private fun addSourceAndLayersToMap() {

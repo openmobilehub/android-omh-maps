@@ -71,6 +71,9 @@ internal object Constants {
     const val LINE_JOIN_MITER_LIMIT = 4.0
     const val LINE_JOINT_ROUND_LIMIT = 0.0
 
+    /** All elements are visible by default */
+    const val DEFAULT_ELEMENTS_VISIBILITY = true
+
     // Map Elements
     const val POLYLINE_LAYER_TYPE = "LineString"
 

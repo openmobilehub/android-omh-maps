@@ -30,6 +30,7 @@ import com.openmobilehub.android.maps.core.presentation.models.OmhPolygonOptions
 import com.openmobilehub.android.maps.core.utils.ScreenUnitConverter
 import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IPolygonDelegate
+import com.openmobilehub.android.maps.plugin.mapbox.utils.Constants
 import com.openmobilehub.android.maps.plugin.mapbox.utils.JoinTypeConverter
 import com.openmobilehub.android.maps.plugin.mapbox.utils.polygonLogger
 
@@ -55,7 +56,7 @@ class OmhPolygonImpl(
     private var bufferedFillColor: Int? = null
     private var bufferedStrokeJointType: Int? = null
     private var bufferedStrokeWidth: Float? = null
-    private var bufferedVisibility: Boolean = true
+    private var bufferedVisibility: Boolean? = null
 
     init {
         options.clickable?.let { clickable = it }
@@ -184,7 +185,7 @@ class OmhPolygonImpl(
         if (isStyleReady()) {
             return lineLayer.visibility === Visibility.VISIBLE && fillLayer.visibility === Visibility.VISIBLE
         }
-        return bufferedVisibility
+        return bufferedVisibility ?: Constants.DEFAULT_ELEMENTS_VISIBILITY
     }
 
     override fun setVisible(visible: Boolean) {
@@ -202,12 +203,13 @@ class OmhPolygonImpl(
         bufferedFillColor?.let { setFillColor(it) }
         bufferedStrokeJointType?.let { setStrokeJointType(it) }
         bufferedStrokeWidth?.let { setStrokeWidth(it) }
-        setVisible(bufferedVisibility)
+        bufferedVisibility?.let { setVisible(it) }
 
         bufferedStrokeColor = null
         bufferedFillColor = null
         bufferedStrokeJointType = null
         bufferedStrokeWidth = null
+        bufferedVisibility = null
     }
 
     private fun addSourceAndLayersToMap() {
