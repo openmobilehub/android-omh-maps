@@ -13,7 +13,6 @@ import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhPolyl
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolylineOptions
 import com.openmobilehub.android.maps.core.utils.uuid.UUIDGenerator
-import com.openmobilehub.android.maps.plugin.mapbox.presentation.maps.OmhPolylineImpl
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
@@ -38,7 +37,6 @@ class PolylineManagerTest {
         mockkStatic("com.mapbox.maps.extension.style.layers.LayerUtils")
 
         every { uuidGenerator.generate() } returns UUID.fromString(DEFAULT_UUID)
-
         polylineManager = PolylineManager(mapView, uuidGenerator)
     }
 
@@ -114,7 +112,7 @@ class PolylineManagerTest {
     }
 
     @Test
-    fun `onStyleLoaded adds source and layers to style and applies buffered properties for each polyline`() {
+    fun `onStyleLoaded adds source and layers to style for each polyline`() {
         // Arrange
         every { any<MapboxStyleManager>().addSource(any()) } just runs
         every { any<MapboxStyleManager>().addLayer(any()) } just runs
@@ -124,13 +122,12 @@ class PolylineManagerTest {
         }
 
         // Act
-        val polyline = polylineManager.addPolyline(polylineOptions, null) as OmhPolylineImpl
+        polylineManager.addPolyline(polylineOptions, null)
         polylineManager.onStyleLoaded(style)
 
         // Assert
         verify(exactly = 1) { style.addSource(any()) }
         verify(exactly = 1) { style.addLayer(any()) }
-        verify(exactly = 1) { polyline.onStyleLoaded(style) }
     }
 
     @Test
