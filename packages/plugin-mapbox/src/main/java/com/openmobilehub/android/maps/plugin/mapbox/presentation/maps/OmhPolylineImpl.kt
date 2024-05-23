@@ -28,6 +28,7 @@ import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhPolyl
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhStyleSpan
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolylineOptions
+import com.openmobilehub.android.maps.core.utils.ScreenUnitConverter
 import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IPolylineDelegate
 import com.openmobilehub.android.maps.plugin.mapbox.utils.CapConverter
@@ -39,7 +40,6 @@ internal class OmhPolylineImpl(
     private var source: Source,
     private val lineLayer: LineLayer,
     options: OmhPolylineOptions,
-    private var scaleFactor: Float,
     private var delegate: IPolylineDelegate,
     private var logger: UnsupportedFeatureLogger = polylineLogger
 ) : OmhPolyline {
@@ -174,14 +174,16 @@ internal class OmhPolylineImpl(
 
     override fun getWidth(): Float? {
         if (isStyleReady()) {
-            return lineLayer.lineWidth?.toFloat()?.times(scaleFactor)
+            return lineLayer.lineWidth?.let {
+                ScreenUnitConverter.dpToPx(it.toFloat())
+            }
         }
         return bufferedWidth
     }
 
     override fun setWidth(width: Float) {
         if (isStyleReady()) {
-            lineLayer.lineWidth((width / scaleFactor).toDouble())
+            lineLayer.lineWidth(ScreenUnitConverter.pxToDp(width).toDouble())
         } else {
             bufferedWidth = width
         }

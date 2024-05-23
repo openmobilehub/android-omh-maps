@@ -27,6 +27,7 @@ import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhPatte
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhPolygon
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolygonOptions
+import com.openmobilehub.android.maps.core.utils.ScreenUnitConverter
 import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IPolygonDelegate
 import com.openmobilehub.android.maps.plugin.mapbox.utils.JoinTypeConverter
@@ -38,7 +39,6 @@ class OmhPolygonImpl(
     private val fillLayer: FillLayer,
     private val lineLayer: LineLayer,
     options: OmhPolygonOptions,
-    private val scaleFactor: Float,
     private val polygonDelegate: IPolygonDelegate,
     private val logger: UnsupportedFeatureLogger = polygonLogger
 ) : OmhPolygon {
@@ -156,15 +156,16 @@ class OmhPolygonImpl(
 
     override fun getStrokeWidth(): Float? {
         if (isStyleReady()) {
-            return lineLayer.lineWidth?.toFloat()
-                ?.times(scaleFactor)
+            return lineLayer.lineWidth?.let {
+                ScreenUnitConverter.dpToPx(it.toFloat())
+            }
         }
         return bufferedStrokeWidth
     }
 
     override fun setStrokeWidth(width: Float) {
         if (isStyleReady()) {
-            lineLayer.lineWidth((width / scaleFactor).toDouble())
+            lineLayer.lineWidth(ScreenUnitConverter.pxToDp(width).toDouble())
         } else {
             bufferedStrokeWidth = width
         }

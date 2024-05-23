@@ -28,6 +28,7 @@ import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhPolyg
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhJointType
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolygonOptions
+import com.openmobilehub.android.maps.core.utils.ScreenUnitConverter
 import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
 import com.openmobilehub.android.maps.plugin.azuremaps.presentation.interfaces.IPolygonDelegate
 import com.openmobilehub.android.maps.plugin.azuremaps.utils.JointTypeConverter
@@ -43,12 +44,9 @@ internal class OmhPolygonImpl(
     private val lineLayer: LineLayer,
     private val delegate: IPolygonDelegate,
     options: OmhPolygonOptions,
-    scaleFactor: Float = 1.0f,
     private val logger: UnsupportedFeatureLogger = polygonLogger
 ) : OmhPolygon {
 
-    var scaleFactor: Float
-        private set
     private var _clickable: Boolean = false
     private var _tag: Any? = null
     private var _outline: List<OmhCoordinate>
@@ -92,7 +90,6 @@ internal class OmhPolygonImpl(
         }
 
     init {
-        this.scaleFactor = scaleFactor
         _outline = options.outline
         options.clickable?.let { _clickable = it }
         options.fillColor?.let { _fillColor = it }
@@ -180,12 +177,6 @@ internal class OmhPolygonImpl(
         logger.logSetterNotSupported("zIndex")
     }
 
-    fun setScaleFactor(scaleFactor: Float) {
-        this.scaleFactor = scaleFactor
-        applyStrokeWidth()
-        applyStrokePattern()
-    }
-
     private fun applyStrokeColor() {
         lineLayer.setOptions(
             LineLayerOptions.strokeColor(_strokeColor)
@@ -194,7 +185,7 @@ internal class OmhPolygonImpl(
 
     private fun applyStrokeWidth() {
         lineLayer.setOptions(
-            LineLayerOptions.strokeWidth(_strokeWidth * scaleFactor)
+            LineLayerOptions.strokeWidth(ScreenUnitConverter.pxToDp(_strokeWidth))
         )
     }
 
@@ -224,7 +215,7 @@ internal class OmhPolygonImpl(
             lineLayer.setOptions(
                 LineLayerOptions.strokeDashArray(
                     PatternConverter.convertToAzureMapsPattern(pattern, logger)
-                        .map { it / _strokeWidth * scaleFactor }
+                        .map { it / ScreenUnitConverter.pxToDp(_strokeWidth) }
                         .toTypedArray()
                 )
             )

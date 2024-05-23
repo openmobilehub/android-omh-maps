@@ -15,6 +15,7 @@ object DebugPolygonHelper {
                 OmhCoordinate(-27.5, 27.5),
                 OmhCoordinate(-27.5, -27.5),
             )
+            strokeWidth = 10f
         }
 
         val polygon = omhMap.addPolygon(polygonOptions)
@@ -31,6 +32,7 @@ object DebugPolygonHelper {
                 OmhCoordinate(-30.0, 30.0),
             )
             strokeColor = Color.DKGRAY
+            strokeWidth = 10f
             fillColor = Color.LTGRAY
             clickable = true
             zIndex = 50f

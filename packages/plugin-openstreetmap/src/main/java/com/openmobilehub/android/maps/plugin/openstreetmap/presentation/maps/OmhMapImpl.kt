@@ -402,10 +402,6 @@ class OmhMapImpl(
         logger.logSetterNotSupported("mapStyle")
     }
 
-    override fun setScaleFactor(scaleFactor: Float) {
-        // Not required for OpenStreetMap
-    }
-
     override fun setCustomInfoWindowViewFactory(factory: OmhInfoWindowViewFactory?) {
         customInfoWindowViewFactory = factory
 

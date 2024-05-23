@@ -13,6 +13,7 @@ import com.mapbox.maps.extension.style.sources.generated.GeoJsonSource
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhPatternItem
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolygonOptions
+import com.openmobilehub.android.maps.core.utils.ScreenUnitConverter
 import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
 import com.openmobilehub.android.maps.plugin.mapbox.presentation.interfaces.IPolygonDelegate
 import com.openmobilehub.android.maps.plugin.mapbox.utils.JoinTypeConverter
@@ -31,7 +32,6 @@ class OmhPolygonImplTest {
     private val source = mockk<GeoJsonSource>(relaxed = true)
     private val lineLayer = mockk<LineLayer>(relaxed = true)
     private val fillLayer = mockk<FillLayer>(relaxed = true)
-    private val scaleFactor = 3.0f
     private val polygonDelegate = mockk<IPolygonDelegate>(relaxed = true)
     private val logger: UnsupportedFeatureLogger =
         mockk<UnsupportedFeatureLogger>(relaxed = true)
@@ -53,6 +53,8 @@ class OmhPolygonImplTest {
 
         mockkObject(JoinTypeConverter)
 
+        mockkObject(ScreenUnitConverter)
+
         every { style.isStyleLoaded() } returns true
 
         omhPolygon = OmhPolygonImpl(
@@ -60,7 +62,6 @@ class OmhPolygonImplTest {
             fillLayer,
             lineLayer,
             initialOptions,
-            scaleFactor,
             polygonDelegate,
             logger
         )
@@ -275,8 +276,11 @@ class OmhPolygonImplTest {
         // Arrange
         omhPolygon.onStyleLoaded(style)
 
+        val density = 2.0f
+        every { ScreenUnitConverter.dpToPx(any<Float>()) } answers { firstArg<Float>() * density }
+
         val nativeWidth = 10.0
-        val expectedWidth = (nativeWidth * scaleFactor).toFloat()
+        val expectedWidth = (nativeWidth * density).toFloat()
         every { lineLayer.lineWidth } returns nativeWidth
 
         // Act
@@ -292,8 +296,11 @@ class OmhPolygonImplTest {
         // Arrange
         omhPolygon.onStyleLoaded(style)
 
+        val density = 2.0f
+        every { ScreenUnitConverter.pxToDp(any<Float>()) } answers { firstArg<Float>() / density }
+
         val width = 30.0f
-        val nativeWidth = (width / scaleFactor).toDouble()
+        val nativeWidth = (width / density).toDouble()
 
         // Act
         omhPolygon.setStrokeWidth(width)
@@ -609,11 +616,14 @@ class OmhPolygonImplTest {
         val lineJoin = mockk<LineJoin>()
         every { JoinTypeConverter.convertToLineJoin(any<Int>()) } returns lineJoin
 
+        val density = 2.0f
+        every { ScreenUnitConverter.pxToDp(any<Float>()) } answers { firstArg<Float>() / density }
+
         val expectedStrokeColor = Color.RED
         val expectedFillColor = Color.BLUE
         val expectedStrokeJoinType = 1
         val expectedStrokeWidth = 30f
-        val expectedNativeStrokeWidth = 10.0
+        val expectedNativeStrokeWidth = (expectedStrokeWidth / density).toDouble()
         val expectedVisibility = false
 
         // Act

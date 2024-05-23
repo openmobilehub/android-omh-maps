@@ -19,6 +19,7 @@ package com.openmobilehub.android.maps.plugin.mapbox.extensions
 import com.mapbox.maps.extension.style.layers.generated.LineLayer
 import com.mapbox.maps.extension.style.layers.properties.generated.Visibility
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolylineOptions
+import com.openmobilehub.android.maps.core.utils.ScreenUnitConverter
 import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
 import com.openmobilehub.android.maps.plugin.mapbox.utils.CapConverter
 import com.openmobilehub.android.maps.plugin.mapbox.utils.JoinTypeConverter
@@ -26,11 +27,10 @@ import com.openmobilehub.android.maps.plugin.mapbox.utils.polylineLogger
 
 internal fun OmhPolylineOptions.applyPolylineOptions(
     lineLayer: LineLayer,
-    scaleFactor: Float,
     logger: UnsupportedFeatureLogger = polylineLogger
 ) {
     color?.let { lineLayer.lineColor(it) }
-    width?.let { lineLayer.lineWidth(it.toDouble() / scaleFactor) }
+    width?.let { lineLayer.lineWidth(ScreenUnitConverter.pxToDp(it).toDouble()) }
     endCap?.let { logger.logNotSupported("endCap") }
     jointType?.let { lineLayer.lineJoin(JoinTypeConverter.convertToLineJoin(it)) }
     pattern?.let { logger.logNotSupported("pattern") }

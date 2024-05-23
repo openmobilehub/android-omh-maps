@@ -229,25 +229,6 @@ class PolygonManagerTest {
         assertEquals(0, polygonManager.polygons.count())
     }
 
-    @Test
-    fun `setScaleFactor should update polygons scale factors`() {
-        // Arrange
-        polygonManager.addPolygon(
-            OmhPolygonOptions()
-        ).apply {
-            setScaleFactor(1.0f)
-        }
-        val newScaleFactor = 2.0f
-
-        // Act
-        polygonManager.scaleFactor = newScaleFactor
-
-        // Assert
-        polygonManager.polygons.values.forEach {
-            assertEquals(newScaleFactor, it.scaleFactor)
-        }
-    }
-
     companion object {
         private const val DEFAULT_UUID = "00000000-0000-0000-0000-000000000000"
     }

@@ -11,6 +11,7 @@ import com.openmobilehub.android.maps.core.presentation.models.OmhDot
 import com.openmobilehub.android.maps.core.presentation.models.OmhGap
 import com.openmobilehub.android.maps.core.presentation.models.OmhJointType
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolygonOptions
+import com.openmobilehub.android.maps.core.utils.ScreenUnitConverter
 import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
 import com.openmobilehub.android.maps.plugin.mapbox.utils.JoinTypeConverter
 import io.mockk.every
@@ -23,7 +24,6 @@ import org.junit.Test
 class OmhPolygonOptionsExtensionsTest {
     private val lineLayer = mockk<LineLayer>(relaxed = true)
     private val fillLayer = mockk<FillLayer>(relaxed = true)
-    private val scaleFactor = 1f
     private val logger = mockk<UnsupportedFeatureLogger>(relaxed = true)
 
     private val omhPolygonOptions = OmhPolygonOptions().apply {
@@ -58,6 +58,7 @@ class OmhPolygonOptionsExtensionsTest {
     @Before
     fun setUp() {
         mockkObject(JoinTypeConverter)
+        mockkObject(ScreenUnitConverter)
     }
 
     @Test
@@ -66,14 +67,17 @@ class OmhPolygonOptionsExtensionsTest {
         val lineJoin = mockk<LineJoin>()
         every { JoinTypeConverter.convertToLineJoin(any<Int>()) } returns lineJoin
 
+        val density = 2.0f
+        every { ScreenUnitConverter.pxToDp(any<Float>()) } answers { firstArg<Float>() / density }
+
         // Act
-        omhPolygonOptions.applyPolygonOptions(lineLayer, fillLayer, scaleFactor, logger)
+        omhPolygonOptions.applyPolygonOptions(lineLayer, fillLayer, logger)
 
         // Assert
         verify { lineLayer.lineColor(Color.RED) }
         verify { fillLayer.fillColor(Color.BLUE) }
         verify { lineLayer.lineJoin(lineJoin) }
-        verify { lineLayer.lineWidth(100.0) }
+        verify { lineLayer.lineWidth((omhPolygonOptions.strokeWidth!! / density).toDouble()) }
         verify { lineLayer.visibility(Visibility.VISIBLE) }
         verify { fillLayer.visibility(Visibility.VISIBLE) }
         verify { logger.logNotSupported("strokePattern") }

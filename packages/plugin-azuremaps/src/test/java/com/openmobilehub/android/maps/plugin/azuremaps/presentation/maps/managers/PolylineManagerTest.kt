@@ -183,25 +183,6 @@ class PolylineManagerTest {
         assertEquals(0, polylineManager.polylines.count())
     }
 
-    @Test
-    fun `setScaleFactor should update polylines scale factors`() {
-        // Arrange
-        polylineManager.addPolyline(
-            OmhPolylineOptions()
-        ).apply {
-            setScaleFactor(1.0f)
-        }
-        val newScaleFactor = 2.0f
-
-        // Act
-        polylineManager.scaleFactor = newScaleFactor
-
-        // Assert
-        polylineManager.polylines.values.forEach {
-            assertEquals(newScaleFactor, it.scaleFactor)
-        }
-    }
-
     companion object {
         private const val DEFAULT_UUID = "00000000-0000-0000-0000-000000000000"
     }

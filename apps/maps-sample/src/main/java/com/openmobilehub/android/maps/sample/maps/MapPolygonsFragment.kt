@@ -114,7 +114,6 @@ class MapPolygonsFragment : Fragment(), OmhOnMapReadyCallback {
         }
 
         omhMap.setZoomGesturesEnabled(true)
-        omhMap.setScaleFactor(getScaleFactor(omhMap.providerName))
 
         val omhOnPolygonClickListener = OmhOnPolygonClickListener {
             val alert = AlertDialog.Builder(requireContext())
@@ -261,17 +260,6 @@ class MapPolygonsFragment : Fragment(), OmhOnMapReadyCallback {
                 referencePolygon = DebugPolygonHelper.addReferencePolygon(omhMap!!)
             } else {
                 referencePolygon?.remove()
-            }
-        }
-    }
-
-    private fun getScaleFactor(providerName: String): Float {
-        return when(providerName) {
-            Constants.AZURE_PROVIDER -> {
-                0.5f
-            }
-            else -> {
-                1.0f
             }
         }
     }

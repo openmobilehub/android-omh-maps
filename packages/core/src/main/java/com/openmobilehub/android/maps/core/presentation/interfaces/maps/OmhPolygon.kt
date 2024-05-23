@@ -123,14 +123,14 @@ interface OmhPolygon {
     fun setStrokePattern(pattern: List<OmhPatternItem>)
 
     /**
-     * Gets the width of the polygon's stroke.
-     * @return A float representing the width of the polygon's stroke.
+     * Gets the width in pixels of the polygon's stroke.
+     * @return A float representing the width in pixels of the polygon's stroke.
      */
     fun getStrokeWidth(): Float?
 
     /**
-     * Sets the width of the polygon's stroke.
-     * @param width A float representing the width of the polygon's stroke.
+     * Sets the width in pixels of the polygon's stroke.
+     * @param width A float representing the width in pixels of the polygon's stroke.
      */
     fun setStrokeWidth(width: Float)
 

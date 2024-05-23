@@ -159,14 +159,14 @@ interface OmhPolyline {
     fun setVisible(visible: Boolean)
 
     /**
-     * Gets the width of the polyline.
-     * @return A float representing the width of the polyline.
+     * Gets the width in pixels of the polyline.
+     * @return A float representing the width in pixels of the polyline.
      */
     fun getWidth(): Float?
 
     /**
-     * Sets the width of the polyline.
-     * @param width A float representing the width of the polyline.
+     * Sets the width in pixels of the polyline.
+     * @param width A float representing the width in pixels of the polyline.
      */
     fun setWidth(width: Float)
 
