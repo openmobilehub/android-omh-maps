@@ -17,6 +17,7 @@
 package com.openmobilehub.android.maps.core.utils
 
 import android.content.Context
+import android.content.res.Resources
 
 /**
  * Utility for converting screen units.
@@ -35,6 +36,17 @@ object ScreenUnitConverter {
     }
 
     /**
+     * Converts pixels to dp (density independent pixels).
+     *
+     * @param px The value in pixels.
+     *
+     * @return The value in dp.
+     */
+    fun pxToDp(px: Float): Float {
+        return px / Resources.getSystem().displayMetrics.density
+    }
+
+    /**
      * Converts dp (density independent pixels) to pixels.
      *
      * @param dp The value in dp.
@@ -44,5 +56,16 @@ object ScreenUnitConverter {
      */
     fun dpToPx(dp: Float, context: Context): Float {
         return dp * context.resources.displayMetrics.density
+    }
+
+    /**
+     * Converts dp (density independent pixels) to pixels.
+     *
+     * @param dp The value in dp.
+     *
+     * @return The value in pixels.
+     */
+    fun dpToPx(dp: Float): Float {
+        return dp * Resources.getSystem().displayMetrics.density
     }
 }

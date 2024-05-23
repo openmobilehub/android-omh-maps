@@ -42,7 +42,6 @@ import com.openmobilehub.android.maps.plugin.mapbox.utils.polygonLogger
 
 class PolygonManager(
     private val mapView: MapView,
-    private val scaleFactor: Float,
     private val uuidGenerator: UUIDGenerator = DefaultUUIDGenerator(),
     private val logger: UnsupportedFeatureLogger = polygonLogger
 ) : IPolygonDelegate {
@@ -117,14 +116,13 @@ class PolygonManager(
             lineMiterLimit(Constants.LINE_JOIN_MITER_LIMIT)
             lineRoundLimit(Constants.LINE_JOINT_ROUND_LIMIT)
         }
-        options.applyPolygonOptions(outlineLayer, fillLayer, scaleFactor, logger)
+        options.applyPolygonOptions(outlineLayer, fillLayer, logger)
 
         val omhPolygon = OmhPolygonImpl(
             source,
             fillLayer,
             outlineLayer,
             options,
-            this.scaleFactor,
             this
         )
 

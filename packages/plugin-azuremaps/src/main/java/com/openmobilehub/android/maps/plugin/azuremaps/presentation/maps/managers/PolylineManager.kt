@@ -44,11 +44,6 @@ internal class PolylineManager(
     @VisibleForTesting
     internal val polylines: Map<String, OmhPolylineImpl> = _polylines
     internal var clickListener: OmhOnPolylineClickListener? = null
-    internal var scaleFactor: Float = 1.0f
-        set(value) {
-            field = value
-            _polylines.values.forEach { it.setScaleFactor(value) }
-        }
 
     fun addPolyline(options: OmhPolylineOptions): OmhPolylineImpl {
         val polylineId = uuidGenerator.generate()
@@ -64,7 +59,7 @@ internal class PolylineManager(
             OmhPolylineImpl.getLineLayerID(polylineId)
         )
 
-        val omhPolyline = OmhPolylineImpl(polylineId, source, layer, this, options, scaleFactor)
+        val omhPolyline = OmhPolylineImpl(polylineId, source, layer, this, options)
 
         map.layers.add(layer)
 

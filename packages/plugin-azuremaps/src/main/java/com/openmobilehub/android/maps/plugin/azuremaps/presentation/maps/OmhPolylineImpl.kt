@@ -30,6 +30,7 @@ import com.openmobilehub.android.maps.core.presentation.models.OmhGap
 import com.openmobilehub.android.maps.core.presentation.models.OmhJointType
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolylineOptions
 import com.openmobilehub.android.maps.core.presentation.models.OmhRoundCap
+import com.openmobilehub.android.maps.core.utils.ScreenUnitConverter
 import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
 import com.openmobilehub.android.maps.plugin.azuremaps.presentation.interfaces.IPolylineDelegate
 import com.openmobilehub.android.maps.plugin.azuremaps.utils.CapConverter
@@ -45,12 +46,8 @@ internal class OmhPolylineImpl(
     private val lineLayer: LineLayer,
     private val delegate: IPolylineDelegate,
     options: OmhPolylineOptions,
-    scaleFactor: Float = 1.0f,
     private val logger: UnsupportedFeatureLogger = polylineLogger
 ) : OmhPolyline {
-
-    var scaleFactor: Float
-        private set
     private var _clickable: Boolean = false
     private var _tag: Any? = null
     private var _points: List<OmhCoordinate>
@@ -91,7 +88,6 @@ internal class OmhPolylineImpl(
         }
 
     init {
-        this.scaleFactor = scaleFactor
         _points = options.points
         options.clickable?.let { _clickable = it }
         options.color?.let { _color = it }
@@ -193,12 +189,6 @@ internal class OmhPolylineImpl(
         logger.logSetterNotSupported("zIndex")
     }
 
-    fun setScaleFactor(scaleFactor: Float) {
-        this.scaleFactor = scaleFactor
-        applyWidth()
-        applyPattern()
-    }
-
     private fun applyIsVisible() {
         lineLayer.setOptions(
             LayerOptions.visible(_isVisible),
@@ -213,7 +203,7 @@ internal class OmhPolylineImpl(
 
     private fun applyWidth() {
         lineLayer.setOptions(
-            LineLayerOptions.strokeWidth(_width * scaleFactor)
+            LineLayerOptions.strokeWidth(ScreenUnitConverter.pxToDp(_width))
         )
     }
 
@@ -240,7 +230,7 @@ internal class OmhPolylineImpl(
             lineLayer.setOptions(
                 LineLayerOptions.strokeDashArray(
                     PatternConverter.convertToAzureMapsPattern(modifiedPattern, logger)
-                        .map { it / _width * scaleFactor }
+                        .map { it / ScreenUnitConverter.pxToDp(_width) }
                         .toTypedArray()
                 )
             )

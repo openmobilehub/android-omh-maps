@@ -40,7 +40,6 @@ import com.openmobilehub.android.maps.plugin.mapbox.utils.polylineLogger
 
 class PolylineManager(
     private val mapView: MapView,
-    private val scaleFactor: Float,
     private val uuidGenerator: UUIDGenerator = DefaultUUIDGenerator(),
     private val logger: UnsupportedFeatureLogger = polylineLogger
 ) : IPolylineDelegate {
@@ -87,13 +86,12 @@ class PolylineManager(
             lineMiterLimit(Constants.LINE_JOIN_MITER_LIMIT)
             lineRoundLimit(Constants.LINE_JOINT_ROUND_LIMIT)
         }
-        options.applyPolylineOptions(layer, scaleFactor, logger)
+        options.applyPolylineOptions(layer, logger)
 
         val omhPolyline = OmhPolylineImpl(
             source,
             layer,
             options,
-            scaleFactor,
             this
         )
 

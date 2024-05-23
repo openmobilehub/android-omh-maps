@@ -82,9 +82,8 @@ class OmhMapImpl(
     override val mapView: MapView,
     private val context: Context,
     private val myLocationIcon: ImageView = MyLocationIcon(context),
-    private var scaleFactor: Float = 1.0f,
-    private val polylineManager: PolylineManager = PolylineManager(mapView, scaleFactor),
-    private val polygonManager: PolygonManager = PolygonManager(mapView, scaleFactor),
+    private val polylineManager: PolylineManager = PolylineManager(mapView),
+    private val polygonManager: PolygonManager = PolygonManager(mapView),
     private val logger: Logger = commonLogger,
 ) : OmhMap, IMapDragManagerDelegate, IOmhInfoWindowMapViewDelegate {
     /**
@@ -445,10 +444,6 @@ class OmhMapImpl(
         } ?: logger.logError("Failed to load map style. Style string is null.")
     }
 
-    override fun setScaleFactor(scaleFactor: Float) {
-        this.scaleFactor = scaleFactor
-    }
-
     private fun setupMapViewUIControls() {
         // To have parity with Google Maps
         val iconMargin = ScreenUnitConverter.dpToPx(Constants.MAPBOX_ICON_MARGIN.toFloat(), context)
@@ -457,7 +452,6 @@ class OmhMapImpl(
         mapView.compass.position = Gravity.TOP or Gravity.START
 
         mapView.scalebar.enabled = false
-
         myLocationIcon.contentDescription = context.getString(R.string.button_center_my_location)
     }
 

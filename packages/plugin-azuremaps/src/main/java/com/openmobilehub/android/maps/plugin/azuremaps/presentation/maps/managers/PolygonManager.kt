@@ -46,11 +46,6 @@ internal class PolygonManager(
     @VisibleForTesting
     internal val polygons: Map<String, OmhPolygonImpl> = _polygons
     internal var clickListener: OmhOnPolygonClickListener? = null
-    internal var scaleFactor: Float = 1.0f
-        set(value) {
-            field = value
-            _polygons.values.forEach { it.setScaleFactor(value) }
-        }
 
     fun addPolygon(options: OmhPolygonOptions): OmhPolygonImpl {
         val polygonId = uuidGenerator.generate()
@@ -67,7 +62,7 @@ internal class PolygonManager(
         )
         val lineLayer = LineLayer(source, OmhPolygonImpl.getPolygonLineLayerID(polygonId))
 
-        val omhPolygon = OmhPolygonImpl(polygonId, source, polygonLayer, lineLayer, this, options, scaleFactor)
+        val omhPolygon = OmhPolygonImpl(polygonId, source, polygonLayer, lineLayer, this, options)
 
         map.layers.add(polygonLayer)
         map.layers.add(lineLayer)

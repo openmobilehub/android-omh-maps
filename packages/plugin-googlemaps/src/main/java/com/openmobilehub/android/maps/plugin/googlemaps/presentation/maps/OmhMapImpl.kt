@@ -325,10 +325,6 @@ class OmhMapImpl(
         mapView.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoomLevel))
     }
 
-    override fun setScaleFactor(scaleFactor: Float) {
-        // Not required for Google Maps
-    }
-
     override fun removeMarker(marker: Marker) {
         markers.remove(marker)
     }
