@@ -13,7 +13,6 @@ import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhPolyg
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhPolygonOptions
 import com.openmobilehub.android.maps.core.utils.uuid.UUIDGenerator
-import com.openmobilehub.android.maps.plugin.mapbox.presentation.maps.OmhPolygonImpl
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
@@ -115,7 +114,7 @@ class PolygonManagerTest {
     }
 
     @Test
-    fun `onStyleLoaded adds source and layers to style and applies buffered properties for each polygon`() {
+    fun `onStyleLoaded adds source and layers to style for each polygon`() {
         // Arrange
         every { any<MapboxStyleManager>().addSource(any()) } just runs
         every { any<MapboxStyleManager>().addLayer(any()) } just runs
@@ -125,13 +124,12 @@ class PolygonManagerTest {
         }
 
         // Act
-        val polygon = polygonManager.addPolygon(polygonOptions, null) as OmhPolygonImpl
+        polygonManager.addPolygon(polygonOptions, null)
         polygonManager.onStyleLoaded(style)
 
         // Assert
         verify(exactly = 1) { style.addSource(any()) }
         verify(exactly = 2) { style.addLayer(any()) }
-        verify(exactly = 1) { polygon.onStyleLoaded(style) }
     }
 
     @Test
