@@ -210,10 +210,10 @@ Comments for partially supported 🟨 properties:
 
 Comments for partially supported 🟨 properties:
 
-| Property   | Comments                                                                                             |
-| ---------- | ---------------------------------------------------------------------------------------------------- |
-| setPattern | Azure Maps SDK only supports alternating dashes and gaps that form the dash pattern.                 |
-| setCap     | Azure Maps SDK supports BUTT, SQUARE and ROUND caps. Defaults to ROUND when other value is provided. |
+| Property   | Comments                                                                                                                                                                                                               |
+| ---------- |------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| setPattern | Azure Maps SDK only supports alternating dashes and gaps that form the dash pattern. Important: In case of using pattern, polyline is split into multiple short polylines, and cap settings are applied to all of them |
+| setCap     | Azure Maps SDK supports BUTT, SQUARE and ROUND caps. Defaults to ROUND when other value is provided.                                                                                                                   |
 
 ### Polygon
 
