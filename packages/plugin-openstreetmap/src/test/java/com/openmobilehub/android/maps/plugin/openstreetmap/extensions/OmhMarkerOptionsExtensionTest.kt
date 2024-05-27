@@ -17,14 +17,18 @@
 package com.openmobilehub.android.maps.plugin.openstreetmap.extensions
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import com.openmobilehub.android.maps.core.presentation.models.Constants
 import com.openmobilehub.android.maps.core.presentation.models.OmhCoordinate
 import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
+import com.openmobilehub.android.maps.core.utils.DrawableConverter
 import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
 import com.openmobilehub.android.maps.plugin.openstreetmap.presentation.maps.OmhMapImpl
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkObject
 import io.mockk.verify
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -35,18 +39,9 @@ import org.osmdroid.views.overlay.infowindow.MarkerInfoWindow
 
 internal class OmhMarkerOptionsExtensionTest {
     private val omhCoordinate = OmhCoordinate(16.9, 166.0)
-    private val omhMarkerOptionsWithIcon = OmhMarkerOptions().apply {
-        position = omhCoordinate
-        title = "Marker Title 1"
-        draggable = true
-        anchor = Pair(0.5f, 0.5f)
-        alpha = 0.5f
-        snippet = "Marker Snippet 1"
-        isVisible = true
-        isFlat = true
-        rotation = 87.6f
-        icon = mockk<Drawable>()
-    }
+    private var mockedIcon: Drawable = mockk<Drawable>()
+    private val omhMarkerOptionsWithIcon: OmhMarkerOptions
+    private val convertDrawableToBitmapMock = mockk<Bitmap>()
 
     private val omhMarkerOptionsInvisible = OmhMarkerOptions().apply {
         position = omhCoordinate
@@ -70,6 +65,27 @@ internal class OmhMarkerOptionsExtensionTest {
         every { repository.defaultPolylineInfoWindow } returns mockk<BasicInfoWindow>()
         every { mapView.context } returns context
         every { mapView.repository } returns repository
+
+        every { mockedIcon.intrinsicWidth } returns 50
+        every { mockedIcon.intrinsicHeight } returns 50
+        mockkObject(DrawableConverter)
+        every { convertDrawableToBitmapMock.width } returns 80
+        every { convertDrawableToBitmapMock.height } returns 80
+        every { convertDrawableToBitmapMock.density } returns 1
+        every { DrawableConverter.convertDrawableToBitmap(any()) } answers { convertDrawableToBitmapMock }
+
+        omhMarkerOptionsWithIcon = OmhMarkerOptions().apply {
+            position = omhCoordinate
+            title = "Marker Title 1"
+            draggable = true
+            anchor = Pair(0.5f, 0.5f)
+            alpha = 0.5f
+            snippet = "Marker Snippet 1"
+            isVisible = true
+            isFlat = true
+            rotation = 87.6f
+            icon = mockedIcon
+        }
     }
 
     @Test
@@ -102,7 +118,13 @@ internal class OmhMarkerOptionsExtensionTest {
             -markerOptions.rotation
         ) // rotation is counter-clockwise in OSM
 
-        assertEquals(omhMarkerOptionsWithIcon.icon, markerOptions.icon)
+        val res = context.resources
+        verify {
+            DrawableConverter.convertDrawableToBitmap(mockedIcon)
+            BitmapDrawable(res, convertDrawableToBitmapMock)
+        }
+
+        assert(markerOptions.icon is BitmapDrawable)
     }
 
     @Test

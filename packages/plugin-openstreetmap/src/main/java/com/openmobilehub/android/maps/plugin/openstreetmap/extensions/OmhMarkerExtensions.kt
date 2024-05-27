@@ -16,7 +16,9 @@
 
 package com.openmobilehub.android.maps.plugin.openstreetmap.extensions
 
+import android.graphics.drawable.BitmapDrawable
 import com.openmobilehub.android.maps.core.presentation.models.OmhMarkerOptions
+import com.openmobilehub.android.maps.core.utils.DrawableConverter
 import com.openmobilehub.android.maps.core.utils.logging.UnsupportedFeatureLogger
 import com.openmobilehub.android.maps.plugin.openstreetmap.presentation.maps.CustomMarker
 import com.openmobilehub.android.maps.plugin.openstreetmap.presentation.maps.OmhMapImpl
@@ -53,7 +55,13 @@ internal fun OmhMarkerOptions.toMarkerOptions(
     }
 
     if (icon != null) {
-        marker.icon = icon
+        // apply re-scaling to ensure the icon is manually sized
+        // since osmdroid utilizes Drawables, resulting in malformed-sized
+        // icons in initial options; the same logic is applied in OmhMarkerImpl::setIcon
+        val bitmap = DrawableConverter.convertDrawableToBitmap(icon!!)
+        val bitmapAsDrawable = BitmapDrawable(mapView.context.resources, bitmap)
+
+        marker.icon = bitmapAsDrawable
     } else if (backgroundColor != null) {
         logger.logSetterNotSupported("backgroundColor")
     } else {
