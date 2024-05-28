@@ -73,16 +73,16 @@ Add the plugins you want to use:
 
 ```kotlin
 //Azure Maps
-implementation("com.openmobilehub.android.maps:plugin-azuremaps:2.0.0")
+implementation("com.openmobilehub.android.maps:plugin-azuremaps:2.1.0")
 
 //Google Maps
-implementation("com.openmobilehub.android.maps:plugin-googlemaps:2.0.0")
+implementation("com.openmobilehub.android.maps:plugin-googlemaps:2.1.0")
 
 //Mapbox
-implementation("com.openmobilehub.android.maps:plugin-mapbox:2.0.0")
+implementation("com.openmobilehub.android.maps:plugin-mapbox:2.1.0")
 
 //Open Street Map
-implementation("com.openmobilehub.android.maps:plugin-openstreetmap:2.0.0")
+implementation("com.openmobilehub.android.maps:plugin-openstreetmap:2.1.0")
 ```
 
 ### Initial configuration

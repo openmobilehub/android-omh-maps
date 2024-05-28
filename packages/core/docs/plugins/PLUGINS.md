@@ -15,10 +15,10 @@ omhConfig {
         bundle("singleBuild") {
             maps {
                 gmsService {
-                    dependency = "com.openmobilehub.android:plugin-googlemaps:2.0.0"
+                    dependency = "com.openmobilehub.android:plugin-googlemaps:2.1.0"
                 }
                 nonGmsService {
-                    dependency = "com.openmobilehub.android:plugin-openstreetmap:2.0.0"
+                    dependency = "com.openmobilehub.android:plugin-openstreetmap:2.1.0"
                     path = "your libraries path"
                 }
             }
@@ -26,7 +26,7 @@ omhConfig {
 }
 ```
 
-2. In your library you need to add the references like: `implementation("com.openmobilehub.android.maps:core:2.0.0")`
+2. In your library you need to add the references like: `implementation("com.openmobilehub.android.maps:core:2.1.0")`
 
 3. Basically is implement all the interfaces from the `OmhMapApi`.
    This means to implement the `OmhMapFactory`, `OmhMap`, `OmhMapView`, `OmhMarker`, `OmhPolyline`, `OmhPolygon` and `OmhLocation` interfaces.
