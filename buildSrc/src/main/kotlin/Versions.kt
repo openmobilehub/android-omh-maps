@@ -21,7 +21,7 @@ object Versions {
     const val googlePlayBase = "18.2.0"
 
     // OMH Maps
-    const val omhMapsCore = "2.0.0"
+    const val omhMapsCore = "2.1.0"
 
     // Open Street Map
     const val osmdroid = "6.1.11"
