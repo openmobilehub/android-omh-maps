@@ -4,6 +4,10 @@ plugins {
 
 android {
     namespace = "com.openmobilehub.android.maps.plugin.azuremaps"
+
+    defaultConfig{
+        consumerProguardFiles("proguard-rules.pro")
+    }
 }
 
 val useLocalProjects = project.rootProject.extra["useLocalProjects"] as Boolean
