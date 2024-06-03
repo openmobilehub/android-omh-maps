@@ -73,7 +73,7 @@ Add the plugins you want to use:
 
 ```kotlin
 //Azure Maps
-implementation("com.openmobilehub.android.maps:plugin-azuremaps:2.1.0")
+implementation("com.openmobilehub.android.maps:plugin-azuremaps:2.1.1")
 
 //Google Maps
 implementation("com.openmobilehub.android.maps:plugin-googlemaps:2.1.0")
