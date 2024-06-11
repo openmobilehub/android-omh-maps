@@ -15,7 +15,7 @@
 
 ## Overview
 
-OMH Maps Client Library is an Android SDK that simplifies the integration of maps on both Google Mobile Services (GMS) and non-GMS devices. It provides a unified interface and components for a consistent map experience, eliminating the need for separate codebases for different Android builds. This repository contains a detailed Getting Started guide to help developers learn and effectively implement the OMH Maps Client Library into their Android projects. For a general overview and understanding of the philosophy behind OMH, please visit the official website at https://www.openmobilehub.com.
+OMH Maps Client Library is an Android SDK that simplifies the integration of maps on both Google Mobile Services (GMS) and non-GMS devices. It provides a unified interface and components for a consistent map experience, eliminating the need for separate codebases for different Android builds. This repository contains a detailed Getting Started guide to help developers learn and effectively implement the OMH Maps Client Library into their Android projects. For a general overview and understanding of the philosophy behind OMH, please visit the official website at https://openmobilehub.org.
 
 ### A single codebase, running seamlessly on any device
 
@@ -59,7 +59,7 @@ This section describes how to setup and use the OMH Maps SDK.
 There are two possibilities to add and configure the OMH Maps SDK into your project. 
 
 **_We highly encourage you to use our plugin, which offers automatic creation of the separate build variants for GMS and Non-GMS builds, adds needed dependencies and generates BuildConfig fields for you.
-[To learn more click here](https://www.openmobilehub.com/android-omh-maps/advanced-docs/core/SETUP_WITH_OMH_CORE_PLUGIN/)_**
+[To learn more click here](https://openmobilehub.github.io/android-omh-maps/advanced-docs/core/SETUP_WITH_OMH_CORE_PLUGIN/)_**
 
 Below you will find the basic quick start guide 
 
@@ -102,7 +102,7 @@ In your Application class configure initial plugin paths:
         }
     }
 ```
-You can find more detailed info [here](https://www.openmobilehub.com/android-omh-maps/advanced-docs/core/SETUP_WITHOUT_OMH_CORE_PLUGIN/)
+You can find more detailed info [here](https://openmobilehub.github.io/android-omh-maps/advanced-docs/core/SETUP_WITHOUT_OMH_CORE_PLUGIN/)
 
 ### Provider specific setup
 
@@ -148,7 +148,7 @@ OMH Maps SDK is open-source, promoting community collaboration and plugin suppor
 
 ## Documentation
 
-- Check out the [API Reference Docs](https://www.openmobilehub.com/android-omh-maps/api-docs/)
+- Check out the [API Reference Docs](https://openmobilehub.github.io/android-omh-maps/api-docs/)
 - Check out the [Core Package documentation](/packages/core/README.md)
 - Check out the [Google Maps Plugin documentation](/packages/plugin-googlemaps/README.md)
 - Check out the [OpenStreetMap Plugin documentation](/packages/plugin-openstreetmap/README.md)
