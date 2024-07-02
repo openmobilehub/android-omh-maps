@@ -1,0 +1,78 @@
+name: Create Release and Upload Artifacts
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build-sample-app:
+    name: Build Sample App
+
+    runs-on: ubuntu-latest
+
+    env:
+      SAMPLE_APP_PATH: "apps/maps-sample"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: "zulu"
+          java-version: "17"
+
+      - name: Setup secrets
+        run: bash ./.github/scripts/setup_secrets.sh "${{ secrets.MAPBOX_SECRET_TOKEN }}" "${{ secrets.GOOGLE_MAPS_API_KEY }}" "${{ secrets.MAPBOX_PUBLIC_TOKEN }}" "${{ secrets.AZURE_MAPS_SUBSCRIPTION_KEY }}"
+
+      - name: Set useMavenLocal flag
+        run: echo useMavenLocal=true >> local.properties
+
+      # Decodes keystore base64 string to file
+      - name: Decode keystore
+        uses: timheuer/base64-to-file@v1.2
+        with:
+          fileDir: ${{ env.SAMPLE_APP_PATH }}
+          fileName: ${{ secrets.SAMPLE_APP_KEYSTORE_FILE_NAME }}
+          encodedString: ${{ secrets.SAMPLE_APP_KEYSTORE_BASE_64 }}
+
+      - name: Build release
+        run: ./gradlew :apps:maps-sample:assembleRelease
+        env:
+          SAMPLE_APP_KEYSTORE_FILE_NAME: ${{ secrets.SAMPLE_APP_KEYSTORE_FILE_NAME }}
+          SAMPLE_APP_KEYSTORE_STORE_PASSWORD: ${{ secrets.SAMPLE_APP_KEYSTORE_STORE_PASSWORD }}
+          SAMPLE_APP_KEYSTORE_KEY_ALIAS: ${{ secrets.SAMPLE_APP_KEYSTORE_KEY_ALIAS }}
+          SAMPLE_APP_KEYSTORE_KEY_PASSWORD: ${{ secrets.SAMPLE_APP_KEYSTORE_KEY_PASSWORD }}
+
+      - name: Upload .apk
+        uses: actions/upload-artifact@v4
+        with:
+          name: apk
+          path: ${{ env.SAMPLE_APP_PATH }}/build/outputs/apk/release/maps-sample-release.apk
+
+  create-release:
+    name: Create Release and Upload Artifacts
+
+    needs: [build-sample-app]
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download .apk & .ipa files
+        uses: actions/download-artifact@v4
+        with:
+          merge-multiple: true
+
+      - name: Rename .apk
+        run: mv maps-sample-release.apk sample-app.apk
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            sample-app.apk
