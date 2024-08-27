@@ -104,9 +104,8 @@ class OmhMapImpl(
     init {
         if (!bRunningInTest) {
             setupTouchInteractionListeners()
+            setupNoAuthenticationListener()
         }
-
-        setupNoAuthenticationListener()
     }
 
     @SuppressWarnings("UseCheckOrError")
