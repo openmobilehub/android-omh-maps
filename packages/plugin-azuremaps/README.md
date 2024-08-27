@@ -39,7 +39,7 @@ This plugin provides support for Azure Maps by utilizing the [Azure Maps Android
    ```kotlin
    dependencies {
    ...
-      implementation("com.openmobilehub.android.maps:plugin-azuremaps:2.1.1") {
+      implementation("com.openmobilehub.android.maps:plugin-azuremaps:2.1.2") {
          exclude(group = "org.maplibre.gl", module = "android-sdk-geojson")
       }
    }
