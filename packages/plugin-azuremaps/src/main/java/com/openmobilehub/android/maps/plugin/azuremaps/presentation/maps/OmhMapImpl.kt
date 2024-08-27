@@ -27,6 +27,7 @@ import com.azure.android.maps.control.LayerManager
 import com.azure.android.maps.control.MapControl
 import com.azure.android.maps.control.PopupManager
 import com.azure.android.maps.control.SourceManager
+import com.azure.android.maps.control.events.OnAuthenticationNeeded
 import com.azure.android.maps.control.events.OnFeatureClick
 import com.mapbox.geojson.Feature
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhInfoWindowViewFactory
@@ -103,7 +104,19 @@ class OmhMapImpl(
     init {
         if (!bRunningInTest) {
             setupTouchInteractionListeners()
+            setupNoAuthenticationListener()
         }
+    }
+
+    @SuppressWarnings("UseCheckOrError")
+    private fun setupNoAuthenticationListener() {
+        azureMap.events.add(object : OnAuthenticationNeeded {
+            override fun onAuthenticationNeeded() {
+                throw IllegalStateException(
+                    "Authentication required for Azure Maps. Please ensure valid credentials are provided."
+                )
+            }
+        })
     }
 
     private fun setupTouchInteractionListeners() {

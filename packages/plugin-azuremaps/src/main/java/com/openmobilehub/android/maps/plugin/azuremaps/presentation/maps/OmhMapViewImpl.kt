@@ -19,14 +19,19 @@ package com.openmobilehub.android.maps.plugin.azuremaps.presentation.maps
 import android.content.Context
 import android.os.Bundle
 import android.view.View
+import com.azure.android.maps.control.AzureMaps
 import com.azure.android.maps.control.MapControl
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhMapView
 import com.openmobilehub.android.maps.core.presentation.interfaces.maps.OmhOnMapReadyCallback
+import java.util.Locale
 
 @Suppress("TooManyFunctions") // Suppress issue since interface has more than 12 functions.
 internal class OmhMapViewImpl(private val context: Context) : OmhMapView {
 
-    private var mapControl: MapControl = MapControl(context)
+    private val mapControl: MapControl by lazy {
+        setupMapLanguage()
+        MapControl(context)
+    }
 
     override fun getView(): View {
         return mapControl
@@ -70,6 +75,11 @@ internal class OmhMapViewImpl(private val context: Context) : OmhMapView {
 
     override fun onStop() {
         mapControl.onStart()
+    }
+
+    private fun setupMapLanguage() {
+        val languageTag = Locale.getDefault().toLanguageTag()
+        AzureMaps.setLanguage(languageTag)
     }
 
     internal class Builder : OmhMapView.Builder {
