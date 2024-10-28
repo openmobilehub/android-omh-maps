@@ -15,8 +15,8 @@ This plugin provides support for Mapbox by utilizing the [Mapbox Android SDK](ht
 
 1. Add the plugin to the project by following one of the guides:
 
-- [Setup with omh-core plugin](https://www.openmobilehub.com/android-omh-maps/advanced-docs/core/SETUP_WITH_OMH_CORE_PLUGIN/)
-- [Setup without omh-core plugin](https://www.openmobilehub.com/android-omh-maps/advanced-docs/core/SETUP_WITHOUT_OMH_CORE_PLUGIN/)
+- [Setup with omh-core plugin](https://openmobilehub.github.io/android-omh-maps/advanced-docs/core/SETUP_WITH_OMH_CORE_PLUGIN/)
+- [Setup without omh-core plugin](https://openmobilehub.github.io/android-omh-maps/advanced-docs/core/SETUP_WITHOUT_OMH_CORE_PLUGIN/)
 
 2. Configure credentials according the [Official Documentation](https://docs.mapbox.com/android/maps/guides/install#configure-credentials).
 

@@ -30,6 +30,6 @@ This is the advanced usage documentation for Open Mobile Hub Maps. Browse the to
 
 You can find the source code for OMH Maps at GitHub:
 [android-omh-maps](https://github.com/openmobilehub/android-omh-maps)
-and the corresponding [API docs here](https://openmobilehub.com/android-omh-maps/api-docs).
+and the corresponding [API docs here](https://openmobilehub.github.io/android-omh-maps).
 
 [Open Mobile Hub home page](https://openmobilehub.com)
