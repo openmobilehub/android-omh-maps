@@ -15,8 +15,8 @@ This plugin provides support for OpenStreetMap maps by utilizing the [osmdroid](
 
 1. Add the plugin to the project by following one of the guides:
 
-- [Setup with omh-core plugin](https://www.openmobilehub.com/android-omh-maps/advanced-docs/core/SETUP_WITH_OMH_CORE_PLUGIN/)
-- [Setup without omh-core plugin](https://www.openmobilehub.com/android-omh-maps/advanced-docs/core/SETUP_WITHOUT_OMH_CORE_PLUGIN/)
+- [Setup with omh-core plugin](https://openmobilehub.github.io/android-omh-maps/advanced-docs/core/SETUP_WITH_OMH_CORE_PLUGIN/)
+- [Setup without omh-core plugin](https://openmobilehub.github.io/android-omh-maps/advanced-docs/core/SETUP_WITHOUT_OMH_CORE_PLUGIN/)
 
 2. In your app's module-level `AndroidManifest.xml` add the required permissions, for more information see [permissions](https://developer.android.com/training/permissions/declaring).
 
@@ -77,7 +77,7 @@ Comments for partially supported 🟨 properties:
 | Property                       | Comments                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | setOnCameraMoveStartedListener | The reason of the camera changed started is unknown                                                                                                                                                                                                                                                                                                                                                                                       |
-| setCustomInfoWindowViewFactory | The provider supports this method in full, however since the view is rendered "live" (i.e., the view is mounted instead of being rendered to a bitmap), attaching interaction listeners to the root view returned by the factory is forbidden. Please consult the [advanced documentation](https://www.openmobilehub.com/android-omh-maps/advanced-docs/plugin-openstreetmap/advanced/INFO_WINDOWS/) of this plugin for more information. |
+| setCustomInfoWindowViewFactory | The provider supports this method in full, however since the view is rendered "live" (i.e., the view is mounted instead of being rendered to a bitmap), attaching interaction listeners to the root view returned by the factory is forbidden. Please consult the [advanced documentation](https://openmobilehub.github.io/android-omh-maps/advanced-docs/plugin-openstreetmap/advanced/INFO_WINDOWS/) of this plugin for more information. |
 
 ### Marker
 

@@ -16,7 +16,7 @@ A polygon is a shape with multiple edges on the map. You can customize the appea
 ## Polygon options
 
 Define polygon options for a `Polygon`.
-Many properties can be set. To get the full list of properties, see the [OmhPolygonOptions](https://www.openmobilehub.com/android-omh-maps/api-docs/packages/core/com.openmobilehub.android.maps.core.presentation.models/-omh-polygon-options/index.html){:target="\_blank"} class.
+Many properties can be set. To get the full list of properties, see the [OmhPolygonOptions](https://openmobilehub.github.io/android-omh-maps/api-docs/packages/core/com.openmobilehub.android.maps.core.presentation.models/-omh-polygon-options/index.html){:target="\_blank"} class.
 Example of usage of `OmhPolygonOptions` and `addPolygon(OmhPolygonOptions)`:
 
 ```kotlin
@@ -37,7 +37,7 @@ val polygon = omhMap.addPolygon(omhPolygonOptions)
 ## Modifying an existing Polygon
 
 Once a Polygon is added to the map, you can modify its properties by calling the methods of the `OmhPolygon` class.
-To get the full list of methods, see the [OmhPolygon](https://www.openmobilehub.com/android-omh-maps/api-docs/packages/core/com.openmobilehub.android.maps.core.presentation.interfaces.maps/-omh-polygon/index.html){:target="\_blank"} class. Example of usage of `OmhPolygon` methods:
+To get the full list of methods, see the [OmhPolygon](https://openmobilehub.github.io/android-omh-maps/api-docs/packages/core/com.openmobilehub.android.maps.core.presentation.interfaces.maps/-omh-polygon/index.html){:target="\_blank"} class. Example of usage of `OmhPolygon` methods:
 
 ```kotlin
 polygon.setFillColor(Color.BLUE)
