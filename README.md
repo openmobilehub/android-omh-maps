@@ -23,7 +23,7 @@ For instance, the following screenshots showcase multiple devices with Android, 
 
 <div align="center">
 
-| Google Maps                    | Open Street Maps             | MapBox                          | Azure Maps                     |
+| Google Maps                    | OpenStreetMap             | MapBox                          | Azure Maps                     |
 | ------------------------------ | ---------------------------- | ------------------------------- | ------------------------------ |
 | Camera Map                     |
 | <img src="images/gmaps_1.gif"> | <img src="images/osm_1.gif"> | <img src="images/mapbox_1.gif"> | <img src="images/azure_1.gif"> |
@@ -34,7 +34,7 @@ For instance, the following screenshots showcase multiple devices with Android, 
 
 <div align="center">
 
-| Google Maps                    | Open Street Maps             | MapBox                          | Azure Maps                     |
+| Google Maps                    | OpenStreetMap             | MapBox                          | Azure Maps                     |
 | ------------------------------ | ---------------------------- | ------------------------------- | ------------------------------ |
 | Location Sharing Map           |
 | <img src="images/gmaps_2.gif"> | <img src="images/osm_2.gif"> | <img src="images/mapbox_2.gif"> | <img src="images/azure_2.gif"> |
@@ -81,7 +81,7 @@ implementation("com.openmobilehub.android.maps:plugin-googlemaps:2.1.0")
 //Mapbox
 implementation("com.openmobilehub.android.maps:plugin-mapbox:2.1.0")
 
-//Open Street Map
+//OpenStreetMap
 implementation("com.openmobilehub.android.maps:plugin-openstreetmap:2.1.0")
 ```
 
